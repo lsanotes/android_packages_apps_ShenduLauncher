@@ -16,7 +16,9 @@
 
 package com.cyanogenmod.trebuchet;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
@@ -28,14 +30,16 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
 public class DeleteDropTarget extends ButtonDropTarget {
 
-    private static final int MODE_DELETE = 0;
+	private static final int MODE_DELETE = 0;
     private static final int MODE_UNINSTALL = 1;
     private int mMode = MODE_DELETE;
 
@@ -43,11 +47,14 @@ public class DeleteDropTarget extends ButtonDropTarget {
     private ColorStateList mOriginalTextColor;
     private int mHoverColor = 0xFFFF0000;
     private Drawable mUninstallActiveDrawable;
+    private Drawable mUninstallNormalDrawable;
     private Drawable mRemoveActiveDrawable;
     private Drawable mRemoveNormalDrawable;
     private Drawable mCurrentDrawable;
     private boolean mUninstall;
-
+    private AlertDialog mUninstallDialog;
+    private CellLayout.CellInfo mCellInfo;
+    
     private final Handler mHandler = new Handler();
 
     public DeleteDropTarget(Context context, AttributeSet attrs) {
@@ -78,6 +85,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
         mHoverPaint.setColorFilter(new PorterDuffColorFilter(
                 mHoverColor, PorterDuff.Mode.SRC_ATOP));
         mUninstallActiveDrawable = r.getDrawable(R.drawable.ic_launcher_trashcan_active_holo);
+        mUninstallNormalDrawable = r.getDrawable(R.drawable.ic_launcher_trashcan_normal_holo);
         mRemoveActiveDrawable = r.getDrawable(R.drawable.ic_launcher_clear_active_holo);
         mRemoveNormalDrawable = r.getDrawable(R.drawable.ic_launcher_clear_normal_holo);
 
@@ -115,16 +123,47 @@ public class DeleteDropTarget extends ButtonDropTarget {
     @Override
     public boolean acceptDrop(DragObject d) {
         // We can remove everything including App shortcuts, folders, widgets, etc.
-        return true;
+    	boolean flag = true;
+    	 if(mUninstall){
+         	ShortcutInfo shortcutInfo = (ShortcutInfo) d.dragInfo;
+        	ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
+            if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+            	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){
+           	 flag = false;
+           //	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+            }else{
+           	 flag = true;
+            }
+         
+    	 }else{
+    		 if(isWorkspaceFolder(d.dragSource,d.dragInfo)){
+        		 flag = false;
+        	//	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+    		 }else{
+        		 flag = true;
+    		 }
+    	 }
+    	 Log.i("hhl", "....DeleteDropTarget.java...acceptDrop==="+flag+"==="+d.dragInfo);
+    	 return flag;
+    	//return true;
     }
 
     @Override
     public void onDragStart(DragSource source, Object info, int dragAction) {
         boolean isUninstall = false;
-
+        Drawable drawable = mRemoveNormalDrawable; 
+        if((info instanceof ShortcutInfo) && 
+        		((source instanceof Workspace) || (source instanceof Folder))){
+            mUninstall = true;
+            drawable = mUninstallNormalDrawable; 
+            mMode = MODE_UNINSTALL;
+        }else{
+            mMode = MODE_DELETE;
+        	mUninstall = false;
+        }
         // If we are dragging an application from AppsCustomize, only show the uninstall control if we
         // can delete the app (it was downloaded)
-        if (isAllAppsApplication(source, info)) {
+        /*if (isAllAppsApplication(source, info)) {
             ApplicationInfo appInfo = (ApplicationInfo) info;
             if ((appInfo.flags & ApplicationInfo.DOWNLOADED_FLAG) != 0) {
                 isUninstall = true;
@@ -137,23 +176,31 @@ public class DeleteDropTarget extends ButtonDropTarget {
                     android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0) {
                 isUninstall = true;
             }
-        }
-
-        setCompoundDrawablesWithIntrinsicBounds(mRemoveNormalDrawable, null, null, null);
+        }*/
+        Log.i("hhl", "...DeleteDropTarget.java...onDragStart...."+isUninstall+"==="+getText()+"==="+
+        		info+"==="+(mLauncher.getWorkspace().getDragInfo()==null));
+        mCellInfo = mLauncher.getWorkspace().getDragInfo();
+        setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
         mCurrentDrawable = getCompoundDrawables()[0];
 
-        mUninstall = isUninstall;
+        if(mUninstall){
+            setText(R.string.delete_target_uninstall_label);
+        }else{
+            setText(R.string.delete_target_label);
+        }
+       // mUninstall = isUninstall;
         mActive = true;
-        mMode = MODE_DELETE;
+       // mMode = MODE_DELETE;
         setTextColor(mOriginalTextColor);
         ((ViewGroup) getParent()).setVisibility(View.VISIBLE);
-        if (getText().length() > 0) {
+        
+        /*if (getText().length() > 0) {
             if (isAllAppsItem(source, info)) {
                 setText(R.string.cancel_target_label);
             } else {
                 setText(R.string.delete_target_label);
             }
-        }
+        }*/
     }
 
     private void switchToUninstallTarget() {
@@ -181,12 +228,17 @@ public class DeleteDropTarget extends ButtonDropTarget {
     public void onDragEnter(DragObject d) {
         super.onDragEnter(d);
 
-        if (mUninstall) {
+        /*if (mUninstall) {
             mHandler.removeCallbacks(mShowUninstaller);
             mHandler.postDelayed(mShowUninstaller, 1000);
+        }*/
+        Drawable drawable = null;
+        if(mUninstall){
+        	drawable = mUninstallActiveDrawable;
+        }else{
+        	drawable = mRemoveActiveDrawable;
         }
-
-        setCompoundDrawablesWithIntrinsicBounds(mRemoveActiveDrawable, null, null, null);
+        setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
         mCurrentDrawable = getCompoundDrawables()[0];
         setTextColor(mHoverColor);
     }
@@ -194,20 +246,26 @@ public class DeleteDropTarget extends ButtonDropTarget {
     public void onDragExit(DragObject d) {
         super.onDragExit(d);
 
-        mHandler.removeCallbacks(mShowUninstaller);
+        //mHandler.removeCallbacks(mShowUninstaller);
 
         if (!d.dragComplete) {
-            mMode = MODE_DELETE;
+            //mMode = MODE_DELETE;
 
-            if (getText().length() > 0) {
+            /*if (getText().length() > 0) {
                 if (isAllAppsItem(d.dragSource, d.dragInfo)) {
                     setText(R.string.cancel_target_label);
                 } else {
                     setText(R.string.delete_target_label);
                 }
+            }*/
+        	Drawable drawable = null;
+            if(mUninstall){
+            	drawable = mUninstallNormalDrawable;
+            }else{
+            	drawable = mRemoveNormalDrawable;
             }
 
-            setCompoundDrawablesWithIntrinsicBounds(mRemoveNormalDrawable, null, null, null);
+            setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
             mCurrentDrawable = getCompoundDrawables()[0];
             setTextColor(mOriginalTextColor);
         }
@@ -235,8 +293,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
             @Override
             public void run() {
                 mSearchDropTargetBar.onDragEnd();
-                mLauncher.exitSpringLoadedDragMode();
                 completeDrop(d);
+                mLauncher.exitSpringLoadedDragMode();
             }
         };
         dragLayer.animateView(d.dragView, from, to, 0.1f, 0.1f,
@@ -247,7 +305,63 @@ public class DeleteDropTarget extends ButtonDropTarget {
     private void completeDrop(DragObject d) {
         ItemInfo item = (ItemInfo) d.dragInfo;
 
-        switch (mMode) {
+        if(mUninstall){
+        	ShortcutInfo shortcutInfo = (ShortcutInfo) item;
+        	//ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
+            /*if (resolveInfo != null &&
+            	((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+            	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
+            	if(mCellInfo != null){
+                    Log.i("hhl", "---DeleteDropTarget.java..completeDrop.system app   111111.====");
+            		mCellInfo.cell.setVisibility(View.VISIBLE);
+            	}
+            	Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+            }else{*/
+            	final String pkgName = shortcutInfo.intent.getComponent().getPackageName();
+            	/*if(mLauncher.getWorkspace().mDragInfo != null){
+            		mLauncher.getWorkspace().mDragInfo.cell.setVisibility(View.VISIBLE);
+            	}
+            	mUninstallDialog = new AlertDialog.Builder(getContext())
+                .setTitle(getContext().getString(R.string.dialog_uninstall_app_title))
+                .setMessage(getContext().getString(R.string.dialog_uninstall_app_message))
+                .setPositiveButton(getContext().getString(R.string.dialog_uninstall_app_ok),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {*/
+                                getContext().getPackageManager().deletePackage(pkgName, null, 0);
+                           /* }
+                        })
+                .setNegativeButton(mLauncher.getString(R.string.dialog_uninstall_app_cancle), null)
+                .show();*/
+            	//mLauncher.startApplicationUninstallActivity((ApplicationInfo) item);
+            //}
+        }else{
+        	if (isWorkspaceOrFolderApplication(d.dragSource, item)) {
+                LauncherModel.deleteItemFromDatabase(mLauncher, item);
+            } else if (isWorkspaceFolder(d.dragSource, d.dragInfo)) {
+                // Remove the folder from the workspace and delete the contents from launcher model
+                FolderInfo folderInfo = (FolderInfo) item;
+                mLauncher.removeFolder(folderInfo);
+                LauncherModel.deleteFolderContentsFromDatabase(mLauncher, folderInfo);
+            } else if (isWorkspaceWidget(d.dragSource, item)) {
+                // Remove the widget from the workspace
+                mLauncher.removeAppWidget((LauncherAppWidgetInfo) item);
+                LauncherModel.deleteItemFromDatabase(mLauncher, item);
+
+                final LauncherAppWidgetInfo launcherAppWidgetInfo = (LauncherAppWidgetInfo) item;
+                final LauncherAppWidgetHost appWidgetHost = mLauncher.getAppWidgetHost();
+                if (appWidgetHost != null) {
+                    // Deleting an app widget ID is a void call but writes to disk before returning
+                    // to the caller...
+                    new Thread("deleteAppWidgetId") {
+                        public void run() {
+                            appWidgetHost.deleteAppWidgetId(launcherAppWidgetInfo.appWidgetId);
+                        }
+                    }.start();
+                }
+            }
+        }
+        Log.i("hhl", "---DeleteDropTarget.java..completeDrop.===="+(mCellInfo==null));
+        /*switch (mMode) {
             case MODE_DELETE:
                 if (isWorkspaceOrFolderApplication(d.dragSource, item)) {
                     LauncherModel.deleteItemFromDatabase(mLauncher, item);
@@ -283,7 +397,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
                     mLauncher.startShortcutUninstallActivity((ShortcutInfo) item);
                 }
                 break;
-        }
+        }*/
     }
 
     public void onDrop(DragObject d) {

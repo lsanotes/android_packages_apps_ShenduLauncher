@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cyanogenmod.trebuchet"
     android:versionName="@string/application_version">
-
+<!--
     <permission
         android:name="com.android.launcher.permission.INSTALL_SHORTCUT"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
@@ -34,6 +34,10 @@
         android:protectionLevel="normal"
         android:label="@string/permlab_uninstall_shortcut"
         android:description="@string/permdesc_uninstall_shortcut"/>
+        
+          -->
+          
+          
     <permission
         android:name="com.android.launcher.permission.READ_SETTINGS"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
@@ -54,6 +58,7 @@
     <uses-permission android:name="android.permission.BIND_APPWIDGET" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.DELETE_PACKAGES" />
 
     <uses-sdk android:minSdkVersion="14"
         android:targetSdkVersion="15" />

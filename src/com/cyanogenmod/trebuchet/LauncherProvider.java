@@ -194,7 +194,7 @@ public class LauncherProvider extends ContentProvider {
         return mOpenHelper.generateNewId();
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    static class DatabaseHelper extends SQLiteOpenHelper {
         private static final String TAG_FAVORITES = "favorites";
         private static final String TAG_FAVORITE = "favorite";
         private static final String TAG_CLOCK = "clock";
@@ -736,10 +736,10 @@ public class LauncherProvider extends ContentProvider {
                     // If we are adding to the hotseat, the screen is used as the position in the
                     // hotseat. This screen can't be at position 0 because AllApps is in the
                     // zeroth position.
-                    if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
-                            Hotseat.isAllAppsButtonRank(Integer.valueOf(screen))) {
-                        throw new RuntimeException("Invalid screen position for hotseat item");
-                    }
+//                    if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
+//                            Hotseat.isAllAppsButtonRank(Integer.valueOf(screen))) {
+//                        throw new RuntimeException("Invalid screen position for hotseat item");
+//                    }
 
                     values.clear();
                     values.put(LauncherSettings.Favorites.CONTAINER, container);

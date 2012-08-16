@@ -128,7 +128,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         tabView.setContentDescription(label);
         tabView.setOnLongClickListener(new View.OnLongClickListener() {
                 public boolean onLongClick(View v) {
-                    mLauncher.onLongClickAppsTab(v);
+                 //   mLauncher.onLongClickAppsTab(v);
                     return true;
                 }
         });

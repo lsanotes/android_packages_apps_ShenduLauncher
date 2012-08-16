@@ -19,10 +19,14 @@ package com.cyanogenmod.trebuchet;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Represents a launchable icon on the workspaces and in folders.
@@ -61,6 +65,16 @@ class ShortcutInfo extends ItemInfo {
      * The application icon.
      */
     private Bitmap mIcon;
+    
+    /**
+     * add hhl
+     */
+    ComponentName componentName;
+    static final int DOWNLOADED_FLAG = 1;
+    static final int UPDATED_SYSTEM_APP_FLAG = 2;
+    int flags = 0;
+    long firstInstallTime;
+    Bitmap iconBitmap;
 
     ShortcutInfo() {
         itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
@@ -114,6 +128,30 @@ class ShortcutInfo extends ItemInfo {
         itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_APPLICATION;
     }
 
+    /**
+     * add hhl
+     */
+    public ShortcutInfo(PackageManager pm, ResolveInfo info, IconCache iconCache,HashMap<Object, CharSequence> labelCache){
+    	String packageName = info.activityInfo.applicationInfo.packageName;
+        this.componentName = new ComponentName(packageName, info.activityInfo.name);
+        this.container = ItemInfo.NO_ID;
+        this.setActivity(componentName,
+                Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        try {
+            int appFlags = pm.getApplicationInfo(packageName, 0).flags;
+            if ((appFlags & android.content.pm.ApplicationInfo.FLAG_SYSTEM) == 0) {
+                flags |= DOWNLOADED_FLAG;
+                if ((appFlags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0) {
+                    flags |= UPDATED_SYSTEM_APP_FLAG;
+                }
+            }
+            firstInstallTime = pm.getPackageInfo(packageName, 0).firstInstallTime;
+        } catch (NameNotFoundException e) {
+           e.printStackTrace();
+        }
+        iconCache.getTitleAndIcon(this, info, labelCache);
+    }
+    
     @Override
     void onAddToDatabase(ContentValues values) {
         super.onAddToDatabase(values);

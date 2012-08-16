@@ -113,6 +113,8 @@ public class LauncherModel extends BroadcastReceiver {
 
     // </ only access in worker thread >
 
+    static final ArrayList<Intent> AppsInDB =  new ArrayList<Intent>();
+    
     private IconCache mIconCache;
     private Bitmap mDefaultIcon;
 
@@ -129,10 +131,10 @@ public class LauncherModel extends BroadcastReceiver {
         public void bindFolders(HashMap<Long,FolderInfo> folders);
         public void finishBindingItems();
         public void bindAppWidget(LauncherAppWidgetInfo info);
-        public void bindAllApplications(ArrayList<ApplicationInfo> apps);
-        public void bindAppsAdded(ArrayList<ApplicationInfo> apps);
-        public void bindAppsUpdated(ArrayList<ApplicationInfo> apps);
-        public void bindAppsRemoved(ArrayList<ApplicationInfo> apps, boolean permanent);
+        public void bindAllApplications(ArrayList<ShortcutInfo> apps);
+        public void bindAppsAdded(ArrayList<ShortcutInfo> apps);
+        public void bindAppsUpdated(ArrayList<ShortcutInfo> apps);
+        public void bindAppsRemoved(ArrayList<ShortcutInfo> apps, boolean permanent);
         public void bindPackagesUpdated();
         public boolean isAllAppsVisible();
         public void bindSearchablesChanged();
@@ -193,7 +195,9 @@ public class LauncherModel extends BroadcastReceiver {
      */
     static void addOrMoveItemInDatabase(Context context, ItemInfo item, long container,
             int screen, int cellX, int cellY) {
+    //    Log.i(Launcher.TAG,TAG+ "..........................addOrMoveItemInDatabase..."+item.container  +item+ItemInfo.NO_ID); 
         if (item.container == ItemInfo.NO_ID) {
+        	
             // From all apps
             addItemToDatabase(context, item, container, screen, cellX, cellY, false);
         } else {
@@ -213,6 +217,8 @@ public class LauncherModel extends BroadcastReceiver {
                 cr.update(uri, values, null, null);
 
                 ItemInfo modelItem = sItemsIdMap.get(itemId);
+           //     Log.i(Launcher.TAG,TAG+ "..........................addOrMoveItemInDatabase..."+item+ " :"+item.id +modelItem); 
+                
                 if (item != modelItem) {
                     // the modelItem needs to match up perfectly with item if our model is to be
                     // consistent with the database-- for now, just require modelItem == item
@@ -438,6 +444,7 @@ public class LauncherModel extends BroadcastReceiver {
                     throw new RuntimeException("Error: ItemInfo id (" + item.id + ") passed to " +
                         "addItemToDatabase already exists." + item.toString());
                 }
+                Log.i(Launcher.TAG,TAG+ "..........................addItemToDatabase..."+item.id );
                 sItemsIdMap.put(item.id, item);
                 switch (item.itemType) {
                     case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
@@ -915,9 +922,9 @@ public class LauncherModel extends BroadcastReceiver {
             int containerIndex = item.screen;
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
                 // Return early if we detect that an item is under the hotseat button
-                if (Hotseat.isAllAppsButtonRank(item.screen)) {
-                    return false;
-                }
+//                if (Hotseat.isAllAppsButtonRank(item.screen)) {
+//                    return false;
+//                }
 
                 // We use the last index to refer to the hotseat and the screen as the rank, so
                 // test and update the occupied state accordingly
@@ -976,7 +983,7 @@ public class LauncherModel extends BroadcastReceiver {
 
             final Cursor c = contentResolver.query(
                     LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
-
+            
             // +1 for the hotseat (it can be larger than the workspace)
             // Load workspace in reverse order to ensure that latest items are loaded first (and
             // before any earlier duplicates)
@@ -1025,6 +1032,7 @@ public class LauncherModel extends BroadcastReceiver {
 
                 while (!mStopped && c.moveToNext()) {
                     try {
+                    
                         int itemType = c.getInt(itemTypeIndex);
 
                         switch (itemType) {
@@ -1033,6 +1041,7 @@ public class LauncherModel extends BroadcastReceiver {
                             intentDescription = c.getString(intentIndex);
                             try {
                                 intent = Intent.parseUri(intentDescription, 0);
+                                AppsInDB.add(intent);
                             } catch (URISyntaxException e) {
                                 continue;
                             }
@@ -1343,14 +1352,85 @@ public class LauncherModel extends BroadcastReceiver {
             }
 
             // shallow copy
-            final ArrayList<ApplicationInfo> list
-                    = (ArrayList<ApplicationInfo>) mAllAppsList.data.clone();
+            final ArrayList<ShortcutInfo> list
+                    = (ArrayList<ShortcutInfo>) mAllAppsList.data.clone();
             mHandler.post(new Runnable() {
                 public void run() {
                     final long t = SystemClock.uptimeMillis();
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
-                        callbacks.bindAllApplications(list);
+                    	
+                    	
+                    	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
+//                    	
+//                    	for(ApplicationInfo info:list){
+//                    		
+//                    		for(Intent intent:AppsInDB){
+//                    			
+//                    			if(info.intent.toString().equals(intent.toString())){	
+//                    				break;
+//                    			}
+//                    	  		listOutOfDB.add(info);
+//                        	}
+//                  
+//                    	}
+                    	
+                    	AppsInDB.clear();
+                    	
+                        final Cursor c = mContext.getContentResolver().query(
+                                LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
+                        
+                        try {
+                        	final int intentIndex = c.getColumnIndexOrThrow
+                                    (LauncherSettings.Favorites.INTENT);
+                         	 final int itemTypeIndex = c.getColumnIndexOrThrow(
+                                 LauncherSettings.Favorites.ITEM_TYPE);
+                            while (!mStopped && c.moveToNext()) {
+                              
+                                int itemType = c.getInt(itemTypeIndex);
+                                if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+                                	String  intentDescription = c.getString(intentIndex);
+                                    
+                                    Intent   intent = Intent.parseUri(intentDescription, 0);
+                                    AppsInDB.add(intent);
+                                }
+                        
+                            
+                   			}
+                           	
+                        } catch (URISyntaxException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                        
+                        finally {
+                            c.close();
+                        }
+                 
+                    	
+                    	for(ShortcutInfo info:list){
+                    		
+                    		boolean ins=true;
+                    		for(Intent intent:AppsInDB){
+                    			
+                    			if(info.intent.toString().equals(intent.toString())){	
+                    				ins =false;
+                    				break;
+                    				
+                    			}
+                    
+                        	}
+                    		if(ins){
+                				listOutOfDB.add(info);
+                			}
+                  
+                    	}
+
+                    
+                    	Log.i(Launcher.TAG,TAG+ "..........................onlyBindAllApps()+ "+listOutOfDB.size());
+                        callbacks.bindAllApplications(listOutOfDB);
+                        listOutOfDB.clear();
+                        listOutOfDB=null;
                     }
                     if (DEBUG_LOADERS) {
                         Log.d(TAG, "bound all " + list.size() + " apps from cache in "
@@ -1360,6 +1440,8 @@ public class LauncherModel extends BroadcastReceiver {
             });
 
         }
+        
+     
 
         private void loadAllAppsByBatch() {
             final long t = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
@@ -1418,23 +1500,83 @@ public class LauncherModel extends BroadcastReceiver {
                 startIndex = i;
                 for (int j = 0; i < N && j < N; j++) {
                     // This builds the icon bitmaps.
-                    mAllAppsList.add(new ApplicationInfo(packageManager, apps.get(i),
-                            mIconCache, mLabelCache));
+                    //mAllAppsList.add(new ApplicationInfo(packageManager, apps.get(i),
+                           // mIconCache, mLabelCache));
+                    mAllAppsList.add(new ShortcutInfo(packageManager, apps.get(i),mIconCache,mLabelCache));//hhl
                     i++;
                 }
 
                 final boolean first = i <= N;
                 final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
-                final ArrayList<ApplicationInfo> added = mAllAppsList.added;
-                mAllAppsList.added = new ArrayList<ApplicationInfo>();
+                final ArrayList<ShortcutInfo> added = mAllAppsList.added;
+                mAllAppsList.added = new ArrayList<ShortcutInfo>();
 
                 mHandler.post(new Runnable() {
                     public void run() {
                         final long t = SystemClock.uptimeMillis();
                         if (callbacks != null) {
                             if (first) {
-                                callbacks.bindAllApplications(added);
+
+                               	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
+                            	Log.i(Launcher.TAG,TAG+ "..........................first()"+added.size());
+                            	AppsInDB.clear();
+                            	
+                                final Cursor c = mContext.getContentResolver().query(
+                                        LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
+                                
+                                try {
+                                	final int intentIndex = c.getColumnIndexOrThrow
+                                            (LauncherSettings.Favorites.INTENT);
+                                 	 final int itemTypeIndex = c.getColumnIndexOrThrow(
+                                         LauncherSettings.Favorites.ITEM_TYPE);
+                                    while (!mStopped && c.moveToNext()) {
+                                      
+                                        int itemType = c.getInt(itemTypeIndex);
+                                        if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+                                        	String  intentDescription = c.getString(intentIndex);
+                                            
+                                            Intent   intent = Intent.parseUri(intentDescription, 0);
+                                            AppsInDB.add(intent);
+                                        }
+                                
+                                    
+                           			}
+                                   	
+                                } catch (URISyntaxException e) {
+        							// TODO Auto-generated catch block
+        							e.printStackTrace();
+        						}
+                                
+                                finally {
+                                    c.close();
+                                }
+                         
+                            	
+                            	for(ShortcutInfo info:added){
+                            		
+                            		boolean ins=true;
+                            		for(Intent intent:AppsInDB){
+                            			
+                            			if(info.intent.toString().equals(intent.toString())){	
+                            				ins =false;
+                            				break;
+                            				
+                            			}
+                            
+                                	}
+                            		if(ins){
+                        				listOutOfDB.add(info);
+                        			}
+                          
+                            	}
+
+                            	Log.i(Launcher.TAG,TAG+ "..........................loadAllAppsByBatch()+ "+listOutOfDB.size());
+
+                                callbacks.bindAllApplications(listOutOfDB);
+                                
                             } else {
+                            	Log.i(Launcher.TAG,TAG+ ".........................loadAllAppsByBatch().first()"+first+added.size());
+                       
                                 callbacks.bindAppsAdded(added);
                             }
                             if (DEBUG_LOADERS) {
@@ -1516,24 +1658,24 @@ public class LauncherModel extends BroadcastReceiver {
                     break;
             }
 
-            ArrayList<ApplicationInfo> added = null;
-            ArrayList<ApplicationInfo> removed = null;
-            ArrayList<ApplicationInfo> modified = null;
+            ArrayList<ShortcutInfo> added = null;
+            ArrayList<ShortcutInfo> removed = null;
+            ArrayList<ShortcutInfo> modified = null;
 
             if (mAllAppsList.added.size() > 0) {
                 added = mAllAppsList.added;
-                mAllAppsList.added = new ArrayList<ApplicationInfo>();
+                mAllAppsList.added = new ArrayList<ShortcutInfo>();
             }
             if (mAllAppsList.removed.size() > 0) {
                 removed = mAllAppsList.removed;
-                mAllAppsList.removed = new ArrayList<ApplicationInfo>();
-                for (ApplicationInfo info : removed) {
+                mAllAppsList.removed = new ArrayList<ShortcutInfo>();
+                for (ShortcutInfo info : removed) {
                     mIconCache.remove(info.intent.getComponent());
                 }
             }
             if (mAllAppsList.modified.size() > 0) {
                 modified = mAllAppsList.modified;
-                mAllAppsList.modified = new ArrayList<ApplicationInfo>();
+                mAllAppsList.modified = new ArrayList<ShortcutInfo>();
             }
 
             final Callbacks callbacks = mCallbacks != null ? mCallbacks.get() : null;
@@ -1543,18 +1685,19 @@ public class LauncherModel extends BroadcastReceiver {
             }
 
             if (added != null) {
-                final ArrayList<ApplicationInfo> addedFinal = added;
+                final ArrayList<ShortcutInfo> addedFinal = added;
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
+                        //	Log.i(Launcher.TAG,TAG+ "..........................PackageUpdatedTask()..+added");
                             callbacks.bindAppsAdded(addedFinal);
                         }
                     }
                 });
             }
             if (modified != null) {
-                final ArrayList<ApplicationInfo> modifiedFinal = modified;
+                final ArrayList<ShortcutInfo> modifiedFinal = modified;
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
@@ -1566,7 +1709,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
             if (removed != null) {
                 final boolean permanent = mOp != OP_UNAVAILABLE;
-                final ArrayList<ApplicationInfo> removedFinal = removed;
+                final ArrayList<ShortcutInfo> removedFinal = removed;
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
@@ -1924,9 +2067,9 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     private static final Collator sCollator = Collator.getInstance();
-    public static final Comparator<ApplicationInfo> APP_NAME_COMPARATOR
-            = new Comparator<ApplicationInfo>() {
-        public final int compare(ApplicationInfo a, ApplicationInfo b) {
+    public static final Comparator<ShortcutInfo> APP_NAME_COMPARATOR
+            = new Comparator<ShortcutInfo>() {
+        public final int compare(ShortcutInfo a, ShortcutInfo b) {
             int result = sCollator.compare(a.title.toString(), b.title.toString());
             if (result == 0) {
                 result = a.componentName.compareTo(b.componentName);
@@ -1934,9 +2077,9 @@ public class LauncherModel extends BroadcastReceiver {
             return result;
         }
     };
-    public static final Comparator<ApplicationInfo> APP_INSTALL_TIME_COMPARATOR
-            = new Comparator<ApplicationInfo>() {
-        public final int compare(ApplicationInfo a, ApplicationInfo b) {
+    public static final Comparator<ShortcutInfo> APP_INSTALL_TIME_COMPARATOR
+            = new Comparator<ShortcutInfo>() {
+        public final int compare(ShortcutInfo a, ShortcutInfo b) {
             if (a.firstInstallTime < b.firstInstallTime) return 1;
             if (a.firstInstallTime > b.firstInstallTime) return -1;
             return 0;

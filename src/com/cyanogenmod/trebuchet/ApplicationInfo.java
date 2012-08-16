@@ -90,7 +90,7 @@ class ApplicationInfo extends ItemInfo {
             Log.d(TAG, "PackageManager.getApplicationInfo failed for " + packageName);
         }
 
-        iconCache.getTitleAndIcon(this, info, labelCache);
+       // iconCache.getTitleAndIcon(this, info, labelCache);
     }
 
     public ApplicationInfo(ApplicationInfo info) {
@@ -123,9 +123,9 @@ class ApplicationInfo extends ItemInfo {
     }
 
     public static void dumpApplicationInfoList(String tag, String label,
-            ArrayList<ApplicationInfo> list) {
+            ArrayList<ShortcutInfo> list) {
         Log.d(tag, label + " size=" + list.size());
-        for (ApplicationInfo info: list) {
+        for (ShortcutInfo info: list) {
             Log.d(tag, "   title=\"" + info.title + "\" iconBitmap="
                     + info.iconBitmap + " firstInstallTime="
                     + info.firstInstallTime);

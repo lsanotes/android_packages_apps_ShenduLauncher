@@ -1376,6 +1376,126 @@ public class CellLayout extends ViewGroup {
         markCellsAsOccupiedForView(ignoreView);
         return foundCell;
     }
+    /**
+     * find the Last coordinate  which it have item in cell in this CellLayout
+     * 
+     * 
+     * 
+     * @return coordinate
+     */
+    
+    int[] existsLastOccupiedCell() {
+        return findCellLastOccupiedCell(null, 1, 1);
+    }
+    
+    /**
+     * Finds the upper-left coordinate of the first rectangle in the grid that can
+     * hold a cell of the specified dimensions. If intersectX and intersectY are not -1,
+     * then this method will only return coordinates for rectangles that contain the cell
+     * (intersectX, intersectY)
+     *
+     * @param cellXY The array that will contain the position of a vacant cell if such a cell
+     *               can be found.
+     * @param spanX The horizontal span of the cell we want to find.
+     * @param spanY The vertical span of the cell we want to find.
+     *
+     * @return True if a vacant cell of the specified dimension was found, false otherwise.
+     */
+    int[] findCellLastOccupiedCell(int[] cellXY, int spanX, int spanY) {
+        return findCellLastOccupiedCellIgnoring(cellXY, spanX, spanY, -1, -1, null);
+    }
+    
+    /**
+     * The superset of the above two methods
+     */
+    int[] findCellLastOccupiedCellIgnoring(int[] cellXY, int spanX, int spanY,
+            int intersectX, int intersectY, View ignoreView) {
+        // mark space take by ignoreView as available (method checks if ignoreView is null)
+        markCellsAsUnoccupiedForView(ignoreView);
+    
+        int[] lastCell =new int[2];
+        lastCell[0]=1;
+        lastCell[1]=2;
+       
+        boolean foundCell = false;
+        
+        int spanLastCellX=0;
+        int spanLastCellY=0;
+        while (true) {
+        	
+           
+            int startX = 0;
+            if (intersectX >= 0) {
+                startX = Math.max(startX, intersectX - (spanX - 1));
+            }
+            int endX = mCountX - (spanX - 1);
+            if (intersectX >= 0) {
+                endX = Math.min(endX, intersectX + (spanX - 1) + (spanX == 1 ? 1 : 0));
+            }
+            int startY = 0;
+            if (intersectY >= 0) {
+                startY = Math.max(startY, intersectY - (spanY - 1));
+            }
+            int endY = mCountY - (spanY - 1);
+            if (intersectY >= 0) {
+                endY = Math.min(endY, intersectY + (spanY - 1) + (spanY == 1 ? 1 : 0));
+            }
+          
+            for (int y = endY-1; y >=startY && !foundCell; y--) {
+                inner:
+                for (int x = endX-1; x >= startX ; x--) {
+                    for (int i = spanX-1; i >=0; i--) {
+                        for (int j = spanY-1; j >=0; j--) {
+                        
+                            if (!mOccupied[x - i][y - j]) {
+                                // small optimization: we can skip to after the column we just found
+                                // an occupied cell
+                                x -= i;
+                           
+                                continue inner;
+                            }
+                        }
+                    }
+                	Log.i(Launcher.TAG,TAG+ "..........................findCellLastOccupiedCellIgnoring()!!!!!"+x +y);
+                    spanLastCellX=x;
+                    spanLastCellY=y;
+                   
+                    if (cellXY != null) {
+                        cellXY[0] = x;
+                        cellXY[1] = y;
+                    }
+                    foundCell = true;
+                    break;
+                }
+            
+            
+            }
+            
+        	Log.i(Launcher.TAG,TAG+ "..........................findCellLastOccupiedCellIgnoring().....@@@@"+foundCell);
+            if (intersectX == -1 && intersectY == -1) {
+                break;
+            } else {
+                // if we failed to find anything, try again but without any requirements of
+                // intersecting
+                intersectX = -1;
+                intersectY = -1;
+                continue;
+            }
+        }
+        
+     if(foundCell){
+    	  lastCell[0]=spanLastCellX;
+          lastCell[1]=spanLastCellY; 
+     }else{
+    	 lastCell[0] =-1;
+    	 lastCell[1] =0;
+     }
+      
+     
+        // re-mark space taken by ignoreView as occupied
+       markCellsAsOccupiedForView(ignoreView);
+        return lastCell;
+    }
 
     /**
      * A drag event has begun over this layout.

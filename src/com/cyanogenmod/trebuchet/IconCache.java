@@ -154,7 +154,7 @@ public class IconCache {
     /**
      * Fill in "application" with the icon and label for "info."
      */
-    public void getTitleAndIcon(ApplicationInfo application, ResolveInfo info,
+    public void getTitleAndIcon(ShortcutInfo application, ResolveInfo info,
             HashMap<Object, CharSequence> labelCache) {
         synchronized (mCache) {
             CacheEntry entry = cacheLocked(application.componentName, info, labelCache);

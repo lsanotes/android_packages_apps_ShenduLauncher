@@ -85,7 +85,7 @@ public class PagedViewIcon extends TextView implements Checkable {
         return mHolographicOutline;
     }
 
-    public void applyFromApplicationInfo(ApplicationInfo info,
+    public void applyFromApplicationInfo(ShortcutInfo info,
             HolographicOutlineHelper holoOutlineHelper) {
         mHolographicOutlineHelper = holoOutlineHelper;
         mIcon = info.iconBitmap;

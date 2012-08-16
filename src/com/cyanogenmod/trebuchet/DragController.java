@@ -367,13 +367,13 @@ public class DragController {
         }
         endDrag();
     }
-    public void onAppsRemoved(ArrayList<ApplicationInfo> apps, Context context) {
+    public void onAppsRemoved(ArrayList<ShortcutInfo> apps, Context context) {
         // Cancel the current drag if we are removing an app that we are dragging
         if (mDragObject != null) {
             Object rawDragInfo = mDragObject.dragInfo;
             if (rawDragInfo instanceof ShortcutInfo) {
                 ShortcutInfo dragInfo = (ShortcutInfo) rawDragInfo;
-                for (ApplicationInfo info : apps) {
+                for (ShortcutInfo info : apps) {
                     if (dragInfo.intent.getComponent().equals(info.intent.getComponent())) {
                         cancelDrag();
                         return;
@@ -467,13 +467,16 @@ public class DragController {
             if (delegate != null) {
                 dropTarget = delegate;
             }
-
+         
             if (mLastDropTarget != dropTarget) {
                 if (mLastDropTarget != null) {
                     mLastDropTarget.onDragExit(mDragObject);
                 }
+                
+                
                 dropTarget.onDragEnter(mDragObject);
             }
+        
             dropTarget.onDragOver(mDragObject);
         } else {
             if (mLastDropTarget != null) {
@@ -576,6 +579,8 @@ public class DragController {
             if (dropTarget.acceptDrop(mDragObject)) {
                 dropTarget.onDrop(mDragObject);
                 accepted = true;
+            }else{
+            	mDragObject.cancelled = true;
             }
         }
         mDragObject.dragSource.onDropCompleted((View) dropTarget, mDragObject, accepted);
@@ -588,6 +593,7 @@ public class DragController {
         final int count = dropTargets.size();
         for (int i=count-1; i>=0; i--) {
             DropTarget target = dropTargets.get(i);
+  
             if (!target.isDropEnabled())
                 continue;
 

@@ -36,9 +36,12 @@ import android.content.ClipDescription;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.Canvas;
@@ -68,6 +71,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.cyanogenmod.trebuchet.FolderIcon.FolderRingAnimator;
 import com.cyanogenmod.trebuchet.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
@@ -328,6 +332,7 @@ public class Workspace extends PagedView
 
         // Preferences
         mNumberHomescreens = PreferencesProvider.Interface.Homescreen.getNumberHomescreens(context);
+        
         mDefaultHomescreen = PreferencesProvider.Interface.Homescreen.getDefaultHomescreen(context,
                 mNumberHomescreens / 2);
         if (mDefaultHomescreen >= mNumberHomescreens) {
@@ -448,6 +453,26 @@ public class Workspace extends PagedView
         mLauncher.unlockScreenOrientationOnLargeUI();
     }
 
+    public void addScreen(LayoutInflater inflater){
+
+
+            View screen = inflater.inflate(R.layout.workspace_screen, null);
+            screen.setPadding(screen.getPaddingLeft() + mScreenPaddingHorizontal,
+                    screen.getPaddingTop() + mScreenPaddingVertical,
+                    screen.getPaddingRight() + mScreenPaddingHorizontal,
+                    screen.getPaddingBottom() + mScreenPaddingVertical);
+            addView(screen); 
+        
+    }
+    
+    void savedThePageCount(){
+        
+        SharedPreferences preferences = mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, 0);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("ui_homescreen_screens", getChildCount());
+        editor.commit();
+    }
+    
     /**
      * Initializes various states for this workspace.
      */
@@ -463,15 +488,14 @@ public class Workspace extends PagedView
 
         final Resources res = getResources();
 
-        LayoutInflater inflater =
-                (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+  
         for (int i = 0; i < mNumberHomescreens; i++) {
-            View screen = inflater.inflate(R.layout.workspace_screen, null);
-            screen.setPadding(screen.getPaddingLeft() + mScreenPaddingHorizontal,
-                    screen.getPaddingTop() + mScreenPaddingVertical,
-                    screen.getPaddingRight() + mScreenPaddingHorizontal,
-                    screen.getPaddingBottom() + mScreenPaddingVertical);
-            addView(screen);        }
+            LayoutInflater inflater =
+                    (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            addScreen(inflater);
+            
+        }
+        savedThePageCount();
 
         try {
             mBackground = res.getDrawable(R.drawable.apps_customize_bg);
@@ -2387,13 +2411,13 @@ public class Workspace extends PagedView
             if (!mDragTargetLayout.findCellForSpanIgnoring(null, spanX, spanY, ignoreView)) {
                 // Don't show the message if we are dropping on the AllApps button and the hotseat
                 // is full
-                if (mTargetCell != null && mLauncher.isHotseatLayout(mDragTargetLayout)) {
-                    Hotseat hotseat = mLauncher.getHotseat();
-                    if (Hotseat.isAllAppsButtonRank(
-                            hotseat.getOrderInHotseat(mTargetCell[0], mTargetCell[1]))) {
-                        return false;
-                    }
-                }
+//                if (mTargetCell != null && mLauncher.isHotseatLayout(mDragTargetLayout)) {
+//                    Hotseat hotseat = mLauncher.getHotseat();
+//                    if (Hotseat.isAllAppsButtonRank(
+//                            hotseat.getOrderInHotseat(mTargetCell[0], mTargetCell[1]))) {
+//                        return false;
+//                    }
+//                }
 
                 mLauncher.showOutOfSpaceMessage();
                 return false;
@@ -2639,6 +2663,12 @@ public class Workspace extends PagedView
             }
             parent.onDropChild(cell);
         }
+        
+        
+       CellLayout  cellLayout =(CellLayout)getChildAt(getChildCount()-1);
+        
+        int [] lastOccupiedCell=  cellLayout.existsLastOccupiedCell();
+
     }
 
     public void setFinalScrollForPageChange(int screen) {
@@ -3067,6 +3097,7 @@ public class Workspace extends PagedView
             }
             if (layout == null) {
                 layout = findMatchingPageForDragOver(d.dragView, d.x, d.y, false);
+               	Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()   findMatchingPageForDragOver"+(layout != mDragTargetLayout)+(layout != null));
             }
             if (layout != mDragTargetLayout) {
                 // Cancel all intermediate folder states
@@ -3079,6 +3110,7 @@ public class Workspace extends PagedView
                 mDragTargetLayout = layout;
                 if (mDragTargetLayout != null) {
                     mDragTargetLayout.setIsDragOverlapping(true);
+                    Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()   mDragTargetLayout.onDragEnter()");
                     mDragTargetLayout.onDragEnter();
                 } else {
                     mLastDragOverView = null;
@@ -3378,13 +3410,16 @@ public class Workspace extends PagedView
             }
             addInScreen(view, container, screen, mTargetCell[0], mTargetCell[1], info.spanX,
                     info.spanY, insertAtFirst);
+   
+         
             cellLayout.onDropChild(view);
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) view.getLayoutParams();
             cellLayout.getChildrenLayout().measureChild(view);
 
             LauncherModel.addOrMoveItemInDatabase(mLauncher, info, container, screen,
                     lp.cellX, lp.cellY);
-
+            
+          
             if (d.dragView != null) {
                 // We wrap the animation call in the temporary set and reset of the current
                 // cellLayout to its final transform -- this means we animate the drag view to
@@ -3484,6 +3519,17 @@ public class Workspace extends PagedView
      * Called at the end of a drag which originated on the workspace.
      */
     public void onDropCompleted(View target, DragObject d, boolean success) {
+    	//add by zlf
+        final Runnable exitSpringLoadedRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mLauncher.exitSpringLoadedDragModeDelayed(true, false);
+            }
+        };
+        exitSpringLoadedRunnable.run();
+    	
+        
+        
         if (success) {
             if (target != this) {
                 if (mDragInfo != null) {
@@ -3702,19 +3748,22 @@ public class Workspace extends PagedView
         }
     }
 
-    void removeItems(final ArrayList<ApplicationInfo> apps) {
+    void removeItems(final ArrayList<ShortcutInfo> apps) {
+    	Log.i(Launcher.TAG,TAG+ ".removeItems..........................removeItems(cellLayout):");
+    	
         final AppWidgetManager widgets = AppWidgetManager.getInstance(getContext());
 
         final HashSet<String> packageNames = new HashSet<String>();
         final int appCount = apps.size();
-        for (ApplicationInfo app : apps) {
+        for (ShortcutInfo app : apps) {
             packageNames.add(app.componentName.getPackageName());
         }
 
         ArrayList<CellLayout> cellLayouts = getWorkspaceAndHotseatCellLayouts();
+        int pageCount=0;
         for (final CellLayout layoutParent: cellLayouts) {
             final ViewGroup layout = layoutParent.getChildrenLayout();
-
+   
             // Avoid ANRs by treating each screen separately
             post(new Runnable() {
                 public void run() {
@@ -3795,9 +3844,57 @@ public class Workspace extends PagedView
                 }
             });
         }
+        
+        
+        post(new Runnable() {
+      
+            public void run() {
+            	 //add zlf
+            	
+            	int count =getChildCount();
+                CellLayout  cellLayout =(CellLayout) getChildAt(count-1);
+               
+                int [] lastOccupiedCell=  cellLayout.existsLastOccupiedCell();
+             	
+                if(lastOccupiedCell[0]==-1){
+               	
+             
+               	removeView(cellLayout); 
+           
+               	}
+        
+              
+ 
+            }
+        }) ;
+       
     }
 
-    void updateShortcuts(ArrayList<ApplicationInfo> apps) {
+    public void removeView( View cellLayout){
+    	super.removeView(cellLayout);
+      	Log.i(Launcher.TAG,TAG+ "..........................mWorkspace.removeView(cellLayout)"+mCurrentPage);
+      	int count =getChildCount();
+       	if(  mCurrentPage>=count-1){
+      
+       		setCurrentPage(mCurrentPage-1);
+       		
+       	}
+       	if(mDefaultHomescreen>=count-1){
+       		mDefaultHomescreen-=1;
+
+       	}
+       	
+         savedThePageCount();
+         
+//         SQLiteOpenHelper sph = new LauncherProvider.DatabaseHelper(getContext());
+//
+// 	    SQLiteDatabase db = sph.getWritableDatabase();
+ 	 
+ 	//  db.execSQL("UPDATE "+LauncherProvider.TABLE_FAVORITES+" SET id=id-1 WHERE id>"+pageCount +";"); 
+     //	
+    }
+
+    void updateShortcuts(ArrayList<ShortcutInfo> apps) {
         ArrayList<CellLayoutChildren> childrenLayouts = getWorkspaceAndHotseatCellLayoutChildren();
         for (CellLayoutChildren layout: childrenLayouts) {
             int childCount = layout.getChildCount();
@@ -3814,7 +3911,7 @@ public class Workspace extends PagedView
                     if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION &&
                             Intent.ACTION_MAIN.equals(intent.getAction()) && name != null) {
                         final int appCount = apps.size();
-                        for (ApplicationInfo app : apps) {
+                        for (ShortcutInfo app : apps) {
                             if (app.componentName.equals(name)) {
                                 info.setIcon(mIconCache.getIcon(info.intent));
                                 ((TextView) view).setCompoundDrawablesWithIntrinsicBounds(null,

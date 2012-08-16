@@ -170,7 +170,6 @@ class AppsCustomizeAsyncTask extends AsyncTask<AsyncTaskPageData, Void, AsyncTas
     AppsCustomizeView.ContentType pageContentType;
     int threadPriority;
 }
-
 /**
  * The Apps/Customize page that displays all the applications, widgets, and shortcuts.
  */
@@ -190,7 +189,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     // Content
     private ContentType mContentType;
     private SortMode mSortMode = SortMode.Title;
-    private ArrayList<ApplicationInfo> mApps;
+    private ArrayList<ShortcutInfo> mApps;
     private ArrayList<Object> mWidgets;
 
     // Cling
@@ -257,7 +256,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mLayoutInflater = LayoutInflater.from(context);
         mPackageManager = context.getPackageManager();
         mContentType = ContentType.Apps;
-        mApps = new ArrayList<ApplicationInfo>();
+        mApps = new ArrayList<ShortcutInfo>();
         mWidgets = new ArrayList<Object>();
         mIconCache = ((LauncherApplication) context.getApplicationContext()).getIconCache();
         mHolographicOutlineHelper = new HolographicOutlineHelper();
@@ -983,7 +982,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
         layout.removeAllViewsOnPage();
         for (int i = startIndex; i < endIndex; ++i) {
-            ApplicationInfo info = mApps.get(i);
+        	ShortcutInfo info = mApps.get(i);
             PagedViewIcon icon = (PagedViewIcon) mLayoutInflater.inflate(
                     R.layout.apps_customize_application, layout, false);
             icon.applyFromApplicationInfo(info, mHolographicOutlineHelper);
@@ -1858,7 +1857,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
 
     @Override
-    public void setApps(ArrayList<ApplicationInfo> list) {
+    public void setApps(ArrayList<ShortcutInfo> list) {
         mApps = list;
         if (mSortMode == SortMode.Title) {
             Collections.sort(mApps, LauncherModel.APP_NAME_COMPARATOR);
@@ -1871,9 +1870,9 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // request a layout to do this test and invalidate the page data when ready.
         if (testDataReady()) requestLayout();
     }
-    private void addAppsWithoutInvalidate(ArrayList<ApplicationInfo> list) {
+    private void addAppsWithoutInvalidate(ArrayList<ShortcutInfo> list) {
         // We add it in place, in alphabetical order
-        for (ApplicationInfo info : list) {
+        for (ShortcutInfo info : list) {
             int index = 0;
             if (mSortMode == SortMode.Title) {
                 index = Collections.binarySearch(mApps, info, LauncherModel.APP_NAME_COMPARATOR);
@@ -1886,25 +1885,25 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
     }
     @Override
-    public void addApps(ArrayList<ApplicationInfo> list) {
+    public void addApps(ArrayList<ShortcutInfo> list) {
         addAppsWithoutInvalidate(list);
         updatePageCounts();
         invalidatePageData();
     }
-    private int findAppByComponent(List<ApplicationInfo> list, ApplicationInfo item) {
+    private int findAppByComponent(List<ShortcutInfo> list, ShortcutInfo item) {
         ComponentName removeComponent = item.intent.getComponent();
         int length = list.size();
         for (int i = 0; i < length; ++i) {
-            ApplicationInfo info = list.get(i);
+        	ShortcutInfo info = list.get(i);
             if (info.intent.getComponent().equals(removeComponent)) {
                 return i;
             }
         }
         return -1;
     }
-    private void removeAppsWithoutInvalidate(ArrayList<ApplicationInfo> list) {
+    private void removeAppsWithoutInvalidate(ArrayList<ShortcutInfo> list) {
         // loop through all the apps and remove apps that have the same component
-        for (ApplicationInfo info : list) {
+        for (ShortcutInfo info : list) {
             int removeIndex = findAppByComponent(mApps, info);
             if (removeIndex > -1) {
                 mApps.remove(removeIndex);
@@ -1912,13 +1911,13 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
     }
     @Override
-    public void removeApps(ArrayList<ApplicationInfo> list) {
+    public void removeApps(ArrayList<ShortcutInfo> list) {
         removeAppsWithoutInvalidate(list);
         updatePageCounts();
         invalidatePageData();
     }
     @Override
-    public void updateApps(ArrayList<ApplicationInfo> list) {
+    public void updateApps(ArrayList<ShortcutInfo> list) {
         // We remove and re-add the updated applications list because it's properties may have
         // changed (ie. the title), and this will ensure that the items will be in their proper
         // place in the list.
