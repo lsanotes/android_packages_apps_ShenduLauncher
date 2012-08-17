@@ -30,6 +30,7 @@ import android.text.InputType;
 import android.text.Selection;
 import android.text.Spannable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cyanogenmod.trebuchet.FolderInfo.FolderListener;
+import com.cyanogenmod.trebuchet.Launcher.State;
 import com.cyanogenmod.trebuchet.preference.PreferencesProvider;
 
 import java.util.ArrayList;
@@ -669,6 +671,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     };
 
     public void completeDragExit() {
+        mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED);
+        mLauncher.mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
         mLauncher.closeFolder();
         mCurrentDragInfo = null;
         mCurrentDragView = null;
@@ -714,7 +718,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mCurrentDragInfo = null;
         mCurrentDragView = null;
         mSuppressOnAdd = false;
-
+        mLauncher.exitSpringLoadedDragModeDelayed(true, false);
+        Log.i("hhl", "....Folder.java..onDropCompleted=========.");
         // Reordering may have occured, and we need to save the new item locations. We do this once
         // at the end to prevent unnecessary database operations.
         updateItemLocationsInDatabase();

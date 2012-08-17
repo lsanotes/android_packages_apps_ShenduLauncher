@@ -583,6 +583,7 @@ public class DragController {
             	mDragObject.cancelled = true;
             }
         }
+        Log.i(Launcher.TAG,TAG+ ".drop.........................:"+ mDragObject.dragSource+accepted);
         mDragObject.dragSource.onDropCompleted((View) dropTarget, mDragObject, accepted);
     }
 

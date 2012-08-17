@@ -28,6 +28,7 @@ import android.util.DisplayMetrics;
 
 import java.util.HashMap;
 
+
 /**
  * Cache of application icons.  Icons can be made from any thread.
  */
@@ -215,8 +216,11 @@ public class IconCache {
                 entry.title = info.activityInfo.name;
             }
 
+//            entry.icon = Utilities.createIconBitmap(
+//                    getFullResIcon(info), mContext);
+            
             entry.icon = Utilities.createIconBitmap(
-                    getFullResIcon(info), mContext);
+                    info.activityInfo.loadIcon(mPackageManager), mContext);
         }
         return entry;
     }

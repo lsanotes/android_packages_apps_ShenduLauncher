@@ -167,8 +167,8 @@ public final class Launcher extends Activity
     private static final String TOOLBAR_ICON_METADATA_NAME = "com.android.launcher.toolbar_icon";
 
     /** The different states that Launcher can be in. */
-    private enum State { WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED };
-    private State mState = State.WORKSPACE;
+    public  enum State { WORKSPACE, APPS_CUSTOMIZE, APPS_CUSTOMIZE_SPRING_LOADED };
+    public  State mState = State.WORKSPACE;
     private AnimatorSet mStateAnimation;
     private AnimatorSet mDividerAnimator;
 
@@ -3132,7 +3132,7 @@ public final class Launcher extends Activity
 
 
         // Notify the drag controller
-        mDragController.onAppsRemoved(apps, this);
+       // mDragController.onAppsRemoved(apps, this);
         
      
      

@@ -127,14 +127,18 @@ public class DeleteDropTarget extends ButtonDropTarget {
     	 if(mUninstall){
          	ShortcutInfo shortcutInfo = (ShortcutInfo) d.dragInfo;
         	ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
-            if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
-            	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){
-           	 flag = false;
-           //	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
-            }else{
-           	 flag = true;
-            }
-         
+        	if(resolveInfo==null){
+        	
+        		flag =false;
+        	}else{
+        		if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+                   	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){
+                  	 flag = false;
+                  //	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+                   }else{
+                  	 flag = true;
+                   }
+        	}
     	 }else{
     		 if(isWorkspaceFolder(d.dragSource,d.dragInfo)){
         		 flag = false;

@@ -870,8 +870,7 @@ public class LauncherModel extends BroadcastReceiver {
 
             // Clear out this reference, otherwise we end up holding it until all of the
             // callback runnables are done.
-            mContext = null;
-
+      
             synchronized (mLock) {
                 // If we are still the last one to be scheduled, remove ourselves.
                 if (mLoaderTask == this) {
