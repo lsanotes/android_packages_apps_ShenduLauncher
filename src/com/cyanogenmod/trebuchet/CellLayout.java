@@ -1496,6 +1496,84 @@ public class CellLayout extends ViewGroup {
        markCellsAsOccupiedForView(ignoreView);
         return lastCell;
     }
+    
+    
+    
+    /**
+     * find the emptyCell of the draglist and move the lastItem  to this cell;
+     * 
+     * 
+     * @param header  is  the header of draglist.
+     *
+     * @return True if a vacant cell of the specified dimension was found, false otherwise.
+     */
+    int[] findFooterOfDragList(int[] header){
+    	int[]  emptyCell=new int[2];
+    	boolean direction=true;
+  //  	Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList.....####.........  i:"+header[1]+" j:"+header[0]+"  mCountX:"+mCountX);
+
+    		int startX =header[0];
+    		int startY =header[1];
+    		while(true){
+        			//Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList..............  i:"+i+" j:"+j);
+                	
+    			
+    			Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList..............  i:"+startX+" j:"+startY+mOccupied[startY][startX]);
+    			
+    			
+    			
+    			if(0<=startX&&startX<mCountX&&direction){
+    				startX +=1;
+    				if(startX==mCountX){
+    					startX =0;
+    					startY+=1;
+    					if(startY==mCountY){
+    						direction =false;
+    						startY=mCountY-1;
+    						startX =mCountX-1;
+    					}
+    				}
+    				
+             
+        			if(!mOccupied[startY][startX]){
+        				emptyCell[0]=startX;
+        				
+        				emptyCell[1]=startY;
+        				return emptyCell;
+        				
+        			}
+    				
+    				
+    			}
+    			
+    			
+    			if(0<=startX&&startX<mCountX&&!direction){
+    				
+    				startX -=1;
+    				if(startX<0){
+    					startX =mCountX;
+    					startY-=1;
+    					if(startY<0){
+    				  return null;
+    					}
+    				}
+    				
+             
+        			if(!mOccupied[startY][startX]){
+        				emptyCell[0]=startX;
+        				
+        				emptyCell[1]=startY;
+        				return emptyCell;
+        				
+        			}
+    				
+    			}
+
+    		
+        	}
+    	
+    	
+    }
 
     /**
      * A drag event has begun over this layout.

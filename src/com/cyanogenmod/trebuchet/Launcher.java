@@ -2061,17 +2061,18 @@ public final class Launcher extends Activity
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
                     mWorkspace.startDrag(longClickCellInfo);
+
                     
+                    //动画 缩小
                     mWorkspace.changeState(Workspace.State.SPRING_LOADED);
-                    // hideAppsCustomizeHelper(true, true);
-                     // hideDockDivider();
-                  mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+               
+                    mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
                 }
             }
         }
         
      	Log.i(Launcher.TAG,TAG+ "..onLongClick..........................mWorkspace.showOutlines()");
-       // mWorkspace.showOutlines();
+    
         
         return true;
     }
@@ -3072,8 +3073,7 @@ public final class Launcher extends Activity
                    		cellY);
            	     
         }
-        
-  	  
+   
   		workspace.savedThePageCount();
     }
 
