@@ -458,18 +458,18 @@ public class CellLayout extends ViewGroup {
             canvas.restore();
 
             // Draw inner ring
-            d = FolderRingAnimator.sSharedInnerRingDrawable;
-            width = (int) fra.getInnerRingSize();
-            height = width;
-            cellToPoint(fra.mCellX, fra.mCellY, mTempLocation);
-
-            centerX = mTempLocation[0] + mCellWidth / 2;
-            centerY = mTempLocation[1] + FolderRingAnimator.sPreviewSize / 2;
-            canvas.save();
-            canvas.translate(centerX - width / 2, centerY - width / 2);
-            d.setBounds(0, 0, width, height);
-            d.draw(canvas);
-            canvas.restore();
+         //   d = FolderRingAnimator.sSharedInnerRingDrawable;
+//            width = (int) fra.getInnerRingSize();
+//            height = width;
+//            cellToPoint(fra.mCellX, fra.mCellY, mTempLocation);
+//
+//            centerX = mTempLocation[0] + mCellWidth / 2;
+//            centerY = mTempLocation[1] + FolderRingAnimator.sPreviewSize / 2;
+//            canvas.save();
+//            canvas.translate(centerX - width / 2, centerY - width / 2);
+//            d.setBounds(0, 0, width, height);
+//            d.draw(canvas);
+//            canvas.restore();
         }
 
         if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) {
@@ -1179,6 +1179,7 @@ public class CellLayout extends ViewGroup {
         pixelY -= (mCellHeight + mHeightGap) * (spanY - 1) / 2f;
 
         // Keep track of best-scoring drop area
+     //   final int[] bestXY = result != null ? result : new int[2];
         final int[] bestXY = result != null ? result : new int[2];
         double bestDistance = Double.MAX_VALUE;
 
@@ -1189,6 +1190,7 @@ public class CellLayout extends ViewGroup {
         for (int y = 0; y < countY - (spanY - 1); y++) {
             inner:
             for (int x = 0; x < countX - (spanX - 1); x++) {
+            	
                 if (ignoreOccupied) {
                     for (int i = 0; i < spanX; i++) {
                         for (int j = 0; j < spanY; j++) {
@@ -1201,15 +1203,21 @@ public class CellLayout extends ViewGroup {
                         }
                     }
                 }
+                
+                
                 final int[] cellXY = mTmpXY;
                 cellToCenterPoint(x, y, cellXY);
 
                 double distance = Math.sqrt(Math.pow(cellXY[0] - pixelX, 2)
                         + Math.pow(cellXY[1] - pixelY, 2));
                 if (distance <= bestDistance) {
+           	
                     bestDistance = distance;
+                    
+                  //  Log.i(Launcher.TAG,TAG+ ".findNearestArea.........................bestDistance:"+bestDistance+"   x:"+x+y);
                     bestXY[0] = x;
                     bestXY[1] = y;
+               
                 }
             }
         }
@@ -1500,79 +1508,80 @@ public class CellLayout extends ViewGroup {
     
     
     /**
-     * find the emptyCell of the draglist and move the lastItem  to this cell;
+     * find the emptyCell of the Pushlist and move the lastItem  to this cell;
      * 
      * 
-     * @param header  is  the header of draglist.
+     * @param header  is  the header of Pushlist.
      *
-     * @return True if a vacant cell of the specified dimension was found, false otherwise.
+     * @return emptyCell  if a vacant cell of the specified dimension was found, null  this spacecseen is full.
      */
-    int[] findFooterOfDragList(int[] header){
+    int[] findFooterOfPushList(int[] header){
     	int[]  emptyCell=new int[2];
     	boolean direction=true;
   //  	Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList.....####.........  i:"+header[1]+" j:"+header[0]+"  mCountX:"+mCountX);
 
     		int startX =header[0];
     		int startY =header[1];
+    		
+//     		int startX =0;
+//    		int startY =0;
+    		
+//    		for(int i=0;i<4;i++){
+//    			
+//    			for(int j=0;j<4;j++){
+//    				
+//    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
+//    			}
+//    			System.out.println("  ");
+//    		}
+    		
     		while(true){
-        			//Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList..............  i:"+i+" j:"+j);
-                	
-    			
-    			Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList..............  i:"+startX+" j:"+startY+mOccupied[startY][startX]);
-    			
-    			
-    			
+        	
+    		//	Log.i(Launcher.TAG,TAG+ "..findFooterOfDragList..............  i:"+startX+" j:"+startY+mOccupied[startX][startY]);
+    
     			if(0<=startX&&startX<mCountX&&direction){
+
+        			if(!mOccupied[startX][startY]){
+        				emptyCell[0]=startX;
+        				
+        				emptyCell[1]=startY;
+        				return emptyCell;
+        			}
+    
+    				
     				startX +=1;
     				if(startX==mCountX){
     					startX =0;
     					startY+=1;
     					if(startY==mCountY){
     						direction =false;
-    						startY=mCountY-1;
-    						startX =mCountX-1;
+    						 startX =header[0];
+    			    		 startY =header[1];
     					}
     				}
-    				
-             
-        			if(!mOccupied[startY][startX]){
-        				emptyCell[0]=startX;
-        				
-        				emptyCell[1]=startY;
-        				return emptyCell;
-        				
-        			}
-    				
-    				
     			}
-    			
-    			
+    	
     			if(0<=startX&&startX<mCountX&&!direction){
-    				
+
+        			if(!mOccupied[startX][startY]){
+        				emptyCell[0]=startX;
+        				emptyCell[1]=startY;
+        				return emptyCell;	
+        			}
+
     				startX -=1;
     				if(startX<0){
-    					startX =mCountX;
+    					startX =mCountX-1;
     					startY-=1;
     					if(startY<0){
     				  return null;
     					}
     				}
-    				
-             
-        			if(!mOccupied[startY][startX]){
-        				emptyCell[0]=startX;
-        				
-        				emptyCell[1]=startY;
-        				return emptyCell;
-        				
-        			}
-    				
+   
     			}
 
-    		
         	}
-    	
-    	
+
     }
 
     /**

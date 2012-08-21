@@ -52,6 +52,8 @@
     <string name="delete_zone_label_all_apps" msgid="6664588234817475108">"卸载"</string>
     <string name="delete_target_label" msgid="665300185123139530">"删除"</string>
     <string name="delete_target_uninstall_label" msgid="748894921183769150">"卸载"</string>
+     <string name="delete_target_uninstallunable_label" msgid="748894921183769150">"系统应用，不可卸载"</string>
+    
     <string name="info_target_label" msgid="4019495079517426980">"应用程序信息"</string>
     <string name="accessibility_search_button" msgid="816822994629942611">"搜索"</string>
     <string name="accessibility_voice_search_button" msgid="3938249215065842475">"语音搜索"</string>
@@ -174,4 +176,7 @@
     <!-- General -->
     <string name="preferences_interface_general_title">常规</string>
     <string name="preferences_interface_general_orientation_title">自动旋转屏幕</string>
+    
+    <string name="preferences_interface_homescreen_general_screen_folder_style_title">文件夹样式</string>
+    <string name="preferences_interface_homescreen_general_screen_folder_style_summary">选择文件夹显示的样式</string>
 </resources>

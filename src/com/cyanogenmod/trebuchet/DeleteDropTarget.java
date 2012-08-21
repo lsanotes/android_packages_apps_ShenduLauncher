@@ -134,7 +134,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
         		if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
                    	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){
                   	 flag = false;
-                  //	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+                 	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstallunable_label),Toast.LENGTH_SHORT).show();
                    }else{
                   	 flag = true;
                    }
@@ -142,14 +142,14 @@ public class DeleteDropTarget extends ButtonDropTarget {
     	 }else{
     		 if(isWorkspaceFolder(d.dragSource,d.dragInfo)){
         		 flag = false;
-        	//	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
+        		 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
     		 }else{
         		 flag = true;
     		 }
     	 }
-    	 Log.i("hhl", "....DeleteDropTarget.java...acceptDrop==="+flag+"==="+d.dragInfo);
+    
     	 return flag;
-    	//return true;
+    	
     }
 
     @Override

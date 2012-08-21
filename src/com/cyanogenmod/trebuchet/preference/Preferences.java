@@ -18,10 +18,12 @@ package com.cyanogenmod.trebuchet.preference;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
+import android.util.Log;
 
 import com.cyanogenmod.trebuchet.LauncherApplication;
 
@@ -30,17 +32,22 @@ import com.cyanogenmod.trebuchet.R;
 public class Preferences extends PreferenceActivity {
 
     private static final String TAG = "Launcher.Preferences";
+    private SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        SharedPreferences prefs =
-            getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+        
+        /*SharedPreferences prefs = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        prefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         SharedPreferences.Editor editor = prefs.edit();
-                editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, true);
-                editor.commit();
+        editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, true);
+        editor.commit();*/
+                
 
         // Remove some preferences on large screens
         if (LauncherApplication.isScreenLarge()) {
@@ -54,7 +61,26 @@ public class Preferences extends PreferenceActivity {
             drawer.removePreference(findPreference("ui_drawer_indicator"));
         }
 
-        Preference version = findPreference("application_version");
-        version.setTitle(getString(R.string.application_name));
+        //Preference version = findPreference("application_version");
+        //version.setTitle(getString(R.string.application_name));
     }
+    
+    protected void onDestroy() {
+    	mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
+    }
+    
+    /**
+     * add by hhl, used to listener the launcher settings changed
+     */
+    OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener(){
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String str) {
+			Log.i(TAG, "!!!!!!!!!!!!!!!Preferences.java...OnSharedPreferenceChangeListener==="+str);
+			if(!str.equals(PreferencesProvider.PREFERENCES_CHANGED)){
+				SharedPreferences.Editor editor = mSharedPreferences.edit();
+		        editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, true);
+		        editor.commit();
+			}
+		}
+    };
+    
 }

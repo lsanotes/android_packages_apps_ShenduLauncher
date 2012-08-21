@@ -22,13 +22,18 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +45,7 @@ import android.widget.TextView;
 
 import com.cyanogenmod.trebuchet.DropTarget.DragObject;
 import com.cyanogenmod.trebuchet.FolderInfo.FolderListener;
+import com.cyanogenmod.trebuchet.Workspace.FolderStyle;
 import com.cyanogenmod.trebuchet.preference.PreferencesProvider;
 
 import java.util.ArrayList;
@@ -121,6 +127,11 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         icon.setOnClickListener(launcher);
         icon.mInfo = folderInfo;
         icon.mLauncher = launcher;
+        //Log.i("hhl", "****FolderIcon.java...fromXml()==="+folderInfo.contents.size()+"==="+folderInfo.title);
+        Workspace.FolderStyle folderStyle = launcher.getWorkspace().getFolderStyle();
+        if(folderStyle == Workspace.FolderStyle.Square){
+            icon.mPreviewBackground.setImageDrawable(icon.shenduCreateFolderThumBitmap(folderInfo));
+        }
         icon.setContentDescription(String.format(launcher.getString(R.string.folder_name_format),
                 folderInfo.title));
         Folder folder = Folder.fromXml(launcher);
@@ -169,8 +180,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             if (sStaticValuesDirty) {
                 sPreviewSize = res.getDimensionPixelSize(R.dimen.folder_preview_size);
                 sPreviewPadding = res.getDimensionPixelSize(R.dimen.folder_preview_padding);
-                sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo);
-                sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_holo);
+                Workspace.FolderStyle folderStyle = launcher.getWorkspace().getFolderStyle();
+                if(folderStyle == Workspace.FolderStyle.Ring){
+                    sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_ring_outer_holo);
+                	//sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_ring_inner_holo);
+                }else{
+                    sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_square_outer_holo);
+                	//sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_square_inner_holo);
+                }
                 sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest);
                 sStaticValuesDirty = false;
             }
@@ -195,8 +212,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             mAcceptAnimator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
+                	//Log.i("hhl", ">>>>>>>>>>>>>>>>FolderIcon.java...animateToAcceptState==="+(mFolderIcon != null));
                     if (mFolderIcon != null) {
-                        mFolderIcon.mPreviewBackground.setVisibility(INVISIBLE);
+                        //mFolderIcon.mPreviewBackground.setVisibility(View.INVISIBLE);
                     }
                 }
             });
@@ -260,30 +278,57 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     private boolean willAcceptItem(ItemInfo item) {
         final int itemType = item.itemType;
-        return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
+        int itemCount = 0;
+        boolean resultFlag = false;
+        switch(itemType){
+	        case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
+	        case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+	        	itemCount = 1;
+	        	break;
+	        case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+	        	itemCount = ((FolderInfo)item).contents.size();
+	        	break;
+	        default:break;
+        }
+        Log.i("hhl", "...FolderIcon.java...willAcceptItem===="+item+"==="+itemCount);
+        if(itemCount>0 && !mFolder.isFull(itemCount) && item != mInfo && !mInfo.opened){
+        	resultFlag = true;
+        }
+        return resultFlag;
+        /*return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                 itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT ||
                 itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER) &&
-                !mFolder.isFull() && item != mInfo && !mInfo.opened);
+                !mFolder.isFull() && item != mInfo && !mInfo.opened);*/
     }
 
     public boolean acceptDrop(Object dragInfo) {
         final ItemInfo item = (ItemInfo) dragInfo;
+    	Log.i("hhl", "*************FolderIcon.java....acceptDrop==="+getClass().getName()+"===="+item);
         return willAcceptItem(item);
     }
 
     public void addItem(ShortcutInfo item) {
+        //Log.i("hhl", "^^^FolderIcon.java...addItem()....."+item.title+"=="+item.itemType);
         mInfo.add(item);
+        Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        if(folderStyle == Workspace.FolderStyle.Square){
+            mFolder.mFolderIcon.mPreviewBackground.setImageDrawable(shenduCreateFolderThumBitmap(mInfo));
+        }
         LauncherModel.addOrMoveItemInDatabase(mLauncher, item, mInfo.id, 0, item.cellX, item.cellY);
     }
 
     public void onDragEnter(Object dragInfo) {
+    	Log.i("hhl", "FolderIcon.java....onDragEnter====="+dragInfo.toString());
         if (!willAcceptItem((ItemInfo) dragInfo)) return;
-        CellLayout.LayoutParams lp = (CellLayout.LayoutParams) getLayoutParams();
-        CellLayout layout = (CellLayout) getParent().getParent();
-        mFolderRingAnimator.setCell(lp.cellX, lp.cellY);
-        mFolderRingAnimator.setCellLayout(layout);
-        mFolderRingAnimator.animateToAcceptState();
-        layout.showFolderAccept(mFolderRingAnimator);
+        //Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        //if(folderStyle == Workspace.FolderStyle.Ring){
+            CellLayout.LayoutParams lp = (CellLayout.LayoutParams) getLayoutParams();
+            CellLayout layout = (CellLayout) getParent().getParent();
+            mFolderRingAnimator.setCell(lp.cellX, lp.cellY);
+            mFolderRingAnimator.setCellLayout(layout);
+            mFolderRingAnimator.animateToAcceptState();
+            layout.showFolderAccept(mFolderRingAnimator);
+        //}
     }
 
     public void onDragOver(Object dragInfo) {
@@ -294,6 +339,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             float scaleRelativeToDragLayer, Runnable postAnimationRunnable) {
 
         Drawable animateDrawable = ((TextView) destView).getCompoundDrawables()[1];
+    	Log.i("hhl", "^^^^^^^FolderIcon.java...performCreateAnimation before computer 333===");
+    	
         computePreviewDrawingParams(animateDrawable.getIntrinsicWidth(), destView.getMeasuredWidth());
 
         // This will animate the dragView (srcView) into the new folder
@@ -311,19 +358,72 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     public void onDragExit(Object dragInfo) {
+    	//Log.i("hhl", "FolderIcon.java...onDragExit====="+dragInfo.toString());
         if (!willAcceptItem((ItemInfo) dragInfo)) return;
-        mFolderRingAnimator.animateToNaturalState();
+        //Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        //if(folderStyle == Workspace.FolderStyle.Ring){
+            mFolderRingAnimator.animateToNaturalState();
+        //}
+    }
+    
+    public Drawable shenduCreateFolderThumBitmap(FolderInfo folderInfo){
+    	//Log.i("hhl", "+++++FolderIcon.java...shenduCreateFolderThumBitmap==="+folderInfo.contents.size());
+    	final Resources resource = mLauncher.getResources();
+		Bitmap oldBitmap = BitmapFactory.decodeResource(resource,R.drawable.portal_square_inner_holo);
+		Bitmap mutableBitmap = Bitmap.createScaledBitmap(
+								oldBitmap,
+								(oldBitmap.getWidth())*3/2,
+								(oldBitmap.getHeight())*3/2, 
+								false); 
+		int count = folderInfo.contents.size();
+		count = count>4 ? 4:count;
+		Canvas canvas = new Canvas(mutableBitmap); 
+		for(int i=0; i<count; i++) {
+			ItemInfo info = folderInfo.contents.get(i); 
+			Bitmap orgbmp=null;
+			if(folderInfo.contents.get(i) instanceof ShortcutInfo){
+				orgbmp = ((ShortcutInfo)info).iconBitmap; 
+				if(orgbmp==null){
+					orgbmp = ((ShortcutInfo)info).mIcon;
+				}
+			}else{
+				orgbmp=((ApplicationInfo)info).iconBitmap;
+			}
+			int oldWidth  = orgbmp.getWidth();
+			int oldHeight = orgbmp.getHeight();
+			int newWidth  = 50;
+			int newHeight = 50;
+			float scaleW  = ((float)newWidth) / oldWidth;
+			float scaleH  = ((float)newHeight) / oldHeight;
+			Matrix matrix = new Matrix();
+			matrix.postScale(scaleW, scaleH); 
+			Bitmap thumbmp = Bitmap.createBitmap(orgbmp,0,0,oldWidth,oldHeight,matrix,true); 
+			if (i == 3)
+				canvas.drawBitmap(thumbmp, 63, 63, null);
+			if (i == 2)
+				canvas.drawBitmap(thumbmp, 13, 63, null);
+			if (i == 1)
+				canvas.drawBitmap(thumbmp, 63, 13, null);
+			if (i == 0)
+				canvas.drawBitmap(thumbmp, 13, 13, null);
+			canvas.save(Canvas.ALL_SAVE_FLAG);
+			canvas.restore();
+		}
+		BitmapDrawable closeIcon = new BitmapDrawable(mutableBitmap); 
+		return closeIcon; 
     }
 
     private void onDrop(final ShortcutInfo item, View animateView, Rect finalRect,
             float scaleRelativeToDragLayer, int index, Runnable postAnimationRunnable) {
         item.cellX = -1;
         item.cellY = -1;
-
+        Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        
+    	Log.i("hhl", "FolderIcon.java...onDrop 6====="+item.title+"==="+(animateView != null)+"==="+(finalRect==null));
         // Typically, the animateView corresponds to the DragView; however, if this is being done
         // after a configuration activity (ie. for a Shortcut being dragged from AllApps) we
         // will not have a view to animate
-        if (animateView != null) {
+        if (animateView != null && (folderStyle == Workspace.FolderStyle.Ring)) {
             DragLayer dragLayer = mLauncher.getDragLayer();
             Rect from = new Rect();
             dragLayer.getViewRectRelativeToSelf(animateView, from);
@@ -370,6 +470,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void onDrop(DragObject d) {
         ShortcutInfo item;
+    	Log.i("hhl", "FolderIcon.java...onDrop 1====="+getClass().getName()+"==="+d.dragInfo);
         if (d.dragInfo instanceof ApplicationInfo) {
             // Came from all apps -- make a copy
             item = ((ApplicationInfo) d.dragInfo).makeShortcut();
@@ -394,29 +495,34 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     private void computePreviewDrawingParams(int drawableSize, int totalSize) {
-        if (mIntrinsicIconSize != drawableSize || mTotalWidth != totalSize) {
-            mIntrinsicIconSize = drawableSize;
-            mTotalWidth = totalSize;
+    	//Log.i("hhl", "^^^^^^^FolderIcon.java...computePreviewDrawingParams two===");
+    	Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        if(folderStyle == Workspace.FolderStyle.Ring){
+        	if (mIntrinsicIconSize != drawableSize || mTotalWidth != totalSize) {
+                mIntrinsicIconSize = drawableSize;
+                mTotalWidth = totalSize;
 
-            final int previewSize = FolderRingAnimator.sPreviewSize;
-            final int previewPadding = FolderRingAnimator.sPreviewPadding;
+                final int previewSize = FolderRingAnimator.sPreviewSize;
+                final int previewPadding = FolderRingAnimator.sPreviewPadding;
 
-            mAvailableSpaceInPreview = (previewSize - 2 * previewPadding);
-            // cos(45) = 0.707  + ~= 0.1) = 0.8f
-            int adjustedAvailableSpace = (int) ((mAvailableSpaceInPreview / 2) * (1 + 0.8f));
+                mAvailableSpaceInPreview = (previewSize - 2 * previewPadding);
+                // cos(45) = 0.707  + ~= 0.1) = 0.8f
+                int adjustedAvailableSpace = (int) ((mAvailableSpaceInPreview / 2) * (1 + 0.8f));
 
-            int unscaledHeight = (int) (mIntrinsicIconSize * (1 + PERSPECTIVE_SHIFT_FACTOR));
-            mBaselineIconScale = (1.0f * adjustedAvailableSpace / unscaledHeight);
+                int unscaledHeight = (int) (mIntrinsicIconSize * (1 + PERSPECTIVE_SHIFT_FACTOR));
+                mBaselineIconScale = (1.0f * adjustedAvailableSpace / unscaledHeight);
 
-            mBaselineIconSize = (int) (mIntrinsicIconSize * mBaselineIconScale);
-            mMaxPerspectiveShift = mBaselineIconSize * PERSPECTIVE_SHIFT_FACTOR;
+                mBaselineIconSize = (int) (mIntrinsicIconSize * mBaselineIconScale);
+                mMaxPerspectiveShift = mBaselineIconSize * PERSPECTIVE_SHIFT_FACTOR;
 
-            mPreviewOffsetX = (mTotalWidth - mAvailableSpaceInPreview) / 2;
-            mPreviewOffsetY = previewPadding;
+                mPreviewOffsetX = (mTotalWidth - mAvailableSpaceInPreview) / 2;
+                mPreviewOffsetY = previewPadding;
+            }
         }
     }
 
     private void computePreviewDrawingParams(Drawable d) {
+    	//Log.i("hhl", "^^^^^^^FolderIcon.java...computePreviewDrawingParams one===");
         computePreviewDrawingParams(d.getIntrinsicWidth(), getMeasuredWidth());
     }
 
@@ -504,14 +610,24 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         TextView v;
 
         // Update our drawing parameters if necessary
-        if (mAnimating) {
-            computePreviewDrawingParams(mAnimParams.drawable);
-        } else {
-            v = (TextView) items.get(0);
-            d = v.getCompoundDrawables()[1];
-            computePreviewDrawingParams(d);
+        //FolderStyle folderStyle = PreferencesProvider.Interface.Homescreen.getScreenFolderStyle(getContext(), 
+        		//getResources().getString(R.string.config_folder_style_default));
+        Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
+        //Log.i("hhl", "&&&&FolderIcon.java...dispatchDraw().before computer 111.."+mAnimating+"==="+
+        		//(mFolder.mInfo==null)+"==="+folderStyle);
+        //if(folderStyle == Workspace.FolderStyle.Ring){
+        	if (mAnimating) {
+                computePreviewDrawingParams(mAnimParams.drawable);
+            } else {
+                v = (TextView) items.get(0);
+                d = v.getCompoundDrawables()[1];
+                computePreviewDrawingParams(d);
+            }
+        //}else
+        	if(folderStyle == Workspace.FolderStyle.Square){
+        	mFolder.mFolderIcon.mPreviewBackground.setImageDrawable(shenduCreateFolderThumBitmap(mFolder.mInfo));
         }
-
+        
         int nItemsInPreview = Math.min(items.size(), NUM_ITEMS_IN_PREVIEW);
         if (!mAnimating) {
             for (int i = nItemsInPreview - 1; i >= 0; i--) {
@@ -528,6 +644,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     private void animateFirstItem(final Drawable d, int duration) {
+    	//Log.i("hhl", "^^^^^^^FolderIcon.java...animateFirstItem before computer 222===");
         computePreviewDrawingParams(d);
         final PreviewItemDrawingParams finalParams = computePreviewItemDrawingParams(0, null);
 

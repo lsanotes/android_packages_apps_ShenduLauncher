@@ -66,6 +66,12 @@ public final class PreferencesProvider {
                 return (int)((float) preferences.getInt("ui_homescreen_screen_padding_horizontal", 0) * 3.0f *
                         LauncherApplication.getScreenDensity());
             }
+            //add by zlf
+            public static Workspace.FolderStyle getScreenFolderStyle(Context context, String def) {
+            	               final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
+            	                return Workspace.FolderStyle.valueOf(preferences.getString("ui_homescreen_screen_folder_style", def));
+            	            }
+            
             public static boolean getShowSearchBar(Context context) {
                 final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
                 return preferences.getBoolean("ui_homescreen_general_search", true);
@@ -107,6 +113,8 @@ public final class PreferencesProvider {
                     return preferences.getBoolean("ui_homescreen_indicator_background", true);
                 }
             }
+            
+    
         }
 
         public static class Drawer {

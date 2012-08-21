@@ -64,7 +64,7 @@ class ShortcutInfo extends ItemInfo {
     /**
      * The application icon.
      */
-    private Bitmap mIcon;
+    public Bitmap mIcon;
     
     /**
      * add hhl

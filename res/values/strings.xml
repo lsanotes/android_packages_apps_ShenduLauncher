@@ -122,6 +122,8 @@ s -->
     <string name="cancel_target_label">Cancel</string>
     <!-- Label for uninstall drop target. [CHAR_LIMIT=30]-->
     <string name="delete_target_uninstall_label">Uninstall</string>
+    
+         <string name="delete_target_uninstallunable_label" >"System App , Can not uninstall! "</string>
     <!-- Label for the info icon. [CHAR_LIMIT=30] -->
     <string name="info_target_label">App info</string>
 
@@ -345,5 +347,10 @@ s -->
     <!-- General -->
     <string name="preferences_interface_general_title">General</string>
     <string name="preferences_interface_general_orientation_title">Auto-rotate screen</string>
+    
+    
+    
+    <string name="preferences_interface_homescreen_general_screen_folder_style_title">Folder Style</string>
+    <string name="preferences_interface_homescreen_general_screen_folder_style_summary">Choose Folder Display Style</string>
 
 </resources>

@@ -40,7 +40,7 @@
     
     <favorite
         launcher:packageName="com.android.settings"
-        launcher:className="com.android.settings.Settings"
+        launcher:className="com.android.settings.MainSetting"
         launcher:screen="0"
         launcher:x="3"
         launcher:y="3" />
@@ -99,8 +99,8 @@
         launcher:y="2" />
 
     <favorite
-        launcher:packageName="com.shendu.filemanage"
-        launcher:className="com.shendu.filemanage.FileManager"
+        launcher:packageName="net.micode.fileexplorer"
+        launcher:className="net.micode.fileexplorer.FileExplorerTabActivity"
         launcher:screen="1"
         launcher:x="3"
         launcher:y="2" />

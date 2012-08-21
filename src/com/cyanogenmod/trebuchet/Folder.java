@@ -82,9 +82,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private static final int ON_EXIT_CLOSE_DELAY = 800;
     private int mMode = PARTIAL_GROW;
     private boolean mRearrangeOnClose = false;
-    private FolderIcon mFolderIcon;
+    public  FolderIcon mFolderIcon;
     private int mMaxCountX;
-    private int mMaxCountY;
+    private int mMaxCountY;  
     private int mMaxNumItems;
     private Rect mNewSize = new Rect();
     private Rect mIconRect = new Rect();
@@ -106,6 +106,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private boolean mSuppressFolderDeletion = false;
     private boolean mItemAddedBackToSelfViaIcon = false;
     FolderEditText mFolderName;
+    
+
 
     private boolean mIsEditingName = false;
     private InputMethodManager mInputMethodManager;
@@ -522,7 +524,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final int itemType = item.itemType;
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                     itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
-                    !isFull());
+                    !isFull(1));
     }
 
     protected boolean findAndSetEmptyCells(ShortcutInfo item) {
@@ -777,8 +779,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         arrangeChildren(list);
     }
 
-    public boolean isFull() {
-        return getItemCount() >= mMaxNumItems;
+    public boolean isFull(int itemsCount) {
+        return getItemCount()+itemsCount > mMaxNumItems;
     }
 
     private void centerAboutIcon() {
@@ -924,8 +926,11 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             finalItem = mInfo.contents.get(0);
         }
 
-        // Remove the folder completely
+        // Remove the folder completely  
+  
         CellLayout cellLayout = mLauncher.getCellLayout(mInfo.container, mInfo.screen);
+        
+        
         cellLayout.removeView(mFolderIcon);
         if (mFolderIcon instanceof DropTarget) {
             mDragController.removeDropTarget((DropTarget) mFolderIcon);

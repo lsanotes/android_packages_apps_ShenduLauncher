@@ -41,5 +41,10 @@
         <item>立方飞出</item>
         <item>堆叠</item>
     </string-array>
+    
+    <string-array name="preferences_interface_homescreen_general_screen_folder_style_entries">
+        <item>环形</item>
+        <item>方形</item>
+    </string-array>
 
 </resources>

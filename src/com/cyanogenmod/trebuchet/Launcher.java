@@ -2063,17 +2063,14 @@ public final class Launcher extends Activity
                     mWorkspace.startDrag(longClickCellInfo);
 
                     
-                    //动画 缩小
-                    mWorkspace.changeState(Workspace.State.SPRING_LOADED);
-               
-                    mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+//                    //动画 缩小
+//                    mWorkspace.changeState(Workspace.State.SPRING_LOADED);
+//               
+//                    mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
                 }
             }
         }
-        
-     	Log.i(Launcher.TAG,TAG+ "..onLongClick..........................mWorkspace.showOutlines()");
-    
-        
+  
         return true;
     }
 
@@ -3255,8 +3252,8 @@ public final class Launcher extends Activity
         // Enable the clings only if they have not been dismissed before
         SharedPreferences prefs =
             getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
-        if (isClingsEnabled() && !prefs.getBoolean(Cling.WORKSPACE_CLING_DISMISSED_KEY, false)) {
-            initCling(R.id.workspace_cling, null, false, 0);
+        if (isClingsEnabled() && !prefs.getBoolean(Cling.WORKSPACE_CLING_DISMISSED_KEY, true)) {
+           initCling(R.id.workspace_cling, null, false, 0);
         } else {
             removeCling(R.id.workspace_cling);
         }
