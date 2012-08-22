@@ -29,6 +29,8 @@
     android:paddingTop="@dimen/workspace_top_padding"
     android:paddingBottom="@dimen/workspace_bottom_padding"
     android:hapticFeedbackEnabled="false"
+    
+    android:background="@drawable/thumbnail_new_screen_n"
 
     launcher:cellWidth="@dimen/workspace_cell_width"
     launcher:cellHeight="@dimen/workspace_cell_height"

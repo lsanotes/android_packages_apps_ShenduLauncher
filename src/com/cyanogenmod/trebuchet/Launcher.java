@@ -1663,7 +1663,18 @@ public final class Launcher extends Activity
             mWorkspace.exitWidgetResizeMode();
 
             // Back button is a no-op here, but give at least some feedback for the button press
-            mWorkspace.showOutlinesTemporarily();
+          //  mWorkspace.showOutlinesTemporarily();
+   
+                final Runnable exitSpringLoadedRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        exitSpringLoadedDragModeDelayed(true, false);
+                    }
+                };
+                exitSpringLoadedRunnable.run();
+       
+                mWorkspace.removeTheHeaderOrFooterSpace();
+            
         }
     }
 
@@ -2028,9 +2039,11 @@ public final class Launcher extends Activity
     }
 
     public boolean onLongClick(View v) {
-        if (mState != State.WORKSPACE) {
-            return false;
-        }
+    	
+    	
+//        if (mState != State.WORKSPACE) {
+//            return false;
+//        }
 
         if (isWorkspaceLocked()) {
             return false;
@@ -2056,17 +2069,21 @@ public final class Launcher extends Activity
                 // User long pressed on empty space
                 mWorkspace.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
                         HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-                startWallpaper();
+              //  startWallpaper();
+                
+                //动画 缩小
+                
+                mWorkspace.addTheHeaderOrFooterSpace();
+     
+                mWorkspace.changeState(Workspace.State.SPRING_LOADED);
+                mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+          
+                
             } else {
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
                     mWorkspace.startDrag(longClickCellInfo);
 
-                    
-//                    //动画 缩小
-//                    mWorkspace.changeState(Workspace.State.SPRING_LOADED);
-//               
-//                    mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
                 }
             }
         }

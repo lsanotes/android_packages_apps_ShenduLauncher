@@ -93,7 +93,7 @@ public class CellLayout extends ViewGroup {
     private float mBackgroundAlpha;
     private float mBackgroundAlphaMultiplier = 1.0f;
 
-    private Drawable mNormalBackground;
+    Drawable mNormalBackground;
     private Drawable mActiveGlowBackground;
     private Drawable mOverScrollForegroundDrawable;
     private Drawable mOverScrollLeft;
@@ -1526,14 +1526,14 @@ public class CellLayout extends ViewGroup {
 //     		int startX =0;
 //    		int startY =0;
     		
-//    		for(int i=0;i<4;i++){
-//    			
-//    			for(int j=0;j<4;j++){
-//    				
-//    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
-//    			}
-//    			System.out.println("  ");
-//    		}
+    		for(int i=0;i<4;i++){
+    			
+    			for(int j=0;j<4;j++){
+    				
+    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
+    			}
+    			System.out.println("  ");
+    		}
     		
     		while(true){
         	

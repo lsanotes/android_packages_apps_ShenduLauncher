@@ -903,6 +903,7 @@ public abstract class PagedView extends ViewGroup {
                  * whether the user has moved far enough from his original down touch.
                  */
                 if (mActivePointerId != INVALID_POINTER) {
+                	 Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev): mActivePointerId."+mActivePointerId);
                     determineScrollingStart(ev);
                     break;
                 }
@@ -971,6 +972,8 @@ public abstract class PagedView extends ViewGroup {
          * The only time we want to intercept motion events is if we are in the
          * drag mode.
          */
+        
+        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............return:."+ (mTouchState != TOUCH_STATE_REST));
         return mTouchState != TOUCH_STATE_REST;
     }
 
@@ -1001,6 +1004,8 @@ public abstract class PagedView extends ViewGroup {
          * of the down event.
          */
         final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+        
+        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):  pointerIndex."+pointerIndex);
         if (pointerIndex == -1) {
             return;
         }
@@ -1010,10 +1015,11 @@ public abstract class PagedView extends ViewGroup {
         final int yDiff = (int) Math.abs(y - mLastMotionY);
 
         final int touchSlop = Math.round(touchSlopScale * mTouchSlop);
+        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):."+touchSlop+"  xDiff:"+xDiff+"  mPagingTouchSlop:"+mPagingTouchSlop);
         boolean xPaged = xDiff > mPagingTouchSlop;
         boolean xMoved = xDiff > touchSlop;
         boolean yMoved = yDiff > touchSlop;
-
+        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):."+yMoved+xMoved+xPaged);
         if (xMoved || xPaged || yMoved) {
             if (mUsePagingTouchSlop ? xPaged : xMoved) {
                 // Scroll if the user moved far enough along the X axis
@@ -1118,6 +1124,7 @@ public abstract class PagedView extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+    	
         // Skip touch handling if there are no pages to swipe
         if (getChildCount() <= 0) return super.onTouchEvent(ev);
 

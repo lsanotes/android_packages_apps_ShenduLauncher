@@ -66,6 +66,7 @@ public class Preferences extends PreferenceActivity {
     }
     
     protected void onDestroy() {
+    	super.onDestroy();
     	mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
     }
     
@@ -74,7 +75,7 @@ public class Preferences extends PreferenceActivity {
      */
     OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener(){
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String str) {
-			Log.i(TAG, "!!!!!!!!!!!!!!!Preferences.java...OnSharedPreferenceChangeListener==="+str);
+		//	Log.i(TAG, "!!!!!!!!!!!!!!!Preferences.java...OnSharedPreferenceChangeListener==="+str);
 			if(!str.equals(PreferencesProvider.PREFERENCES_CHANGED)){
 				SharedPreferences.Editor editor = mSharedPreferences.edit();
 		        editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, true);
