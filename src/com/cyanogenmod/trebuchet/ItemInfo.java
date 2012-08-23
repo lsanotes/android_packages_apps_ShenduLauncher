@@ -87,6 +87,7 @@ class ItemInfo {
     int[] dropPos = null;
 
     ItemInfo() {
+    	
     }
 
     ItemInfo(ItemInfo info) {

@@ -2828,9 +2828,36 @@ public class Workspace extends PagedView
         }
         
         
-       CellLayout  cellLayout =(CellLayout)getChildAt(getChildCount()-1);
         
-        int [] lastOccupiedCell=  cellLayout.existsLastOccupiedCell();
+        updateCurrentPageItemCoordinate();
+        
+      
+  
+
+    }
+    /**
+     * update Current Page Items' Coordinate after the Item Drags
+     *  
+     * 
+     */
+    
+    private void updateCurrentPageItemCoordinate(){
+    
+    	
+    CellLayoutChildren 	  cellLayoutChildren =((CellLayout)getChildAt(mCurrentPage)).getChildrenLayout();
+    int count =	cellLayoutChildren.getChildCount();	 
+
+    ItemInfo item =null;
+    for(int i = 0 ; i < count ; i++){
+    	
+    	 // cellLayoutChildren.getChildAt(i).getTag();
+    	  Log.i(Launcher.TAG, TAG+"..updateCurrentPageItemCoordinate....@@@@@22.............."+cellLayoutChildren.getChildAt(i).getTag());
+    	
+    	  item= (ItemInfo) cellLayoutChildren.getChildAt(i).getTag();
+    	  
+    	  LauncherModel.addOrMoveItemInDatabase(mLauncher, item, item.container, item.screen, item.cellX, item.cellY);
+    	}
+    	
 
     }
 
@@ -3252,7 +3279,19 @@ public class Workspace extends PagedView
     
     OnAlarmListener mReorderAlarmListener = new OnAlarmListener() {
         public void onAlarm(Alarm alarm) {
-            realTimeReorder(mEmptyCell, mTargetCell);
+        	int[] empty=new int[2];
+        	int[] target=new int[2];
+        	
+        	
+        	Log.i(Launcher.TAG,TAG+ "..realTimeReorder...qian onAlarm...............empty:."+mEmptyCell[0]+mEmptyCell[1]+"  target:"+mReorderAlarmTarget[0]+mReorderAlarmTarget[1]);
+        	empty[0] =mEmptyCell[0];
+        	empty[1] =mEmptyCell[1];
+        	
+        	target[0] =mReorderAlarmTarget[0];
+        	target[1] =mReorderAlarmTarget[1];
+        	
+        	
+            realTimeReorder(empty, target);
         }
     };
 
@@ -3261,15 +3300,22 @@ public class Workspace extends PagedView
     }
 
     private void realTimeReorder(int[] empty, int[] target) {
+    	
+       	Log.i(Launcher.TAG,TAG+ "..realTimeReorder...00...............empty:."+empty[0]+empty[1]+"  target:"+target[0]+target[1]+mReorderAlarmFinish);
         boolean wrap;
         int startX;
         int endX;
         int startY;
         int delay = 0;
+ //       float delayAmount = 30;
         float delayAmount = 30;
         
         CellLayout currentLayout=  ((CellLayout) getChildAt(mCurrentPage));
+        
+        
         if (readingOrderGreaterThan(target, empty)) {
+        	
+        	
             wrap = empty[0] >= ((CellLayout) getChildAt(mCurrentPage)).getCountX() - 1;  //X is >=4
             startY = wrap ? empty[1] + 1 : empty[1];    // Y is +1
             for (int y = startY; y <= target[1]; y++) {  // Y from Target  to empty  
@@ -3279,6 +3325,7 @@ public class Workspace extends PagedView
                     View v =currentLayout.getChildAt(x,y);
                     if (currentLayout.animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay)) {
+                    	
                         empty[0] = x;
                         empty[1] = y;
                         delay += delayAmount;
@@ -3287,6 +3334,7 @@ public class Workspace extends PagedView
                 }
             }
         } else {
+    
             wrap = empty[0] == 0;
             startY = wrap ? empty[1] - 1 : empty[1];
             for (int y = startY; y >= target[1]; y--) {
@@ -3304,10 +3352,18 @@ public class Workspace extends PagedView
                 }
             }
         }
+       
+        
+        mReorderAlarmFinish=true;
+        
     }
-    
+    // add byz zlf
    int testH=-1;
    int testF=-1;
+   
+    boolean mReorderAlarmFinish =true;
+    private int[] mReorderAlarmTarget = new int[2];
+   
 
     public void onDragOver(DragObject d) {
         // Skip drag over events while we are dragging over side pages
@@ -3411,9 +3467,7 @@ public class Workspace extends PagedView
 
             boolean isOverFolder = dragOverView instanceof FolderIcon;
 
-            
-            //if target ==Folder
-            int test[]=null;
+
 
             /////
             final int[] cellXY = new int[2];
@@ -3423,103 +3477,79 @@ public class Workspace extends PagedView
             double distance = Math.sqrt(Math.pow(cellXY[0] - (int) mDragViewVisualCenter[0], 2)
                     + Math.pow(cellXY[1] - (int) mDragViewVisualCenter[1], 2));
             
-        //  test = mDragTargetLayout.findFooterOfPushList(mTargetCell);
+        Log.i(Launcher.TAG, TAG+"onDragOver............  distance :"+distance + " X:"+Math.abs(cellXY[0] - mDragViewVisualCenter[0])+" Y:"+Math.abs(cellXY[1] - mDragViewVisualCenter[1]));
+         
+        int distanceX =(int) Math.abs(cellXY[0] - mDragViewVisualCenter[0]);
+        int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
+        
+        
+       if(mReorderAlarmFinish&&distanceX>22){
+    	   mReorderAlarmTarget[0] =mTargetCell[0];
+    	   mReorderAlarmTarget[1] =mTargetCell[1];
+    	   
+    	   int count =mReorderAlarmTarget[0]  +  mReorderAlarmTarget[1] * 4;
+    	   Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####...out .......testH:.:  "+testH+"  mOcupied:"+mDragTargetLayout.mOccupied[mTargetCell[0]][mTargetCell[1]]+"  count:"+count+"    mTargetCell:"+mTargetCell[0]+mTargetCell[1]+"   mPreviousTargetCell"+mPreviousTargetCell[0]+mPreviousTargetCell[1]);    
+            	
+         if (mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1]) {
+        
+           if(testH==-1&&mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]){
+        	   
+        	   
+        	   mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
  
-            
-//           if(mPreviousTargetCell[0]==mTargetCell[0]&&mPreviousTargetCell[0]==mTargetCell[0]){
-//        	
-//        	   
-//           }else {
-//        	   
-//        	   
-//        	   dragFromTargetcellToEmptycell();
-//        	  
-//        	   if(mDragTargetLayout.isOccupied(mTargetCell[0], mTargetCell[1])){
-//        		  // mEmptyCell=mDragTargetLayout.findFooterOfPushList(mTargetCell);  
-//        		   
-//        		   
-//        	   }else{
-//        		   
-//        		   
-//        	   }
-//        	
-//        	   
-//           }
-            mEmptyCell=mDragTargetLayout.findFooterOfPushList(mTargetCell);
-            
-            
-           dragFromTargetcellToEmptycell();
-           
-//           
-//           mEmptyCell[0] =mTargetCell[0];
-//           mEmptyCell[1] =mTargetCell[1];
-           
-          //  boolean isPush=false;
-//            if(distance>50){ //距离比较远 可以推挤了
-//            	//  Log.i(Launcher.TAG,TAG+ ".findNearestArea... hou0000......................distance:"+distance+"   x:"+mTargetCell[0]+mTargetCell[1]);
-//            	if(userFolderPending){
-//            		userFolderPending=false;
-//            	}
-//            	if(isOverFolder){
-//            		isOverFolder=false;
-//            	}
-//              
-//            }else{  //mTargetCell[2]==0  距离近了  
-//            	//  Log.i(Launcher.TAG,TAG+ ".findNearestArea... hou1111......................distance:"+distance+"   x:"+mTargetCell[0]+mTargetCell[1]);
-//            
-//            }
-            
-//            int count = (mTargetCell[0]+1)+(mTargetCell[1]+1)*mCellCountX;
-//            
-//        	Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####00.......:..testF.:  "+testF);	
-//            if(testF==-1){
-  //          	  test = mDragTargetLayout.findFooterOfPushList(mTargetCell);
-//            	  
-//            	  if(mDragTargetLayout.isOccupied(mTargetCell[0],mTargetCell[1])){
-//              		mEmptyCell = mDragTargetLayout.findFooterOfPushList(mTargetCell);
-//              		
-//              		mLastEmptyCell =mEmptyCell;
-//              		
-//              	      testH =(mTargetCell[0]+1)+(mTargetCell[1]+1)*mCellCountX;
-//                      testF =(mEmptyCell[0]+1)+(mEmptyCell[1]+1)*mCellCountX;
-//                 
-//                      if(testH>testF){
-//                      	int temp =testH;
-//                      			testH=testF;
-//                      			testF=temp;
-//                      }else if(Math.abs(testH-testF)<=1){
-//                    	  testF=-1;  
-//                      }
-//                     
-//                  	Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####11.......first:..testH.:  "+testH+"  testF:"+testF+"  :");	
-//              	}
-//            }else{
-//            	Log.i(Launcher.TAG,TAG+ "..onDragOver.....####22........testF!=-1..:  "+mTargetCell[0]+mTargetCell[1]+"  count:"+count);	
-//            
-//            	if(count>=testH&&count<=testF){
-//            		
-//            		test=mLastTargetCell;
-//
-//            	}else {
-//            		
-//            		test=mLastTargetCell;
-//            		mTargetCell=mLastEmptyCell;
-//            	    testF=-1;
-//            		// test = mDragTargetLayout.findFooterOfPushList(mTargetCell);
-//            	}
-//            	
-//            	
-//            	
-//            }
-//          
-//    
-//            
+               testH =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
+               testF =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
+ 
+             
+               if(testH>testF){
+              	int temp =testH;
+              			testH=testF;
+              			testF=temp;
+              }
 
-//        	
-          
-            
-        
-        
+              //push  
+       
+              Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in...push .....testH.:  "+testH+"  testF:"+testF+"  :");	
+              
+              
+              mLastEmptyCell[0]=mEmptyCell[0];
+              mLastEmptyCell[1]=mEmptyCell[1];
+              
+              
+
+              dragFromTargetcellToEmptycell(true);
+            	
+            }else if(count>=testH&&count<=testF&&testH!=-1 ){
+      
+            Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.jiaohuan.....testH.:  "+testH+"  testF:"+testF+"  count:"+count+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]);	
+            	//changed
+              mEmptyCell[0] =mPreviousTargetCell[0];
+              mEmptyCell[1] =mPreviousTargetCell[1];
+     
+              dragFromTargetcellToEmptycell(false);
+            	
+            }else if ((count<testH||count>testF)&&testH!=-1){
+            	//huifu xi lie 
+            	
+                mEmptyCell[0] =mPreviousTargetCell[0];
+                mEmptyCell[1] =mPreviousTargetCell[1];
+               	
+                mReorderAlarmTarget[0]=mLastEmptyCell[0];
+                mReorderAlarmTarget[1]=mLastEmptyCell[1];
+            	
+             Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.huifu.....//:  "+testH+"  testF:"+testF+"  count:"+count);	
+
+                dragFromTargetcellToEmptycell(true);
+               	
+            	//huifu zhuangtai 
+            	testH=-1;
+            }
+         }
+           
+         mPreviousTargetCell[0] = mReorderAlarmTarget[0];
+         mPreviousTargetCell[1] = mReorderAlarmTarget[1];
+         
+            	   }
             if (dragOverView != mLastDragOverView) {
                 cancelFolderCreation();
                 if (mLastDragOverView != null && mLastDragOverView instanceof FolderIcon) {
@@ -3551,26 +3581,24 @@ public class Workspace extends PagedView
         }
     }
     
-   private void dragFromTargetcellToEmptycell(){
+   private void dragFromTargetcellToEmptycell( boolean isPush){
 
          	
-               if (mTargetCell[0] != mPreviousTargetCell[0] || mTargetCell[1] != mPreviousTargetCell[1]) {
-                   mReorderAlarm.cancelAlarm();
+               //if (mTargetCell[0] != mPreviousTargetCell[0] || mTargetCell[1] != mPreviousTargetCell[1]) {
+	   
+	       
+            	   Log.i(Launcher.TAG,TAG+ "..tuiji tuiji le ...............00 :mEmptyCell:"+"  :"+mEmptyCell[0]+mEmptyCell[1]+"   targetCell:"+mTargetCell[0]+mTargetCell[1]+mReorderAlarmFinish);
+               
+                   mReorderAlarmFinish=false;
+                   
+            	   mReorderAlarm.cancelAlarm();
                    mReorderAlarm.setOnAlarmListener(mReorderAlarmListener);
-                   mReorderAlarm.setAlarm(150);
-                   mPreviousTargetCell[0] = mTargetCell[0];
-                   mPreviousTargetCell[1] = mTargetCell[1];
-                   
-//                   mLastEmptyCell[0]=mEmptyCell[0];
-//                
-//                   mLastEmptyCell[1]=mEmptyCell[1];
-                   
-
-                   
-                   Log.i(Launcher.TAG,TAG+ "..tuiji tuiji le ...............00 :mLastEmptyCell:  "+"  :"+mLastEmptyCell[0]+mLastEmptyCell[1]);
-           }
-             
-  
+                   mReorderAlarm.setAlarm(130);
+                   mLastTargetCell[0] =mTargetCell[0];
+                   mLastTargetCell[1] =mTargetCell[1];
+                  
+          // }
+    
     }
 
     private void cleanupFolderCreation(DragObject d) {
@@ -3894,9 +3922,9 @@ public class Workspace extends PagedView
     /**
      * Called at the end of a drag which originated on the workspace.
      */
-    	//add by zlf  动画放大
-    public void onDropCompleted(View target, DragObject d, boolean success) {
 
+    public void onDropCompleted(View target, DragObject d, boolean success) {
+    	testH=-1;
 
         if (success) {
         	CellLayout cell =null;
@@ -4169,8 +4197,7 @@ public class Workspace extends PagedView
         	}
         	forIdCursor.close();
         	forIdCR = null;
-            
-            
+          
       
             LauncherModel.deleteItemFromDatabase(mLauncher, app);
         }

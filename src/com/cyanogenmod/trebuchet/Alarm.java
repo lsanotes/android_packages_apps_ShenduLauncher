@@ -17,6 +17,7 @@
 package com.cyanogenmod.trebuchet;
 
 import android.os.Handler;
+import android.util.Log;
 
 public class Alarm implements Runnable{
     // if we reach this time and the alarm hasn't been cancelled, call the listener
@@ -60,7 +61,10 @@ public class Alarm implements Runnable{
         mWaitingForCallback = false;
         if (mAlarmTriggerTime != 0) {
             long currentTime = System.currentTimeMillis();
+            Log.i(Launcher.TAG, "Alarm ..run()..     mAlarmTriggerTime > currentTime"+(mAlarmTriggerTime > currentTime))	;
             if (mAlarmTriggerTime > currentTime) {
+          
+            	
                 // We still need to wait some time to trigger spring loaded mode--
                 // post a new callback
                 mHandler.postDelayed(this, Math.max(0, mAlarmTriggerTime - currentTime));

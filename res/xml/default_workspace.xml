@@ -46,7 +46,7 @@
         launcher:y="3" />
     
     
-    <!-- default screen [1] -->
+    <!-- default screen [1] 
     <appwidget
         launcher:packageName="com.android.music"
         launcher:className="com.android.music.MediaAppWidgetProvider"
@@ -55,6 +55,10 @@
         launcher:y="0"
         launcher:spanX="4"
         launcher:spanY="1" />
+        -->
+        
+        
+ <!--  
     
     <favorite
         launcher:packageName="com.shendu.weather"
@@ -62,7 +66,7 @@
         launcher:screen="1"
         launcher:x="0"
         launcher:y="1" />
-
+-->  
     <favorite
         launcher:packageName="com.android.deskclock"
         launcher:className="com.android.deskclock.DeskClock"
@@ -104,7 +108,7 @@
         launcher:screen="1"
         launcher:x="3"
         launcher:y="2" />
-
+    <!-- 
     <favorite
         launcher:packageName="com.android.quicksearchbox"
         launcher:className="com.android.quicksearchbox.SearchActivity"
@@ -118,7 +122,7 @@
         launcher:screen="1"
         launcher:x="1"
         launcher:y="3" />
-
+ -->
     
     <!-- Hotseat (We use the screen as the position of the item in the hotseat) -->
     <favorite

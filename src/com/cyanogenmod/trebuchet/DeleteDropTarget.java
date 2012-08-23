@@ -181,8 +181,8 @@ public class DeleteDropTarget extends ButtonDropTarget {
                 isUninstall = true;
             }
         }*/
-        Log.i("hhl", "...DeleteDropTarget.java...onDragStart...."+isUninstall+"==="+getText()+"==="+
-        		info+"==="+(mLauncher.getWorkspace().getDragInfo()==null));
+//        Log.i("hhl", "...DeleteDropTarget.java...onDragStart...."+isUninstall+"==="+getText()+"==="+
+//        		info+"==="+(mLauncher.getWorkspace().getDragInfo()==null));
         mCellInfo = mLauncher.getWorkspace().getDragInfo();
         setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
         mCurrentDrawable = getCompoundDrawables()[0];
@@ -364,7 +364,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
                 }
             }
         }
-        Log.i("hhl", "---DeleteDropTarget.java..completeDrop.===="+(mCellInfo==null));
+    
         /*switch (mMode) {
             case MODE_DELETE:
                 if (isWorkspaceOrFolderApplication(d.dragSource, item)) {

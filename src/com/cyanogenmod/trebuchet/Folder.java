@@ -673,8 +673,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     };
 
     public void completeDragExit() {
-        mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED);
-        mLauncher.mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+//        mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED);
+//        mLauncher.mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
         mLauncher.closeFolder();
         mCurrentDragInfo = null;
         mCurrentDragView = null;
@@ -720,8 +720,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mCurrentDragInfo = null;
         mCurrentDragView = null;
         mSuppressOnAdd = false;
-        mLauncher.exitSpringLoadedDragModeDelayed(true, false);
-        Log.i("hhl", "....Folder.java..onDropCompleted=========.");
+       // mLauncher.exitSpringLoadedDragModeDelayed(true, false);
+
         // Reordering may have occured, and we need to save the new item locations. We do this once
         // at the end to prevent unnecessary database operations.
         updateItemLocationsInDatabase();

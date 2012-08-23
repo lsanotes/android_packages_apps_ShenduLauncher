@@ -161,7 +161,7 @@ public class CellLayout extends ViewGroup {
         mCountX = LauncherModel.getCellCountX();
         mCountY = LauncherModel.getCellCountY();
         mOccupied = new boolean[mCountX][mCountY];
-
+        Log.i(Launcher.TAG, TAG+"..CellLayout()...  "+mCountX+mCountY);
         a.recycle();
 
         setAlwaysDrawnWithCacheEnabled(false);
@@ -288,6 +288,7 @@ public class CellLayout extends ViewGroup {
         mCountX = x;
         mCountY = y;
         mOccupied = new boolean[mCountX][mCountY];
+        Log.i(Launcher.TAG, TAG+"setGridSize....  "+mCountX+mCountY);
         requestLayout();
     }
 
@@ -964,6 +965,7 @@ public class CellLayout extends ViewGroup {
 
     public boolean animateChildToPosition(final View child, int cellX, int cellY, int duration,
             int delay) {
+    	
         CellLayoutChildren clc = getChildrenLayout();
         if (clc.indexOfChild(child) != -1 && !mOccupied[cellX][cellY]) {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -1526,14 +1528,14 @@ public class CellLayout extends ViewGroup {
 //     		int startX =0;
 //    		int startY =0;
     		
-    		for(int i=0;i<4;i++){
-    			
-    			for(int j=0;j<4;j++){
-    				
-    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
-    			}
-    			System.out.println("  ");
-    		}
+//    		for(int i=0;i<4;i++){
+//    	
+//    			for(int j=0;j<4;j++){
+//    				
+//    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
+//    			}
+//    			System.out.println("  "); 
+//    		}
     		
     		while(true){
         	

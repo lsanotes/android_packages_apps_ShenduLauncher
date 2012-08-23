@@ -1218,6 +1218,8 @@ public final class Launcher extends Activity
 
             closeFolder();
             exitSpringLoadedDragMode();
+            
+            backFromEditMode();
             showWorkspace(alreadyOnHome);
 
             final View v = getWindow().peekDecorView();
@@ -1346,7 +1348,7 @@ public final class Launcher extends Activity
         if (isWorkspaceLocked()) {
             return false;
         }
-
+    //    编辑模式  修改壁纸 桌面缩略图 桌面设置 系统设置
         super.onCreateOptionsMenu(menu);
 
         Intent manageApps = new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
@@ -1665,17 +1667,25 @@ public final class Launcher extends Activity
             // Back button is a no-op here, but give at least some feedback for the button press
           //  mWorkspace.showOutlinesTemporarily();
    
-                final Runnable exitSpringLoadedRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        exitSpringLoadedDragModeDelayed(true, false);
-                    }
-                };
-                exitSpringLoadedRunnable.run();
-       
-                mWorkspace.removeTheHeaderOrFooterSpace();
+            backFromEditMode(); 
             
         }
+    }
+    
+    private void backFromEditMode(){
+    	if(mWorkspace.isSmall()){
+    		
+    		  final Runnable exitSpringLoadedRunnable = new Runnable() {
+                  @Override
+                  public void run() {
+                      exitSpringLoadedDragModeDelayed(true, false);
+                  }
+              };
+              exitSpringLoadedRunnable.run();
+     
+              mWorkspace.removeTheHeaderOrFooterSpace();
+    	}
+    	
     }
 
     /**
