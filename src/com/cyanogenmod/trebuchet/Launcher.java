@@ -98,6 +98,7 @@ import android.widget.Toast;
 import com.android.common.Search;
 import com.cyanogenmod.trebuchet.R;
 import com.cyanogenmod.trebuchet.DropTarget.DragObject;
+import com.cyanogenmod.trebuchet.Workspace.State;
 import com.cyanogenmod.trebuchet.preference.*;
 
 import java.io.DataInputStream;
@@ -125,8 +126,9 @@ public final class Launcher extends Activity
     private static final int MENU_GROUP_MARKET = MENU_GROUP_WALLPAPER + 1;
     private static final int MENU_WALLPAPER_SETTINGS = Menu.FIRST + 1;
     private static final int MENU_MANAGE_APPS = MENU_WALLPAPER_SETTINGS + 1;
-    private static final int MENU_MARKET = MENU_MANAGE_APPS + 1;
-    private static final int MENU_PREFERENCES = MENU_MARKET + 1;
+   // private static final int MENU_MARKET = MENU_MANAGE_APPS + 1;
+    private static final int MENU_EDITMODE =  MENU_MANAGE_APPS + 1;
+    private static final int MENU_PREFERENCES = MENU_EDITMODE + 1;
     private static final int MENU_SYSTEM_SETTINGS = MENU_PREFERENCES + 1;
     private static final int MENU_HELP = MENU_SYSTEM_SETTINGS + 1;
 
@@ -286,6 +288,9 @@ public final class Launcher extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        
+        Log.i(Launcher.TAG, TAG+" onCreate(......   ");
         LauncherApplication app = ((LauncherApplication)getApplication());
         mModel = app.setLauncher(this);
         mIconCache = app.getIconCache();
@@ -329,6 +334,8 @@ public final class Launcher extends Activity
         }
 
         if (!mRestoring) {
+        	
+        	 Log.i(Launcher.TAG, TAG+" onCreate(......    mModel.startLoader(...............");   
             mModel.startLoader(this, true);
         }
 
@@ -1348,7 +1355,7 @@ public final class Launcher extends Activity
         if (isWorkspaceLocked()) {
             return false;
         }
-    //    编辑模式  修改壁纸 桌面缩略图 桌面设置 系统设置
+    //    编辑模式  修改壁纸 桌面缩略图(meibiyao) 桌面设置 系统设置
         super.onCreateOptionsMenu(menu);
 
         Intent manageApps = new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
@@ -1365,21 +1372,35 @@ public final class Launcher extends Activity
         help.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
-        menu.add(MENU_GROUP_WALLPAPER, MENU_WALLPAPER_SETTINGS, 0, R.string.menu_wallpaper)
-            .setIcon(android.R.drawable.ic_menu_gallery)
-            .setAlphabeticShortcut('W');
+//        menu.add(MENU_GROUP_WALLPAPER, MENU_WALLPAPER_SETTINGS, 0, R.string.menu_wallpaper)
+//            .setIcon(android.R.drawable.ic_menu_gallery)
+//            .setAlphabeticShortcut('W');
         menu.add(0, MENU_MANAGE_APPS, 0, R.string.menu_manage_apps)
             .setIcon(android.R.drawable.ic_menu_manage)
             .setIntent(manageApps)
             .setAlphabeticShortcut('M');
-        menu.add(MENU_GROUP_MARKET, MENU_MARKET, 0, R.string.menu_market)
-            .setAlphabeticShortcut('A')
-            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//        menu.add(MENU_GROUP_MARKET, MENU_MARKET, 0, R.string.menu_market)
+//            .setAlphabeticShortcut('A')
+//            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        onClickAppMarketButton(null);
+//                        return true;
+//                    }
+//            });
+        
+        
+        menu.add(0, MENU_EDITMODE, 0, R.string.menu_editmode)
+        .setIcon(android.R.drawable.ic_menu_manage)
+       // .setIntent(manageApps)
+        .setAlphabeticShortcut('M')
+         .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        onClickAppMarketButton(null);
+                    	enterEditMode();
                         return true;
                     }
             });
+      
+        
       //  if (!getResources().getBoolean(R.bool.config_cyanogenmod)) {
             menu.add(0, MENU_PREFERENCES, 0, R.string.menu_preferences)
                 .setIcon(android.R.drawable.ic_menu_preferences)
@@ -1406,7 +1427,7 @@ public final class Launcher extends Activity
 //        if (mAppsCustomizeTabHost.isTransitioning()) {
 //            return false;
 //        }
-     //   boolean allAppsVisible = (mAppsCustomizeTabHost.getVisibility() == View.VISIBLE);
+//        boolean allAppsVisible = (mAppsCustomizeTabHost.getVisibility() == View.VISIBLE);
 //        menu.setGroupVisible(MENU_GROUP_WALLPAPER, !allAppsVisible);
 //        menu.setGroupVisible(MENU_GROUP_MARKET, allAppsVisible &&
 //                !ViewConfiguration.get(this).hasPermanentMenuKey() &&
@@ -2050,7 +2071,8 @@ public final class Launcher extends Activity
 
     public boolean onLongClick(View v) {
     	
-    	
+   //remove by zlf 	
+    	//otherwise do not longclick
 //        if (mState != State.WORKSPACE) {
 //            return false;
 //        }
@@ -2083,10 +2105,7 @@ public final class Launcher extends Activity
                 
                 //动画 缩小
                 
-                mWorkspace.addTheHeaderOrFooterSpace();
-     
-                mWorkspace.changeState(Workspace.State.SPRING_LOADED);
-                mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+                enterEditMode();
           
                 
             } else {
@@ -2100,6 +2119,14 @@ public final class Launcher extends Activity
   
         return true;
     }
+    
+    
+    private  void enterEditMode(){
+      mWorkspace.addTheHeaderOrFooterSpace();
+      
+      mWorkspace.changeState(Workspace.State.SPRING_LOADED);
+       mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+      }
 
     boolean isHotseatLayout(View layout) {
         return mHotseat != null && layout != null &&

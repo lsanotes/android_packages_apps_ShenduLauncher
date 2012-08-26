@@ -62,6 +62,8 @@
     <string name="delete_zone_label_all_apps_system_app" msgid="3683920959591819044">"卸载更新"</string>
     <string name="menu_add" msgid="3065046628354640854">"添加"</string>
     <string name="menu_manage_apps" msgid="2308685199463588895">"管理应用程序"</string>
+     <string name="menu_editmode" >"编辑模式"</string>
+    <string name="menu_preferences">"桌面设置"</string>
     <string name="menu_wallpaper" msgid="5837429080911269832">"壁纸"</string>
     <string name="menu_search" msgid="4826514464423239041">"搜索"</string>
     <string name="menu_notifications" msgid="6424587053194766192">"通知"</string>

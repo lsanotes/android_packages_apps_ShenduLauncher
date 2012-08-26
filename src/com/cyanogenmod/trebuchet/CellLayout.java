@@ -285,6 +285,9 @@ public class CellLayout extends ViewGroup {
     }
 
     public void setGridSize(int x, int y) {
+    	 Log.i(Launcher.TAG, TAG+"setGridSize  ............       288   xy:"+x+y);
+         
+    	
         mCountX = x;
         mCountY = y;
         mOccupied = new boolean[mCountX][mCountY];
@@ -597,18 +600,21 @@ public class CellLayout extends ViewGroup {
 
     @Override
     public void removeView(View view) {
+    	 Log.i(Launcher.TAG, TAG+"removeView  markCellsAsUnoccupiedForView  ...........        ");
         markCellsAsUnoccupiedForView(view);
         mChildren.removeView(view);
     }
 
     @Override
     public void removeViewAt(int index) {
+    	 Log.i(Launcher.TAG, TAG+"removeViewAt  markCellsAsUnoccupiedForView  ...........        "+index);
         markCellsAsUnoccupiedForView(mChildren.getChildAt(index));
         mChildren.removeViewAt(index);
     }
 
     @Override
     public void removeViewInLayout(View view) {
+    	 Log.i(Launcher.TAG, TAG+"removeViewInLayout  markCellsAsUnoccupiedForView  ...........        ");
         markCellsAsUnoccupiedForView(view);
         mChildren.removeViewInLayout(view);
     }
@@ -616,6 +622,7 @@ public class CellLayout extends ViewGroup {
     @Override
     public void removeViews(int start, int count) {
         for (int i = start; i < start + count; i++) {
+        	 Log.i(Launcher.TAG, TAG+"removeViews(for  markCellsAsUnoccupiedForView  ...........        ");
             markCellsAsUnoccupiedForView(mChildren.getChildAt(i));
         }
         mChildren.removeViews(start, count);
@@ -624,6 +631,7 @@ public class CellLayout extends ViewGroup {
     @Override
     public void removeViewsInLayout(int start, int count) {
         for (int i = start; i < start + count; i++) {
+        	 Log.i(Launcher.TAG, TAG+"removeViewsInLayout(for  markCellsAsUnoccupiedForView  ...........        ");
             markCellsAsUnoccupiedForView(mChildren.getChildAt(i));
         }
         mChildren.removeViewsInLayout(start, count);
@@ -979,8 +987,13 @@ public class CellLayout extends ViewGroup {
 
             int oldX = lp.x;
             int oldY = lp.y;
+            
+        
+            
             mOccupied[lp.cellX][lp.cellY] = false;
+            Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old .      "+lp.cellX+lp.cellY +false);
             mOccupied[cellX][cellY] = true;
+            Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........new.       "+cellX + cellY +true);
 
             lp.isLockedToGrid = true;
             lp.cellX = info.cellX = cellX;
@@ -999,8 +1012,11 @@ public class CellLayout extends ViewGroup {
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(lp, x, y);
             oa.setDuration(duration);
             mReorderAnimators.put(lp, oa);
+            Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...........      oldXY: "+oldX + oldY +"   new:"+newX+newY);
             oa.addUpdateListener(new AnimatorUpdateListener() {
                 public void onAnimationUpdate(ValueAnimator animation) {
+                	
+                	Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...........       child.requestLayout(): ");
                     child.requestLayout();
                 }
             });
@@ -1016,9 +1032,12 @@ public class CellLayout extends ViewGroup {
                     if (mReorderAnimators.containsKey(lp)) {
                         mReorderAnimators.remove(lp);
                     }
+                    
+                	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: ");
                 }
                 public void onAnimationCancel(Animator animation) {
                     cancelled = true;
+                 
                 }
             });
             oa.setStartDelay(delay);
@@ -1172,7 +1191,7 @@ public class CellLayout extends ViewGroup {
     int[] findNearestArea(int pixelX, int pixelY, int spanX, int spanY, View ignoreView,
             boolean ignoreOccupied, int[] result) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-        markCellsAsUnoccupiedForView(ignoreView);
+      //  markCellsAsUnoccupiedForView(ignoreView);
 
         // For items with a spanX / spanY > 1, the passed in point (pixelX, pixelY) corresponds
         // to the center of the item, but we are searching based on the top-left cell, so
@@ -1224,7 +1243,10 @@ public class CellLayout extends ViewGroup {
             }
         }
         // re-mark space taken by ignoreView as occupied
-        markCellsAsOccupiedForView(ignoreView);
+
+       //remove by zlf
+    //    markCellsAsOccupiedForView(ignoreView);
+
 
         // Return -1, -1 if no suitable location found
         if (bestDistance == Double.MAX_VALUE) {
@@ -1329,7 +1351,8 @@ public class CellLayout extends ViewGroup {
     boolean findCellForSpanThatIntersectsIgnoring(int[] cellXY, int spanX, int spanY,
             int intersectX, int intersectY, View ignoreView) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-        markCellsAsUnoccupiedForView(ignoreView);
+    	 Log.i(Launcher.TAG, TAG+"findCellForSpanThatIntersectsIgnoring  markCellsAsUnoccupiedForView  ...........        ");
+    	markCellsAsUnoccupiedForView(ignoreView);
 
         boolean foundCell = false;
         while (true) {
@@ -1421,7 +1444,8 @@ public class CellLayout extends ViewGroup {
     int[] findCellLastOccupiedCellIgnoring(int[] cellXY, int spanX, int spanY,
             int intersectX, int intersectY, View ignoreView) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-        markCellsAsUnoccupiedForView(ignoreView);
+    	 Log.i(Launcher.TAG, TAG+"findCellLastOccupiedCellIgnoring11  markCellsAsUnoccupiedForView  ...........        ");
+    	markCellsAsUnoccupiedForView(ignoreView);
     
         int[] lastCell =new int[2];
         lastCell[0]=1;
@@ -1525,17 +1549,7 @@ public class CellLayout extends ViewGroup {
     		int startX =header[0];
     		int startY =header[1];
     		
-//     		int startX =0;
-//    		int startY =0;
-    		
-//    		for(int i=0;i<4;i++){
-//    	
-//    			for(int j=0;j<4;j++){
-//    				
-//    				System.out.print(+j+" "+i+"   "+mOccupied[j][i]);
-//    			}
-//    			System.out.println("  "); 
-//    		}
+
     		
     		while(true){
         	
@@ -1788,6 +1802,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         for (int x = lp.cellX - 1; x >= 0; x--) {
             flag = false;
             for (int y = lp.cellY; y < lp.cellY + lp.cellVSpan; y++) {
+                 
                 if (mOccupied[x][y]) flag = true;
             }
             if (flag) break;
@@ -1818,6 +1833,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         for (int y = lp.cellY + lp.cellVSpan; y < mCountY; y++) {
             flag = false;
             for (int x = lp.cellX; x < lp.cellX + lp.cellHSpan; x++) {
+            	 Log.i(Launcher.TAG, TAG+"..getExpandabilityArrayForView  ............         1813");
                 if (mOccupied[x][y]) flag = true;
             }
             if (flag) break;
@@ -1827,26 +1843,38 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
 
     public void onMove(View view, int newCellX, int newCellY) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
+        Log.i(Launcher.TAG, TAG+"..onMove(  markCellsAsUnoccupiedForView  ...........        ");
+        //remove by zlf
         markCellsAsUnoccupiedForView(view);
+        Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
         markCellsForView(newCellX, newCellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
     public void markCellsAsOccupiedForView(View view) {
+      
         if (view == null || view.getParent() != mChildren) return;
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
+        
+   	 Log.i(Launcher.TAG, TAG+"..markCellsAsOccupiedForView  ..###..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
         markCellsForView(lp.cellX, lp.cellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
     public void markCellsAsUnoccupiedForView(View view) {
         if (view == null || view.getParent() != mChildren) return;
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
+        
+        Log.i(Launcher.TAG, TAG+"..markCellsAsUnoccupiedForView  ..###11..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
         markCellsForView(lp.cellX, lp.cellY, lp.cellHSpan, lp.cellVSpan, false);
     }
 
     private void markCellsForView(int cellX, int cellY, int spanX, int spanY, boolean value) {
         for (int x = cellX; x < cellX + spanX && x < mCountX; x++) {
             for (int y = cellY; y < cellY + spanY && y < mCountY; y++) {
+            	
+            
                 mOccupied[x][y] = value;
+            	 Log.i(Launcher.TAG, TAG+"getExpandabilityArrayForView  ............         1842   xy:"+x+y+ mOccupied[x][y]);
+         
             }
         }
     }
@@ -1862,6 +1890,8 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
     }
 
     public boolean isOccupied(int x, int y) {
+    	
+    	//Log.i(Launcher.TAG, TAG+"isOccupied(:    "+mCountX + mCountY + x+ y);
         if (x < mCountX && y < mCountY) {
             return mOccupied[x][y];
         } else {

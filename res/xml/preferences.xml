@@ -22,12 +22,14 @@
         <PreferenceScreen android:key="ui_homescreen"
             android:title="@string/preferences_interface_homescreen_title">
             <PreferenceCategory android:title="@string/preferences_interface_homescreen_general_category">
+               <!--  
                 <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_screens"
                     android:title="@string/preferences_interface_homescreen_general_screens_title"
                     android:summary="@string/preferences_interface_homescreen_general_screens_summary"
                     android:defaultValue="2"
                     launcher:max="7"
                     launcher:min="2" />
+                    -->
                 <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_default_screen"
                     android:title="@string/preferences_interface_homescreen_general_default_screen_title"
                     android:summary="@string/preferences_interface_homescreen_general_default_screen_summary"
@@ -109,7 +111,7 @@
             </PreferenceCategory>
         </PreferenceScreen>
 
-        <!-- Drawer -->
+        <!-- Drawer 
         <PreferenceScreen android:key="ui_drawer"
             android:title="@string/preferences_interface_drawer_title">
             <PreferenceCategory android:title="@string/preferences_interface_drawer_widgets_category">
@@ -142,7 +144,7 @@
                     android:dependency="ui_drawer_indicator_enable" />
             </PreferenceCategory>
         </PreferenceScreen>
-
+-->
         <!-- Dock -->
         <!-- <PreferenceScreen android:key="ui_dock"
             android:title="@string/preferences_interface_dock_title">
