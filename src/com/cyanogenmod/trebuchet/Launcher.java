@@ -82,6 +82,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -375,6 +376,8 @@ public final class Launcher extends Activity
         mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
 
         syncOrientation();
+        
+        mWindow = getWindow();
     }
 
     private void syncOrientation() {
@@ -1696,6 +1699,8 @@ public final class Launcher extends Activity
     private void backFromEditMode(){
     	if(mWorkspace.isSmall()){
     		
+    		setScreenNoLimit();
+    		
     		  final Runnable exitSpringLoadedRunnable = new Runnable() {
                   @Override
                   public void run() {
@@ -2101,7 +2106,7 @@ public final class Launcher extends Activity
                 // User long pressed on empty space
                 mWorkspace.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
                         HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-              //  startWallpaper();
+              // startWallpaper();
                 
                 //动画 缩小
                 
@@ -2111,8 +2116,8 @@ public final class Launcher extends Activity
             } else {
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
-                    mWorkspace.startDrag(longClickCellInfo);
-
+                    mWorkspace.startDrag(longClickCellInfo,isHotseatLayout(v));
+                   
                 }
             }
         }
@@ -2122,7 +2127,9 @@ public final class Launcher extends Activity
     
     
     private  void enterEditMode(){
-      mWorkspace.addTheHeaderOrFooterSpace();
+    	setFullScreen();
+    
+    	mWorkspace.addTheHeaderOrFooterSpace();
       
       mWorkspace.changeState(Workspace.State.SPRING_LOADED);
        mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
@@ -2944,12 +2951,15 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
+  
         setLoadOnResume();
 
         final Workspace workspace = mWorkspace;
         for (int i=start; i<end; i++) {
+        	
+      
             final ItemInfo item = shortcuts.get(i);
-
+        	Log.i(Launcher.TAG, TAG+"..........................item:"+item.toString());
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
@@ -3406,6 +3416,25 @@ public final class Launcher extends Activity
             writer.println("  " + sDumpLogs.get(i));
         }
     }
+    
+   private   Window mWindow ;
+    
+    public  void setFullScreen(){
+
+    	 WindowManager.LayoutParams attrs = mWindow.getAttributes(); 
+    	 attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN; 
+    	 mWindow.setAttributes(attrs); 
+    	 mWindow.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS); 
+    	
+    }
+     public void setScreenNoLimit(){
+     	WindowManager.LayoutParams attrs = mWindow.getAttributes(); 
+ 	   
+     	attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+     	mWindow.setAttributes(attrs); 
+     
+     	mWindow.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+     }
 }
 
 interface LauncherTransitionable {

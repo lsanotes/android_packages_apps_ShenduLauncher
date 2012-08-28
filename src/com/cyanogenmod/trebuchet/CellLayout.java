@@ -980,16 +980,16 @@ public class CellLayout extends ViewGroup {
             final ItemInfo info = (ItemInfo) child.getTag();
 
             // We cancel any existing animations
-            if (mReorderAnimators.containsKey(lp)) {
-                mReorderAnimators.get(lp).cancel();
-                mReorderAnimators.remove(lp);
-            }
+//            if (mReorderAnimators.containsKey(lp)) {
+//            	
+//            	Log.i(Launcher.TAG, TAG+".mReorderAnimators.get(lp).cancel();..........      mReorderAnimators.get(lp).cancel(); ");
+//                mReorderAnimators.get(lp).cancel();
+//                mReorderAnimators.remove(lp);
+//            }
 
             int oldX = lp.x;
             int oldY = lp.y;
-            
-        
-            
+      
             mOccupied[lp.cellX][lp.cellY] = false;
             Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old .      "+lp.cellX+lp.cellY +false);
             mOccupied[cellX][cellY] = true;
@@ -1011,16 +1011,27 @@ public class CellLayout extends ViewGroup {
             PropertyValuesHolder y = PropertyValuesHolder.ofInt("y", oldY, newY);
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(lp, x, y);
             oa.setDuration(duration);
-            mReorderAnimators.put(lp, oa);
+          //  mReorderAnimators.put(lp, oa);
             Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...........      oldXY: "+oldX + oldY +"   new:"+newX+newY);
             oa.addUpdateListener(new AnimatorUpdateListener() {
                 public void onAnimationUpdate(ValueAnimator animation) {
-                	
-                	Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...........       child.requestLayout(): ");
+          
                     child.requestLayout();
+                    Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
+                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
+                    
+                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------");
                 }
             });
             oa.addListener(new AnimatorListenerAdapter() {
+            	 public void onAnimationStart(Animator animation){
+        
+            		 
+            		 Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
+            		 
+            	 }
+            	
+            	
                 boolean cancelled = false;
                 public void onAnimationEnd(Animator animation) {
                     // If the animation was cancelled, it means that another animation
@@ -1029,13 +1040,17 @@ public class CellLayout extends ViewGroup {
                     if (!cancelled) {
                         lp.isLockedToGrid = true;
                     }
-                    if (mReorderAnimators.containsKey(lp)) {
-                        mReorderAnimators.remove(lp);
-                    }
+                    // remove by zlf
+//                    if (mReorderAnimators.containsKey(lp)) {
+//                        mReorderAnimators.remove(lp);
+//                    }
                     
-                	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: ");
+                	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
                 }
+                
                 public void onAnimationCancel(Animator animation) {
+                	Log.i(Launcher.TAG, TAG+"..onAnimationCancel  ...........      onAnimationCancel: "+animation.toString());
+                	
                     cancelled = true;
                  
                 }
@@ -1845,7 +1860,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         Log.i(Launcher.TAG, TAG+"..onMove(  markCellsAsUnoccupiedForView  ...........        ");
         //remove by zlf
-        markCellsAsUnoccupiedForView(view);
+      //  markCellsAsUnoccupiedForView(view);
         Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
         markCellsForView(newCellX, newCellY, lp.cellHSpan, lp.cellVSpan, true);
     }

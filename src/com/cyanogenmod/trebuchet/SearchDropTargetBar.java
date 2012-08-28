@@ -25,6 +25,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -55,6 +56,8 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     private boolean mDeferOnDragEnd = false;
 
     private Drawable mPreviousBackground;
+    
+    private Launcher mLauncher;
 
     public SearchDropTargetBar(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -67,6 +70,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     }
 
     public void setup(Launcher launcher, DragController dragController) {
+    	mLauncher = launcher;
         dragController.addDragListener(this);
         dragController.addDragListener(mInfoDropTarget);
         dragController.addDragListener(mDeleteDropTarget);
@@ -159,6 +163,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
      * Shows and hides the search bar.
      */
     public void showSearchBar(boolean animated) {
+    	//mLauncher.setScreenNoLimit();
         cancelAnimations();
         if (animated) {
             if (mShowQSBSearchBar) {
@@ -173,6 +178,8 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
         mIsSearchBarHidden = false;
     }
     public void hideSearchBar(boolean animated) {
+    	
+    	//mLauncher.setFullScreen();
         cancelAnimations();
         if (animated) {
             if (mShowQSBSearchBar) {

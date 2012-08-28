@@ -72,4 +72,13 @@
         <item>Ring</item>
         <item>Square</item>
     </string-array>
+    
+    
+     <declare-styleable name="sliding_SlidingIndicator">
+        <attr name="barColor" format="color" />
+        <attr name="highlightColor" format="color" />
+        <attr name="fadeDelay" format="integer" />
+        <attr name="fadeDuration" format="integer" />
+        <attr name="roundRectRadius" format="float" />
+    </declare-styleable>
 </resources>

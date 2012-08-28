@@ -175,14 +175,14 @@ public abstract class PagedView extends ViewGroup {
 
     // Scrolling indicator
     private ValueAnimator mScrollIndicatorAnimator;
-    private ImageView mScrollIndicator;
+    private SlidingIndicator mScrollIndicator;
     private int mScrollIndicatorPaddingLeft;
     private int mScrollIndicatorPaddingRight;
     private boolean mHasScrollIndicator = true;
     protected static final int sScrollIndicatorFadeInDuration = 150;
-    protected static final int sScrollIndicatorFadeOutDuration = 650;
+    protected static final int sScrollIndicatorFadeOutDuration = 1000;
     protected static final int sScrollIndicatorFadeOutShortDuration = 150;
-    protected static final int sScrollIndicatorFlashDuration = 650;
+    protected static final int sScrollIndicatorFlashDuration = 1000;
 
     // If set, will defer loading associated pages until the scrolling settles
     private boolean mDeferLoadAssociatedPagesUntilScrollCompletes;
@@ -1728,12 +1728,12 @@ public abstract class PagedView extends ViewGroup {
         }
     }
 
-    protected ImageView getScrollingIndicator() {
+    protected SlidingIndicator getScrollingIndicator() {
         // We use mHasScrollIndicator to prevent future lookups if there is no sibling indicator
         // found
         if (mHasScrollIndicator && mScrollIndicator == null) {
             ViewGroup parent = (ViewGroup) getParent();
-            mScrollIndicator = (ImageView) (parent.findViewById(R.id.paged_view_indicator));
+            mScrollIndicator = (SlidingIndicator) (parent.findViewById(R.id.paged_view_indicator));
             mHasScrollIndicator = mScrollIndicator != null;
             if (mHasScrollIndicator) {
                 mScrollIndicator.setVisibility(View.VISIBLE);
@@ -1863,27 +1863,33 @@ public abstract class PagedView extends ViewGroup {
         if (!isScrollingIndicatorEnabled()) return;
         if (mScrollIndicator == null) return;
         int numPages = getChildCount();
-        int pageWidth = getMeasuredWidth();
-        int lastChildIndex = Math.max(0, getChildCount() - 1);
-        int maxScrollX = getChildOffset(lastChildIndex) - getRelativeChildOffset(lastChildIndex);
-        int trackWidth = pageWidth - mScrollIndicatorPaddingLeft - mScrollIndicatorPaddingRight;
-        int indicatorWidth = mScrollIndicator.getMeasuredWidth() -
-                mScrollIndicator.getPaddingLeft() - mScrollIndicator.getPaddingRight();
-
-        float offset = Math.max(0f, Math.min(1f, (float) getScrollX() / maxScrollX));
-        int indicatorSpace = trackWidth / numPages;
-        int indicatorPos = (int) (offset * (trackWidth - indicatorSpace)) + mScrollIndicatorPaddingLeft;
-        if (hasElasticScrollIndicator()) {
-            if (mScrollIndicator.getMeasuredWidth() != indicatorSpace) {
-                mScrollIndicator.getLayoutParams().width = indicatorSpace;
-                mScrollIndicator.requestLayout();
-            }
-        } else {
-            int indicatorCenterOffset = indicatorSpace / 2 - indicatorWidth / 2;
-            indicatorPos += indicatorCenterOffset;
-        }
-        mScrollIndicator.setTranslationX(indicatorPos);
-        mScrollIndicator.invalidate();
+        
+        mScrollIndicator.setPageAmount(numPages);
+        
+        
+//        int pageWidth = getMeasuredWidth();
+//        int lastChildIndex = Math.max(0, getChildCount() - 1);
+//        int maxScrollX = getChildOffset(lastChildIndex) - getRelativeChildOffset(lastChildIndex);
+//        int trackWidth = pageWidth - mScrollIndicatorPaddingLeft - mScrollIndicatorPaddingRight;
+//        int indicatorWidth = mScrollIndicator.getMeasuredWidth() -
+//                mScrollIndicator.getPaddingLeft() - mScrollIndicator.getPaddingRight();
+//
+//        float offset = Math.max(0f, Math.min(1f, (float) getScrollX() / maxScrollX));
+//        int indicatorSpace = trackWidth / numPages;
+//        int indicatorPos = (int) (offset * (trackWidth - indicatorSpace)) + mScrollIndicatorPaddingLeft;
+//        if (hasElasticScrollIndicator()) {
+//            if (mScrollIndicator.getMeasuredWidth() != indicatorSpace) {
+//                mScrollIndicator.getLayoutParams().width = indicatorSpace;
+//                mScrollIndicator.requestLayout();
+//            }
+//        } else {
+//            int indicatorCenterOffset = indicatorSpace / 2 - indicatorWidth / 2;
+//            indicatorPos += indicatorCenterOffset;
+//        }
+//        mScrollIndicator.setTranslationX(indicatorPos);
+//        mScrollIndicator.invalidate();
+        mScrollIndicator.setCurrentPage(mCurrentPage);
+        
     }
 
     /* Accessibility */
