@@ -180,9 +180,9 @@ public abstract class PagedView extends ViewGroup {
     private int mScrollIndicatorPaddingRight;
     private boolean mHasScrollIndicator = true;
     protected static final int sScrollIndicatorFadeInDuration = 150;
-    protected static final int sScrollIndicatorFadeOutDuration = 1000;
+    protected static final int sScrollIndicatorFadeOutDuration = 2000;
     protected static final int sScrollIndicatorFadeOutShortDuration = 150;
-    protected static final int sScrollIndicatorFlashDuration = 1000;
+    protected static final int sScrollIndicatorFlashDuration = 2000;
 
     // If set, will defer loading associated pages until the scrolling settles
     private boolean mDeferLoadAssociatedPagesUntilScrollCompletes;

@@ -17,9 +17,9 @@ import android.view.animation.LinearInterpolator;
 
 
 public class SlidingIndicator extends View {  
-    public static final int BAR_COLOR = 0xffffffff;  
+    public static final int BAR_COLOR = 0xbbADADAD;  
     public static final int HIGHLIGHT_COLOR = 0Xff0072E3;  
-    public static final int FADE_DELAY = 1000;  
+    public static final int FADE_DELAY = 2000;  
     public static final int FADE_DURATION = 500;  
   
     private int amount, currentPage;  
@@ -143,7 +143,7 @@ public class SlidingIndicator extends View {
     	for(int i=0;i<amount;i++){
     	
     		  //  rectFBody.set(position+40*i,0, position+40*i+20, 20);  
-    	        canvas.drawCircle(position+40*i, positionY, 7, barPaint);  
+    	        canvas.drawCircle(position+40*i, positionY, 6, barPaint);  
     	}
        
        // rectFIndicator.set(position+currentPage*40, 0, position+currentPage*40+20, getHeight());  

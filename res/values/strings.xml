@@ -21,9 +21,9 @@
     <!-- General -->
     <skip />
     <!-- Application name -->
-    <string name="application_name" translatable="false">Trebuchet</string>
+    <string name="application_name" translatable="false">ShenDuLauncher</string>
     <!-- Application copyright -->
-    <string name="application_copyright">Copyright \u00A9 CyanogenMod 2012</string>
+    <string name="application_copyright">Copyright \u00A9 ShenDu.com 2012</string>
     <!-- Application version -->
     <string name="application_version">0.1</string>
 

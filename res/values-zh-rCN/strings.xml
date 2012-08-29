@@ -19,6 +19,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+     <string name="application_name" translatable="false">深度桌面</string>
     <string name="uid_name" msgid="3371120195364560632">"Android 核心应用程序"</string>
     <string name="folder_name" msgid="8551881338202938211"></string>
     <string name="chooser_wallpaper" msgid="6063168087625352235">"选择壁纸来源"</string>
@@ -118,38 +119,38 @@
 
     <!-- UI -->
     <!-- Homescreen -->
-    <string name="preferences_interface_homescreen_title">主屏幕</string>
+    <string name="preferences_interface_homescreen_title">屏幕</string>
     <string name="preferences_interface_homescreen_general_category">常规</string>
-    <string name="preferences_interface_homescreen_general_screens_title">主屏幕数量</string>
-    <string name="preferences_interface_homescreen_general_screens_summary">主屏幕上的页面数量</string>
+    <string name="preferences_interface_homescreen_general_screens_title">屏幕数量</string>
+    <string name="preferences_interface_homescreen_general_screens_summary">屏幕上的页面数量</string>
     <string name="preferences_interface_homescreen_general_default_screen_title">默认主屏幕</string>
-    <string name="preferences_interface_homescreen_general_default_screen_summary">选择默认的主屏幕</string>
+    <string name="preferences_interface_homescreen_general_default_screen_summary">选择默认的屏幕</string>
     <string name="preferences_interface_homescreen_general_grid_title">网格大小</string>
-    <string name="preferences_interface_homescreen_general_grid_summary">选择主屏幕上的行/列数</string>
+    <string name="preferences_interface_homescreen_general_grid_summary">选择屏幕上的行/列数</string>
     <string name="preferences_interface_homescreen_general_grid_rows_title">行</string>
     <string name="preferences_interface_homescreen_general_grid_columns_title">列</string>
     <string name="preferences_interface_homescreen_general_screen_padding_vertical_title">垂直间隔</string>
-    <string name="preferences_interface_homescreen_general_screen_padding_vertical_summary">在主屏幕上加上额外的垂直间隔</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_vertical_summary">在屏幕上加上额外的垂直间隔</string>
     <string name="preferences_interface_homescreen_general_screen_padding_horizontal_title">水平间隔</string>
-    <string name="preferences_interface_homescreen_general_screen_padding_horizontal_summary">在主屏幕上加上额外的水平间隔</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_horizontal_summary">在屏幕上加上额外的水平间隔</string>
     <string name="preferences_interface_homescreen_general_search_title">搜索栏</string>
     <string name="preferences_interface_homescreen_general_search_summary">启用搜索栏</string>
     <string name="preferences_interface_homescreen_general_resize_any_widget_title">调整任何小部件的大小</string>
     <string name="preferences_interface_homescreen_general_resize_any_widget_summary">允许小部件的大小调整</string>
     <string name="preferences_interface_homescreen_general_hide_icon_labels_title">隐藏图标标签</string>
-    <string name="preferences_interface_homescreen_general_hide_icon_labels_summary">隐藏在主屏幕上图标的标签</string>
+    <string name="preferences_interface_homescreen_general_hide_icon_labels_summary">隐藏在屏幕上图标的标签</string>
     <string name="preferences_interface_homescreen_scrolling_category">滚动</string>
     <string name="preferences_interface_homescreen_scrolling_transition_effect_title">过渡效果</string>
     <string name="preferences_interface_homescreen_scrolling_transition_effect_summary">选择滚动屏幕时的过渡效果</string>
     <string name="preferences_interface_homescreen_scrolling_fade_adjacent_screens_title">淡出边界</string>
     <string name="preferences_interface_homescreen_scrolling_fade_adjacent_screens_summary">滚动屏幕时淡出边界</string>
     <string name="preferences_interface_homescreen_scrolling_scroll_wallpaper_title">滚动壁纸</string>
-    <string name="preferences_interface_homescreen_scrolling_scroll_wallpaper_summary">主屏幕滚动时壁纸将会一起滚动</string>
+    <string name="preferences_interface_homescreen_scrolling_scroll_wallpaper_summary">屏幕滚动时壁纸将会一起滚动</string>
     <string name="preferences_interface_homescreen_indicator_category">指示器</string>
     <string name="preferences_interface_homescreen_indicator_enable_title">启用页面指示器</string>
     <string name="preferences_interface_homescreen_indicator_enable_summary">在屏幕的底部显示当前页面的指示器</string>
     <string name="preferences_interface_homescreen_indicator_fade_title">淡出指示器</string>
-    <string name="preferences_interface_homescreen_indicator_fade_summary">改变主屏幕后将淡出指示器</string>
+    <string name="preferences_interface_homescreen_indicator_fade_summary">改变屏幕后将淡出指示器</string>
     <string name="preferences_interface_homescreen_indicator_background_title">显示底座分隔器</string>
     <string name="preferences_interface_homescreen_indicator_background_summary">显示指示器后面的背景</string>
 

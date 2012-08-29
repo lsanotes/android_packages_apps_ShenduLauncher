@@ -1020,7 +1020,7 @@ public class CellLayout extends ViewGroup {
                     Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
                     Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
                     
-                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------");
+                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
                 }
             });
             oa.addListener(new AnimatorListenerAdapter() {
@@ -1053,6 +1053,7 @@ public class CellLayout extends ViewGroup {
                 	
                     cancelled = true;
                  
+                    
                 }
             });
             oa.setStartDelay(delay);
