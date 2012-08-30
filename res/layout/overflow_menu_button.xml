@@ -21,6 +21,7 @@
     android:drawableLeft="@drawable/ic_menu_overflow"
     android:gravity="center"
     android:paddingLeft="16dp"
+    android:visibility="gone"
     android:paddingRight="16dp"
     android:background="@drawable/tab_widget_indicator_selector"
     android:contentDescription="@string/menu"

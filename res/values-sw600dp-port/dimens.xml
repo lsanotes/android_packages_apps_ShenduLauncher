@@ -16,8 +16,8 @@
 
 <resources>
 <!-- AppsCustomize -->
-    <dimen name="apps_customize_cell_width">96dp</dimen>
-    <dimen name="apps_customize_cell_height">96dp</dimen>
+    <dimen name="apps_customize_cell_width">92dp</dimen>
+    <dimen name="apps_customize_cell_height">112dp</dimen>
 
 <!-- Workspace -->
     <!-- the area at the edge of the screen that makes the workspace go left

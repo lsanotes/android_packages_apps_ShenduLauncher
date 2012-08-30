@@ -18,6 +18,7 @@ package com.cyanogenmod.trebuchet;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -105,8 +106,8 @@ public abstract class PagedViewWithDraggableItems extends PagedView
         // Return early if we are still animating the pages
         if (mNextPage != INVALID_PAGE) return false;
         // When we have exited all apps or are in transition, disregard long clicks
-        if (!mLauncher.isAllAppsCustomizeOpen() ||
-                mLauncher.getWorkspace().isSwitchingState()) return false;
+        //if (!mLauncher.isAllAppsCustomizeOpen() ||
+        if (   mLauncher.getWorkspace().isSwitchingState()) return false;
 
         return beginDragging(v);
     }

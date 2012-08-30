@@ -138,6 +138,7 @@ public class LauncherModel extends BroadcastReceiver {
         public void bindPackagesUpdated();
         public boolean isAllAppsVisible();
         public void bindSearchablesChanged();
+        public void bindWallpaperChanged();
     }
 
     LauncherModel(LauncherApplication app, IconCache iconCache) {
@@ -645,6 +646,12 @@ public class LauncherModel extends BroadcastReceiver {
                 if (callbacks != null) {
                     callbacks.bindSearchablesChanged();
                 }
+            }
+        } else if(Intent.ACTION_WALLPAPER_CHANGED.equals(action)){
+        	Log.i("hhl", "====LauncherModel.java...onreceive()==wallpaper changed=="+action+"==="+(mCallbacks==null));
+        	Callbacks callbacks = mCallbacks==null?null:mCallbacks.get();
+            if (callbacks != null) {
+                callbacks.bindWallpaperChanged();
             }
         }
     }

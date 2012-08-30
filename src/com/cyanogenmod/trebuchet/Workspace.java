@@ -2138,9 +2138,27 @@ public class Workspace extends PagedView
                         final CellLayout cl = (CellLayout) getPageAt(i);
                         cl.invalidate();
                         cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
-                        cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
-                        cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-                        cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+                        
+                        if(mState ==State.NORMAL ){
+                        	  cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
+                        	 
+                        }else{
+                        	cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-60);
+                        }
+                      
+                        
+                        Log.i(Launcher.TAG, TAG +"  .........................3333..a:     "+ ((a) * mOldTranslationYs[i]+(b) * mNewTranslationYs[i]));
+                        //set width and height
+                        cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
+                        
+                        if(mState ==State.NORMAL ){
+                        	  cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
+                        	 cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+                        }else{
+                        	  cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
+                        	 cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]-0.1f);
+                        }
+                       
                         cl.setFastBackgroundAlpha(
                                 a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
                         cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
@@ -2379,7 +2397,7 @@ public class Workspace extends PagedView
        		return;
        	}
          
-        updataDBallSceens(pageCount,1);
+        updataDBWhenRemoveScreen(pageCount,1);
  		Log.i(Launcher.TAG,TAG+ "..........................db.execSQL");
     	
     }
@@ -2404,8 +2422,9 @@ public class Workspace extends PagedView
                Log.i(Launcher.TAG,TAG+ "..........................removeTheHeaderOrFooterSpace000::"+lastOccupiedCell[0]);
                if(lastOccupiedCell[0]==-1){
         
-              	removeView(cellLayout,count); 
+              	removeView(cellLayout); 
                }else{
+            
             	   cellLayout.setBackgroundDrawable(cellLayout.mNormalBackground);
                }
        
@@ -2415,7 +2434,7 @@ public class Workspace extends PagedView
                 Log.i(Launcher.TAG,TAG+ "..........................removeTheHeaderOrFooterSpace111::"+lastOccupiedCell[0]);
                 if(lastOccupiedCell[0]==-1){
                   
-                  	removeView(cellLayout,0); 
+                  	removeView(cellLayout); 
                   	
                   	 setCurrentPage(mCurrentPage-1);
                    }else{
@@ -2444,15 +2463,16 @@ public class Workspace extends PagedView
         mPreviousTargetCell[0] = cellInfo.cellX;
         mPreviousTargetCell[1] = cellInfo.cellY;
   
-       if(isFromHotseat){
-    	   mLauncher.getHotseat().getLayout().mOccupied[cellInfo.cellX][ cellInfo.cellY]=false;
+     //  if(isFromHotseat){
+    	//   mLauncher.getHotseat().getLayout().mOccupied[cellInfo.cellX][ cellInfo.cellY]=false;
     	   
-    	   Log.i(Launcher.TAG, TAG+"startDrag( 00..............   cellInfo.cellX :"+ cellInfo.cellX+cellInfo.cellY);
-       }else{
+    	 //  Log.i(Launcher.TAG, TAG+"startDrag( 00..............   cellInfo.cellX :"+ cellInfo.cellX+cellInfo.cellY);
+     //  }else{
+
     	   ((CellLayout)getChildAt(cellInfo.screen)).mOccupied[cellInfo.cellX][ cellInfo.cellY]=false;  
     	   
     	   Log.i(Launcher.TAG, TAG+"astartDrag( 11...............    cellInfo.cellX :"+ cellInfo.cellX+cellInfo.cellY);
-       }
+     //  }
      
 
        
@@ -3530,83 +3550,83 @@ public class Workspace extends PagedView
         int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
         
         
-       if(mReorderAlarmFinish&&distanceX>22){
-    	   mReorderAlarmTarget[0] =mTargetCell[0];
-    	   mReorderAlarmTarget[1] =mTargetCell[1];
-    	   
-    	   int count =mReorderAlarmTarget[0]  +  mReorderAlarmTarget[1] * 4;
-    	//   Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####...out .......testH:.:  "+testH+"  mOcupied:"+mDragTargetLayout.mOccupied[mTargetCell[0]][mTargetCell[1]]+"  count:"+count+"    mTargetCell:"+mTargetCell[0]+mTargetCell[1]+"   mPreviousTargetCell"+mPreviousTargetCell[0]+mPreviousTargetCell[1]);    
-            	
-         if (mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1]) {
-        
-           if(testH==-1&&mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]){
-        	   
-        	   mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
-
-              //push  
-       
-        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in...push .....testH.:  "+testH+"  testF:"+testF+"  :"+mEmptyCell);	
-              
-         if(mEmptyCell!=null){
-        
-             testH =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
-             testF =mEmptyCell[0]+mEmptyCell[1]*4;
-
-           
-             if(testH>testF){
-            	int temp =testH;
-            			testH=testF;
-            			testF=temp;
-            }
-       
-    	  mLastEmptyCell[0]=mEmptyCell[0];
-          mLastEmptyCell[1]=mEmptyCell[1];  
-
-          dragFromTargetcellToEmptycell();
-         }else{
-        	 mEmptyCell=new int[2];
-        	 testH=-1; 
-         }
-         
-            }else if(count>=testH&&count<=testF&&testH>=0 ){
-      
-           Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.jiaohuan.....testH.:  "+testH+"  testF:"+testF+"  count:"+count+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]);	
-            	//changed
-              mEmptyCell[0] =mPreviousTargetCell[0];
-              mEmptyCell[1] =mPreviousTargetCell[1];
-     
-              dragFromTargetcellToEmptycell();
-            	
-            }else if ((count<testH||count>testF)&&testH>=0){
-            	//huifu xi lie 
-            	
-                mEmptyCell[0] =mPreviousTargetCell[0];
-                mEmptyCell[1] =mPreviousTargetCell[1];
-               	
-                mReorderAlarmTarget[0]=mLastEmptyCell[0];
-                mReorderAlarmTarget[1]=mLastEmptyCell[1];
-            	
-             Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.huifu.....//:  "+testH+"  testF:"+testF+"  count:"+count);	
-
-                dragFromTargetcellToEmptycell();
-               	
-            	//huifu zhuangtai 
-                
-                testH=-2;
-            	  postDelayed(new Runnable() {
-          
-                      public void run() {    
-                    	  
-                    	  testH=-1;
-                      }
-            	  },500);
-            }
-         }
-           
-         mPreviousTargetCell[0] = mReorderAlarmTarget[0];
-         mPreviousTargetCell[1] = mReorderAlarmTarget[1];
-         
-            	   }
+//       if(mReorderAlarmFinish&&distanceX>22){
+//    	   mReorderAlarmTarget[0] =mTargetCell[0];
+//    	   mReorderAlarmTarget[1] =mTargetCell[1];
+//    	   
+//    	   int count =mReorderAlarmTarget[0]  +  mReorderAlarmTarget[1] * 4;
+//    	//   Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####...out .......testH:.:  "+testH+"  mOcupied:"+mDragTargetLayout.mOccupied[mTargetCell[0]][mTargetCell[1]]+"  count:"+count+"    mTargetCell:"+mTargetCell[0]+mTargetCell[1]+"   mPreviousTargetCell"+mPreviousTargetCell[0]+mPreviousTargetCell[1]);    
+//            	
+//         if (mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1]) {
+//        
+//           if(testH==-1&&mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]){
+//        	   
+//        	   mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
+//
+//              //push  
+//       
+//        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in...push .....testH.:  "+testH+"  testF:"+testF+"  :"+mEmptyCell);	
+//              
+//         if(mEmptyCell!=null){
+//        
+//             testH =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
+//             testF =mEmptyCell[0]+mEmptyCell[1]*4;
+//
+//           
+//             if(testH>testF){
+//            	int temp =testH;
+//            			testH=testF;
+//            			testF=temp;
+//            }
+//       
+//    	  mLastEmptyCell[0]=mEmptyCell[0];
+//          mLastEmptyCell[1]=mEmptyCell[1];  
+//
+//          dragFromTargetcellToEmptycell();
+//         }else{
+//        	 mEmptyCell=new int[2];
+//        	 testH=-1; 
+//         }
+//         
+//            }else if(count>=testH&&count<=testF&&testH>=0 ){
+//      
+//           Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.jiaohuan.....testH.:  "+testH+"  testF:"+testF+"  count:"+count+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]);	
+//            	//changed
+//              mEmptyCell[0] =mPreviousTargetCell[0];
+//              mEmptyCell[1] =mPreviousTargetCell[1];
+//     
+//              dragFromTargetcellToEmptycell();
+//            	
+//            }else if ((count<testH||count>testF)&&testH>=0){
+//            	//huifu xi lie 
+//            	
+//                mEmptyCell[0] =mPreviousTargetCell[0];
+//                mEmptyCell[1] =mPreviousTargetCell[1];
+//               	
+//                mReorderAlarmTarget[0]=mLastEmptyCell[0];
+//                mReorderAlarmTarget[1]=mLastEmptyCell[1];
+//            	
+//             Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.huifu.....//:  "+testH+"  testF:"+testF+"  count:"+count);	
+//
+//                dragFromTargetcellToEmptycell();
+//               	
+//            	//huifu zhuangtai 
+//                
+//                testH=-2;
+//            	  postDelayed(new Runnable() {
+//          
+//                      public void run() {    
+//                    	  
+//                    	  testH=-1;
+//                      }
+//            	  },500);
+//            }
+//         }
+//           
+//         mPreviousTargetCell[0] = mReorderAlarmTarget[0];
+//         mPreviousTargetCell[1] = mReorderAlarmTarget[1];
+//         
+//            	   }
        
        
        final View dragOverView = mDragTargetLayout.getChildAt(mTargetCell[0],
@@ -3770,7 +3790,7 @@ public class Workspace extends PagedView
         final Runnable exitSpringLoadedRunnable = new Runnable() {
             @Override
             public void run() {
-                mLauncher.exitSpringLoadedDragModeDelayed(true, false);
+                //mLauncher.exitSpringLoadedDragModeDelayed(true, false);
             }
         };
 
@@ -3882,7 +3902,7 @@ public class Workspace extends PagedView
             if (touchXY != null) {
                 mTargetCell = findNearestArea((int) touchXY[0], (int) touchXY[1], spanX, spanY,
                         cellLayout, mTargetCell);
-                d.postAnimationRunnable = exitSpringLoadedRunnable;
+                //d.postAnimationRunnable = exitSpringLoadedRunnable;
                 if (createUserFolderIfNecessary(view, container, cellLayout, mTargetCell, true,
                         d.dragView, d.postAnimationRunnable)) {
                     return;
@@ -3916,8 +3936,8 @@ public class Workspace extends PagedView
                 // cellLayout to its final transform -- this means we animate the drag view to
                 // the correct final location.
                 setFinalTransitionTransform(cellLayout);
-                mLauncher.getDragLayer().animateViewIntoPosition(d.dragView, view,
-                        exitSpringLoadedRunnable);
+                //mLauncher.getDragLayer().animateViewIntoPosition(d.dragView, view,
+                        //exitSpringLoadedRunnable);
                 resetTransitionTransform(cellLayout);
             }
         }
@@ -4015,11 +4035,12 @@ public class Workspace extends PagedView
     	Log.i(Launcher.TAG,TAG+ ".onDropCompleted..........................success:"+(target.getClass().getName())+(mDragInfo .getClass().getName()));
         if (success) {
         	CellLayout cell =null;
-       	  
+         	cell= getParentCellLayoutForView(mDragInfo.cell);
             if (target != this) {
                 if (mDragInfo != null) {
-                	cell= getParentCellLayoutForView(mDragInfo.cell);
+               
                 	cell.removeView(mDragInfo.cell);
+                	
                 	//   Log.i(Launcher.TAG,TAG+ ".onDropCompleted.111.........................success:"+cell);
                     if (mDragInfo.cell instanceof DropTarget) {
                         mDragController.removeDropTarget((DropTarget) mDragInfo.cell);
@@ -4033,7 +4054,9 @@ public class Workspace extends PagedView
             }
 
             if(startMovedPage !=-1){
-    	
+    	    if(cell!=null){
+    	    	
+    	   
              cell = (CellLayout) getChildAt(startMovedPage);
              int [] lastOccupiedCell=  cell.existsLastOccupiedCell();
           	
@@ -4049,7 +4072,7 @@ public class Workspace extends PagedView
             	}
        
              }
-        
+    	    }
              startMovedPage=-1;	
             }
         } else if (mDragInfo != null) {
@@ -4459,16 +4482,14 @@ public class Workspace extends PagedView
       	 postDelayed(new Runnable() {
              public void run() {
       			
-            updataDBallSceens(pageCount,-1);	
+            updataDBWhenRemoveScreen(pageCount,-1);	
       			
       		}
       	},1500);
 
     }
     
-    void updataDBallSceens(int pageCount,int addOrRemove){
-    	
-    	
+    void updataDBWhenRemoveScreen(int pageCount,int addOrRemove){
     	
     	 SQLiteOpenHelper sph = new LauncherProvider.DatabaseHelper(getContext());
 
@@ -4492,7 +4513,43 @@ public class Workspace extends PagedView
     	 db.close();
     	 db=null;
     	 sph=null;
- 	Log.i(Launcher.TAG,TAG+ "..........................db.execSQL"+pageCount+addOrRemove);
+ 	     Log.i(Launcher.TAG,TAG+ "..........................db.execSQL"+pageCount+addOrRemove);
+    }
+    
+    public void updateAllScreen(){
+    	int  screenNum = getChildCount();
+    	CellLayoutChildren cellLayoutChildren=null;
+    	for(int i = 0 ; i < screenNum ; i++){
+    		cellLayoutChildren =((CellLayout)getChildAt(i)).getChildrenLayout();
+    		
+    		
+            int itemNum =	cellLayoutChildren.getChildCount();	 
+
+            ItemInfo item =null;
+            for(int j = 0 ; j < itemNum ; j++){
+          	
+          	
+          	  item= (ItemInfo) cellLayoutChildren.getChildAt(j).getTag();
+          	  item.screen =i;
+          	  LauncherModel.addOrMoveItemInDatabase(mLauncher, item, item.container, item.screen, item.cellX, item.cellY);
+          	}
+    		
+    	}
+    	
+      	
+ 	  cellLayoutChildren =((CellLayout)mLauncher.getHotseat().getLayout()).getChildrenLayout();
+        int countHotseat =	cellLayoutChildren.getChildCount();	 
+
+          ItemInfo item =null;
+          for(int i = 0 ; i < countHotseat ; i++){
+        	
+        	
+        	  item= (ItemInfo) cellLayoutChildren.getChildAt(i).getTag();
+        	  
+        	  LauncherModel.addOrMoveItemInDatabase(mLauncher, item, item.container, item.cellX, item.cellX, item.cellY);
+        	}
+    	
+    	
     }
 
     void updateShortcuts(ArrayList<ShortcutInfo> apps) {

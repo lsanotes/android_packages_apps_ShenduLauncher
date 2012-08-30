@@ -40,6 +40,7 @@
     <string name="group_shortcuts" msgid="9133529424900391877">"快捷方式"</string>
     <string name="group_widgets" msgid="6704978494073105844">"窗口小部件"</string>
     <string name="group_wallpapers" msgid="1568191644272224858">"壁纸"</string>
+      <string name="group_more_wallpapers" msgid="1568191644272224858">"更多壁纸"</string>
     <string name="out_of_space" msgid="8365249326091984698">"此主屏幕上已没有空间。"</string>
     <string name="invalid_hotseat_item" msgid="6545340627805449250">"该窗口小部件太大，超出基座区域可用空间。"</string>
     <string name="shortcut_installed" msgid="7071557296331322355">"已创建“<xliff:g id="NAME">%s</xliff:g>”快捷方式。"</string>
@@ -182,4 +183,8 @@
     
     <string name="preferences_interface_homescreen_general_screen_folder_style_title">文件夹样式</string>
     <string name="preferences_interface_homescreen_general_screen_folder_style_summary">选择文件夹显示的样式</string>
+    <string name="editstate_choice_widget">插件</string>
+    <string name="editstate_choice_wallpaper">壁纸</string>
+    <string name="editstate_choice_theme">主题</string>
+    <string name="editstate_choice_specially_effect">特效</string>
 </resources>

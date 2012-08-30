@@ -600,9 +600,10 @@ public class CellLayout extends ViewGroup {
 
     @Override
     public void removeView(View view) {
-    	 Log.i(Launcher.TAG, TAG+"removeView  markCellsAsUnoccupiedForView  ...........        ");
+    	
         markCellsAsUnoccupiedForView(view);
         mChildren.removeView(view);
+      //  Log.i(Launcher.TAG, TAG+"removeView    ....hou.......mChildren.getChildCount():        "+mChildren.getChildCount());
     }
 
     @Override
@@ -1207,7 +1208,7 @@ public class CellLayout extends ViewGroup {
     int[] findNearestArea(int pixelX, int pixelY, int spanX, int spanY, View ignoreView,
             boolean ignoreOccupied, int[] result) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-      //  markCellsAsUnoccupiedForView(ignoreView);
+       markCellsAsUnoccupiedForView(ignoreView);
 
         // For items with a spanX / spanY > 1, the passed in point (pixelX, pixelY) corresponds
         // to the center of the item, but we are searching based on the top-left cell, so
@@ -1261,7 +1262,7 @@ public class CellLayout extends ViewGroup {
         // re-mark space taken by ignoreView as occupied
 
        //remove by zlf
-    //    markCellsAsOccupiedForView(ignoreView);
+        markCellsAsOccupiedForView(ignoreView);
 
 
         // Return -1, -1 if no suitable location found
@@ -1861,7 +1862,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         Log.i(Launcher.TAG, TAG+"..onMove(  markCellsAsUnoccupiedForView  ...........        ");
         //remove by zlf
-      //  markCellsAsUnoccupiedForView(view);
+        markCellsAsUnoccupiedForView(view);
         Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
         markCellsForView(newCellX, newCellY, lp.cellHSpan, lp.cellVSpan, true);
     }

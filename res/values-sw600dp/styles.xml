@@ -100,7 +100,7 @@
         <item name="android:paddingBottom">0dp</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
-        <item name="android:drawablePadding">4dp</item>
+        <item name="android:drawablePadding">0dp</item>
         <item name="android:textSize">13sp</item>
     </style>
     <style name="WorkspaceIcon.Landscape.AppsCustomize">
@@ -115,6 +115,11 @@
         <item name="android:paddingRight">32dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:maxWidth">240dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginBottom">0dp</item>
     </style>
 
     <!-- QSB Search / Drop Target bar -->

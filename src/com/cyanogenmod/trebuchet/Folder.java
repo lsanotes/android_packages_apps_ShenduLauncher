@@ -661,8 +661,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         // In order to find the visual center, we shift by half the dragRect
         res[0] = left + dragView.getDragRegion().width() / 2;
-        res[1] = top + dragView.getDragRegion().height() / 2;
-
+       res[1] = top + dragView.getDragRegion().height() / 2-mFolderNameHeight;
+      //  res[1] = top + dragView.getDragRegion().height() / 2
         return res;
     }
 
@@ -775,6 +775,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             }
             done = countX == oldCountX && countY == oldCountY;
         }
+   //     mContent.setGridSize(mMaxCountX, countY);
+        //changed by zlf
         mContent.setGridSize(countX, countY);
         arrangeChildren(list);
     }

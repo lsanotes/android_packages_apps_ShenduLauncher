@@ -22,12 +22,15 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -42,7 +45,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     static final String LOG_TAG = "AppsCustomizeTabHost";
 
     private static final String APPS_TAB_TAG = "APPS";
+    private static final String WALLPAPERS_TAB_TAG = "WALLPAPERS";
     private static final String WIDGETS_TAB_TAG = "WIDGETS";
+    private static final String THEMES_TAB_TAG = "THEMES";
+    private static final String EFFECTS_TAB_TAG = "EFFECTS";
 
     private final LayoutInflater mLayoutInflater;
     private ViewGroup mTabs;
@@ -57,6 +63,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     private boolean mInTransition;
     private boolean mResetAfterTransition;
     private Animator mLauncherTransition;
+    
+    private FrameLayout mTabViewLayout;
+    private TextView mTabLabel;
+    private ImageView mTabLabelIndicator;
 
     // Preferences
     private boolean mFadeScrollingIndicator;
@@ -80,6 +90,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     private void setContentTypeImmediate(AppsCustomizeView.ContentType type) {
         mAppsCustomizePane.hideIndicator(false);
         mAppsCustomizePane.setContentType(type);
+        mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
     }
     void selectAppsTab() {
         setContentTypeImmediate(AppsCustomizeView.ContentType.Apps);
@@ -120,36 +131,65 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         };
 
         // Create the tabs
-        TextView tabView;
+        //TextView tabView;
         String label;
-        label = mContext.getString(R.string.all_apps_button_label);
+        /*label = mContext.getString(R.string.all_apps_button_label);
         tabView = (TextView) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
         tabView.setText(label);
         tabView.setContentDescription(label);
         tabView.setOnLongClickListener(new View.OnLongClickListener() {
                 public boolean onLongClick(View v) {
-                 //   mLauncher.onLongClickAppsTab(v);
+                    mLauncher.onLongClickAppsTab(v);
                     return true;
                 }
         });
-        addTab(newTabSpec(APPS_TAB_TAG).setIndicator(tabView).setContent(contentFactory));
-        label = mContext.getString(R.string.widgets_tab_label);
-        tabView = (TextView) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
-        tabView.setText(label);
-        tabView.setContentDescription(label);
-        addTab(newTabSpec(WIDGETS_TAB_TAG).setIndicator(tabView).setContent(contentFactory));
+        addTab(newTabSpec(APPS_TAB_TAG).setIndicator(tabView).setContent(contentFactory));*/
+        
+        //choice widget
+        label = mContext.getString(R.string.editstate_choice_widget);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(WIDGETS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        onTabChanged(WIDGETS_TAB_TAG);
+        
+        //choice wallpaper
+        label = mContext.getString(R.string.editstate_choice_wallpaper);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(WALLPAPERS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        
+        //choice theme
+        label = mContext.getString(R.string.editstate_choice_theme);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        
+        //choice specially effect
+        label = mContext.getString(R.string.editstate_choice_specially_effect);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(EFFECTS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        
         setOnTabChangedListener(this);
 
         // Setup the key listener to jump between the last tab view and the market icon
-        AppsCustomizeTabKeyEventListener keyListener = new AppsCustomizeTabKeyEventListener();
+        /*AppsCustomizeTabKeyEventListener keyListener = new AppsCustomizeTabKeyEventListener();
         View lastTab = tabs.getChildTabViewAt(tabs.getTabCount() - 1);
         lastTab.setOnKeyListener(keyListener);
         View shopButton = findViewById(R.id.market_button);
-        shopButton.setOnKeyListener(keyListener);
+        shopButton.setOnKeyListener(keyListener);*/
 
         // Soft menu button
-        View overflowMenuButton = findViewById(R.id.overflow_menu_button);
-        overflowMenuButton.setOnKeyListener(keyListener);
+       /* View overflowMenuButton = findViewById(R.id.overflow_menu_button);
+        overflowMenuButton.setOnKeyListener(keyListener);*/
 
         // Hide the tab bar until we measure
         mTabsContainer.setAlpha(0f);
@@ -194,7 +234,25 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             mSuppressContentCallback = false;
             return;
         }
-
+        //Log.i("hhl", "===AppsCustomizeTabHost.java..onTabChanged====="+type+"===="+getCurrentTab()+"=="+
+        		//getCurrentTabTag()+"==="+getCurrentTabView()+"==="+getCurrentView());
+        /**
+         * add by hhl
+         * userd to update tab widget display style
+         */
+        int size = getTabWidget().getChildCount();
+        for(int i=0;i<size;i++){ 
+        	mTabViewLayout = (FrameLayout)getTabWidget().getChildAt(i);
+            mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+            mTabLabelIndicator = (ImageView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_indicator_id);
+        	if(getCurrentTab()==i){
+        		mTabLabel.setTextColor(Color.BLUE);
+        		mTabLabelIndicator.setVisibility(View.VISIBLE);
+        	}else{
+        		mTabLabel.setTextColor(Color.BLACK);
+        		mTabLabelIndicator.setVisibility(View.GONE);
+        	}
+        }
         mAppsCustomizePane.onTabChanged(type);
 
     }
@@ -212,6 +270,12 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             return AppsCustomizeView.ContentType.Apps;
         } else if (tag.equals(WIDGETS_TAB_TAG)) {
             return AppsCustomizeView.ContentType.Widgets;
+        } else if(tag.equals(WALLPAPERS_TAB_TAG)){
+            return AppsCustomizeView.ContentType.Wallpapers;
+        } else if(tag.equals(THEMES_TAB_TAG)){
+            return AppsCustomizeView.ContentType.Themes;
+        } else if(tag.equals(EFFECTS_TAB_TAG)){
+            return AppsCustomizeView.ContentType.Effects;
         }
         return AppsCustomizeView.ContentType.Apps;
     }

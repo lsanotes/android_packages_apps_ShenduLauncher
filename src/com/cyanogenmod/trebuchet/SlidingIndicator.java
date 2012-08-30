@@ -20,7 +20,7 @@ public class SlidingIndicator extends View {
     public static final int BAR_COLOR = 0xbbADADAD;  
     public static final int HIGHLIGHT_COLOR = 0Xff0072E3;  
     public static final int FADE_DELAY = 2000;  
-    public static final int FADE_DURATION = 500;  
+    public static final int FADE_DURATION = 0;  
   
     private int amount, currentPage;  
     private Paint barPaint, highlightPaint;  
@@ -38,7 +38,6 @@ public class SlidingIndicator extends View {
         fadeDelay = FADE_DELAY;  
         fadeDuration = FADE_DURATION;  
         if (attrs != null) {  
-        	Log.i("hhl", "===SlidingIndicator.java...attrs!=null...43...");
             TypedArray typedArr = context.obtainStyledAttributes(attrs, R.styleable.sliding_SlidingIndicator);  
             barColor = typedArr.getColor(R.styleable.sliding_SlidingIndicator_barColor, BAR_COLOR);  
             highlightColor = typedArr.getColor(R.styleable.sliding_SlidingIndicator_highlightColor, HIGHLIGHT_COLOR);  
@@ -46,8 +45,6 @@ public class SlidingIndicator extends View {
             fadeDuration = typedArr.getInteger(R.styleable.sliding_SlidingIndicator_fadeDuration, FADE_DURATION);  
             ovalRadius = typedArr.getDimension(R.styleable.sliding_SlidingIndicator_roundRectRadius, 2.0f);  
             typedArr.recycle();  
-        	Log.i("hhl", "===SlidingIndicator.java...51..."+barColor+"=="+highlightColor+"=="
-        			+fadeDelay+"=="+fadeDuration+"=="+ovalRadius);
         }  
         initialization(barColor, highlightColor, fadeDuration);  
     }  
@@ -69,13 +66,13 @@ public class SlidingIndicator extends View {
         highlightPaint.setColor(highlightColor);  
         highlightPaint.setAntiAlias(true); 
         
-        animFadeout = new AlphaAnimation(1f, 0f);  
-        animFadeout.setDuration(fadeDuration);  
-        animFadeout.setRepeatCount(0);  
-        animFadeout.setInterpolator(new LinearInterpolator());  
-       
-        animFadeout.setFillEnabled(true);  
-        animFadeout.setFillAfter(true);  
+//        animFadeout = new AlphaAnimation(1f, 0f);  
+//        animFadeout.setDuration(fadeDuration);  
+//        animFadeout.setRepeatCount(0);  
+//        animFadeout.setInterpolator(new LinearInterpolator());  
+//       
+//        animFadeout.setFillEnabled(true);  
+//        animFadeout.setFillAfter(true);  
   
         rectFBody = new RectF();  
         rectFIndicator = new RectF();  
@@ -89,17 +86,17 @@ public class SlidingIndicator extends View {
         }  
         amount = num;  
         invalidate();  
-        fadeOut();  
+      //  fadeOut();  
     }  
   
-    private void fadeOut() {  
-        if (fadeDuration > 0) {  
-            clearAnimation();  
-        
-            animFadeout.setStartTime(AnimationUtils.currentAnimationTimeMillis() + fadeDelay);  
-            setAnimation(animFadeout);  
-        }  
-    }  
+//    private void fadeOut() {  
+//        if (fadeDuration > 0) {  
+//            clearAnimation();  
+//        
+//            animFadeout.setStartTime(AnimationUtils.currentAnimationTimeMillis() + fadeDelay);  
+//            setAnimation(animFadeout);  
+//        }  
+//    }  
   
     public int getCurrentPage() {  
         return currentPage;  
@@ -114,7 +111,7 @@ public class SlidingIndicator extends View {
             this.currentPage = idx;
           //  this.position = currentPage * getPageWidth(); 
             invalidate();  
-            fadeOut();  
+          //  fadeOut();  
         
     }  
   

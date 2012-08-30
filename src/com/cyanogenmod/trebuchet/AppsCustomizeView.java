@@ -22,7 +22,10 @@ public interface AppsCustomizeView {
 
     public enum ContentType {
         Apps,
-        Widgets
+        Widgets,
+        Wallpapers,
+        Themes,
+        Effects
     }
 
     public enum SortMode {
@@ -67,6 +70,10 @@ public interface AppsCustomizeView {
     public void updateApps(ArrayList<ShortcutInfo> list);
 
     public void onPackagesUpdated();
+    
+    public void onWallpaperChanged();
+    
+    public void shenduUpdateTheArrowImageView(int page);
 
     public void reset();
 

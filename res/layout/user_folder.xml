@@ -22,22 +22,11 @@
     android:orientation="vertical"
     android:background="@drawable/portal_container_holo">
 
-    <com.cyanogenmod.trebuchet.CellLayout
-        android:id="@+id/folder_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="0dip"
-        android:paddingRight="0dip"
-        android:paddingTop="0dip"
-        android:paddingBottom="0dip"
-        android:cacheColorHint="#ff333333"
-        android:hapticFeedbackEnabled="false"
-        launcher:widthGap="@dimen/folder_width_gap"
-        launcher:heightGap="@dimen/folder_height_gap"
-        launcher:cellWidth="@dimen/folder_cell_width"
-        launcher:cellHeight="@dimen/folder_cell_height" />
+    
 
-    <com.cyanogenmod.trebuchet.FolderEditText
+   
+	
+   <com.cyanogenmod.trebuchet.FolderEditText
         android:id="@+id/folder_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,4 +41,23 @@
         android:gravity="center_horizontal"
         android:singleLine="true"
         android:imeOptions="flagNoExtractUi"/>
+    
+    <com.cyanogenmod.trebuchet.CellLayout
+        android:id="@+id/folder_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="0dip"
+        android:paddingRight="0dip"
+        android:paddingTop="0dip"
+        android:paddingBottom="0dip"
+         android:background="#ffffffff"
+        android:cacheColorHint="#ff333333"
+        android:hapticFeedbackEnabled="false"
+        launcher:widthGap="@dimen/folder_width_gap"
+        launcher:heightGap="@dimen/folder_height_gap"
+        launcher:cellWidth="@dimen/folder_cell_width"
+        launcher:cellHeight="@dimen/folder_cell_height" />
+
+   
+    
 </com.cyanogenmod.trebuchet.Folder>

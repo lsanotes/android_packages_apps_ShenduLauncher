@@ -102,7 +102,7 @@
         <item name="android:paddingBottom">0dp</item>
         <item name="android:paddingLeft">0dp</item>
         <item name="android:paddingRight">0dp</item>
-        <item name="android:drawablePadding">2dp</item>
+        <item name="android:drawablePadding">0dp</item>
     </style>
     <style name="WorkspaceIcon.Landscape.AppsCustomize">
         <item name="android:background">@null</item>
@@ -116,10 +116,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/qsb_bar_height</item>
         <item name="android:layout_gravity">top|center_horizontal</item>
-        <item name="android:background">@drawable/search_bg_panel</item>
+     
         <item name="android:paddingLeft">@dimen/qsb_padding_left</item>
         <item name="android:paddingRight">@dimen/qsb_padding_right</item>
     </style>
+    <!--     <item name="android:background">@drawable/search_bg_panel</item>      -->
     <style name="SearchDropTargetBar">
         <item name="android:orientation">horizontal</item>
         <item name="android:layout_width">match_parent</item>
@@ -163,7 +164,7 @@
         <item name="android:gravity">center</item>
         <item name="android:paddingLeft">20dp</item>
         <item name="android:paddingRight">20dp</item>
-        <item name="android:background">@drawable/tab_widget_indicator_selector</item>
+        <item name="android:background">@null</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>

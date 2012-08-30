@@ -93,6 +93,20 @@ public class PagedViewIcon extends TextView implements Checkable {
         setText(info.title);
         setTag(info);
     }
+    
+    public void applyFromShenduPrograme(ShenduPrograme info,HolographicOutlineHelper holoOutlineHelper) {
+        mHolographicOutlineHelper = holoOutlineHelper;
+        //mIcon = getContext().getResources().getDrawable(info.getResSmallId());
+        int resId = info.getResSmallId();
+        //Log.i("hhl", "====PagedViewIcon.java====applyFromShenduPrograme()===="+resId);
+        if(resId==0){
+            setCompoundDrawablesWithIntrinsicBounds(null,info.getResDrawable(),null,null);
+        }else{
+            setCompoundDrawablesWithIntrinsicBounds(0,info.getResSmallId(),0,0);
+        }
+        setText(info.getName());
+        setTag(info);
+    }
 
     public void setHolographicOutline(Bitmap holoOutline) {
         mHolographicOutline = holoOutline;

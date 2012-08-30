@@ -25,50 +25,62 @@
     launcher:blurColor="#FF6B8CF0"
     launcher:outlineColor="#FF8CD2FF"
 
-    android:background="@drawable/focusable_view_bg"
     android:focusable="true">
-
-    <LinearLayout
+	
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:orientation="horizontal">
-        <!-- The name of the widget. -->
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/widget_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
+        android:layout_height="match_parent" >
 
-            android:textColor="#FFFFFFFF"
-            android:textSize="13sp" />
+        <LinearLayout
+            android:id="@+id/apps_customize_widget_name_parent_id"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal" >
 
-        <!-- The original dimensions of the widget (can't be the same text as above due to different
-             style. -->
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/widget_dims"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="0"
-            android:gravity="left"
+            <!-- The name of the widget. -->
 
-            android:textColor="#FF555555"
-            android:textSize="12sp" />
-    </LinearLayout>
+            <TextView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/widget_name"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:gravity="left"
+                android:singleLine="true"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
 
-    <!-- The icon of the widget. -->
-    <com.cyanogenmod.trebuchet.PagedViewWidgetImageView
-        android:id="@+id/widget_preview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingTop="@dimen/app_widget_preview_padding_top"
-        android:paddingLeft="@dimen/app_widget_preview_padding_left"
-        android:scaleType="matrix" />
+            <!--
+             The original dimensions of the widget (can't be the same text as above due to different
+             style.
+            -->
+
+            <TextView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/widget_dims"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="0"
+                android:gravity="left"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
+        </LinearLayout>
+        <!-- The icon of the widget.-->
+
+        <com.cyanogenmod.trebuchet.PagedViewWidgetImageView
+            android:id="@+id/widget_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/apps_customize_widget_name_parent_id"
+            android:scaleType="centerInside" />
+             
+    </RelativeLayout>
+
 </com.cyanogenmod.trebuchet.PagedViewWidget>

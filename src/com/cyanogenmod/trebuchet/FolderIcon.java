@@ -290,15 +290,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 	        	break;
 	        default:break;
         }
-        Log.i("hhl", "...FolderIcon.java...willAcceptItem===="+item+"==="+itemCount);
+       
         if(itemCount>0 && !mFolder.isFull(itemCount) && item != mInfo && !mInfo.opened){
         	resultFlag = true;
         }
-        return resultFlag;
-        /*return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT ||
-                itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER) &&
-                !mFolder.isFull() && item != mInfo && !mInfo.opened);*/
+       // return resultFlag;
+       return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
+                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
+                resultFlag);
     }
 
     public boolean acceptDrop(Object dragInfo) {

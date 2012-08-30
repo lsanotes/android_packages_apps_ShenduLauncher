@@ -309,8 +309,12 @@ public abstract class PagedView extends ViewGroup {
         }
 
         mCurrentPage = Math.max(0, Math.min(currentPage, getPageCount() - 1));
-        updateCurrentPageScroll();
         updateScrollingIndicator();
+        updateCurrentPageScroll();
+        if (mScrollIndicator != null) {
+        	   mScrollIndicator.setCurrentPage(mCurrentPage);
+        }
+     
         notifyPageSwitchListener();
         invalidate();
     }
@@ -495,7 +499,8 @@ public abstract class PagedView extends ViewGroup {
         // We also wait until we set the measured dimensions before flushing the cache as well, to
         // ensure that the cache is filled with good values.
         invalidateCachedOffsets();
-        updateScrollingIndicatorPosition();
+        
+      //  updateScrollingIndicatorPosition();
 
         if (childCount > 0) {
             mMaxScrollX = getChildOffset(childCount - 1) - getRelativeChildOffset(childCount - 1);
@@ -979,15 +984,15 @@ public abstract class PagedView extends ViewGroup {
 
     protected void animateClickFeedback(View v, final Runnable r) {
         // animate the view slightly to show click feedback running some logic after it is "pressed"
-        ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.
-                loadAnimator(mContext, R.anim.paged_view_click_feedback);
-        anim.setTarget(v);
-        anim.addListener(new AnimatorListenerAdapter() {
-            public void onAnimationRepeat(Animator animation) {
+        //ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.
+                //loadAnimator(mContext, R.anim.paged_view_click_feedback);
+        //anim.setTarget(v);
+        //anim.addListener(new AnimatorListenerAdapter() {
+            //public void onAnimationRepeat(Animator animation) {
                 r.run();
-            }
-        });
-        anim.start();
+            //}
+        //});
+        //anim.start();
     }
 
     protected void determineScrollingStart(MotionEvent ev) {
@@ -1218,11 +1223,21 @@ public abstract class PagedView extends ViewGroup {
                         (isFling && velocityX > 0)) && mCurrentPage > 0) {
                     finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage - 1;
                     snapToPageWithVelocity(finalPage, velocityX);
+                    if(mScrollIndicator!=null){
+                    	  mScrollIndicator.setCurrentPage(finalPage);	
+                    }
+                  
                 } else if (((isSignificantMove && deltaX < 0 && !isFling) ||
                         (isFling && velocityX < 0)) &&
                         mCurrentPage < getChildCount() - 1) {
                     finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage + 1;
                     snapToPageWithVelocity(finalPage, velocityX);
+                    
+                    //add by zlf
+                    if(mScrollIndicator!=null ){
+                        mScrollIndicator.setCurrentPage(finalPage);
+                    }
+               
                 } else {
                     snapToDestination();
                 }
@@ -1386,6 +1401,10 @@ public abstract class PagedView extends ViewGroup {
     }
 
     protected void snapToDestination() {
+    	  if(mScrollIndicator!=null){
+    		  mScrollIndicator.setCurrentPage(mCurrentPage);  
+    	  }
+    	  
         snapToPage(getPageNearestToCenterOfScreen(), PAGE_SNAP_ANIMATION_DURATION);
     }
 
@@ -1702,6 +1721,7 @@ public abstract class PagedView extends ViewGroup {
             mScroller.forceFinished(true);
             mNextPage = INVALID_PAGE;
 
+        	Log.i("hhl", "==PageView.java==invalidatePageData 1111111=="+currentPage+"=="+mIsDataReady);
             // Update all the pages
             syncPages();
 
@@ -1735,7 +1755,7 @@ public abstract class PagedView extends ViewGroup {
             ViewGroup parent = (ViewGroup) getParent();
             mScrollIndicator = (SlidingIndicator) (parent.findViewById(R.id.paged_view_indicator));
             mHasScrollIndicator = mScrollIndicator != null;
-            if (mHasScrollIndicator) {
+            if (mHasScrollIndicator &&mScrollIndicator!=null) {
                 mScrollIndicator.setVisibility(View.VISIBLE);
             }
         }
@@ -1855,7 +1875,7 @@ public abstract class PagedView extends ViewGroup {
 
         getScrollingIndicator();
         if (mScrollIndicator != null) {
-            updateScrollingIndicatorPosition();
+           // updateScrollingIndicatorPosition();
         }
     }
 
@@ -1888,7 +1908,7 @@ public abstract class PagedView extends ViewGroup {
 //        }
 //        mScrollIndicator.setTranslationX(indicatorPos);
 //        mScrollIndicator.invalidate();
-        mScrollIndicator.setCurrentPage(mCurrentPage);
+     //   mScrollIndicator.setCurrentPage(mCurrentPage);
         
     }
 
