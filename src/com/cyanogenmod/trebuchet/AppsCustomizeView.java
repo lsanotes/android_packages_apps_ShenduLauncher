@@ -28,10 +28,10 @@ public interface AppsCustomizeView {
         Effects
     }
 
-    public enum SortMode {
+    /*public enum SortMode {
         Title,
         InstallDate
-    }
+    }*/
 
     public void setup(Launcher launcher, DragController dragController);
 
@@ -41,11 +41,11 @@ public interface AppsCustomizeView {
 
     public boolean isContentType(ContentType type);
 
-    public SortMode getSortMode();
+    //public SortMode getSortMode();
 
-    public void showIndicator(boolean immediately);
+    //public void showIndicator(boolean immediately);
 
-    public void hideIndicator(boolean immediately);
+    //public void hideIndicator(boolean immediately);
 
     public void loadContent();
 
@@ -53,15 +53,15 @@ public interface AppsCustomizeView {
 
     public void onTabChanged(ContentType type);
 
-    public void showAllAppsCling();
+    //public void showAllAppsCling();
 
-    public void setCurrentToApps();
+    //public void setCurrentToApps();
 
-    public void setCurrentToWidgets();
+    //public void setCurrentToWidgets();
 
-    public void setSortMode(SortMode mode);
+    //public void setSortMode(SortMode mode);
 
-    public void setApps(ArrayList<ShortcutInfo> list);
+    //public void setApps(ArrayList<ShortcutInfo> list);
 
     public void addApps(ArrayList<ShortcutInfo> list);
 

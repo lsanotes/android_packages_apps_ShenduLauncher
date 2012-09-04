@@ -46,21 +46,21 @@ public class InfoDropTarget extends ButtonDropTarget {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mOriginalTextColor = getTextColors();
+        //mOriginalTextColor = getTextColors();
 
         // Get the hover color
         Resources r = getResources();
         mHoverColor = r.getColor(R.color.info_target_hover_tint);
         mHoverPaint.setColorFilter(new PorterDuffColorFilter(
                 mHoverColor, PorterDuff.Mode.SRC_ATOP));
-        mDrawable = (TransitionDrawable) getCompoundDrawables()[0];
+        mDrawable = (TransitionDrawable) getDrawable();
         mDrawable.setCrossFadeEnabled(true);
 
         // Remove the text in the Phone UI in landscape
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (!LauncherApplication.isScreenLarge()) {
-                setText("");
+                //setText("");
             }
         }
     }
@@ -97,7 +97,7 @@ public class InfoDropTarget extends ButtonDropTarget {
 
         mActive = isVisible;
         mDrawable.resetTransition();
-        setTextColor(mOriginalTextColor);
+        //setTextColor(mOriginalTextColor);
         ((ViewGroup) getParent()).setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
@@ -111,7 +111,7 @@ public class InfoDropTarget extends ButtonDropTarget {
         super.onDragEnter(d);
 
         mDrawable.startTransition(mTransitionDuration);
-        setTextColor(mHoverColor);
+        //setTextColor(mHoverColor);
     }
 
     public void onDragExit(DragObject d) {
@@ -119,7 +119,7 @@ public class InfoDropTarget extends ButtonDropTarget {
 
         if (!d.dragComplete) {
             mDrawable.resetTransition();
-            setTextColor(mOriginalTextColor);
+            //setTextColor(mOriginalTextColor);
         }
     }
 }

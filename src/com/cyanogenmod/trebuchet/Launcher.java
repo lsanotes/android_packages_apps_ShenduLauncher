@@ -235,7 +235,7 @@ public final class Launcher extends Activity
 
     private static HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
 
-    private Intent mAppMarketIntent = null;
+    //private Intent mAppMarketIntent = null;
 
     // Related to the auto-advancing of widgets
     private final int ADVANCE_MSG = 1;
@@ -329,7 +329,7 @@ public final class Launcher extends Activity
         if (mAppsCustomizeContent != null) {
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
-            Log.i("hhl", "====Launcher.java====onCreate()=======");
+            //Log.i("hhl", "====Launcher.java====onCreate()=======");
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
@@ -640,6 +640,9 @@ public final class Launcher extends Activity
             });
         }
         clearTypedText();
+        if(mWorkspace!=null && !mWorkspace.isSmall()){//used to draw line condition
+        	CellLayout.mIsEditstate = false;
+        }
     }
 
     @Override
@@ -648,7 +651,7 @@ public final class Launcher extends Activity
         
 
         // add by zlf
-        backFromEditMode();
+        //backFromEditMode();
         
         mPaused = true;
         mDragController.cancelDrag();
@@ -1736,7 +1739,7 @@ public final class Launcher extends Activity
     
     private void backFromEditMode(){
     	if(mWorkspace.isSmall()){
-    		
+    		CellLayout.mIsEditstate = false; //used to draw line condition
     		setScreenNoLimit();
     		
     		  final Runnable exitSpringLoadedRunnable = new Runnable() {
@@ -1871,11 +1874,12 @@ public final class Launcher extends Activity
         v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
     }
 
-    public void onClickAppMarketButton(View v) {
+    /* remove by hhl: do not used the market button
+      public void onClickAppMarketButton(View v) {
         if (mAppMarketIntent != null) {
             startActivitySafely(mAppMarketIntent, "app market");
         }
-    }
+    }*/
 
     public void onClickOverflowMenuButton(View v) {
         final PopupMenu popupMenu = new PopupMenu(this, v);
@@ -2170,6 +2174,7 @@ public final class Launcher extends Activity
     
     
     private  void enterEditMode(){
+    	CellLayout.mIsEditstate = true; //used to draw line condition
     	if (mAppsCustomizeTabHost != null) {
             mAppsCustomizeTabHost.selectWidgetsTab();
         }
@@ -2476,7 +2481,7 @@ public final class Launcher extends Activity
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
-        //    mAppsCustomizeTabHost.onTrimMemory();
+            mAppsCustomizeTabHost.onTrimMemory();
         }
     }
 
@@ -2777,10 +2782,10 @@ public final class Launcher extends Activity
 
     }
 
-    private void updateTextButtonWithDrawable(int buttonId, Drawable.ConstantState d) {
+    /*private void updateTextButtonWithDrawable(int buttonId, Drawable.ConstantState d) {
         TextView button = (TextView) findViewById(buttonId);
         button.setCompoundDrawables(d.newDrawable(getResources()), null, null, null);
-    }
+    }*/
 
     private void updateButtonWithDrawable(int buttonId, Drawable.ConstantState d) {
         ImageView button = (ImageView) findViewById(buttonId);
@@ -2868,8 +2873,9 @@ public final class Launcher extends Activity
 
     /**
      * Sets the app market icon
+     * remove by hhl: do not used the market button
      */
-    private void updateAppMarketIcon() {
+    /*private void updateAppMarketIcon() {
         final View marketButton = findViewById(R.id.market_button);
         Intent intent = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_MARKET);
         // Find the app market activity by resolving an intent.
@@ -2892,13 +2898,14 @@ public final class Launcher extends Activity
             marketButton.setVisibility(View.GONE);
             marketButton.setEnabled(false);
         }
-    }
+    }*/
 
-    private void updateAppMarketIcon(Drawable.ConstantState d) {
+    /*private void updateAppMarketIcon(Drawable.ConstantState d) {
         updateTextButtonWithDrawable(R.id.market_button, d);
-    }
+    }*/
 
-    private void updateOverflowMenuButton() {
+    /*remove by hhl: do not used the overflow menu
+      private void updateOverflowMenuButton() {
         View overflowMenuButton = findViewById(R.id.overflow_menu_button);
         if (ViewConfiguration.get(this).hasPermanentMenuKey() ||
                 getResources().getBoolean(R.bool.config_cyanogenmod)) {
@@ -2907,7 +2914,7 @@ public final class Launcher extends Activity
         } else {
             overflowMenuButton.setVisibility(View.VISIBLE);
         }
-    }
+    }*/
 
     /**
      * Displays the shortcut creation dialog and launches, if necessary, the

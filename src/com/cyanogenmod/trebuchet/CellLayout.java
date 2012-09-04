@@ -28,6 +28,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -78,7 +79,7 @@ public class CellLayout extends ViewGroup {
     // return an (x, y) value from helper functions. Do NOT use them to maintain other state.
     private final int[] mTmpXY = new int[2];
     private final int[] mTmpPoint = new int[2];
-    private final PointF mTmpPointF = new PointF();
+    //private final PointF mTmpPointF = new PointF();
     int[] mTempLocation = new int[2];
 
     boolean[][] mOccupied;
@@ -133,6 +134,9 @@ public class CellLayout extends ViewGroup {
 
     private TimeInterpolator mEaseOutInterpolator;
     private CellLayoutChildren mChildren;
+    
+    public static boolean mIsEditstate = false;
+    public boolean mIsCurrentPage = false;
 
     public CellLayout(Context context) {
         this(context, null);
@@ -164,12 +168,15 @@ public class CellLayout extends ViewGroup {
         Log.i(Launcher.TAG, TAG+"..CellLayout()...  "+mCountX+mCountY);
         a.recycle();
 
+        //Log.i("hhl", "===CellLayout.java==333==CellLayout==="+mCellWidth+"*"+mCellHeight+"=="+getClass().getName());
         setAlwaysDrawnWithCacheEnabled(false);
 
         final Resources res = getResources();
 
-        mNormalBackground = res.getDrawable(R.drawable.homescreen_blue_normal_holo);
-        mActiveGlowBackground = res.getDrawable(R.drawable.homescreen_blue_strong_holo);
+        //mNormalBackground = res.getDrawable(R.drawable.homescreen_blue_normal_holo);
+        //mActiveGlowBackground = res.getDrawable(R.drawable.homescreen_blue_strong_holo);
+        mNormalBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
+        mActiveGlowBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
 
         mOverScrollLeft = res.getDrawable(R.drawable.overscroll_glow_left);
         mOverScrollRight = res.getDrawable(R.drawable.overscroll_glow_right);
@@ -181,7 +188,8 @@ public class CellLayout extends ViewGroup {
 
         // Initialize the data structures used for the drag visualization.
 
-        mCrosshairsDrawable = res.getDrawable(R.drawable.gardening_crosshairs);
+        //mCrosshairsDrawable = res.getDrawable(R.drawable.gardening_crosshairs);
+        mCrosshairsDrawable = res.getDrawable(R.drawable.editstate_workspace_crosshairs);
         mEaseOutInterpolator = new DecelerateInterpolator(2.5f); // Quint ease out
 
         // Set up the animation for fading the crosshairs in and out
@@ -385,39 +393,69 @@ public class CellLayout extends ViewGroup {
             bg.setBounds(mBackgroundRect);
             bg.draw(canvas);
         }
-
-        if (mCrosshairsVisibility > 0.0f) {
+        //Log.i("hhl", "^^^^^^CellLayout.java==onDraw=="+mCellHeight+"==="+mCellWidth+"=="+
+    			//getMeasuredHeight()+"*"+getMeasuredWidth()+"==="+mIsEditstate+"*"+mIsCurrentPage+"**"+
+    			//+mWidthGap+"*"+mHeightGap);
+        if(mIsEditstate && mIsCurrentPage){
+        	//if (mCrosshairsVisibility > 0.0f) {
+        	//Log.i("hhl", "^^^^^^CellLayout.java==onDraw=="+mCellHeight+"==="+mCellWidth+"=="+
+        			//getMeasuredHeight()+"*"+getMeasuredWidth()+"==="+mWidthGap+"*"+mHeightGap);
             final int countX = mCountX;
             final int countY = mCountY;
+            final int drawCellWidth = (getMeasuredWidth()-6)/4;
+            final int drawCellHeight = (getMeasuredHeight()-6)/4;
+            //final float MAX_ALPHA = 0.4f;
+            //final int MAX_VISIBLE_DISTANCE = 600;
+            //final float DISTANCE_MULTIPLIER = 0.002f;
 
-            final float MAX_ALPHA = 0.4f;
-            final int MAX_VISIBLE_DISTANCE = 600;
-            final float DISTANCE_MULTIPLIER = 0.002f;
-
-            final Drawable d = mCrosshairsDrawable;
-            final int width = d.getIntrinsicWidth();
-            final int height = d.getIntrinsicHeight();
-
-            int x = getPaddingLeft() - (mWidthGap / 2) - (width / 2);
+            final Drawable dCrosshairs = mCrosshairsDrawable;
+            final int crosshairsWidth = dCrosshairs.getIntrinsicWidth();
+            final int crosshairsHeight = dCrosshairs.getIntrinsicHeight();
+            Paint paintLine = new Paint();
+            paintLine.setStrokeWidth(1);
+            paintLine.setAntiAlias(true);
+            paintLine.setColor(Color.argb(51,255,255,255));
+            //Log.i("hhl", "===CellLayout.java===onDraw()==="+mCellHeight+"*"+mCellWidth+"==="+mHeightGap+"*"+mWidthGap
+            		//+"=="+getPaddingTop()+"*"+getPaddingBottom()+"*"+getPaddingLeft()+"*"+getPaddingRight());
+            //int x = getPaddingLeft() - (mWidthGap / 2) - (width / 2);
+            int x = -(mWidthGap/2)-(crosshairsWidth/2)+3;
             for (int col = 0; col <= countX; col++) {
-                int y = getPaddingTop() - (mHeightGap / 2) - (height / 2);
+            	//if(mIsDragOverlapping){
+    		    canvas.drawLine(
+    		    	col*drawCellWidth-(mWidthGap/2)+3,
+    		    	-(mWidthGap/2)+3,
+    		    	col*drawCellWidth-(mWidthGap/2)+3,
+    		    	drawCellHeight*countX-(mWidthGap/2)+3,
+    		        paintLine);//draw port line
+    		    canvas.drawLine(
+    		    	-(mHeightGap/2)+3,
+    		        col*drawCellHeight-(mHeightGap/2)+3,
+    		        drawCellWidth*countX-(mHeightGap/2)+3,
+    		        col*drawCellHeight-(mHeightGap/2)+3,
+    		        paintLine);//draw land line
+            	//}
+                //int y = getPaddingTop() - (mHeightGap / 2) - (height / 2);
+                int y = -(mHeightGap/2)-(crosshairsHeight/2)+3;
                 for (int row = 0; row <= countY; row++) {
-                    mTmpPointF.set(x - mDragCenter.x, y - mDragCenter.y);
-                    float dist = mTmpPointF.length();
+                    //mTmpPointF.set(x - mDragCenter.x, y - mDragCenter.y);
+                    //float dist = mTmpPointF.length();
                     // Crosshairs further from the drag point are more faint
-                    float alpha = Math.min(MAX_ALPHA,
-                            DISTANCE_MULTIPLIER * (MAX_VISIBLE_DISTANCE - dist));
-                    if (alpha > 0.0f) {
-                        d.setBounds(x, y, x + width, y + height);
-                        d.setAlpha((int) (alpha * 255 * mCrosshairsVisibility));
-                        d.draw(canvas);
-                    }
-                    y += mCellHeight + mHeightGap;
+                    //float alpha = Math.min(MAX_ALPHA,
+                            //DISTANCE_MULTIPLIER * (MAX_VISIBLE_DISTANCE - dist));
+                    //if (alpha > 0.0f) {
+                        dCrosshairs.setBounds(x, y, x + crosshairsWidth, y + crosshairsHeight);
+                        //d.setAlpha((int) (alpha * 255 * mCrosshairsVisibility));
+                        dCrosshairs.draw(canvas);
+                    //}
+                    //y += drawCellHeight + mHeightGap;
+                    y += drawCellHeight;
                 }
-                x += mCellWidth + mWidthGap;
+                //x += drawCellWidth + mWidthGap;
+                x += drawCellWidth;
             }
+        //}
         }
-
+        
         final Paint paint = mDragOutlinePaint;
         for (int i = 0; i < mDragOutlines.length; i++) {
             final float alpha = mDragOutlineAlphas[i];
@@ -846,7 +884,7 @@ public class CellLayout extends ViewGroup {
 
         int numWidthGaps = mCountX - 1;
         int numHeightGaps = mCountY - 1;
-
+        //Log.i("hhl", "===CellLayout.java===onMeasure==="+widthSpecSize+"*"+heightSpecSize);
         if (!LauncherApplication.isScreenLarge()){
             mCellWidth = mOriginalCellWidth = (widthSpecSize - mPaddingLeft - mPaddingRight) / mCountX;
             mCellHeight = mOriginalCellHeight = (heightSpecSize - mPaddingTop - mPaddingBottom) / mCountY;

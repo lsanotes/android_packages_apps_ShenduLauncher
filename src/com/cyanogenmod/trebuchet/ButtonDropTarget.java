@@ -20,13 +20,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
 /**
  * Implements a DropTarget.
  */
-public class ButtonDropTarget extends TextView implements DropTarget, DragController.DragListener {
+public class ButtonDropTarget extends ImageView implements DropTarget, DragController.DragListener {
 
     protected final int mTransitionDuration;
 

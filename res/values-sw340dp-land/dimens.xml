@@ -35,9 +35,9 @@
     <dimen name="hotseat_left_padding">-1dp</dimen>
     <dimen name="hotseat_right_padding">-1dp</dimen>
 
-    <dimen name="qsb_bar_height">48dp</dimen>
+    <!-- <dimen name="qsb_bar_height">48dp</dimen> -->
     <!-- height of the bottom row of controls -->
-    <dimen name="button_bar_height">64dip</dimen>
+    <!-- <dimen name="button_bar_height">64dip</dimen> -->
     <!-- Because portal animations go beyond the bounds of an icon, we need
          to make the dock layout slightly larger than the button_bar_height -->
     <dimen name="button_bar_height_top_padding">0dp</dimen>

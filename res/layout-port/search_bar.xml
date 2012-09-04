@@ -18,7 +18,7 @@
     xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
     style="@style/SearchDropTargetBar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/search_bar_height"
+    android:layout_height="match_parent"
     android:layout_gravity="bottom|center_horizontal"
     android:background="@drawable/search_frame">
    <!-- Global search icon -->

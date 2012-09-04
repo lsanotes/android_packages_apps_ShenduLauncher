@@ -16,8 +16,8 @@
 
 <resources>
 <!-- AppsCustomize -->
-    <dimen name="apps_customize_cell_width">92dp</dimen>
-    <dimen name="apps_customize_cell_height">112dp</dimen>
+    <dimen name="apps_customize_cell_width">100px</dimen>
+    <dimen name="apps_customize_cell_height">200px</dimen>
 
 <!-- Workspace -->
     <!-- the area at the edge of the screen that makes the workspace go left
@@ -30,7 +30,7 @@
     <dimen name="workspace_bottom_padding">25dip</dimen>
     <dimen name="workspace_width_gap">0dp</dimen>
     <dimen name="workspace_height_gap">32dp</dimen>
-    <dimen name="workspace_page_spacing">16dp</dimen>
+    <!-- <dimen name="workspace_page_spacing">16dp</dimen> -->
 
     <dimen name="apps_customize_pageLayoutWidthGap">24dp</dimen>
     <dimen name="apps_customize_pageLayoutHeightGap">36dp</dimen>

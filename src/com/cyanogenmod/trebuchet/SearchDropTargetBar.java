@@ -50,7 +50,7 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     private boolean mIsSearchBarHidden;
     private View mQSBSearchBar;
     private View mDropTargetBar;
-    private ButtonDropTarget mInfoDropTarget;
+    //private ButtonDropTarget mInfoDropTarget;
     private ButtonDropTarget mDeleteDropTarget;
     private int mBarHeight;
     private boolean mDeferOnDragEnd = false;
@@ -72,11 +72,11 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
     public void setup(Launcher launcher, DragController dragController) {
     	mLauncher = launcher;
         dragController.addDragListener(this);
-        dragController.addDragListener(mInfoDropTarget);
+        //dragController.addDragListener(mInfoDropTarget);
         dragController.addDragListener(mDeleteDropTarget);
-        dragController.addDropTarget(mInfoDropTarget);
+        //dragController.addDropTarget(mInfoDropTarget);
         dragController.addDropTarget(mDeleteDropTarget);
-        mInfoDropTarget.setLauncher(launcher);
+        //mInfoDropTarget.setLauncher(launcher);
         mDeleteDropTarget.setLauncher(launcher);
     }
 
@@ -87,11 +87,11 @@ public class SearchDropTargetBar extends FrameLayout implements DragController.D
         // Get the individual components
         mQSBSearchBar = findViewById(R.id.qsb_search_bar);
         mDropTargetBar = findViewById(R.id.drag_target_bar);
-        mInfoDropTarget = (ButtonDropTarget) mDropTargetBar.findViewById(R.id.info_target_text);
+        //mInfoDropTarget = (ButtonDropTarget) mDropTargetBar.findViewById(R.id.info_target_text);
         mDeleteDropTarget = (ButtonDropTarget) mDropTargetBar.findViewById(R.id.delete_target_text);
         mBarHeight = getResources().getDimensionPixelSize(R.dimen.qsb_bar_height);
 
-        mInfoDropTarget.setSearchDropTargetBar(this);
+        //mInfoDropTarget.setSearchDropTargetBar(this);
         mDeleteDropTarget.setSearchDropTargetBar(this);
 
         boolean enableDropDownDropTargets =

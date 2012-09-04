@@ -44,7 +44,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         TabHost.OnTabChangeListener {
     static final String LOG_TAG = "AppsCustomizeTabHost";
 
-    private static final String APPS_TAB_TAG = "APPS";
+    //private static final String APPS_TAB_TAG = "APPS";
     private static final String WALLPAPERS_TAB_TAG = "WALLPAPERS";
     private static final String WIDGETS_TAB_TAG = "WIDGETS";
     private static final String THEMES_TAB_TAG = "THEMES";
@@ -55,10 +55,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     private ViewGroup mTabsContainer;
     private AppsCustomizeView mAppsCustomizePane;
     private boolean mSuppressContentCallback = false;
-    private FrameLayout mAnimationBuffer;
+    //private FrameLayout mAnimationBuffer;
     private LinearLayout mContent;
 
-    private Launcher mLauncher;
+    //private Launcher mLauncher;
 
     private boolean mInTransition;
     private boolean mResetAfterTransition;
@@ -69,16 +69,16 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     private ImageView mTabLabelIndicator;
 
     // Preferences
-    private boolean mFadeScrollingIndicator;
+    //private boolean mFadeScrollingIndicator;
 
     public AppsCustomizeTabHost(Context context, AttributeSet attrs) {
         super(context, attrs);
         mLayoutInflater = LayoutInflater.from(context);
 
-        mLauncher = (Launcher) context;
+        //mLauncher = (Launcher) context;
 
         // Preferences
-        mFadeScrollingIndicator = PreferencesProvider.Interface.Drawer.Indicator.getFadeScrollingIndicator(context);
+       // mFadeScrollingIndicator = PreferencesProvider.Interface.Drawer.Indicator.getFadeScrollingIndicator(context);
     }
 
     /**
@@ -88,17 +88,17 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
      * tabs manually).
      */
     private void setContentTypeImmediate(AppsCustomizeView.ContentType type) {
-        mAppsCustomizePane.hideIndicator(false);
+        //mAppsCustomizePane.hideIndicator(false);
         mAppsCustomizePane.setContentType(type);
         mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
     }
-    void selectAppsTab() {
+    /*void selectAppsTab() {
         setContentTypeImmediate(AppsCustomizeView.ContentType.Apps);
         setCurrentTabByTag(APPS_TAB_TAG);
-    }
+    }*/
     void selectWidgetsTab() {
         setContentTypeImmediate(AppsCustomizeView.ContentType.Widgets);
-        mAppsCustomizePane.setCurrentToWidgets();
+        //mAppsCustomizePane.setCurrentToWidgets();
 
         setCurrentTabByTag(WIDGETS_TAB_TAG);
     }
@@ -118,7 +118,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mTabs = tabs;
         mTabsContainer = tabsContainer;
         mAppsCustomizePane = appsCustomizePane;
-        mAnimationBuffer = (FrameLayout) findViewById(R.id.animation_buffer);
+        //mAnimationBuffer = (FrameLayout) findViewById(R.id.animation_buffer);
         mContent = (LinearLayout) findViewById(R.id.apps_customize_content);
         if (tabs == null || mAppsCustomizePane == null) throw new Resources.NotFoundException();
 
@@ -246,7 +246,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
             mTabLabelIndicator = (ImageView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_indicator_id);
         	if(getCurrentTab()==i){
-        		mTabLabel.setTextColor(Color.BLUE);
+        		mTabLabel.setTextColor(Color.rgb(12, 141, 234));
         		mTabLabelIndicator.setVisibility(View.VISIBLE);
         	}else{
         		mTabLabel.setTextColor(Color.BLACK);
@@ -266,9 +266,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
      * Returns the content type for the specified tab tag.
      */
     public AppsCustomizeView.ContentType getContentTypeForTabTag(String tag) {
-        if (tag.equals(APPS_TAB_TAG)) {
+        /*if (tag.equals(APPS_TAB_TAG)) {
             return AppsCustomizeView.ContentType.Apps;
-        } else if (tag.equals(WIDGETS_TAB_TAG)) {
+        } else*/ 
+        if (tag.equals(WIDGETS_TAB_TAG)) {
             return AppsCustomizeView.ContentType.Widgets;
         } else if(tag.equals(WALLPAPERS_TAB_TAG)){
             return AppsCustomizeView.ContentType.Wallpapers;
@@ -284,12 +285,15 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
      * Returns the tab tag for a given content type.
      */
     public String getTabTagForContentType(AppsCustomizeView.ContentType type) {
-        if (type == AppsCustomizeView.ContentType.Apps) {
+        /*if (type == AppsCustomizeView.ContentType.Apps) {
             return APPS_TAB_TAG;
-        } else if (type == AppsCustomizeView.ContentType.Widgets) {
+        } else */
+        if (type == AppsCustomizeView.ContentType.Widgets) {
             return WIDGETS_TAB_TAG;
+        }else if(type == AppsCustomizeView.ContentType.Wallpapers){
+        	return WALLPAPERS_TAB_TAG;
         }
-        return APPS_TAB_TAG;
+        return WIDGETS_TAB_TAG;
     }
 
     /**
@@ -361,9 +365,9 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             enableAndBuildHardwareLayer();
         }
 
-        if (!toWorkspace && !LauncherApplication.isScreenLarge()) {
+        /*if (!toWorkspace && !LauncherApplication.isScreenLarge()) {
             mAppsCustomizePane.showIndicator(false);
-        }
+        }*/
         if (mResetAfterTransition) {
             mAppsCustomizePane.reset();
             mResetAfterTransition = false;
@@ -380,15 +384,15 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
 
         if (!toWorkspace) {
             // Dismiss the workspace cling and show the all apps cling (if not already shown)
-            l.dismissWorkspaceCling(null);
-            mAppsCustomizePane.showAllAppsCling();
+            //l.dismissWorkspaceCling(null);
+            //mAppsCustomizePane.showAllAppsCling();
             // Make sure adjacent pages are loaded (we wait until after the transition to
             // prevent slowing down the animation)
             mAppsCustomizePane.loadContent();
 
-            if (!LauncherApplication.isScreenLarge() && mFadeScrollingIndicator) {
+            /*if (!LauncherApplication.isScreenLarge() && mFadeScrollingIndicator) {
                 mAppsCustomizePane.hideIndicator(false);
-            }
+            }*/
         }
     }
 

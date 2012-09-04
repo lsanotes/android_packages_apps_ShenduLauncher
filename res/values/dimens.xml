@@ -25,9 +25,9 @@
 <!-- Workspace -->
     <!-- qsb_bar_height_inset represents qsb_bar_height minus the padding
          that we put on each page for allowing folders to draw out of bounds -->
-    <dimen name="qsb_bar_height_inset">34dp</dimen>
+    <!-- <dimen name="qsb_bar_height_inset">34dp</dimen> -->
     <dimen name="qsb_bar_hidden_inset">14dp</dimen>
-    <dimen name="qsb_bar_height">40dp</dimen>
+    <!-- <dimen name="qsb_bar_height">40dp</dimen> -->
     <dimen name="qsb_padding_left">0dp</dimen>
     <dimen name="qsb_padding_right">0dp</dimen>
     <dimen name="search_bar_height">40dp</dimen>
@@ -66,8 +66,8 @@
     <dimen name="apps_customize_tab_bar_margin_top">0dp</dimen>
     <dimen name="app_icon_size">48dp</dimen>
     <!-- The width can be 72dp because we don't have L/R padding -->
-    <dimen name="apps_customize_cell_width">92dp</dimen>
-    <dimen name="apps_customize_cell_height">112dp</dimen>
+    <dimen name="apps_customize_cell_width">100px</dimen>
+    <dimen name="apps_customize_cell_height">200px</dimen>
     <dimen name="apps_customize_max_gap">18dp</dimen>
     <dimen name="apps_customize_widget_cell_width_gap">10dp</dimen>
     <dimen name="apps_customize_widget_cell_height_gap">132dp</dimen>

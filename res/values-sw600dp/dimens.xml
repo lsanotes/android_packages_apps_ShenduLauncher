@@ -20,7 +20,7 @@
     <dimen name="toolbar_button_horizontal_padding">12dip</dimen>
 
 <!-- Workspace -->
-    <dimen name="qsb_bar_height">56dp</dimen>
+    <!-- <dimen name="qsb_bar_height">56dp</dimen> -->
     <!-- This should be @dimen/qsb_bar_height - @dimen/workspace_top_padding
          to fix the extra space given to draw portals -->
     <dimen name="workspace_content_large_only_top_margin">36dp</dimen>
@@ -34,8 +34,8 @@
 <!-- AppsCustomize -->
     <dimen name="apps_customize_tab_bar_height">34dp</dimen>
     <dimen name="apps_customize_tab_bar_margin_top">8dp</dimen>
-    <dimen name="apps_customize_cell_width">92dp</dimen>
-    <dimen name="apps_customize_cell_height">112dp</dimen>
+    <dimen name="apps_customize_cell_width">100px</dimen>
+    <dimen name="apps_customize_cell_height">200px</dimen>
     <dimen name="apps_customize_widget_cell_width_gap">10dp</dimen>
     <dimen name="apps_customize_widget_cell_height_gap">132dp</dimen>
 

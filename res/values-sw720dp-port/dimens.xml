@@ -16,7 +16,7 @@
 
 <resources>
 <!-- Workspace -->
-    <dimen name="workspace_page_spacing">24dp</dimen>
+    <!-- <dimen name="workspace_page_spacing">24dp</dimen> -->
 
 <!-- AppsCustomize -->
     <integer name="apps_customize_maxCellCountX">-1</integer>

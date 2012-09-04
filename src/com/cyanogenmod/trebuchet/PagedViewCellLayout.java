@@ -132,6 +132,32 @@ public class PagedViewCellLayout extends ViewGroup implements Page {
         }
         return false;
     }
+    
+    public boolean addViewToCellLayoutWallpapger(View child, int index, int childId,
+            PagedViewCellLayout.LayoutParams params) {
+        final PagedViewCellLayout.LayoutParams lp = params;
+
+        // Generate an id for each view, this assumes we have at most 256x256 cells
+        // per workspace screen
+        if (lp.cellX >= 0 && lp.cellX <= (mCellCountX - 1) &&
+                lp.cellY >= 0 && (lp.cellY <= mCellCountY - 1)) {
+            // If the horizontal or vertical span is set to -1, it is taken to
+            // mean that it spans the extent of the CellLayout
+            if (lp.cellHSpan < 0) lp.cellHSpan = mCellCountX;
+            if (lp.cellVSpan < 0) lp.cellVSpan = mCellCountY;
+
+            //Log.i("hhl", "===PagedViewCellLayout.java===addViewToCellLayoutWallpapger()=="+
+            		//child.getWidth()+"*"+child.getHeight()+"==="+child.getPaddingTop()+"="+
+            		//child.getPaddingBottom()+"="+child.getPaddingLeft()+"="+child.getPaddingRight());
+            child.setId(childId);
+            lp.topMargin=30;
+            lp.bottomMargin=30;
+            mChildren.addView(child, index, lp);
+
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void removeAllViewsOnPage() {
