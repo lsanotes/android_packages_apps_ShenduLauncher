@@ -107,6 +107,9 @@ public class DragController {
 
     private int mTmpPoint[] = new int[2];
     private Rect mDragLayerRect = new Rect();
+    
+    
+    private boolean addNewScreen = false ;
 
     /**
      * Interface to receive notifications when a drag starts or stops
@@ -154,6 +157,7 @@ public class DragController {
      *        {@link #DRAG_ACTION_COPY}
      */
     public void startDrag(View v, DragSource source, Object dragInfo, int dragAction) {
+    	addNewScreen = false;
         startDrag(v, source, dragInfo, dragAction, null);
     }
 
@@ -492,7 +496,11 @@ public class DragController {
             Math.sqrt(Math.pow(mLastTouch[0] - x, 2) + Math.pow(mLastTouch[1] - y, 2));
         mLastTouch[0] = x;
         mLastTouch[1] = y;
-
+        
+        Log.i(Launcher.TAG,TAG+ "    ScrollRunnable()......................x.:"+ x
+        		+"  :mScrollView.getWidth():"+mScrollView.getWidth()+"    :  "
+        		+ mScrollZone+"  mScrollState:"+mScrollState+(mDistanceSinceScroll > slop));
+       //left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
@@ -501,12 +509,31 @@ public class DragController {
                     mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
                 }
             }
+            //right
         } else if (x > mScrollView.getWidth() - mScrollZone) {
+            Log.i(Launcher.TAG,TAG+ "    ScrollRunnable( right )......................mScrollState.:"+ mScrollState);
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
+                
+         
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
                     mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
+                }else{
+                
+                	 if(!addNewScreen ){
+                		 addNewScreen= true;
+                     	 mScrollState = SCROLL_OUTSIDE_ZONE;
+                    	 mLauncher.getWorkspace().addScreen(null); 
+                    	 mLauncher.getWorkspace().savedThePageCount();
+                    	 if(mLauncher.getWorkspace().isSmall()){
+                    	   	 mLauncher.getWorkspace().changeState(Workspace.State.NORMAL);
+                        	 mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED); 
+                    	 }
+                 
+                	 }
+            
+                	
                 }
             }
         } else {
@@ -567,6 +594,9 @@ public class DragController {
     }
 
     private void drop(float x, float y) {
+    	
+    	addNewScreen = false; 
+    	
         final int[] coordinates = mCoordinatesTemp;
         final DropTarget dropTarget = findDropTarget((int) x, (int) y, coordinates);
 
@@ -677,6 +707,8 @@ public class DragController {
         }
 
         public void run() {
+        	
+        	Log.i(Launcher.TAG, TAG+"    .ScrollRunnable()....................:.."+mDragScroller+"  :"+ mDirection);
             if (mDragScroller != null) {
                 if (mDirection == SCROLL_LEFT) {
                     mDragScroller.scrollLeft();

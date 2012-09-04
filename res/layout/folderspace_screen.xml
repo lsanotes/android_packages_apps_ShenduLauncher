@@ -1,0 +1,17 @@
+<com.cyanogenmod.trebuchet.CellLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
+     
+       android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="0dip"
+        android:paddingRight="0dip"
+        android:paddingTop="0dip"
+        android:paddingBottom="0dip"
+        android:background="#ffffffff"
+        android:cacheColorHint="#ff333333"
+        android:hapticFeedbackEnabled="false"
+        launcher:widthGap="@dimen/folder_width_gap"
+        launcher:heightGap="@dimen/folder_height_gap"
+        launcher:cellWidth="@dimen/folder_cell_width"
+        launcher:cellHeight="@dimen/folder_cell_height" />

@@ -356,4 +356,9 @@ s -->
     <string name="preferences_interface_homescreen_general_screen_folder_style_title">Folder Style</string>
     <string name="preferences_interface_homescreen_general_screen_folder_style_summary">Choose Folder Display Style</string>
 
+    <string name="editstate_choice_widget">Widget</string>
+    <string name="editstate_choice_wallpaper">WallPaper</string>
+    <string name="editstate_choice_theme">Theme</string>
+    <string name="editstate_choice_specially_effect">Transition effect</string>
+    
 </resources>

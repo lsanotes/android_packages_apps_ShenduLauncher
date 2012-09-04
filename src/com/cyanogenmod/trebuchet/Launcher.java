@@ -593,7 +593,10 @@ public final class Launcher extends Activity
     @Override
     protected void onResume() {
         super.onResume();
+        
+        
         mPaused = false;
+        
         // Restart launcher when preferences are changed
         if (preferencesChanged()) {
             android.os.Process.killProcess(android.os.Process.myPid());
@@ -642,6 +645,11 @@ public final class Launcher extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        
+
+        // add by zlf
+        backFromEditMode();
+        
         mPaused = true;
         mDragController.cancelDrag();
     }
@@ -1065,6 +1073,9 @@ public final class Launcher extends Activity
             addWidgetToAutoAdvanceIfNeeded(launcherInfo.hostView, appWidgetInfo);
         }
     }
+    
+
+    
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -1733,10 +1744,10 @@ public final class Launcher extends Activity
                   public void run() {
                       exitSpringLoadedDragModeDelayed(true, false);
                       
-                      mWorkspace.removeTheHeaderOrFooterSpace(); 
+                   //   mWorkspace.removeTheHeaderOrFooterSpace(); 
                       
                       // update all when drag item in editMode
-                      mWorkspace.updateAllScreen();
+                    //  mWorkspace.updateAllScreen();
                   }
               };
               exitSpringLoadedRunnable.run();
@@ -2142,10 +2153,7 @@ public final class Launcher extends Activity
                 // User long pressed on empty space
                 mWorkspace.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS,
                         HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
-              // startWallpaper();
-                
-                //动画 缩小
-                
+      
                 enterEditMode();
                 
             } else {
@@ -2169,7 +2177,7 @@ public final class Launcher extends Activity
         showAllApps(true);
     	setFullScreen();
     
-    	mWorkspace.addTheHeaderOrFooterSpace();
+    //	mWorkspace.addTheHeaderOrFooterSpace();
       
       mWorkspace.changeState(Workspace.State.SPRING_LOADED);
        mState = State.APPS_CUSTOMIZE_SPRING_LOADED;

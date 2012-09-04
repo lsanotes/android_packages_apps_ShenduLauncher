@@ -62,13 +62,14 @@
     <include
         android:id="@+id/qsb_bar"
         layout="@layout/qsb_bar" />
-<!-- 
+
     <include layout="@layout/apps_customize_pane"
         android:id="@+id/apps_customize_pane"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="166dp"
+        android:layout_gravity="bottom"
         android:visibility="invisible" />
-         -->
+       
 
     <include layout="@layout/workspace_cling"
         android:id="@+id/workspace_cling"

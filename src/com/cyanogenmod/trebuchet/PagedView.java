@@ -180,7 +180,7 @@ public abstract class PagedView extends ViewGroup {
     private int mScrollIndicatorPaddingRight;
     private boolean mHasScrollIndicator = true;
     protected static final int sScrollIndicatorFadeInDuration = 150;
-    protected static final int sScrollIndicatorFadeOutDuration = 2000;
+    protected static final int sScrollIndicatorFadeOutDuration = 200000;
     protected static final int sScrollIndicatorFadeOutShortDuration = 150;
     protected static final int sScrollIndicatorFlashDuration = 2000;
 
@@ -903,6 +903,10 @@ public abstract class PagedView extends ViewGroup {
 
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE: {
+            	
+            	
+            	   
+     
                 /*
                  * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
                  * whether the user has moved far enough from his original down touch.
@@ -930,7 +934,8 @@ public abstract class PagedView extends ViewGroup {
                 mTotalMotionX = 0;
                 mActivePointerId = ev.getPointerId(0);
                 mAllowLongPress = true;
-
+                OpenStatusBarBeginY =ev.getY();
+                
                 /*
                  * If being flinged and user touches the screen, initiate drag;
                  * otherwise don't.  mScroller.isFinished should be false when
@@ -961,6 +966,12 @@ public abstract class PagedView extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                
+                if(ev.getY()- OpenStatusBarBeginY>80){ 
+                     
+             	   showNotifications();
+                 }
+
                 mTouchState = TOUCH_STATE_REST;
                 mAllowLongPress = false;
                 mActivePointerId = INVALID_POINTER;
@@ -1127,6 +1138,10 @@ public abstract class PagedView extends ViewGroup {
         dampedOverScroll(amount);
     }
 
+    
+    private float OpenStatusBarBeginY;
+    
+    private float OpenStatusBarEndY;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
     	
@@ -1139,6 +1154,9 @@ public abstract class PagedView extends ViewGroup {
 
         switch (action & MotionEvent.ACTION_MASK) {
         case MotionEvent.ACTION_DOWN:
+        	
+        	
+         
             /*
              * If being flinged and user touches, stop the fling. isFinished
              * will be false if being flinged.
@@ -1155,6 +1173,10 @@ public abstract class PagedView extends ViewGroup {
             if (mTouchState == TOUCH_STATE_SCROLLING) {
                 pageBeginMoving();
             }
+            
+            
+        
+            
             break;
 
         case MotionEvent.ACTION_MOVE:
@@ -1188,6 +1210,10 @@ public abstract class PagedView extends ViewGroup {
             break;
 
         case MotionEvent.ACTION_UP:
+        	
+  
+            
+            
             if (mTouchState == TOUCH_STATE_SCROLLING) {
                 final int activePointerId = mActivePointerId;
                 final int pointerIndex = ev.findPointerIndex(activePointerId);
@@ -1267,6 +1293,9 @@ public abstract class PagedView extends ViewGroup {
             mTouchState = TOUCH_STATE_REST;
             mActivePointerId = INVALID_POINTER;
             releaseVelocityTracker();
+            
+            
+                
             break;
 
         case MotionEvent.ACTION_CANCEL:
@@ -1276,6 +1305,10 @@ public abstract class PagedView extends ViewGroup {
             mTouchState = TOUCH_STATE_REST;
             mActivePointerId = INVALID_POINTER;
             releaseVelocityTracker();
+            
+
+            
+            
             break;
 
         case MotionEvent.ACTION_POINTER_UP:
@@ -1285,6 +1318,12 @@ public abstract class PagedView extends ViewGroup {
 
         return true;
     }
+    
+    
+    //show stateBar 
+    public  void showNotifications() { 
+
+      }
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
@@ -1301,7 +1340,10 @@ public abstract class PagedView extends ViewGroup {
                         vscroll = -event.getAxisValue(MotionEvent.AXIS_VSCROLL);
                         hscroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
                     }
+                    Log.i(Launcher.TAG, TAG+"    .onGenericMotionEvent()......................"+hscroll +"  :  "+vscroll);	
                     if (hscroll != 0 || vscroll != 0) {
+                    	
+                    	Log.i(Launcher.TAG, TAG+"    .onGenericMotionEvent()......................"+(hscroll > 0) +(vscroll > 0));	
                         if (hscroll > 0 || vscroll > 0) {
                             scrollRight();
                         } else {
@@ -1483,7 +1525,12 @@ public abstract class PagedView extends ViewGroup {
 
     protected void snapToPage(int whichPage, int delta, int duration) {
         mNextPage = whichPage;
-
+        
+        if(mScrollIndicator!= null){
+        	
+        	mScrollIndicator.setCurrentPage(whichPage);
+        }
+        
         View focusedChild = getFocusedChild();
         if (focusedChild != null && whichPage != mCurrentPage &&
                 focusedChild == getPageAt(mCurrentPage)) {

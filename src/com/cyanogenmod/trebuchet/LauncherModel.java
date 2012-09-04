@@ -445,7 +445,7 @@ public class LauncherModel extends BroadcastReceiver {
                     throw new RuntimeException("Error: ItemInfo id (" + item.id + ") passed to " +
                         "addItemToDatabase already exists." + item.toString());
                 }
-                Log.i(Launcher.TAG,TAG+ "..........................addItemToDatabase..."+item.id );
+             //   Log.i(Launcher.TAG,TAG+ "..........................addItemToDatabase..."+item.id );
                 sItemsIdMap.put(item.id, item);
                 switch (item.itemType) {
                     case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
@@ -1480,7 +1480,7 @@ public class LauncherModel extends BroadcastReceiver {
                     	}
 
                     
-                    	Log.i(Launcher.TAG,TAG+ "..........................onlyBindAllApps()+ "+listOutOfDB.size());
+                    //	Log.i(Launcher.TAG,TAG+ "..........................onlyBindAllApps()+ "+listOutOfDB.size());
                         callbacks.bindAllApplications(listOutOfDB);
                         listOutOfDB.clear();
                         listOutOfDB=null;
@@ -1571,7 +1571,7 @@ public class LauncherModel extends BroadcastReceiver {
                             if (first) {
 
                                	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
-                            	Log.i(Launcher.TAG,TAG+ "..........................first()"+added.size());
+                            //	Log.i(Launcher.TAG,TAG+ "..........................first()"+added.size());
                             	AppsInDB.clear();
                             	
                                 final Cursor c = mContext.getContentResolver().query(
@@ -1623,12 +1623,12 @@ public class LauncherModel extends BroadcastReceiver {
                           
                             	}
 
-                            	Log.i(Launcher.TAG,TAG+ "..........................loadAllAppsByBatch()+ "+listOutOfDB.size());
+                            //	Log.i(Launcher.TAG,TAG+ "..........................loadAllAppsByBatch()+ "+listOutOfDB.size());
 
                                 callbacks.bindAllApplications(listOutOfDB);
                                 
                             } else {
-                            	Log.i(Launcher.TAG,TAG+ ".........................loadAllAppsByBatch().first()"+first+added.size());
+                            //	Log.i(Launcher.TAG,TAG+ ".........................loadAllAppsByBatch().first()"+first+added.size());
                        
                                 callbacks.bindAppsAdded(added);
                             }

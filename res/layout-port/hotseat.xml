@@ -12,11 +12,13 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+     
+         android:background="@drawable/hotseat_bg_panel"
 -->
 <com.cyanogenmod.trebuchet.Hotseat
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
-    android:background="@drawable/hotseat_bg_panel"
+
     launcher:cellCountX="5"
     launcher:cellCountY="1">
     <com.cyanogenmod.trebuchet.CellLayout
