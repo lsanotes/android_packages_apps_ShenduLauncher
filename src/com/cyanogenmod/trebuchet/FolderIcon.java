@@ -283,6 +283,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         switch(itemType){
 	        case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
 	        case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+	        case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
 	        	itemCount = 1;
 	        	break;
 	        case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
@@ -296,7 +297,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         }
        // return resultFlag;
        return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
+                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT||
+                itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT) &&
                 resultFlag);
     }
 
@@ -468,8 +470,10 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     public void onDrop(DragObject d) {
-        ShortcutInfo item;
+        ShortcutInfo item = null;
     	Log.i("hhl", "FolderIcon.java...onDrop 1====="+getClass().getName()+"==="+d.dragInfo);
+    	
+    	
         if (d.dragInfo instanceof ApplicationInfo) {
             // Came from all apps -- make a copy
             item = ((ApplicationInfo) d.dragInfo).makeShortcut();
@@ -483,7 +487,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             LauncherModel.deleteItemFromDatabase(mLauncher, folder);
             return;
         } else {
-            item = (ShortcutInfo) d.dragInfo;
+        
+        		   item = (ShortcutInfo) d.dragInfo;
+        
         }
         mFolder.notifyDrop();
         onDrop(item, d.dragView, null, 1.0f, mInfo.contents.size(), d.postAnimationRunnable);

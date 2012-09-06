@@ -299,7 +299,7 @@ public class CellLayout extends ViewGroup {
         mCountX = x;
         mCountY = y;
         mOccupied = new boolean[mCountX][mCountY];
-        Log.i(Launcher.TAG, TAG+"setGridSize....  "+mCountX+mCountY);
+        Log.i(Launcher.TAG, TAG+".......setGridSize....  "+mCountX+mCountY);
         requestLayout();
     }
 
@@ -886,7 +886,12 @@ public class CellLayout extends ViewGroup {
         int numHeightGaps = mCountY - 1;
         //Log.i("hhl", "===CellLayout.java===onMeasure==="+widthSpecSize+"*"+heightSpecSize);
         if (!LauncherApplication.isScreenLarge()){
-            mCellWidth = mOriginalCellWidth = (widthSpecSize - mPaddingLeft - mPaddingRight) / mCountX;
+        	if(mCountX==0){
+        		mCellWidth = mOriginalCellWidth = (widthSpecSize - mPaddingLeft - mPaddingRight) / 1;	
+        	}else{
+        		  mCellWidth = mOriginalCellWidth = (widthSpecSize - mPaddingLeft - mPaddingRight) / mCountX;	
+        	}
+          
             mCellHeight = mOriginalCellHeight = (heightSpecSize - mPaddingTop - mPaddingBottom) / mCountY;
         }
 
@@ -1032,8 +1037,10 @@ public class CellLayout extends ViewGroup {
 
             int oldX = lp.x;
             int oldY = lp.y;
-      
-            mOccupied[lp.cellX][lp.cellY] = false;
+            if(lp.cellX<mCountX){
+             mOccupied[lp.cellX][lp.cellY] = false;
+            }
+           
             Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old .      "+lp.cellX+lp.cellY +false);
             mOccupied[cellX][cellY] = true;
             Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........new.       "+cellX + cellY +true);
@@ -1252,7 +1259,7 @@ public class CellLayout extends ViewGroup {
     int[] findNearestArea(int pixelX, int pixelY, int spanX, int spanY, View ignoreView,
             boolean ignoreOccupied, int[] result) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-    Log.i(Launcher.TAG,TAG+ ".findNearestArea.11.......................!!!!!..ignoreView:"+ignoreView+ignoreOccupied );
+ //   Log.i(Launcher.TAG,TAG+ ".findNearestArea.11.......................!!!!!..ignoreView:"+ignoreView+ignoreOccupied );
 
     //   markCellsAsUnoccupiedForView(ignoreView);
 
@@ -1898,7 +1905,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         //remove by zlf
       // markCellsAsUnoccupiedForView(view);
-        Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
+    //    Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
         markCellsForView(newCellX, newCellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
@@ -1907,7 +1914,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         if (view == null || view.getParent() != mChildren) return;
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         
-   	 Log.i(Launcher.TAG, TAG+"..markCellsAsOccupiedForView  ..###..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
+ //  	 Log.i(Launcher.TAG, TAG+"..markCellsAsOccupiedForView  ..###..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
         markCellsForView(lp.cellX, lp.cellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
@@ -1925,7 +1932,7 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
             	
             
                 mOccupied[x][y] = value;
-            	 Log.i(Launcher.TAG, TAG+"..markCellsForView  ............         1842   xy:"+x+y+ mOccupied[x][y]);
+            //	 Log.i(Launcher.TAG, TAG+"..markCellsForView  ............         1842   xy:"+x+y+ mOccupied[x][y]);
          
             }
         }

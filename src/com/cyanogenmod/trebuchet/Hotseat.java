@@ -16,10 +16,14 @@
 
 package com.cyanogenmod.trebuchet;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +35,7 @@ public class Hotseat extends FrameLayout {
     private Launcher mLauncher;
     private CellLayout mContent;
 
-    private int mCellCountX;
+    public int mCellCountX;
     private int mCellCountY;
     private boolean mIsLandscape;
 
@@ -51,7 +55,9 @@ public class Hotseat extends FrameLayout {
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.Hotseat, defStyle, 0);
-        mCellCountX = a.getInt(R.styleable.Hotseat_cellCountX, -1);
+      //  mCellCountX = a.getInt(R.styleable.Hotseat_cellCountX, -1);
+        
+        mCellCountX=0;
         mCellCountY = a.getInt(R.styleable.Hotseat_cellCountY, -1);
         mIsLandscape = context.getResources().getConfiguration().orientation ==
             Configuration.ORIENTATION_LANDSCAPE;
@@ -87,10 +93,87 @@ public class Hotseat extends FrameLayout {
         if (mCellCountX < 0) mCellCountX = DEFAULT_CELL_COUNT_X;
         if (mCellCountY < 0) mCellCountY = DEFAULT_CELL_COUNT_Y;
         mContent = (CellLayout) findViewById(R.id.layout);
-        mContent.setGridSize(mCellCountX, mCellCountY);
+        mContent.setGridSize(1, 1);
 
         resetLayout();
     }
+    
+    public void setGridSize(int cellCount,boolean isAdd){
+    	
+    	CellLayoutChildren clc=	(CellLayoutChildren)mContent.getChildrenLayout();
+     	int count =clc.getChildCount();
+     	
+          Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,isAdd:,  "
+           +isAdd
+           +"   mCellCountX :" +mCellCountX
+		 +"  count:"+count);  	
+          
+          
+     	if(isAdd&&mCellCountX<count+1){
+     		
+    		mCellCountX=cellCount;
+     		mContent.setGridSize(mCellCountX, mCellCountY);	
+        
+     	}else if(!isAdd&&mCellCountX>count){	
+     		mCellCountX=cellCount;
+     		mContent.setGridSize(mCellCountX, mCellCountY);	
+     		
+     	}else {
+     		
+     		return;
+     	}
+    	
+
+    	View view = null;
+
+    	
+    
+ 
+    	for(int i = 0 ;i < count ; i++){
+
+    		view =clc.getChildAt(i);
+    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view); 
+    		getLayout().animateChildToPosition(view,i,0,230,30);
+    	}
+    	
+    }
+    
+
+    public void viewMatchingCellInfo(){
+    	
+    	CellLayoutChildren clc=	(CellLayoutChildren)mContent.getChildrenLayout();
+    	
+       int  count =clc.getChildCount();
+//
+//    	 Log.i(Launcher.TAG, "hotseat"+"   .,.viewMatchingCellInfo,,,,##,,,,,,,,,,,,,,,,,,,,,count:,  " +clc.getChildCount()); 
+//    	
+//
+//    	View view = null;
+//    	ItemInfo info =null;
+//    	
+//    	HashMap< Integer,View> views =new HashMap<Integer, View>();
+//    	
+//    	
+//    	for(int i = 0 ;i < count ; i++){
+//    		view =clc.getChildAt(i);
+//    		info=(ItemInfo) view.getTag();
+//    		views.put(info.screen, view);
+//    	}
+// 
+    	mContent.setGridSize(count, mCellCountY);
+//    	
+//     	for(int i = 0 ;i < 5 ; i++){
+//
+//    		view =views.get(i);
+//    		if(view!=null){
+//    		    Log.i(Launcher.TAG, "hotseat"+"   .,.,,viewMatchingCellInfo,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view); 
+//        		getLayout().animateChildToPosition(view,i,0,230,30);	
+//    		}
+//    
+//    	}
+   	
+    }
+    
 
     void resetLayout() {
         mContent.removeAllViewsInLayout();
@@ -130,4 +213,6 @@ public class Hotseat extends FrameLayout {
 //        mContent.addViewToCellLayout(allAppsButton, -1, 0, new CellLayout.LayoutParams(x,y,1,1),
 //                true);
     }
+
+
 }

@@ -112,7 +112,7 @@
     <!--             -->
     <!-- Preferences -->
     <!--             -->
-    <string name="preferences_title">启动器选项</string>
+    <string name="preferences_title">桌面选项</string>
     <!-- UI -->
     <string name="preferences_interface_title">界面</string>
     <!-- Application -->

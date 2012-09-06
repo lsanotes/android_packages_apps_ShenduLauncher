@@ -109,7 +109,7 @@ public class DragController {
     private Rect mDragLayerRect = new Rect();
     
     
-    private boolean addNewScreen = false ;
+    public boolean addNewScreen = false ;
 
     /**
      * Interface to receive notifications when a drag starts or stops
@@ -497,9 +497,9 @@ public class DragController {
         mLastTouch[0] = x;
         mLastTouch[1] = y;
         
-        Log.i(Launcher.TAG,TAG+ "    ScrollRunnable()......................x.:"+ x
-        		+"  :mScrollView.getWidth():"+mScrollView.getWidth()+"    :  "
-        		+ mScrollZone+"  mScrollState:"+mScrollState+(mDistanceSinceScroll > slop));
+    //    Log.i(Launcher.TAG,TAG+ "    ScrollRunnable()......................x.:"+ x
+//        		+"  :mScrollView.getWidth():"+mScrollView.getWidth()+"    :  "
+//        		+ mScrollZone+"  mScrollState:"+mScrollState+(mDistanceSinceScroll > slop));
        //left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
@@ -594,8 +594,7 @@ public class DragController {
     }
 
     private void drop(float x, float y) {
-    	
-    	addNewScreen = false; 
+  
     	
         final int[] coordinates = mCoordinatesTemp;
         final DropTarget dropTarget = findDropTarget((int) x, (int) y, coordinates);
@@ -613,8 +612,10 @@ public class DragController {
             	mDragObject.cancelled = true;
             }
         }
-        Log.i(Launcher.TAG,TAG+ ".drop.........................:"+ mDragObject.dragSource+accepted);
+
         mDragObject.dragSource.onDropCompleted((View) dropTarget, mDragObject, accepted);
+   
+    	addNewScreen = false; 
     }
 
     private DropTarget findDropTarget(int x, int y, int[] dropCoordinates) {
@@ -623,8 +624,9 @@ public class DragController {
         final ArrayList<DropTarget> dropTargets = mDropTargets;
         final int count = dropTargets.size();
         for (int i=count-1; i>=0; i--) {
+        	
+        	
             DropTarget target = dropTargets.get(i);
-  
             if (!target.isDropEnabled())
                 continue;
 
@@ -637,6 +639,7 @@ public class DragController {
             mDragObject.x = x;
             mDragObject.y = y;
             if (r.contains(x, y)) {
+            	
                 DropTarget delegate = target.getDropTargetDelegate(mDragObject);
                 if (delegate != null) {
                     target = delegate;

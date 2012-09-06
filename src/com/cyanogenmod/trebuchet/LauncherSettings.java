@@ -181,10 +181,18 @@ class LauncherSettings {
         */
         static final int ITEM_TYPE_LIVE_FOLDER = 3;
 
+        
+        
         /**
          * The favorite is a widget
          */
-        static final int ITEM_TYPE_APPWIDGET = 4;
+        static final int ITEM_TYPE_DELETESHOETCUT = 4;
+        
+        
+        /**
+         * The favorite is a widget
+         */
+        static final int ITEM_TYPE_APPWIDGET = 5;
 
         /**
          * The favorite is a clock

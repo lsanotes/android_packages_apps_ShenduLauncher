@@ -126,12 +126,20 @@ public class DeleteDropTarget extends ButtonDropTarget {
     public boolean acceptDrop(DragObject d) {
         // We can remove everything including App shortcuts, folders, widgets, etc.
     	boolean flag = true;
+    	
+    	
     	 if(mUninstall){
+    	
          	ShortcutInfo shortcutInfo = (ShortcutInfo) d.dragInfo;
+         	
+       	 if(shortcutInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
+       		mUninstall = false;
+       		return true;
+		 }
         	ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
         	if(resolveInfo==null){
-        	
-        		flag =false;
+        		mUninstall= false;
+        		flag =true;
         	}else{
         		if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
                    	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){

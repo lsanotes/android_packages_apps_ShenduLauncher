@@ -112,7 +112,10 @@
         </activity>
 
         <activity android:name="com.cyanogenmod.trebuchet.preference.Preferences"
-            android:label="@string/preferences_title">
+            android:theme="@style/PreferenceStyle"
+            android:label="@string/preferences_title"
+            android:icon="@drawable/launcher_setting_icon"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="com.cyanogenmod.category.LAUNCHER_PREFERENCES" />

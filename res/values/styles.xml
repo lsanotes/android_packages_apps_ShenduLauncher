@@ -187,4 +187,15 @@
         <item name="android:shadowDy">0.0</item>
         <item name="android:shadowRadius">2.0</item>
     </style>
+    
+    
+    
+    <style name="PreferenceStyle" parent="@android:style/Theme.Holo.Light">
+    
+    
+   
+        
+        
+    </style>
+  
 </resources>

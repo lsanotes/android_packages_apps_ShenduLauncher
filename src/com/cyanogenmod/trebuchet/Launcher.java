@@ -209,7 +209,7 @@ public final class Launcher extends Activity
 
     private SearchDropTargetBar mSearchDropTargetBar;
     private AppsCustomizeTabHost mAppsCustomizeTabHost;
-    private AppsCustomizeView mAppsCustomizeContent;
+    private AppsCustomizePagedView mAppsCustomizeContent;
     private boolean mAutoAdvanceRunning = false;
 
     private Bundle mSavedState;
@@ -594,7 +594,7 @@ public final class Launcher extends Activity
     protected void onResume() {
         super.onResume();
         
-        
+    	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);    
         mPaused = false;
         
         // Restart launcher when preferences are changed
@@ -603,6 +603,8 @@ public final class Launcher extends Activity
         }
         if (mRestoring || mOnResumeNeedsLoad) {
             mWorkspaceLoading = true;
+            
+        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
             mModel.startLoader(this, true);
             mRestoring = false;
             mOnResumeNeedsLoad = false;
@@ -650,8 +652,8 @@ public final class Launcher extends Activity
         super.onPause();
         
 
-        // add by zlf
-        //backFromEditMode();
+       //  add by zlf
+        backFromEditMode();
         
         mPaused = true;
         mDragController.cancelDrag();
@@ -831,15 +833,22 @@ public final class Launcher extends Activity
         // Setup AppsCustomize
         mAppsCustomizeTabHost = (AppsCustomizeTabHost)
                 findViewById(R.id.apps_customize_pane);
-        mAppsCustomizeContent = (AppsCustomizeView)
+        mAppsCustomizeContent = (AppsCustomizePagedView)
                 mAppsCustomizeTabHost.findViewById(R.id.apps_customize_pane_content);
         mAppsCustomizeContent.setup(this, dragController);
-
+        
+      //  dragController.addDragListener(mAppsCustomizeContent);
+        
+        
         // Setup the drag controller (drop targets have to be added in reverse order in priority)
         dragController.setDragScoller(mWorkspace);
         dragController.setScrollView(mDragLayer);
         dragController.setMoveTarget(mWorkspace);
         dragController.addDropTarget(mWorkspace);
+        
+        
+        dragController.addDropTarget(mAppsCustomizeContent);
+        
         if (mSearchDropTargetBar != null) {
             mSearchDropTargetBar.setup(this, dragController);
         }
@@ -1399,7 +1408,7 @@ public final class Launcher extends Activity
         if (isWorkspaceLocked()) {
             return false;
         }
-    //    编辑模式  修改壁纸 桌面缩略图(meibiyao) 桌面设置 系统设置
+
         super.onCreateOptionsMenu(menu);
 
         Intent manageApps = new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
@@ -3074,7 +3083,7 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
-  
+     //   Log.i(Launcher.TAG, TAG+" onCreate(......  bindItems "+shortcuts.size());
         setLoadOnResume();
 
         final Workspace workspace = mWorkspace;
@@ -3082,16 +3091,22 @@ public final class Launcher extends Activity
         	
       
             final ItemInfo item = shortcuts.get(i);
-        	Log.i(Launcher.TAG, TAG+"..........................item:"+item.toString());
+        	Log.i(Launcher.TAG, TAG+"..........................item:"+(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT)+mHotseat);
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
                 continue;
+            }else if(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&mHotseat != null){
+            
+            		mHotseat.setGridSize(item.cellX+1, true);
+            
+            	
             }
 
             switch (item.itemType) {
                 case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
                 case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
                     View shortcut = createShortcut((ShortcutInfo)item);
                     workspace.addInScreen(shortcut, item.container, item.screen, item.cellX,
                             item.cellY, 1, 1, false);
@@ -3293,8 +3308,8 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAppsAdded(ArrayList<ShortcutInfo> apps) {
-    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsAdded()");
-        setLoadOnResume();
+    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsAdded()"+apps.size());
+       // setLoadOnResume();
         removeDialog(DIALOG_CREATE_SHORTCUT);
 
     	if (mAppsCustomizeContent != null) {

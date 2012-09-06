@@ -453,6 +453,7 @@ public class LauncherModel extends BroadcastReceiver {
                         // Fall through
                     case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
                     case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                    case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
                         if (item.container == LauncherSettings.Favorites.CONTAINER_DESKTOP ||
                                 item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
                             sWorkspaceItems.add(item);
@@ -516,6 +517,7 @@ public class LauncherModel extends BroadcastReceiver {
                         break;
                     case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
                     case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                    case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
                         sWorkspaceItems.remove(item);
                         break;
                     case LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET:
@@ -1091,6 +1093,7 @@ public class LauncherModel extends BroadcastReceiver {
                         switch (itemType) {
                         case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
                         case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+                        case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
                             intentDescription = c.getString(intentIndex);
                             try {
                                 intent = Intent.parseUri(intentDescription, 0);
@@ -1102,10 +1105,11 @@ public class LauncherModel extends BroadcastReceiver {
                             if (itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
                                 info = getShortcutInfo(manager, intent, context, c, iconIndex,
                                         titleIndex, mLabelCache);
-                            } else {
+                            } else  {
+                            	
                                 info = getShortcutInfo(c, context, iconTypeIndex,
                                         iconPackageIndex, iconResourceIndex, iconIndex,
-                                        titleIndex);
+                                        titleIndex,itemType);
                             }
 
                             if (info != null) {
@@ -1441,7 +1445,7 @@ public class LauncherModel extends BroadcastReceiver {
                             while (!mStopped && c.moveToNext()) {
                               
                                 int itemType = c.getInt(itemTypeIndex);
-                                if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+                                if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT|| itemType ==  LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
                                 	String  intentDescription = c.getString(intentIndex);
                                     
                                     Intent   intent = Intent.parseUri(intentDescription, 0);
@@ -1585,7 +1589,7 @@ public class LauncherModel extends BroadcastReceiver {
                                     while (!mStopped && c.moveToNext()) {
                                       
                                         int itemType = c.getInt(itemTypeIndex);
-                                        if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+                                        if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT||itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT ){
                                         	String  intentDescription = c.getString(intentIndex);
                                             
                                             Intent   intent = Intent.parseUri(intentDescription, 0);
@@ -1874,11 +1878,14 @@ public class LauncherModel extends BroadcastReceiver {
      */
     private ShortcutInfo getShortcutInfo(Cursor c, Context context,
             int iconTypeIndex, int iconPackageIndex, int iconResourceIndex, int iconIndex,
-            int titleIndex) {
+            int titleIndex,int itemType) {
 
         Bitmap icon = null;
         final ShortcutInfo info = new ShortcutInfo();
-        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
+        
+  
+          info.itemType = itemType;	
+      
 
         // TODO: If there's an explicit component and we can't install that, delete it.
 
@@ -2046,7 +2053,7 @@ public class LauncherModel extends BroadcastReceiver {
         }
 
         final ShortcutInfo info = new ShortcutInfo();
-
+        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT;
         if (icon == null) {
             if (fallbackIcon != null) {
                 icon = fallbackIcon;

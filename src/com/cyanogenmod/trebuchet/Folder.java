@@ -523,7 +523,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         final ItemInfo item = (ItemInfo) d.dragInfo;
         final int itemType = item.itemType;
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                    itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
+                    itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT||
+                    itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT) &&
                     !isFull(1));
     }
 

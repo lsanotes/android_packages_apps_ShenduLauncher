@@ -48,6 +48,7 @@ import android.os.Process;
 import android.service.wallpaper.WallpaperService;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -178,7 +179,7 @@ class AppsCustomizeAsyncTask extends AsyncTask<AsyncTaskPageData, Void, AsyncTas
  * The Apps/Customize page that displays all the applications, widgets, and shortcuts.
  */
 public class AppsCustomizePagedView extends PagedViewWithDraggableItems implements
-        AppsCustomizeView, View.OnClickListener, View.OnKeyListener, DragSource {
+        AppsCustomizeView, View.OnClickListener, View.OnKeyListener, DragSource ,DropTarget ,DragController.DragListener{
     static final String LOG_TAG = "AppsCustomizePagedView";
 
     // Refs
@@ -323,6 +324,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         Context context = getContext();
         Resources r = context.getResources();
         setDragSlopeThreshold(r.getInteger(R.integer.config_appsCustomizeDragSlopeThreshold)/100f);
+        
+    
     }
 
     @Override
@@ -864,6 +867,9 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             if (showOutOfSpaceMessage) {
                 mLauncher.showOutOfSpaceMessage();
             }
+        }else{
+        	ItemInfo info =(ItemInfo)d.dragInfo;
+   
         }
     }
 
@@ -1583,7 +1589,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 // Fill in the shortcuts information
                 ResolveInfo info = (ResolveInfo) rawInfo;
                 createItemInfo = new PendingAddItemInfo();
-                createItemInfo.itemType = LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
+                createItemInfo.itemType = LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT;
                 createItemInfo.componentName = new ComponentName(info.activityInfo.packageName,
                         info.activityInfo.name);
                 widget.applyFromResolveInfo(mPackageManager, info, mHolographicOutlineHelper);
@@ -2044,6 +2050,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         //mEditStateLeftArrow.setOnClickListener(this);
         mEditStateRightArrow = (ImageView)mLauncher.findViewById(R.id.apps_customize_pane_content_right_arrow_id);
         //mEditStateRightArrow.setOnClickListener(this);
+        
+       Display display = mLauncher.getWindowManager().getDefaultDisplay();
+  	    mDisplayWidth = display.getWidth();
+       mDisplayHeight = display.getHeight();
     }
 
     /*public SortMode getSortMode() {
@@ -2278,4 +2288,82 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             return String.format(mContext.getString(stringId), page + 1, getChildCount());
         //}
     }
+
+	@Override
+	public boolean isDropEnabled() {
+		// TODO Auto-generated method stub
+		if(CellLayout.mIsEditstate){
+			return true;
+		}else{
+			return false;	
+		}
+		
+	}
+
+	@Override
+	public void onDrop(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDragEnter(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDragOver(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDragExit(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public DropTarget getDropTargetDelegate(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean acceptDrop(DragObject dragObject) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void getLocationInDragLayer(int[] loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDragStart(DragSource source, Object info, int dragAction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDragEnd() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+	int  mDisplayWidth = 480;
+   int   mDisplayHeight =800;
+    public void getHitRect(Rect outRect){
+    //	super.getHitRect(outRect);
+    	outRect.left=0;
+    	outRect.right=mDisplayWidth;
+    	
+    	outRect.top=mDisplayHeight-230;
+    	outRect.bottom=mDisplayHeight;
+    	
+	 }
 }
