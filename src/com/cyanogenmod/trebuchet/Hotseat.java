@@ -38,6 +38,7 @@ public class Hotseat extends FrameLayout {
     public int mCellCountX;
     private int mCellCountY;
     private boolean mIsLandscape;
+    private CellLayoutChildren cellLayoutChildren ;
 
     private static final int DEFAULT_CELL_COUNT_X = 5;
     private static final int DEFAULT_CELL_COUNT_Y = 1;
@@ -66,6 +67,9 @@ public class Hotseat extends FrameLayout {
     public void setup(Launcher launcher) {
         mLauncher = launcher;
         setOnKeyListener(new HotseatIconKeyEventListener());
+        
+        cellLayoutChildren=(CellLayoutChildren)mContent.getChildrenLayout();
+    
     }
 
     CellLayout getLayout() {
@@ -97,18 +101,16 @@ public class Hotseat extends FrameLayout {
 
         resetLayout();
     }
-    
+    int count =0; 
     public void setGridSize(int cellCount,boolean isAdd){
-    	
-    	CellLayoutChildren clc=	(CellLayoutChildren)mContent.getChildrenLayout();
-     	int count =clc.getChildCount();
+   
+     	 count =cellLayoutChildren.getChildCount();
      	
           Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,isAdd:,  "
            +isAdd
            +"   mCellCountX :" +mCellCountX
 		 +"  count:"+count);  	
-          
-          
+        
      	if(isAdd&&mCellCountX<count+1){
      		
     		mCellCountX=cellCount;
@@ -126,14 +128,21 @@ public class Hotseat extends FrameLayout {
 
     	View view = null;
 
-    	
-    
  
-    	for(int i = 0 ;i < count ; i++){
+    	for(int i = 0 ,j=0;i < count; i++,j++){
 
-    		view =clc.getChildAt(i);
-    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view); 
-    		getLayout().animateChildToPosition(view,i,0,230,30);
+    		view =cellLayoutChildren.getChildAt(j,0);
+    		
+    		
+    		if(view!=null){
+    			 
+       		 mContent.animateChildToPosition(view,i,0,230,30);
+    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view);
+    		}else{
+    			i--;
+    		}
+     
+    		
     	}
     	
     }

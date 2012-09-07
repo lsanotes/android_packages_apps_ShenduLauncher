@@ -1164,6 +1164,8 @@ public class CellLayout extends ViewGroup {
             return;
         }
 
+     
+        
         if (nearest != null && (nearest[0] != oldDragCellX || nearest[1] != oldDragCellY)) {
             // Find the top left corner of the rect the object will occupy
             final int[] topLeft = mTmpPoint;
@@ -1177,6 +1179,7 @@ public class CellLayout extends ViewGroup {
                 // added by the view's parent.
                 MarginLayoutParams lp = (MarginLayoutParams) v.getLayoutParams();
                 left += lp.leftMargin;
+              
                 top += lp.topMargin;
 
                 // Offsets due to the size difference between the View and the dragOutline.

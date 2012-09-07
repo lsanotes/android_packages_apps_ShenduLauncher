@@ -3789,9 +3789,7 @@ public class Workspace extends PagedView
            
          mPreviousTargetCell[0] = mReorderAlarmTarget[0];
          mPreviousTargetCell[1] = mReorderAlarmTarget[1];
-         
-            	   }
-       
+         }
        
        final View dragOverView = mDragTargetLayout.getChildAt(mTargetCell[0],
                mTargetCell[1]);
@@ -3837,12 +3835,8 @@ public class Workspace extends PagedView
         
         }
     }
-    
-    
-    
+   
    private void dragFromTargetcellToEmptycell(){
-
-               //if (mTargetCell[0] != mPreviousTargetCell[0] || mTargetCell[1] != mPreviousTargetCell[1]) {
     
           mReorderAlarmFinish=false;
                    
@@ -3850,7 +3844,7 @@ public class Workspace extends PagedView
                mReorderAlarm.setOnAlarmListener(mReorderAlarmListener);
                mReorderAlarm.setAlarm(130);
                    
-//               	int[] empty=new int[2];
+//              int[] empty=new int[2];
 //            	int[] target=new int[2];
             	
             Log.i(Launcher.TAG,TAG+ "..tuiji tuiji le(dragFromTargetcellToEmptycell) ...............00 :mEmptyCell:"+"  :"+mEmptyCell[0]+mEmptyCell[1]+"   targetCell:"+mTargetCell[0]+mTargetCell[1]+mReorderAlarmFinish);
