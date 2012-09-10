@@ -102,7 +102,7 @@ public class Hotseat extends FrameLayout {
         resetLayout();
     }
     int count =0; 
-    public void setGridSize(int cellCount,boolean isAdd){
+    public void setGridSize(int cellCount,boolean isAdd,boolean initState){
    
      	 count =cellLayoutChildren.getChildCount();
      	
@@ -111,7 +111,7 @@ public class Hotseat extends FrameLayout {
            +"   mCellCountX :" +mCellCountX
 		 +"  count:"+count);  	
         
-     	if(isAdd&&mCellCountX<count+1){
+     	if(isAdd&&mCellCountX<cellCount){
      		
     		mCellCountX=cellCount;
      		mContent.setGridSize(mCellCountX, mCellCountY);	
@@ -122,7 +122,7 @@ public class Hotseat extends FrameLayout {
      		
      	}else {
      		
-     		return;
+     	
      	}
     	
 
@@ -133,13 +133,21 @@ public class Hotseat extends FrameLayout {
 
     		view =cellLayoutChildren.getChildAt(j,0);
     		
-    		
+    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view+"  "+i);
     		if(view!=null){
-    			 
+    	 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,111111,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view.getTag()+"  "+i); 
        		 mContent.animateChildToPosition(view,i,0,230,30);
-    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view);
+    	
     		}else{
-    			i--;
+    			if(initState){
+    				
+    			}else{
+    				i--;
+    			}
+    		}
+    		
+    		if(j-i>20){
+    			return;
     		}
      
     		

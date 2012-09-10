@@ -940,10 +940,16 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
         mLauncher.removeFolder(mInfo);
 
+        
+        
+    	Log.i(Launcher.TAG, TAG+"  ........./////////////////finalItem: "+finalItem+"  .container:."+mInfo.container);
         if (finalItem != null) {
+        	
+        
             LauncherModel.addOrMoveItemInDatabase(mLauncher, finalItem, mInfo.container,
                     mInfo.screen, mInfo.cellX, mInfo.cellY);
         }
+        
         LauncherModel.deleteItemFromDatabase(mLauncher, mInfo);
 
         // Add the last remaining child to the workspace in place of the folder

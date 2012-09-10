@@ -1746,7 +1746,7 @@ public final class Launcher extends Activity
         }
     }
     
-    private void backFromEditMode(){
+     void backFromEditMode(){
     	if(mWorkspace.isSmall()){
     		CellLayout.mIsEditstate = false; //used to draw line condition
     		setScreenNoLimit();
@@ -1795,6 +1795,18 @@ public final class Launcher extends Activity
     public void onClick(View v) {
         // Make sure that rogue clicks don't get through while allapps is launching, or after the
         // view has detached (it's possible for this to happen if the view is removed mid touch).
+    	
+//    	if(CellLayout.mIsEditstate){
+//    		
+//    		backFromEditMode();
+//    		
+//    		return;
+//    	}
+    	if(mWorkspace.isSmall()){
+    		return ;
+    	}
+    	
+    	
         if (v.getWindowToken() == null) {
             return;
         }
@@ -3091,16 +3103,16 @@ public final class Launcher extends Activity
         	
       
             final ItemInfo item = shortcuts.get(i);
-        	Log.i(Launcher.TAG, TAG+"..........................item:"+(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT)+mHotseat);
+        	Log.i(Launcher.TAG, TAG+"..........................item:"+(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT)
+        			+item.toString()+"  :"+item.screen+item.cellX+item.cellY);
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
                 continue;
             }else if(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&mHotseat != null){
             
-            		mHotseat.setGridSize(item.cellX+1, true);
+            		mHotseat.setGridSize(item.cellX+1, true,true);
             
-            	
             }
 
             switch (item.itemType) {
@@ -3459,7 +3471,7 @@ public final class Launcher extends Activity
                     cling.setVisibility(View.GONE);
                     cling.cleanup();
                     SharedPreferences prefs =
-                        getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+                        getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_WORLD_READABLE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putBoolean(flag, true);
                     editor.commit();

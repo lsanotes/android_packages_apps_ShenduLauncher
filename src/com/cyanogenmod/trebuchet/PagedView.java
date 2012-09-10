@@ -944,7 +944,7 @@ public abstract class PagedView extends ViewGroup {
                 mTotalMotionX = 0;
                 mActivePointerId = ev.getPointerId(0);
                 mAllowLongPress = true;
-                OpenStatusBarBeginY =ev.getY();
+             
                 
                 /*
                  * If being flinged and user touches the screen, initiate drag;
@@ -976,11 +976,7 @@ public abstract class PagedView extends ViewGroup {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                
-                if(ev.getY()- OpenStatusBarBeginY>80){ 
-                     
-             	   showNotifications();
-                 }
+    
 
                 mTouchState = TOUCH_STATE_REST;
                 mAllowLongPress = false;
@@ -1148,10 +1144,7 @@ public abstract class PagedView extends ViewGroup {
         dampedOverScroll(amount);
     }
 
-    
-    private float OpenStatusBarBeginY;
-    
-    private float OpenStatusBarEndY;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
     	
@@ -1310,13 +1303,7 @@ public abstract class PagedView extends ViewGroup {
 
         return true;
     }
-    
-    
-    //show stateBar 
-    public  void showNotifications() { 
-
-      }
-
+   
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         if ((event.getSource() & InputDevice.SOURCE_CLASS_POINTER) != 0) {

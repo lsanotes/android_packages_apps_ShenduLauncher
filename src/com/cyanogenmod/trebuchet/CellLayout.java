@@ -1022,7 +1022,7 @@ public class CellLayout extends ViewGroup {
             int delay) {
     	
         CellLayoutChildren clc = getChildrenLayout();
-        Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........shifou yuejie : "+cellX+cellY);
+        Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........shifou yuejie : "+child+cellX+cellY);
         if (clc.indexOfChild(child) != -1 && !mOccupied[cellX][cellY]) {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final ItemInfo info = (ItemInfo) child.getTag();
@@ -1067,17 +1067,16 @@ public class CellLayout extends ViewGroup {
                 public void onAnimationUpdate(ValueAnimator animation) {
           
                     child.requestLayout();
-              //      Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
-                //    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
+                    Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
+                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
                     
-                 //   Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
+                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
                 }
             });
             oa.addListener(new AnimatorListenerAdapter() {
             	 public void onAnimationStart(Animator animation){
         
-            		 
-            	//	 Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
+            		 Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
             		 
             	 }
             	
@@ -1095,7 +1094,7 @@ public class CellLayout extends ViewGroup {
 //                        mReorderAnimators.remove(lp);
 //                    }
                     
-                //	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
+                	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
                 }
                 
                 public void onAnimationCancel(Animator animation) {
