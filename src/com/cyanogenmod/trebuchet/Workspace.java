@@ -76,6 +76,7 @@ import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -689,6 +690,8 @@ public class Workspace extends PagedView
                     ((FolderIcon) child).setTextVisible(false);
                 } else if (child instanceof BubbleTextView) {
                     ((BubbleTextView) child).setTextVisible(false);
+                } else if(child instanceof LinearLayout){
+                	child.findViewById(R.id.app_shortcutinfo_name_id).setVisibility(View.GONE);
                 }
             }
 
@@ -707,6 +710,8 @@ public class Workspace extends PagedView
                     ((FolderIcon) child).setTextVisible(true);
                 } else if (child instanceof BubbleTextView) {
                     ((BubbleTextView) child).setTextVisible(true);
+                } else if(child instanceof LinearLayout){
+                	child.findViewById(R.id.app_shortcutinfo_name_id).setVisibility(View.VISIBLE);
                 }
             }
 
@@ -1935,7 +1940,7 @@ public class Workspace extends PagedView
     * appearance).
     *
     */
-    public void onDragStartedWithItem(View v) {
+    public void onDragStartedWithItem(View v) {//from folder
         final Canvas canvas = new Canvas();
 
         // We need to add extra padding to the bitmap to make room for the glow effect
@@ -1945,7 +1950,7 @@ public class Workspace extends PagedView
         mDragOutline = createDragOutline(v, canvas, bitmapPadding);
     }
 
-    public void onDragStartedWithItem(PendingAddItemInfo info, Bitmap b, Paint alphaClipPaint) {
+    public void onDragStartedWithItem(PendingAddItemInfo info, Bitmap b, Paint alphaClipPaint) {//from AppsTabHost
         final Canvas canvas = new Canvas();
 
         // We need to add extra padding to the bitmap to make room for the glow effect
@@ -2537,7 +2542,7 @@ public class Workspace extends PagedView
 //    	
 //    }
 
-    void startDrag(CellLayout.CellInfo cellInfo ,boolean isFromHotseat) {
+    void startDrag(CellLayout.CellInfo cellInfo ,boolean isFromHotseat) {//from workspace,include hotseat
         View child = cellInfo.cell;
         
         startMovedPage =mCurrentPage;
@@ -2607,7 +2612,8 @@ public class Workspace extends PagedView
 
         mLauncher.getDragLayer().getLocationInDragLayer(child, mTempXY);
         final int dragLayerX = (int) mTempXY[0] + (child.getWidth() - bmpWidth) / 2;
-        int dragLayerY = mTempXY[1] - bitmapPadding / 2;
+        //int dragLayerY = mTempXY[1] - bitmapPadding / 2;
+        int dragLayerY = mTempXY[1];
 
         Point dragVisualizeOffset = null;
         Rect dragRect = null;
@@ -2624,8 +2630,10 @@ public class Workspace extends PagedView
             dragVisualizeOffset = new Point(-bitmapPadding / 2, iconPaddingTop - bitmapPadding / 2);
             dragRect = new Rect(left, top, right, bottom);
         } else if (child instanceof FolderIcon) {
-            int previewSize = r.getDimensionPixelSize(R.dimen.folder_preview_size);
-            dragRect = new Rect(0, 0, child.getWidth(), previewSize);
+            //int previewSize = r.getDimensionPixelSize(R.dimen.folder_preview_size);
+            int previewSize = r.getDimensionPixelSize(R.dimen.app_icon_size);
+            //dragRect = new Rect(0, 0, child.getWidth(), previewSize);
+            dragRect = new Rect(0, 0, child.getWidth(), child.getHeight());
         }
 
         // Clear the pressed state if necessary
@@ -4142,7 +4150,9 @@ public class Workspace extends PagedView
                     // Came from all apps -- make a copy
                     info = new ShortcutInfo((ApplicationInfo) info);
                 }
-                view = mLauncher.createShortcut(R.layout.application, cellLayout,
+                //view = mLauncher.createShortcut(R.layout.application, cellLayout,
+                        //(ShortcutInfo) info);
+                view = mLauncher.createShortcut(R.layout.app_shortcutinfo, cellLayout,
                         (ShortcutInfo) info);
                 break;
             case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
@@ -4868,9 +4878,10 @@ public class Workspace extends PagedView
                         for (ShortcutInfo app : apps) {
                             if (app.componentName.equals(name)) {
                                 info.setIcon(mIconCache.getIcon(info.intent));
-                                ((TextView) view).setCompoundDrawablesWithIntrinsicBounds(null,
+                                ((ImageView)view.findViewById(R.id.app_shortcutinfo_icon_id)).setImageBitmap(info.getIcon(mIconCache));
+                                /*((TextView) view).setCompoundDrawablesWithIntrinsicBounds(null,
                                         new FastBitmapDrawable(info.getIcon(mIconCache)),
-                                        null, null);
+                                        null, null);*/
                             }
                         }
                     }

@@ -50,7 +50,7 @@
         <item name="android:lineSpacingMultiplier">1.1</item>
     </style>
 
-<!-- Workspace -->
+<!-- Workspace 
     <style name="WorkspaceIcon.Portrait">
         <item name="android:drawablePadding">0dp</item>
         <item name="android:paddingLeft">4dp</item>
@@ -58,7 +58,7 @@
         <item name="android:paddingTop">@dimen/app_icon_padding_top</item>
         <item name="android:paddingBottom">4dp</item>
         <item name="android:textSize">13sp</item>
-    </style>
+    </style> -->
     <style name="WorkspaceIcon.Portrait.Folder">
         <item name="android:drawablePadding">0dp</item>
         <item name="android:paddingLeft">4dp</item>

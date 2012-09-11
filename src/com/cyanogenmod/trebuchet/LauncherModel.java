@@ -123,6 +123,24 @@ public class LauncherModel extends BroadcastReceiver {
 
     protected int mPreviousConfigMcc;
 
+    /**
+     * 2012-9-10 hhl
+     * LauncherModel.java
+     * Trebuchet
+     * TODO: used to update the call and sms package mark
+     */
+    Handler mUpdateAppMarkHandler = new Handler(){
+    	public void handleMessage(android.os.Message msg) {
+    		int mark = msg.what;
+    		ShortcutInfo shortcutInfo = (ShortcutInfo)msg.obj;
+    		Callbacks callbacks = mCallbacks != null ? mCallbacks.get() : null;
+            if (callbacks!= null) {
+                callbacks.shenduUpdateAppMark(mark,shortcutInfo.container,
+                		shortcutInfo.screen,shortcutInfo.cellX,shortcutInfo.cellY);
+            }
+    	};
+    };
+    
     public interface Callbacks {
         public boolean setLoadOnResume();
         public int getCurrentWorkspaceScreen();
@@ -139,6 +157,7 @@ public class LauncherModel extends BroadcastReceiver {
         public boolean isAllAppsVisible();
         public void bindSearchablesChanged();
         public void bindWallpaperChanged();
+        public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y);
     }
 
     LauncherModel(LauncherApplication app, IconCache iconCache) {
@@ -1788,6 +1807,35 @@ public class LauncherModel extends BroadcastReceiver {
             });
         }
     }
+   
+    /**
+     * 2012-9-10 hhl
+     * LauncherModel.java
+     * Trebuchet
+     * @param mark: used to diff the call or sms mark changed
+     * @param intent: the mark changed app intent
+     * TODO: used to update the call and sms package mark
+     */
+    public void shenduUpdateAppMarkFromRegister(final int mark,final Intent intent){
+    	new Thread(){
+    		public void run(){
+    			ContentResolver resolver = mApp.getContentResolver();
+    			Cursor cursor = resolver.query(LauncherSettings.Favorites.CONTENT_URI, 
+    					null,LauncherSettings.Favorites.INTENT+" = \'"+intent.toUri(0)+"\'",null,null);
+    			//Log.i("hhl", "===LauncherModel.java==updateShortInfoFromRegister=="+cursor.getCount());
+    			if(cursor.moveToFirst()){
+        			ShortcutInfo shortcutInfo = new ShortcutInfo();
+        			shortcutInfo.screen = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));
+        			shortcutInfo.container = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.CONTAINER));
+        			shortcutInfo.cellX = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
+        			shortcutInfo.cellY = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.CELLY));
+        			mUpdateAppMarkHandler.sendMessage(mUpdateAppMarkHandler.obtainMessage(mark,shortcutInfo));
+    			}
+    			cursor.close();
+    		}
+    	}.start();
+    }
+    
 
     /**
      * This is called from the code that adds shortcuts from the intent receiver.  This

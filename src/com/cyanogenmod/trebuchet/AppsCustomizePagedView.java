@@ -296,8 +296,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
         // The padding on the non-matched dimension for the default widget preview icons
         // (top + bottom)
-        mWidgetPreviewIconPaddedDimension =
-            (int) (mAppIconSize * (1 + (2 * sWidgetPreviewIconPaddingPercentage)));
+        mWidgetPreviewIconPaddedDimension = mAppIconSize;
+            //(int) (mAppIconSize * (1 + (2 * sWidgetPreviewIconPaddingPercentage)));
         mHandleFadeInAdjacentScreens = true;
 
         // Preferences

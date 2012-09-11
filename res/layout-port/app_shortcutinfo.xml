@@ -12,27 +12,43 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+
+
+<com.cyanogenmod.trebuchet.BubbleTextView xmlns:android="http://schemas.android.com/apk/res/android"
+   style="@style/WorkspaceIcon.Portrait"
+   android:focusable="true"
+   android:background="@drawable/focusable_view_bg"/>
 -->
 
-<com.cyanogenmod.trebuchet.FolderIcon
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:focusable="true"
     android:gravity="center_vertical|center_horizontal"
-    android:background="@drawable/focusable_view_bg">
-    <ImageView
-        android:id="@+id/preview_background"
-        android:layout_gravity="center_horizontal"
+    >
+    <FrameLayout 
         android:layout_width="@dimen/app_icon_size"
         android:layout_height="@dimen/app_icon_size"
-        android:src="@drawable/portal_ring_inner_holo"/>
+        >
+	    <ImageView
+	        android:id="@+id/app_shortcutinfo_icon_id"
+	        android:layout_gravity="center_horizontal"
+	        android:layout_width="@dimen/app_icon_size"
+	        android:layout_height="@dimen/app_icon_size"
+	        />
+        <TextView 
+            android:id="@+id/app_shortcutinfo_mark_id"
+            style="@style/WorkspaceAppMark"
+            />
+    </FrameLayout>
     <com.cyanogenmod.trebuchet.BubbleTextView
-        android:id="@+id/folder_icon_name"
+        android:id="@+id/app_shortcutinfo_name_id"
         style="@style/WorkspaceIcon.Portrait"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:singleLine="true"/>
-</com.cyanogenmod.trebuchet.FolderIcon>
+        android:singleLine="true"
+        android:gravity="center_horizontal"
+        />
+</LinearLayout>

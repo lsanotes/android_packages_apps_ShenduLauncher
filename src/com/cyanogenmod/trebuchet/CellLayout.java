@@ -487,12 +487,13 @@ public class CellLayout extends ViewGroup {
 
             // Draw outer ring
             Drawable d = FolderRingAnimator.sSharedOuterRingDrawable;
-            int width = (int) fra.getOuterRingSize();
+            int width = (int) fra.getOuterRingSize()+20;
             int height = width;
             cellToPoint(fra.mCellX, fra.mCellY, mTempLocation);
 
             int centerX = mTempLocation[0] + mCellWidth / 2;
-            int centerY = mTempLocation[1] + FolderRingAnimator.sPreviewSize / 2;
+            //int centerY = mTempLocation[1] + FolderRingAnimator.sPreviewSize / 2;
+            int centerY = mTempLocation[1] + mCellHeight / 2;
 
             canvas.save();
             canvas.translate(centerX - width / 2, centerY - height / 2);

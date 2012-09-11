@@ -18,13 +18,17 @@ package com.cyanogenmod.trebuchet;
 
 import android.app.Application;
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.CallLog.Calls;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
@@ -33,6 +37,12 @@ public class LauncherApplication extends Application {
     public IconCache mIconCache;
     private static boolean sIsScreenLarge;
     private static float sScreenDensity;
+    public static final ComponentName sMMSComponentName = 
+    		new ComponentName("com.android.mms","com.android.mms.ui.ConversationList");
+    public static final ComponentName sCallComponentName = 
+    		new ComponentName("com.android.contacts","com.android.contacts.activities.DialtactsActivity");
+    public static final int MMS_MARK = 1;
+    public static final int CALL_MARK = 2;
     WeakReference<LauncherProvider> mLauncherProvider;
 
     @Override
@@ -70,6 +80,13 @@ public class LauncherApplication extends Application {
         ContentResolver resolver = getContentResolver();
         resolver.registerContentObserver(LauncherSettings.Favorites.CONTENT_URI, true,
                 mFavoritesObserver);
+        
+        // Register for changes to the call info
+        resolver.registerContentObserver(Calls.CONTENT_URI, true,mCallInfoObserver);
+        
+        // Register for changes to the sms and mms info
+        resolver.registerContentObserver(Uri.parse("content://mms-sms/conversations"),true,mSMSObserver);
+        
     }
 
     /**
@@ -83,6 +100,8 @@ public class LauncherApplication extends Application {
 
         ContentResolver resolver = getContentResolver();
         resolver.unregisterContentObserver(mFavoritesObserver);
+        resolver.unregisterContentObserver(mCallInfoObserver);
+        resolver.unregisterContentObserver(mSMSObserver);
     }
 
     /**
@@ -95,6 +114,42 @@ public class LauncherApplication extends Application {
         }
     };
 
+    /**
+     * 2012-9-10 hhl
+     * LauncherApplication.java
+     * Trebuchet
+     * TODO: the listener of call info is changed
+     */
+    private final ContentObserver mCallInfoObserver = new ContentObserver(new Handler()) {
+    	public void onChange(boolean selfChange) {
+            //Log.i("hhl", "==LauncherApplications.java==mCallInfoObserver==");
+    		Intent intent = new Intent();
+    		intent.setAction(Intent.ACTION_MAIN);
+    		intent.setComponent(sCallComponentName);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+    		mModel.shenduUpdateAppMarkFromRegister(CALL_MARK,intent);
+        }
+    };
+    
+    /**
+     * 2012-9-10 hhl
+     * LauncherApplication.java
+     * Trebuchet
+     * TODO: the listener of sms and mms info is changed
+     */
+    private final ContentObserver mSMSObserver = new ContentObserver(new Handler()) {
+    	public void onChange(boolean selfChange) {
+            //Log.i("hhl", "==LauncherApplications.java==mSMSObserver==");
+    		Intent intent = new Intent();
+    		intent.setAction(Intent.ACTION_MAIN);
+    		intent.setComponent(sMMSComponentName);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+    		mModel.shenduUpdateAppMarkFromRegister(MMS_MARK,intent);
+        }
+    };
+    
     LauncherModel setLauncher(Launcher launcher) {
         mModel.initialize(launcher);
         return mModel;

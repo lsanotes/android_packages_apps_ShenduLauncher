@@ -51,6 +51,8 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -62,6 +64,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.provider.CallLog.Calls;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
 import android.text.Selection;
@@ -70,6 +73,7 @@ import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -92,6 +96,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Advanceable;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -862,8 +867,10 @@ public final class Launcher extends Activity
      * @return A View inflated from R.layout.application.
      */
     View createShortcut(ShortcutInfo info) {
-        return createShortcut(R.layout.application,
+        return createShortcut(R.layout.app_shortcutinfo,
                 (ViewGroup) mWorkspace.getChildAt(mWorkspace.getCurrentPage()), info);
+        /*return createShortcut(R.layout.application,
+                (ViewGroup) mWorkspace.getChildAt(mWorkspace.getCurrentPage()), info);*/
     }
 
     /**
@@ -876,14 +883,139 @@ public final class Launcher extends Activity
      * @return A View inflated from layoutResId.
      */
     View createShortcut(int layoutResId, ViewGroup parent, ShortcutInfo info) {
-        BubbleTextView favorite = (BubbleTextView) mInflater.inflate(layoutResId, parent, false);
+    	LinearLayout app_shortcutinfo = (LinearLayout) mInflater.inflate(layoutResId, parent, false);
+    	ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	TextView app_name = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_name_id);
+		TextView app_mark = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_mark_id);
+    	//Log.i("hhll", "====Launcher.java==createShortcut=1111="+info.title+"==="
+    			//+"==="+info.intent.getComponent()+"==="+info.itemType);
+    	if((info.intent.getComponent()!=null) && 
+    		info.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
+    		int unReadMMS_mark = shenduGetUnreadMMSCount();
+    		//Log.i("hhll", "====Launcher.java==createShortcut=222="+info.title+"==="+unReadMMS_mark);
+    		if(unReadMMS_mark>0){
+        		app_mark.setText(unReadMMS_mark+"");
+        		app_mark.setVisibility(View.VISIBLE);
+    		}
+    	}else if((info.intent.getComponent()!=null) &&
+    		info.intent.getComponent().equals(LauncherApplication.sCallComponentName)){
+    		int missCall_mark = shenduGetMissCallCount();
+    		//Log.i("hhll", "====Launcher.java==createShortcut=3333="+info.title+"==="+missCall_mark);
+    		if(missCall_mark>0){
+        		app_mark.setText(String.valueOf(missCall_mark));
+        		app_mark.setVisibility(View.VISIBLE);
+    		}
+    	}
+    	app_icon.setImageBitmap(info.getIcon(mIconCache));
+    	app_name.setText(info.title);
+    	app_shortcutinfo.setTag(info);
+        if (mHideIconLabels) {
+        	app_name.setVisibility(View.INVISIBLE);
+        }
+        app_shortcutinfo.setOnClickListener(this);
+        //Log.i("hhl", "==Launcher.java==createShortcut==="+app_shortcutinfo.getMeasuredHeight()+"*"
+        		//+app_shortcutinfo.getMeasuredWidth());
+        return app_shortcutinfo;
+        /*BubbleTextView favorite = (BubbleTextView) mInflater.inflate(layoutResId, parent, false);
         favorite.applyFromShortcutInfo(info, mIconCache);
         if (mHideIconLabels) {
             favorite.setTextVisible(false);
         }
         favorite.setOnClickListener(this);
-        return favorite;
+        Log.i("hhl", "==Launcher.java==createShortcut==="+favorite.getMeasuredHeight()+"*"+favorite.getMeasuredWidth()
+        		+"==="+favorite.getHeight()+"*"+favorite.getWidth()+"===="+favorite.getPaddingTop()+"*"+
+        		favorite.getPaddingBottom()+"*"+favorite.getPaddingLeft()+"*"+favorite.getPaddingRight());
+        return favorite;*/
     }
+    
+    /**
+     * 2012-9-10 hhl
+     * @return: the unread mms and sms count
+     * TODO: get the unread mms and sms count
+     */
+    public int shenduGetUnreadMMSCount(){
+    	int result;
+    	ContentResolver cr = getContentResolver();  
+    	Cursor cursorUnreadSms = cr.query(Uri.parse("content://sms/inbox"),null,"read = 0",null,null);
+    	Cursor cursorUnreadMms = cr.query(Uri.parse("content://mms/inbox"),null,"read = 0",null,null);
+    	result = cursorUnreadSms.getCount()+cursorUnreadMms.getCount();
+		//Log.i("hhl", "====Launcher.java==getUnreadMMSCount=="+result);
+    	cursorUnreadSms.close();
+    	cursorUnreadMms.close();
+    	return result;
+    }
+    
+    /**
+     * 2012-9-10 hhl
+     * @return: the miss call count
+     * TODO: get the miss call count
+     */
+    public int shenduGetMissCallCount(){
+    	int result;
+    	ContentResolver phoneCR = getContentResolver();  
+    	Cursor cursorMissed=phoneCR.query(Calls.CONTENT_URI,null,
+    			Calls.TYPE+"="+Calls.MISSED_TYPE+" and "+Calls.NEW +" = 1",null,null);
+    	result = cursorMissed.getCount();
+		//Log.i("hhll", "====Launcher.java==getMissCallCount=="+result);
+    	return result;
+    }
+    
+    /**
+     * 2012-9-10 hhl
+     * @param mark: diff wihch app mark changed in call and sms
+     * @param container: used to changed app view container 
+     * @param screen: used to changed app view screen   
+     * @param x: used to changed app view x  
+     * @param y: used to changed app view y
+     * TODO: update the call or sms app view
+     */
+    public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y){
+		//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1111="+mark+"==="+screen+"==="+x+"=="+y);
+		CellLayoutChildren cellLayoutChildren = null;
+		if(container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
+			cellLayoutChildren = 
+					(CellLayoutChildren)((CellLayout)mWorkspace.getChildAt(screen)).getChildrenLayout();
+		}else if(container==LauncherSettings.Favorites.CONTAINER_HOTSEAT){
+			cellLayoutChildren = mHotseat.getLayout().getChildrenLayout();
+		}else{
+			Cursor folder_cursor = getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI,
+				null,"_id = "+container,null,null);
+			if(folder_cursor.moveToFirst()){
+				//int folder_container = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CONTAINER));
+				int folder_screen = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));
+				int folder_x = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
+				int folder_y = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
+				cellLayoutChildren = 
+						(CellLayoutChildren)((CellLayout)mWorkspace.getChildAt(folder_screen)).getChildrenLayout();
+				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=0="+cellLayoutChildren.getChildAt(folder_x, folder_y));
+				FolderIcon folderIcon = (FolderIcon)cellLayoutChildren.getChildAt(folder_x, folder_y);
+				Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1="+(folderIcon==null));
+				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=2="+(folderIcon.mFolder.mContent==null));
+				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=3="+
+						//(folderIcon.mFolder.mContent.getChildrenLayout()==null));
+				cellLayoutChildren = folderIcon.mFolder.mContent.getChildrenLayout();		
+			}
+			folder_cursor.close();
+		}
+		if(cellLayoutChildren!=null){
+			View view = cellLayoutChildren.getChildAt(x, y);
+			TextView app_mark = (TextView)view.findViewById(R.id.app_shortcutinfo_mark_id);
+			int markSize = 0;
+			if(mark==LauncherApplication.MMS_MARK){
+				markSize = shenduGetUnreadMMSCount();
+			}else if(mark==LauncherApplication.CALL_MARK){
+				markSize = shenduGetMissCallCount();
+			}
+			if(markSize>0){
+				app_mark.setText(markSize+"");
+				app_mark.setVisibility(View.VISIBLE);
+			}else{
+				app_mark.setVisibility(View.INVISIBLE);
+			}
+			//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=222222="+markSize);
+			view.requestLayout();
+		}
+	}
 
     /**
      * Add an application shortcut to the workspace.

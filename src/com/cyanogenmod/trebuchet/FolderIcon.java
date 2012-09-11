@@ -178,7 +178,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             // We need to reload the static values when configuration changes in case they are
             // different in another configuration
             if (sStaticValuesDirty) {
-                sPreviewSize = res.getDimensionPixelSize(R.dimen.folder_preview_size);
+                sPreviewSize = res.getDimensionPixelSize(R.dimen.app_icon_size);
+                //sPreviewSize = res.getDimensionPixelSize(R.dimen.folder_preview_size);
                 sPreviewPadding = res.getDimensionPixelSize(R.dimen.folder_preview_padding);
                 Workspace.FolderStyle folderStyle = launcher.getWorkspace().getFolderStyle();
                 if(folderStyle == Workspace.FolderStyle.Ring){
@@ -304,7 +305,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public boolean acceptDrop(Object dragInfo) {
         final ItemInfo item = (ItemInfo) dragInfo;
-    	Log.i("hhl", "*************FolderIcon.java....acceptDrop==="+getClass().getName()+"===="+item);
+    	//Log.i("hhl", "*************FolderIcon.java....acceptDrop==="+getClass().getName()+"===="+item);
         return willAcceptItem(item);
     }
 
@@ -319,7 +320,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     public void onDragEnter(Object dragInfo) {
-    	Log.i("hhl", "FolderIcon.java....onDragEnter====="+dragInfo.toString());
+    	//Log.i("hhl", "FolderIcon.java....onDragEnter====="+dragInfo.toString());
         if (!willAcceptItem((ItemInfo) dragInfo)) return;
         //Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
         //if(folderStyle == Workspace.FolderStyle.Ring){
@@ -339,8 +340,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             final ShortcutInfo srcInfo, final View srcView, Rect dstRect,
             float scaleRelativeToDragLayer, Runnable postAnimationRunnable) {
 
-        Drawable animateDrawable = ((TextView) destView).getCompoundDrawables()[1];
-    	Log.i("hhl", "^^^^^^^FolderIcon.java...performCreateAnimation before computer 333===");
+        //Drawable animateDrawable = ((TextView) destView).getCompoundDrawables()[1];
+        Drawable animateDrawable = ((ImageView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
+    	//Log.i("hhl", "^^^^^^^FolderIcon.java...performCreateAnimation before computer 333===");
     	
         computePreviewDrawingParams(animateDrawable.getIntrinsicWidth(), destView.getMeasuredWidth());
 
@@ -420,7 +422,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         item.cellY = -1;
         Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
         
-    	Log.i("hhl", "FolderIcon.java...onDrop 6====="+item.title+"==="+(animateView != null)+"==="+(finalRect==null));
+    	//Log.i("hhl", "FolderIcon.java...onDrop 6====="+item.title+"==="+(animateView != null)+"==="+(finalRect==null));
         // Typically, the animateView corresponds to the DragView; however, if this is being done
         // after a configuration activity (ie. for a Shortcut being dragged from AllApps) we
         // will not have a view to animate
@@ -471,7 +473,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void onDrop(DragObject d) {
         ShortcutInfo item = null;
-    	Log.i("hhl", "FolderIcon.java...onDrop 1====="+getClass().getName()+"==="+d.dragInfo);
+    	//Log.i("hhl", "FolderIcon.java...onDrop 1====="+getClass().getName()+"==="+d.dragInfo);
     	
     	
         if (d.dragInfo instanceof ApplicationInfo) {
@@ -588,7 +590,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     private void drawPreviewItem(Canvas canvas, PreviewItemDrawingParams params) {
         canvas.save();
-        canvas.translate(params.transX + mPreviewOffsetX, params.transY + mPreviewOffsetY);
+        canvas.translate(params.transX + mPreviewOffsetX, params.transY + mPreviewOffsetY+15);
         canvas.scale(params.scale, params.scale);
         Drawable d = params.drawable;
 
@@ -611,8 +613,11 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         if (mFolder.getItemCount() == 0 && !mAnimating) return;
 
         ArrayList<View> items = mFolder.getItemsInReadingOrder(false);
+        
+        ImageView app_icon;
+        
         Drawable d;
-        TextView v;
+        //TextView v;
 
         // Update our drawing parameters if necessary
         //FolderStyle folderStyle = PreferencesProvider.Interface.Homescreen.getScreenFolderStyle(getContext(), 
@@ -624,8 +629,10 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         	if (mAnimating) {
                 computePreviewDrawingParams(mAnimParams.drawable);
             } else {
-                v = (TextView) items.get(0);
-                d = v.getCompoundDrawables()[1];
+            	app_icon = (ImageView)items.get(0).findViewById(R.id.app_shortcutinfo_icon_id);
+            	d = app_icon.getDrawable();
+                //v = (TextView) items.get(0);
+                //d = v.getCompoundDrawables()[1];
                 computePreviewDrawingParams(d);
             }
         //}else
@@ -636,9 +643,11 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         int nItemsInPreview = Math.min(items.size(), NUM_ITEMS_IN_PREVIEW);
         if (!mAnimating) {
             for (int i = nItemsInPreview - 1; i >= 0; i--) {
-                v = (TextView) items.get(i);
-                d = v.getCompoundDrawables()[1];
-
+                //v = (TextView) items.get(i);
+                //d = v.getCompoundDrawables()[1];
+            	//Log.i("hhl", "===FolderIcon.java==drawPreviewItem==="+mIntrinsicIconSize+"**"+i);
+            	app_icon = (ImageView)items.get(i).findViewById(R.id.app_shortcutinfo_icon_id);
+            	d = app_icon.getDrawable();
                 mParams = computePreviewItemDrawingParams(i, mParams);
                 mParams.drawable = d;
                 drawPreviewItem(canvas, mParams);

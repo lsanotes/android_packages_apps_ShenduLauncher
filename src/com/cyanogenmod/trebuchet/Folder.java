@@ -44,6 +44,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -226,8 +227,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
             mLauncher.getWorkspace().onDragStartedWithItem(v);
             mLauncher.getWorkspace().beginDragShared(v, this);
-            mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
-
+            //mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
+            mIconDrawable=((ImageView)v.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
             mCurrentDragInfo = item;
             mEmptyCell[0] = item.cellX;
             mEmptyCell[1] = item.cellY;
@@ -540,7 +541,33 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     protected boolean createAndAddShortcut(ShortcutInfo item) {
-        final TextView textView =
+    	LinearLayout app_shortcutinfo = (LinearLayout) mInflater.inflate(R.layout.app_shortcutinfo, this, false);
+    	ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	TextView app_name = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_name_id);
+		TextView app_mark = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_mark_id);
+    	app_icon.setImageBitmap(item.getIcon(mIconCache));
+    	if((item.intent.getComponent()!=null) && 
+    		item.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
+        	int unReadMMS_mark = mLauncher.shenduGetUnreadMMSCount();
+        	if(unReadMMS_mark>0){
+            	app_mark.setText(unReadMMS_mark+"");
+            	app_mark.setVisibility(View.VISIBLE);
+        	}
+    	}else if((item.intent.getComponent()!=null) &&
+    		item.intent.getComponent().equals(LauncherApplication.sCallComponentName)){
+        	int missCall_mark = mLauncher.shenduGetMissCallCount();
+        	if(missCall_mark>0){
+            	app_mark.setText(String.valueOf(missCall_mark));
+            	app_mark.setVisibility(View.VISIBLE);
+        	}
+        }
+    	
+    	app_name.setText(item.title);
+    	app_shortcutinfo.setTag(item);
+    	app_shortcutinfo.setOnClickListener(this);
+    	app_shortcutinfo.setOnLongClickListener(this);
+        
+        /*final TextView textView =
             (TextView) mInflater.inflate(R.layout.application, this, false);
         textView.setCompoundDrawablesWithIntrinsicBounds(null,
                 new FastBitmapDrawable(item.getIcon(mIconCache)), null, null);
@@ -548,7 +575,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         textView.setTag(item);
 
         textView.setOnClickListener(this);
-        textView.setOnLongClickListener(this);
+        textView.setOnLongClickListener(this);*/
 
         // We need to check here to verify that the given item's location isn't already occupied
         // by another item. If it is, we need to find the next available slot and assign
@@ -563,8 +590,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         CellLayout.LayoutParams lp =
             new CellLayout.LayoutParams(item.cellX, item.cellY, item.spanX, item.spanY);
-        textView.setOnKeyListener(new FolderKeyEventListener());
-        mContent.addViewToCellLayout(textView, -1, (int)item.id, lp, true);
+        app_shortcutinfo.setOnKeyListener(new FolderKeyEventListener());
+        mContent.addViewToCellLayout(app_shortcutinfo, -1, (int)item.id, lp, true);
         return true;
     }
 
@@ -954,7 +981,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         // Add the last remaining child to the workspace in place of the folder
         if (finalItem != null) {
-            View child = mLauncher.createShortcut(R.layout.application, cellLayout,
+            /*View child = mLauncher.createShortcut(R.layout.application, cellLayout,
+                    (ShortcutInfo) finalItem);*/
+            View child = mLauncher.createShortcut(R.layout.app_shortcutinfo, cellLayout,
                     (ShortcutInfo) finalItem);
 
             mLauncher.getWorkspace().addInScreen(child, mInfo.container, mInfo.screen, mInfo.cellX,
