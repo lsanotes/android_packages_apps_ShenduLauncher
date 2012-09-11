@@ -19,6 +19,7 @@ package com.cyanogenmod.trebuchet;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -57,15 +58,44 @@ public class CellLayoutChildren extends ViewGroup {
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
+            
+            
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
 
             if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
                     (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
+            	
+            	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
+           
                 return child;
             }
         }
         return null;
     }
+    
+    
+    public View  getChildAtNotDrag(int x, int y,View v) {
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            View child = getChildAt(i);
+          
+            CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
+
+            if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
+                    (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
+            	
+            	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
+               if(child.equals(v)){
+            	   continue;
+               }else{
+            	   return child;   
+               }
+          
+            }
+        }
+        return null;
+    }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -165,4 +195,5 @@ public class CellLayoutChildren extends ViewGroup {
     protected void setChildrenDrawnWithCacheEnabled(boolean enabled) {
         super.setChildrenDrawnWithCacheEnabled(enabled);
     }
+
 }

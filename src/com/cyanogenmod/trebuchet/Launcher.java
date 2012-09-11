@@ -1410,7 +1410,7 @@ public final class Launcher extends Activity
         }
 
         super.onCreateOptionsMenu(menu);
-
+        
         Intent manageApps = new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
         manageApps.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
@@ -2588,6 +2588,7 @@ public final class Launcher extends Activity
                     // clean up our state transition functions
                     mAppsCustomizeTabHost.setVisibility(View.GONE);
                     mSearchDropTargetBar.showSearchBar(true);
+                    
                     showWorkspace(true);
                 } else {
                     exitSpringLoadedDragMode();

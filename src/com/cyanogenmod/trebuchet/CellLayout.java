@@ -44,6 +44,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewDebug;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LayoutAnimationController;
@@ -1017,33 +1018,32 @@ public class CellLayout extends ViewGroup {
     public View getChildAt(int x, int y) {
         return mChildren.getChildAt(x, y);
     }
+    
+    public View getChildAtNotDrag(int x, int y,View v) {
+        return mChildren.getChildAtNotDrag(x, y,v);
+    }
+    
 
     public boolean animateChildToPosition(final View child, int cellX, int cellY, int duration,
             int delay) {
     	
         CellLayoutChildren clc = getChildrenLayout();
-        Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........shifou yuejie : "+child+cellX+cellY);
+  
         if (clc.indexOfChild(child) != -1 && !mOccupied[cellX][cellY]) {
+        	
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final ItemInfo info = (ItemInfo) child.getTag();
-
-            // We cancel any existing animations
-//            if (mReorderAnimators.containsKey(lp)) {
-//            	
-//            	Log.i(Launcher.TAG, TAG+".mReorderAnimators.get(lp).cancel();..........      mReorderAnimators.get(lp).cancel(); ");
-//                mReorderAnimators.get(lp).cancel();
-//                mReorderAnimators.remove(lp);
-//            }
+  
 
             int oldX = lp.x;
             int oldY = lp.y;
+            
             if(lp.cellX<mCountX){
+     
              mOccupied[lp.cellX][lp.cellY] = false;
             }
-           
-            Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old .      "+lp.cellX+lp.cellY +false);
+   
             mOccupied[cellX][cellY] = true;
-            Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........new.       "+cellX + cellY +true);
 
             lp.isLockedToGrid = true;
             lp.cellX = info.cellX = cellX;
@@ -1052,31 +1052,36 @@ public class CellLayout extends ViewGroup {
             lp.isLockedToGrid = false;
             int newX = lp.x;
             int newY = lp.y;
-
+          //  Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........newX xy:"+newX +"  :"+ newY);
             lp.x = oldX;
             lp.y = oldY;
             child.requestLayout();
-
+      
+         //   Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old xy:"+newX +"  :"+ newY);
+            
             PropertyValuesHolder x = PropertyValuesHolder.ofInt("x", oldX, newX);
             PropertyValuesHolder y = PropertyValuesHolder.ofInt("y", oldY, newY);
+         //   Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........PropertyValuesHolder xy:"+x +"  :"+ y);
+            
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(lp, x, y);
             oa.setDuration(duration);
-          //  mReorderAnimators.put(lp, oa);
-            Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...........      oldXY: "+oldX + oldY +"   new:"+newX+newY);
+            mReorderAnimators.put(lp, oa);
+       
             oa.addUpdateListener(new AnimatorUpdateListener() {
                 public void onAnimationUpdate(ValueAnimator animation) {
           
                     child.requestLayout();
-                    Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
-                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
                     
-                    Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
+                  //  Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
+                  //  Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
+                    
+                  //  Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
                 }
             });
             oa.addListener(new AnimatorListenerAdapter() {
             	 public void onAnimationStart(Animator animation){
         
-            		 Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
+            		// Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
             		 
             	 }
             	
@@ -1089,12 +1094,12 @@ public class CellLayout extends ViewGroup {
                     if (!cancelled) {
                         lp.isLockedToGrid = true;
                     }
-                    // remove by zlf
-//                    if (mReorderAnimators.containsKey(lp)) {
-//                        mReorderAnimators.remove(lp);
-//                    }
+             
+                    if (mReorderAnimators.containsKey(lp)) {
+                        mReorderAnimators.remove(lp);
+                    }
                     
-                	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
+                //	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
                 }
                 
                 public void onAnimationCancel(Animator animation) {

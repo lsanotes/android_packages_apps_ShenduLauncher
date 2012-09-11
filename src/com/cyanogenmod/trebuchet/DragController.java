@@ -603,8 +603,10 @@ public class DragController {
         mDragObject.y = coordinates[1];
         boolean accepted = false;
         if (dropTarget != null) {
-            mDragObject.dragComplete = true;
-            dropTarget.onDragExit(mDragObject);
+        	   mDragObject.dragComplete = true;
+        
+        		  dropTarget.onDragExit(mDragObject);		
+        
             if (dropTarget.acceptDrop(mDragObject)) {
                 dropTarget.onDrop(mDragObject);
                 accepted = true;
