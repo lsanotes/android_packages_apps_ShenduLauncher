@@ -36,6 +36,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.cyanogenmod.trebuchet.AppsCustomizeView.ContentType;
 import com.cyanogenmod.trebuchet.preference.PreferencesProvider;
 
 import java.util.ArrayList;
@@ -292,6 +293,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             return WIDGETS_TAB_TAG;
         }else if(type == AppsCustomizeView.ContentType.Wallpapers){
         	return WALLPAPERS_TAB_TAG;
+        }else if(type == AppsCustomizeView.ContentType.Effects){
+        	return EFFECTS_TAB_TAG;
         }
         return WIDGETS_TAB_TAG;
     }

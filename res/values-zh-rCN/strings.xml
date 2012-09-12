@@ -187,4 +187,15 @@
     <string name="editstate_choice_wallpaper">壁纸</string>
     <string name="editstate_choice_theme">主题</string>
     <string name="editstate_choice_specially_effect">特效</string>
+    <!-- Effects style -->
+    <string name="editstate_effect_string_standard">标准</string>
+    <string name="editstate_effect_string_tablet">平板</string>
+    <string name="editstate_effect_string_zoomin">缩小</string>
+    <string name="editstate_effect_string_zoomout">放大</string>
+    <string name="editstate_effect_string_rotateup">向上旋转</string>
+    <string name="editstate_effect_string_rotatedown">向下旋转</string>
+    <string name="editstate_effect_string_cubein">立方飞入</string>
+    <string name="editstate_effect_string_cubeout">立方飞出</string>
+    <string name="editstate_effect_string_stack">堆叠</string>
+    
 </resources>

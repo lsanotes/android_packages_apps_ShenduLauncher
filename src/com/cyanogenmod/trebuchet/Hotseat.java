@@ -120,7 +120,7 @@ public class Hotseat extends FrameLayout {
      		mCellCountX=cellCount;
      		mContent.setGridSize(mCellCountX, mCellCountY);	
      		
-     	}else {
+     	//}else {
      		
      	
      	}

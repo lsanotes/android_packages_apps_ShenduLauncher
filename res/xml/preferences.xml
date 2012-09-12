@@ -86,7 +86,7 @@
                 <CheckBoxPreference android:key="ui_homescreen_scrolling_scroll_wallpaper"
                     android:title="@string/preferences_interface_homescreen_scrolling_scroll_wallpaper_title"
                     android:summary="@string/preferences_interface_homescreen_scrolling_scroll_wallpaper_summary"
-                    android:defaultValue="true" />
+                    android:defaultValue="false" />
             </PreferenceCategory>
             <!--  
             <PreferenceCategory android:key="ui_homescreen_indicator"

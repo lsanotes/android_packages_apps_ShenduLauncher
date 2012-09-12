@@ -6,6 +6,18 @@ import android.graphics.drawable.Drawable;
 
 public class ShenduPrograme {
 
+	public int getEffectStrId() {
+		return effectStrId;
+	}
+	public void setEffectStrId(int effectStrId) {
+		this.effectStrId = effectStrId;
+	}
+	public int getEffectDrawableId() {
+		return effectDrawableId;
+	}
+	public void setEffectDrawableId(int effectDrawableId) {
+		this.effectDrawableId = effectDrawableId;
+	}
 	public boolean isLiveWallpaper() {
 		return liveWallpaper;
 	}
@@ -65,5 +77,7 @@ public class ShenduPrograme {
 	private int choice;
 	private boolean liveWallpaper;
 	private ComponentName componentname;
+	private int effectStrId;
+	private int effectDrawableId;
 
 }

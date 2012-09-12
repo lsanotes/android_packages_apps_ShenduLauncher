@@ -970,7 +970,8 @@ public final class Launcher extends Activity
      * TODO: update the call or sms app view
      */
     public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y){
-		//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1111="+mark+"==="+screen+"==="+x+"=="+y);
+		//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1111="+mark+"==="+
+				//container+"==="+screen+"==="+x+"=="+y);
 		CellLayoutChildren cellLayoutChildren = null;
 		if(container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
 			cellLayoutChildren = 
@@ -981,19 +982,28 @@ public final class Launcher extends Activity
 			Cursor folder_cursor = getContentResolver().query(LauncherSettings.Favorites.CONTENT_URI,
 				null,"_id = "+container,null,null);
 			if(folder_cursor.moveToFirst()){
-				//int folder_container = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CONTAINER));
+				int folder_container = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CONTAINER));
 				int folder_screen = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));
 				int folder_x = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
-				int folder_y = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
-				cellLayoutChildren = 
-						(CellLayoutChildren)((CellLayout)mWorkspace.getChildAt(folder_screen)).getChildrenLayout();
-				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=0="+cellLayoutChildren.getChildAt(folder_x, folder_y));
-				FolderIcon folderIcon = (FolderIcon)cellLayoutChildren.getChildAt(folder_x, folder_y);
-				Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1="+(folderIcon==null));
-				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=2="+(folderIcon.mFolder.mContent==null));
-				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=3="+
-						//(folderIcon.mFolder.mContent.getChildrenLayout()==null));
-				cellLayoutChildren = folderIcon.mFolder.mContent.getChildrenLayout();		
+				int folder_y = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLY));
+				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=0="+folder_cursor.getCount()+"==="+folder_container+"==="+
+						//folder_screen+"=="+folder_x+"==="+folder_y);
+				if(folder_container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
+					cellLayoutChildren = 
+							(CellLayoutChildren)((CellLayout)mWorkspace.getChildAt(folder_screen)).getChildrenLayout();
+				}else if(folder_container==LauncherSettings.Favorites.CONTAINER_HOTSEAT){
+					cellLayoutChildren = mHotseat.getLayout().getChildrenLayout();
+				}
+				View view = cellLayoutChildren.getChildAt(folder_x, folder_y);
+				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1="+view+"===="+(view.getTag() instanceof FolderInfo)+
+					//"==="+view.getTag()+"=="+(view instanceof Folder)+"==="+(view instanceof FolderIcon));
+				if(view instanceof FolderIcon){
+					FolderIcon folderIcon = (FolderIcon)view;
+					//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=2="+(folderIcon==null));
+					cellLayoutChildren = folderIcon.mFolder.mContent.getChildrenLayout();
+				}else{
+					cellLayoutChildren = null;
+				}
 			}
 			folder_cursor.close();
 		}

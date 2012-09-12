@@ -196,6 +196,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     //private SortMode mSortMode = SortMode.Title;
     //private ArrayList<ShortcutInfo> mApps;
     private ArrayList<ShenduPrograme> mWallpapersList;
+    private ArrayList<ShenduPrograme> mEffectsList;
     private ImageView mEditStateLeftArrow,mEditStateRightArrow;
     private ArrayList<Object> mWidgets;
 
@@ -265,6 +266,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mContentType = ContentType.Widgets;
         //mApps = new ArrayList<ShortcutInfo>();
         mWallpapersList = new ArrayList<ShenduPrograme>();
+        mEffectsList = new ArrayList<ShenduPrograme>();
         mWidgets = new ArrayList<Object>();
         mIconCache = ((LauncherApplication) context.getApplicationContext()).getIconCache();
         mHolographicOutlineHelper = new HolographicOutlineHelper();
@@ -434,6 +436,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
     	if(mContentType == ContentType.Wallpapers){
     		return !mWallpapersList.isEmpty();
+    	}else if(mContentType == ContentType.Effects){
+    		return !mEffectsList.isEmpty();
     	}else{
     		return !mWidgets.isEmpty();
     	}
@@ -574,6 +578,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 		postDelayed(new Runnable() {
 			public void run() {
 				shenduFindWallpapers();
+				shenduFindEffects();
 			}
 	    }, 500);
 	}
@@ -610,14 +615,47 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
     
     /**
+     * 2012-9-12 hhl
+     * TODO: userd to find the effects style in current launcher and init mEffectsList data
+     */
+    private void shenduFindEffects(){
+    	boolean wasEmpty = mEffectsList.isEmpty();
+    	int effectStrId,effectDrawableId;
+    	//TransitionEffect mTransitionEffect;
+    	mEffectsList.clear();
+    	Resources resources = getResources();
+    	String[] extras = resources.getStringArray(R.array.effects);
+    	for (String extra:extras) {
+    		ShenduPrograme shendParograme = new ShenduPrograme();
+    		effectStrId = getResources().getIdentifier("editstate_effect_string_"+extra.toLowerCase(),
+    				"string","com.cyanogenmod.trebuchet");
+    		effectDrawableId = getResources().getIdentifier("editstate_effect_drawable_"+extra.toLowerCase(),
+    				"drawable","com.cyanogenmod.trebuchet");
+    		//mTransitionEffect = TransitionEffect.valueOf(extra);
+    		shendParograme.setName(extra);
+    		shendParograme.setEffectStrId(effectStrId);
+    		shendParograme.setEffectDrawableId(effectDrawableId);
+    		mEffectsList.add(shendParograme);
+        	//Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindEffects=="+extra);
+    	}
+    	if (wasEmpty) {
+            // The next layout pass will trigger data-ready if both widgets and apps are set, so request
+            // a layout to do this test and invalidate the page data when ready.
+            if (testDataReady()) requestLayout();
+        } else {
+            cancelAllTasks();
+            invalidatePageData();
+        }
+    }
+    
+    /**
      * 2012-8-26 hhl
-     * @return: the widgets list 
-     * TODO: userd to find the wallpapers data in current launcher
+     * TODO: userd to find the wallpapers data in current launcher and init mWallpapersList data
      */
     private void shenduFindWallpapers() {
     	boolean wasEmpty = mWallpapersList.isEmpty();
     	mWallpapersList.clear();
-    	Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindWallpapers=="+wasEmpty);
+    	//Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindWallpapers=="+wasEmpty);
     	Resources resources = getResources();
     	String packageName = resources.getResourcePackageName(R.array.wallpapers);
     	String[] extras = resources.getStringArray(R.array.wallpapers);
@@ -720,7 +758,11 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                     //mLauncher.startActivitySafely(appInfo.intent, appInfo);
                 }
             });
-        } else if (view instanceof PagedViewWidget) {
+        } else if (view instanceof PagedViewEffect){
+        	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
+        	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
+            Log.i("hhl", "===AppsCustonizepagedView.java===onClick==PagedViewEffect=="+view.getTag());
+        }else if (view instanceof PagedViewWidget) {
             // Let the user know that they have to long press to add a widget
             Toast.makeText(getContext(), R.string.long_press_widget_to_add,
                     Toast.LENGTH_SHORT).show();
@@ -1012,7 +1054,9 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             final int duration = res.getInteger(R.integer.config_tabTransitionDuration);
             shenduUpdateTheArrowImageView(0);
             Log.i("hhl", "===AppsCustomizePagedView.java...881===onTabChanged==="+type+"==="+mContentType);
-            if(type.equals(AppsCustomizeView.ContentType.Wallpapers) || type.equals(AppsCustomizeView.ContentType.Widgets)){
+            if(type.equals(AppsCustomizeView.ContentType.Wallpapers) || 
+            		type.equals(AppsCustomizeView.ContentType.Widgets) ||
+            		type.equals(AppsCustomizeView.ContentType.Effects)){
             	
            
             // We post a runnable here because there is a delay while the first page is loading and
@@ -1485,6 +1529,22 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         return preview;
     }
 
+
+    /**
+     * 2012-9-12 hhl
+     * TODO: used sync the effect tabwidget content page view data
+     */
+    public void syncEffectsPages(){
+    	Context context = getContext();
+    	//Log.i("hhl", "===AppsCustomizePagedView.java==="+mCellCountX+"*"+mCellCountY);
+        int numPages = (int) Math.ceil((float)mEffectsList.size()/(mCellCountX * mCellCountY));
+        for (int j = 0; j < numPages; ++j) {
+        	PagedViewCellLayout layout = new PagedViewCellLayout(context);
+            setupPage(layout);
+            addView(layout);
+        }
+    }
+    
     /**
      * 2012-8-29 hhl
      * TODO: used sync the wallpaper tabwidget content page view data
@@ -1546,6 +1606,38 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             int y = index / mCellCountX;
             //layout.addViewToCellLayout(icon, -1, i, new PagedViewCellLayout.LayoutParams(x, y, 1, 1));
             layout.addViewToCellLayoutWallpapger(wallpaperView, -1, i, new PagedViewCellLayout.LayoutParams(x, y, 1, 1));
+        }
+
+        layout.createHardwareLayers();
+    }
+    
+    /**
+     * 2012-9-12 hhl
+     * @param page: which page item used to sync
+     * @param immediate: immediate sync data or not
+     * TODO: used to sync the effect tabwidget content of the page items data
+     */
+    public void syncEffectPageItems(final int page, final boolean immediate){
+    	int numCells = mCellCountX * mCellCountY;
+        int startIndex = page * numCells;
+        int endIndex = Math.min(startIndex + numCells, mEffectsList.size());
+        //Log.i("hhl", "====AppsCustonizePagedView.java..syncEffectPageItems.."+getChildCount()+
+        		//"==="+mEffectsList.size()+"==="+page);
+        PagedViewCellLayout layout = (PagedViewCellLayout) getPageAt(page);
+        layout.removeAllViewsOnPage();
+        for (int i = startIndex; i < endIndex; ++i) {
+        	ShenduPrograme info = mEffectsList.get(i);
+        	PagedViewEffect effectView = (PagedViewEffect)mLayoutInflater.inflate(
+                    R.layout.apps_customize_effect, layout, false);
+        	effectView.applyFromShenduPrograme(info, mHolographicOutlineHelper);
+        	effectView.setOnClickListener(this);
+        	//Log.i("hhl", "====AppsCustonizePagedView.java..syncWallpaperPageItems.."+
+        			//wallpaperView.getWidth()+"*"+wallpaperView.getHeight());
+            int index = i - startIndex;
+            int x = index % mCellCountX;
+            int y = index / mCellCountX;
+            //layout.addViewToCellLayout(icon, -1, i, new PagedViewCellLayout.LayoutParams(x, y, 1, 1));
+            layout.addViewToCellLayoutWallpapger(effectView, -1, i, new PagedViewCellLayout.LayoutParams(x, y, 1, 1));
         }
 
         layout.createHardwareLayers();
@@ -1759,6 +1851,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             case Wallpapers:
                 syncWallpapersPages();
                 break;
+            case Effects:
+            	syncEffectsPages();
+            default:
+            	break;
             }
        //}
     }
@@ -1783,6 +1879,11 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             case Wallpapers:
                 syncWallpaperPageItems(page, immediate);
                 break;
+            case Effects:
+            	syncEffectPageItems(page, immediate);
+            	break;
+            default:
+            	break;
             }
         //}
     }

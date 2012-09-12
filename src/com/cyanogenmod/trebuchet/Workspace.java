@@ -483,6 +483,10 @@ public class Workspace extends PagedView
         return mTransitionEffect;
     }
     
+    public void setTransitionEffect(TransitionEffect transitionEffect) {
+		this.mTransitionEffect = transitionEffect;
+	}
+    
     public FolderStyle getFolderStyle() {
 	       return mFolderStyle;
 	    }
@@ -567,13 +571,15 @@ public class Workspace extends PagedView
             // In this case, we will skip drawing background protection
         }
 
-        if (!mShowSearchBar) {
+        /* update by zlf
+         * when ShowSearchBardo is hide,do not reset workspace padding
+         if (!mShowSearchBar) {
             int paddingTop = 0;
             if (mLauncher.getCurrentOrientation() == Configuration.ORIENTATION_PORTRAIT) {
                 paddingTop = (int)res.getDimension(R.dimen.qsb_bar_hidden_inset);
             }
             setPadding(0, paddingTop, getPaddingRight(), getPaddingBottom());
-        }
+        }*/
 
         if (!mShowScrollingIndicator) {
             disableScrollingIndicator();
@@ -2969,9 +2975,10 @@ public class Workspace extends PagedView
                             lp.cellY);
                 }
             }
-            if(dropTargetLayout==mHotseat.getLayout()){
+            //add by zlf
+            /*if(dropTargetLayout==mHotseat.getLayout()){
                 mLauncher.getHotseat().viewMatchingCellInfo();	
-            }
+            }*/
      
             Log.i(Launcher.TAG, TAG+"..ondrops....getParent()........cell.."+cell);
 
@@ -3483,8 +3490,8 @@ public class Workspace extends PagedView
         	
         	target[0] =mReorderAlarmTarget[0];
         	target[1] =mReorderAlarmTarget[1];
-        	
-            realTimeReorder(empty, target );
+        	CellLayout cellLayout =mDragTargetLayout;
+            realTimeReorder(empty, target ,cellLayout);
         }
     };
 
@@ -3492,7 +3499,7 @@ public class Workspace extends PagedView
         return v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0]);
     }
 
-    private void realTimeReorder(int[] empty, int[] target) {
+    private void realTimeReorder(int[] empty, int[] target,CellLayout cellLayout) {
     	
        
         boolean wrap;
@@ -3501,15 +3508,15 @@ public class Workspace extends PagedView
         int startY;
         int delay = 0;
         float delayAmount = 30;
-        CellLayout currentLayout =null;
+        CellLayout currentLayout = 	cellLayout;	
       //  float delayAmount = 100;
-        if(isInHotseat){
-        	currentLayout =mLauncher.getHotseat().getLayout();
-        }else{
-        	currentLayout  =  ((CellLayout) getChildAt(mCurrentPage));	
+//        if(isInHotseat){
+//        	currentLayout =mLauncher.getHotseat().getLayout();
+//        }else{
+       
         	
         	//currentLayout = cellLayout;
-        }
+      //  }
         
     //	Log.i(Launcher.TAG,TAG+ "..realTimeReorder..---...............empty:."+empty[0]+empty[1]+"  target:"+target[0]+target[1]+mReorderAlarmFinish+currentLayout);
         ItemInfo info =null;
@@ -3727,12 +3734,12 @@ public class Workspace extends PagedView
                 mDragTargetLayout.onDragEnter();
                 
                 
-              Log.i(Launcher.TAG,TAG+ ".onDragOver..........setGridSize(1).............:"
+              Log.i(Launcher.TAG,TAG+ ".onDragOver..........setGridSize(1).....fff........:"
               +(mDragTargetLayout == mLauncher.getHotseat().getLayout())
-              +!(mDragTargetLayout.getChildrenLayout().getChildCount()>=5)+mHotseat);
+              +(mDragTargetLayout.getChildrenLayout().getChildCount())+mHotseat);
               
               
-              if(mDragTargetLayout == mHotseat.getLayout() &&(mHotseat.mCellCountX<5)){
+              if(mDragTargetLayout == mHotseat.getLayout() &&(mDragTargetLayout.getChildrenLayout().getChildCount()<5)){
             	 // mLauncher.getHotseat().viewMatchingCellInfo();
             	  mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false);  		
              	}
@@ -3771,7 +3778,7 @@ public class Workspace extends PagedView
         int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
         
         
-//   Log.i(Launcher.TAG,TAG+ "..onDragOver.  动画..、mReorderAlarmFinish：. "+mReorderAlarmFinish
+//   Log.i(Launcher.TAG,TAG+ "..onDragOver.  ..、mReorderAlarmFinish：. "+mReorderAlarmFinish
 //		   +"  //distanceX:"+distanceX
 //		   + "// item.spanX+item.spanY: "+(item.spanX+item.spanY)
 //		   +" // mReorderAlarmTarget==mPreviousTargetCell:"+(mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1])
@@ -3934,18 +3941,16 @@ public class Workspace extends PagedView
 
    private void dragFromTargetcellToEmptycell(){
     
-          mReorderAlarmFinish=false;
-                   
-            	 mReorderAlarm.cancelAlarm();
+               mReorderAlarmFinish=false;
+                 
+               mReorderAlarm.cancelAlarm();
                mReorderAlarm.setOnAlarmListener(mReorderAlarmListener);
-               mReorderAlarm.setAlarm(130);
+               mReorderAlarm.setAlarm(200);
 
                
                mLastTargetCell[0] =mTargetCell[0];
                mLastTargetCell[1] =mTargetCell[1];
-               
-               
-               
+           
                    
 //               int[] empty=new int[2];
 //            	int[] target=new int[2];
@@ -4311,8 +4316,9 @@ public class Workspace extends PagedView
                 if (mDragInfo != null) {
                
                 	Log.i(Launcher.TAG,TAG+ ".onDropCompleted..........................cell"+cell);
-                	cell.removeView(mDragInfo.cell);
-                	
+                	if(cell!=null){
+                		cell.removeView(mDragInfo.cell);
+                	}
                 	//   Log.i(Launcher.TAG,TAG+ ".onDropCompleted.111.........................success:"+cell);
                     if (mDragInfo.cell instanceof DropTarget) {
                         mDragController.removeDropTarget((DropTarget) mDragInfo.cell);
@@ -4368,7 +4374,7 @@ public class Workspace extends PagedView
         }
         mDragOutline = null;
      //   remove by zlf
-     //   mDragInfo = null;
+      mDragInfo = null;
         
         //add b zlf
         mLastTargetCell[0]=-1;
@@ -4703,6 +4709,10 @@ public class Workspace extends PagedView
                         // Note: We can not remove the view directly from CellLayoutChildren as this
                         // does not re-mark the spaces as unoccupied.
                         layoutParent.removeViewInLayout(child);
+                        if(layoutParent==mHotseat.getLayout()){
+                            
+                            mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false);
+                        }
                         if (child instanceof DropTarget) {
                             mDragController.removeDropTarget((DropTarget)child);
                         }
@@ -4872,7 +4882,8 @@ public class Workspace extends PagedView
                     // web pages.)
                     final Intent intent = info.intent;
                     final ComponentName name = intent.getComponent();
-                    if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION &&
+                    Log.i(Launcher.TAG, TAG+" ..updateShortcuts(...........  info.itemType:"+info.itemType);
+                    if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT &&
                             Intent.ACTION_MAIN.equals(intent.getAction()) && name != null) {
                         final int appCount = apps.size();
                         for (ShortcutInfo app : apps) {
