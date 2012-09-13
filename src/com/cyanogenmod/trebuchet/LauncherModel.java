@@ -1121,7 +1121,7 @@ public class LauncherModel extends BroadcastReceiver {
                                 continue;
                             }
 
-                            if (itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
+                            if (itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) {
                                 info = getShortcutInfo(manager, intent, context, c, iconIndex,
                                         titleIndex, mLabelCache);
                             } else  {
