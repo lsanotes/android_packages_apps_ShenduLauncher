@@ -1917,7 +1917,7 @@ public class LauncherModel extends BroadcastReceiver {
         if (info.title == null) {
             info.title = componentName.getClassName();
         }
-        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+        info.itemType = LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT;
         return info;
     }
 

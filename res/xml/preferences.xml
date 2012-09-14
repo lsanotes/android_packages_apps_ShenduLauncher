@@ -40,7 +40,7 @@
                     launcher:max2="7"
                     launcher:min2="3" />
                     
-                     -->
+                 
                 <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_screen_padding_vertical"
                     android:title="@string/preferences_interface_homescreen_general_screen_padding_vertical_title"
                     android:summary="@string/preferences_interface_homescreen_general_screen_padding_vertical_summary"
@@ -53,6 +53,7 @@
                     android:defaultValue="0"
                     launcher:max="10"
                     launcher:min="0" />
+                        -->
                 <ListPreference android:key="ui_homescreen_screen_folder_style"
                     android:title="@string/preferences_interface_homescreen_general_screen_folder_style_title"
                     android:summary="@string/preferences_interface_homescreen_general_screen_folder_style_summary"

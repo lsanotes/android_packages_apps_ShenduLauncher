@@ -341,7 +341,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             float scaleRelativeToDragLayer, Runnable postAnimationRunnable) {
 
         //Drawable animateDrawable = ((TextView) destView).getCompoundDrawables()[1];
-        Drawable animateDrawable = ((ImageView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
+        //Drawable animateDrawable = ((ImageView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
+        Drawable animateDrawable = ((TextView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
     	//Log.i("hhl", "^^^^^^^FolderIcon.java...performCreateAnimation before computer 333===");
     	
         computePreviewDrawingParams(animateDrawable.getIntrinsicWidth(), destView.getMeasuredWidth());
@@ -614,7 +615,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
         ArrayList<View> items = mFolder.getItemsInReadingOrder(false);
         
-        ImageView app_icon;
+        TextView app_icon;
         
         Drawable d;
         //TextView v;
@@ -629,8 +630,10 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         	if (mAnimating) {
                 computePreviewDrawingParams(mAnimParams.drawable);
             } else {
-            	app_icon = (ImageView)items.get(0).findViewById(R.id.app_shortcutinfo_icon_id);
-            	d = app_icon.getDrawable();
+            	//app_icon = (ImageView)items.get(0).findViewById(R.id.app_shortcutinfo_icon_id);
+            	app_icon = (TextView)items.get(0).findViewById(R.id.app_shortcutinfo_icon_id);
+            	//d = app_icon.getDrawable();
+            	d = app_icon.getBackground();
                 //v = (TextView) items.get(0);
                 //d = v.getCompoundDrawables()[1];
                 computePreviewDrawingParams(d);
@@ -646,8 +649,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                 //v = (TextView) items.get(i);
                 //d = v.getCompoundDrawables()[1];
             	//Log.i("hhl", "===FolderIcon.java==drawPreviewItem==="+mIntrinsicIconSize+"**"+i);
-            	app_icon = (ImageView)items.get(i).findViewById(R.id.app_shortcutinfo_icon_id);
-            	d = app_icon.getDrawable();
+            	app_icon = (TextView)items.get(i).findViewById(R.id.app_shortcutinfo_icon_id);
+            	d = app_icon.getBackground();
                 mParams = computePreviewItemDrawingParams(i, mParams);
                 mParams.drawable = d;
                 drawPreviewItem(canvas, mParams);

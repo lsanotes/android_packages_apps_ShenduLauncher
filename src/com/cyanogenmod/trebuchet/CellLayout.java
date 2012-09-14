@@ -1024,17 +1024,129 @@ public class CellLayout extends ViewGroup {
         return mChildren.getChildAtNotDrag(x, y,v);
     }
     
+    
+
+    boolean readingOrderGreaterThan(int[] v1, int[] v2) {
+        return v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0]);
+    }
+
+    public void realTimeReorder(int[] empty, int[] target, View view) {
+    	
+       
+        boolean wrap;
+        int startX;
+        int endX;
+        int startY;
+        int delay = 0;
+        float delayAmount = 30;
+     
+      //  float delayAmount = 100;
+//        if(isInHotseat){
+//        	currentLayout =mLauncher.getHotseat().getLayout();
+//        }else{
+       
+        	
+        	//currentLayout = cellLayout;
+      //  }
+        
+    //	Log.i(Launcher.TAG,TAG+ "..realTimeReorder..---...............empty:."+empty[0]+empty[1]+"  target:"+target[0]+target[1]+mReorderAlarmFinish+currentLayout);
+        ItemInfo info =null;
+        if (readingOrderGreaterThan(target, empty)) {
+        	
+        	
+         wrap = empty[0] >= getCountX() - 1;  //X is >=4
+//            wrap = empty[0] >= cellLayout.getCountX() - 1;  //X is >=4
+            startY = wrap ? empty[1] + 1 : empty[1];    // Y is +1
+            for (int y = startY; y <= target[1]; y++) {  // Y from Target  to empty  
+                startX = y == empty[1] ? empty[0] + 1 : 0;   //
+                endX = y < target[1] ? getCountX() - 1 : target[0];
+                for (int x = startX; x <= endX; x++) {
+                	
+                	
+                	View v=null;
+                	if(view!=null){	
+                		
+                		 v =getChildAtNotDrag(x,y,view);
+                	}else{
+                		 v =getChildAt(x,y);
+                	}
+                    if(v!=null){
+                    
+                   info =(ItemInfo) v.getTag();
+                    
+                    	    if(info.itemType>=LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET){
+                    	    	continue;
+                    	    }
+                    	
+                    }
+                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder...............empty:."+empty[0]+empty[1]+"  :");  
+                    if (animateChildToPosition(v, empty[0], empty[1],
+                            REORDER_ANIMATION_DURATION, delay)) {
+                    	
+                        empty[0] = x;
+                        empty[1] = y;
+                        delay += delayAmount;
+                        delayAmount *= 0.9;
+                    }
+                }
+            }
+        } else {
+    
+            wrap = empty[0] == 0;
+            startY = wrap ? empty[1] - 1 : empty[1];
+            for (int y = startY; y >= target[1]; y--) {
+                startX = y == empty[1] ? empty[0] - 1 : getCountX() - 1;
+                endX = y > target[1] ? 0 : target[0];
+                for (int x = startX; x >= endX; x--) {
+                 
+                    View v=null;
+                 	
+                	if(view!=null){	
+                		
+                		 v =getChildAtNotDrag(x,y,view);
+                	}else{
+                		 v =getChildAt(x,y);
+                	}
+                    if(v!=null){
+                    	
+                        info =(ItemInfo) v.getTag();
+                         	    
+                         	    if(info.itemType>=LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET){
+                         	    	continue;
+                         	    }
+                         	
+                         }
+                    
+                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder.....11..........empty:."+empty[0]+empty[1]+"  :");       
+                    if (animateChildToPosition(v, empty[0], empty[1],
+                            REORDER_ANIMATION_DURATION, delay)) {
+                        empty[0] = x;
+                        empty[1] = y;
+                        delay += delayAmount;
+                        delayAmount *= 0.9;
+                    }
+                }
+            }
+        }
+ 
+    }
+    
+    private static final int REORDER_ANIMATION_DURATION = 230;
 
     public boolean animateChildToPosition(final View child, int cellX, int cellY, int duration,
             int delay) {
     	
         CellLayoutChildren clc = getChildrenLayout();
   
+//        if(cellX>mCountX || cellY>mCountY ){
+//        	 Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........######################################:");
+//        	return false ;
+//        }
+        
         if (clc.indexOfChild(child) != -1 && !mOccupied[cellX][cellY]) {
         	
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final ItemInfo info = (ItemInfo) child.getTag();
-  
 
             int oldX = lp.x;
             int oldY = lp.y;

@@ -228,7 +228,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mLauncher.getWorkspace().onDragStartedWithItem(v);
             mLauncher.getWorkspace().beginDragShared(v, this);
             //mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
-            mIconDrawable=((ImageView)v.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
+            //mIconDrawable=((ImageView)v.findViewById(R.id.app_shortcutinfo_icon_id)).getDrawable();
+            mIconDrawable=((TextView)v.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
             mCurrentDragInfo = item;
             mEmptyCell[0] = item.cellX;
             mEmptyCell[1] = item.cellY;
@@ -542,10 +543,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     protected boolean createAndAddShortcut(ShortcutInfo item) {
     	LinearLayout app_shortcutinfo = (LinearLayout) mInflater.inflate(R.layout.app_shortcutinfo, this, false);
-    	ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	//ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	TextView app_icon = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_mark_id);
-    	app_icon.setImageBitmap(item.getIcon(mIconCache));
+    	//app_icon.setImageBitmap(item.getIcon(mIconCache));
+    	app_icon.setBackgroundDrawable(new FastBitmapDrawable(item.getIcon(mIconCache)));
     	if((item.intent.getComponent()!=null) && 
     		item.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
         	int unReadMMS_mark = mLauncher.shenduGetUnreadMMSCount();

@@ -28,6 +28,7 @@ import android.appwidget.AppWidgetProviderInfo;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -761,7 +762,12 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         } else if (view instanceof PagedViewEffect){
         	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
         	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
-            Log.i("hhl", "===AppsCustonizepagedView.java===onClick==PagedViewEffect=="+view.getTag());
+            SharedPreferences prefs =
+                mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(PreferencesProvider.PREFERENCES_EFFECT, shenduPrograme.getName());
+            editor.commit();
+        	//Log.i("hhl", "===AppsCustonizepagedView.java===onClick==PagedViewEffect=="+view.getTag());
         }else if (view instanceof PagedViewWidget) {
             // Let the user know that they have to long press to add a widget
             Toast.makeText(getContext(), R.string.long_press_widget_to_add,

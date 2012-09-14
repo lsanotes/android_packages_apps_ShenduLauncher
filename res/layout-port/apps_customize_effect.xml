@@ -21,6 +21,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:gravity="center_horizontal|center_vertical"
+    android:singleLine="true"
+    android:ellipsize="end"
     android:textColor="@android:color/white">
 
 </com.cyanogenmod.trebuchet.PagedViewEffect>

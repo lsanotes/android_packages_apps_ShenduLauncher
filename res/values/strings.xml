@@ -361,14 +361,14 @@ s -->
     <string name="editstate_choice_theme">Theme</string>
     <string name="editstate_choice_specially_effect">Effect</string>
     <!-- Effects style -->
-    <string name="editstate_effect_standard">Standard</string>
-    <string name="editstate_effect_tablet">Tablet</string>
-    <string name="editstate_effect_zoomin">ZoomIn</string>
-    <string name="editstate_effect_zoomout">ZoomOut</string>
-    <string name="editstate_effect_rotateup">RotateUp</string>
-    <string name="editstate_effect_rotatedown">RotateDown</string>
-    <string name="editstate_effect_cubein">CubeIn</string>
-    <string name="editstate_effect_cubeout">CubeOut</string>
-    <string name="editstate_effect_stack">Stack</string>
+    <string name="editstate_effect_string_standard">Standard</string>
+    <string name="editstate_effect_string_tablet">Tablet</string>
+    <string name="editstate_effect_string_zoomin">ZoomIn</string>
+    <string name="editstate_effect_string_zoomout">ZoomOut</string>
+    <string name="editstate_effect_string_rotateup">RotateUp</string>
+    <string name="editstate_effect_string_rotatedown">RotateDown</string>
+    <string name="editstate_effect_string_cubein">CubeIn</string>
+    <string name="editstate_effect_string_cubeout">CubeOut</string>
+    <string name="editstate_effect_string_stack">Stack</string>
     
 </resources>

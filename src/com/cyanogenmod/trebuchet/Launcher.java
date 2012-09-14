@@ -884,11 +884,12 @@ public final class Launcher extends Activity
      */
     View createShortcut(int layoutResId, ViewGroup parent, ShortcutInfo info) {
     	LinearLayout app_shortcutinfo = (LinearLayout) mInflater.inflate(layoutResId, parent, false);
-    	ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	TextView app_icon = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
+    	//ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_mark_id);
-    	//Log.i("hhll", "====Launcher.java==createShortcut=1111="+info.title+"==="
-    			//+"==="+info.intent.getComponent()+"==="+info.itemType);
+    	//Log.i("hhl", "====Launcher.java==createShortcut=1111="+info.title+"==="
+    			//+"==="+info.intent.getComponent()+"==="+info.itemType+"=="+(info.getIcon(mIconCache)==null));
     	if((info.intent.getComponent()!=null) && 
     		info.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
     		int unReadMMS_mark = shenduGetUnreadMMSCount();
@@ -906,7 +907,8 @@ public final class Launcher extends Activity
         		app_mark.setVisibility(View.VISIBLE);
     		}
     	}
-    	app_icon.setImageBitmap(info.getIcon(mIconCache));
+    	//app_icon.setImageBitmap(info.getIcon(mIconCache));
+    	app_icon.setBackgroundDrawable(new FastBitmapDrawable(info.getIcon(mIconCache)));
     	app_name.setText(info.title);
     	app_shortcutinfo.setTag(info);
         if (mHideIconLabels) {
@@ -1627,8 +1629,11 @@ public final class Launcher extends Activity
 //        menu.setGroupVisible(MENU_GROUP_MARKET, allAppsVisible &&
 //                !ViewConfiguration.get(this).hasPermanentMenuKey() &&
 //                mAppMarketIntent != null);
-
-        return true;
+        if(mWorkspace.isSmall()){ //editstate do not used menu key
+        	return false;
+        }else{
+            return true;
+        }
     }
 
     @Override

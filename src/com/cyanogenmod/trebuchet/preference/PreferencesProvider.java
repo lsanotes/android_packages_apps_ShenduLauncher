@@ -27,6 +27,7 @@ public final class PreferencesProvider {
     public static final String PREFERENCES_KEY = "com.cyanogenmod.trebuchet_preferences";
 
     public static final String PREFERENCES_CHANGED = "preferences_changed";
+    public static final String PREFERENCES_EFFECT = "ui_homescreen_scrolling_transition_effect";
 
     public static class Interface {
         public static class Homescreen {
@@ -92,7 +93,7 @@ public final class PreferencesProvider {
                 public static Workspace.TransitionEffect getTransitionEffect(Context context, String def) {
                     final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
                     return Workspace.TransitionEffect.valueOf(
-                            preferences.getString("ui_homescreen_scrolling_transition_effect", def));
+                            preferences.getString(PREFERENCES_EFFECT, def));
                 }
                 public static boolean getFadeInAdjacentScreens(Context context, boolean def) {
                     final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);

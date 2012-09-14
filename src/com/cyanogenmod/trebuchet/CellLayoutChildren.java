@@ -65,7 +65,7 @@ public class CellLayoutChildren extends ViewGroup {
             if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
                     (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
             	
-            	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
+            //	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
            
                 return child;
             }
@@ -84,7 +84,7 @@ public class CellLayoutChildren extends ViewGroup {
             if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
                     (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
             	
-            	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
+            //	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
                if(child.equals(v)){
             	   continue;
                }else{
