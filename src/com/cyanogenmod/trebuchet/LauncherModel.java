@@ -642,6 +642,7 @@ public class LauncherModel extends BroadcastReceiver {
             // Then, rebind everything.
             startLoaderFromBackground();
         } else if (Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE.equals(action)) {
+        	
             String[] packages = intent.getStringArrayExtra(Intent.EXTRA_CHANGED_PACKAGE_LIST);
             enqueuePackageUpdated(new PackageUpdatedTask(
                         PackageUpdatedTask.OP_UNAVAILABLE, packages));
@@ -1022,10 +1023,6 @@ public class LauncherModel extends BroadcastReceiver {
                                     + occupied[containerIndex][x][y]);
                             return false;
                         }
-            
-                        
-                        
-              
                     }
                 }
             }
@@ -1362,6 +1359,7 @@ public class LauncherModel extends BroadcastReceiver {
                         public void run() {
                             Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                             if (callbacks != null) {
+                            	Log.i(Launcher.TAG, TAG+"bindWorkspace(..11.....................widget:..."+widget);
                                 callbacks.bindAppWidget(widget);
                             }
                         }
@@ -1376,6 +1374,7 @@ public class LauncherModel extends BroadcastReceiver {
                         public void run() {
                             Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                             if (callbacks != null) {
+                            	Log.i(Launcher.TAG, TAG+"bindWorkspace(....22...................widget:..."+widget);
                                 callbacks.bindAppWidget(widget);
                             }
                         }
@@ -1432,25 +1431,14 @@ public class LauncherModel extends BroadcastReceiver {
                     = (ArrayList<ShortcutInfo>) mAllAppsList.data.clone();
             mHandler.post(new Runnable() {
                 public void run() {
+                	
                     final long t = SystemClock.uptimeMillis();
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
                     	
                     	
                     	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
-//                    	
-//                    	for(ApplicationInfo info:list){
-//                    		
-//                    		for(Intent intent:AppsInDB){
-//                    			
-//                    			if(info.intent.toString().equals(intent.toString())){	
-//                    				break;
-//                    			}
-//                    	  		listOutOfDB.add(info);
-//                        	}
-//                  
-//                    	}
-                    	
+      	
                     	AppsInDB.clear();
                     	
                         final Cursor c = mContext.getContentResolver().query(
@@ -1482,6 +1470,7 @@ public class LauncherModel extends BroadcastReceiver {
                         finally {
                             c.close();
                         }
+                        
                  
                     	
                     	for(ShortcutInfo info:list){
@@ -1489,7 +1478,8 @@ public class LauncherModel extends BroadcastReceiver {
                     		boolean ins=true;
                     		for(Intent intent:AppsInDB){
                     			
-                    			if(info.intent.toString().equals(intent.toString())){	
+                    			if(info.intent.getComponent().equals(intent.getComponent())){	
+                    				
                     				ins =false;
                     				break;
                     				
@@ -1497,13 +1487,13 @@ public class LauncherModel extends BroadcastReceiver {
                     
                         	}
                     		if(ins){
+                    		
                 				listOutOfDB.add(info);
                 			}
                   
                     	}
 
-                    
-                    //	Log.i(Launcher.TAG,TAG+ "..........................onlyBindAllApps()+ "+listOutOfDB.size());
+                    	Log.i(Launcher.TAG,TAG+ "..........................onlyBindAllApps()+ "+listOutOfDB.size());
                         callbacks.bindAllApplications(listOutOfDB);
                         listOutOfDB.clear();
                         listOutOfDB=null;
@@ -1612,6 +1602,8 @@ public class LauncherModel extends BroadcastReceiver {
                                         	String  intentDescription = c.getString(intentIndex);
                                             
                                             Intent   intent = Intent.parseUri(intentDescription, 0);
+                                            
+                                            
                                             AppsInDB.add(intent);
                                         }
                                 
@@ -1633,7 +1625,7 @@ public class LauncherModel extends BroadcastReceiver {
                             		boolean ins=true;
                             		for(Intent intent:AppsInDB){
                             			
-                            			if(info.intent.toString().equals(intent.toString())){	
+                            			if(info.intent.getComponent().equals(intent.getComponent())){	
                             				ins =false;
                             				break;
                             				
@@ -1646,7 +1638,7 @@ public class LauncherModel extends BroadcastReceiver {
                           
                             	}
 
-                            //	Log.i(Launcher.TAG,TAG+ "..........................loadAllAppsByBatch()+ "+listOutOfDB.size());
+                            	Log.i(Launcher.TAG,TAG+ "..........33................loadAllAppsByBatch()+ "+listOutOfDB.size());
 
                                 callbacks.bindAllApplications(listOutOfDB);
                                 
@@ -1766,7 +1758,6 @@ public class LauncherModel extends BroadcastReceiver {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
-                        //	Log.i(Launcher.TAG,TAG+ "..........................PackageUpdatedTask()..+added");
                             callbacks.bindAppsAdded(addedFinal);
                         }
                     }
@@ -1801,6 +1792,7 @@ public class LauncherModel extends BroadcastReceiver {
                 public void run() {
                     Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                     if (callbacks == cb && cb != null) {
+                    	Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ......................  " );
                         callbacks.bindPackagesUpdated();
                     }
                 }
@@ -1932,7 +1924,7 @@ public class LauncherModel extends BroadcastReceiver {
         final ShortcutInfo info = new ShortcutInfo();
         
   
-          info.itemType = itemType;	
+         info.itemType = itemType;	
       
 
         // TODO: If there's an explicit component and we can't install that, delete it.

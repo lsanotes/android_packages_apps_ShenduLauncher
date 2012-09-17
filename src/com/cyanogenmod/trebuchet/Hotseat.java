@@ -130,7 +130,7 @@ public class Hotseat extends FrameLayout {
     		
     		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view+"  "+i);
     		if(view!=null){
-    	 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,111111,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view.getTag()+"  "+i); 
+        	 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,111111,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view.getTag()+"  "+i); 
        		 mContent.animateChildToPosition(view,i,0,230,30);
     	
     		}else{

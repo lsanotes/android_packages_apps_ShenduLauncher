@@ -606,14 +606,15 @@ public final class Launcher extends Activity
         if (preferencesChanged()) {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
-        if (mRestoring || mOnResumeNeedsLoad) {
-            mWorkspaceLoading = true;
-            
-        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
-            mModel.startLoader(this, true);
-            mRestoring = false;
-            mOnResumeNeedsLoad = false;
-        }
+        //remove by zlf
+//        if (mRestoring || mOnResumeNeedsLoad) {
+//            mWorkspaceLoading = true;
+//            
+//        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
+//            mModel.startLoader(this, true);
+//            mRestoring = false;
+//            mOnResumeNeedsLoad = false;
+//        }
         if (mWaitingForResume != null) {
             mWaitingForResume.setStayPressed(false);
         }
@@ -3388,6 +3389,8 @@ public final class Launcher extends Activity
      * @param apps ArrayList of apps
      */
     public void addAppsToWorkspace(final ArrayList<ShortcutInfo> apps){
+    	
+    	
         final Workspace workspace = mWorkspace;
         int count = apps.size();
         int screenNum=workspace.getChildCount()-1;
@@ -3406,8 +3409,8 @@ public final class Launcher extends Activity
 
 
         for (int i=0; i<count; i++) {
-      	 
       	  final ShortcutInfo shorCutInfo = apps.get(i);
+      	  Log.i(Launcher.TAG,TAG+ ".addAppsToWorkspace.......................shorCutInfo:.."+shorCutInfo.toString());
 
       	   if(cellX>=cellCountX-1&&cellY>=cellCountY-1){
       		   screenNum++;
@@ -3442,7 +3445,7 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
- 
+    	Log.i(Launcher.TAG,TAG+ ".bindAllApplications........................."+apps.size());
     	addAppsToWorkspace(apps);
 		View progressBar = mAppsCustomizeTabHost.
             findViewById(R.id.apps_customize_progress_bar);
@@ -3501,11 +3504,13 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAppsRemoved(ArrayList<ShortcutInfo> apps, boolean permanent) {
-    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsRemoved()");
+    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsRemoved()"+permanent);
+    	
+    	//remove by zlf
         removeDialog(DIALOG_CREATE_SHORTCUT);
-        if (permanent) {
+     //   if (permanent) {
             mWorkspace.removeItems(apps);
-        }
+     //   }
 
 
         // Notify the drag controller
