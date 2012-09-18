@@ -163,13 +163,13 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mTabViewLayout.setContentDescription(label);
         addTab(newTabSpec(WALLPAPERS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
         
-        //choice theme
-        label = mContext.getString(R.string.editstate_choice_theme);
-        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
-        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
-        mTabLabel.setText(label);
-        mTabViewLayout.setContentDescription(label);
-        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+//        //choice theme
+//        label = mContext.getString(R.string.editstate_choice_theme);
+//        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+//        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+//        mTabLabel.setText(label);
+//        mTabViewLayout.setContentDescription(label);
+//        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
         
         //choice specially effect
         label = mContext.getString(R.string.editstate_choice_specially_effect);

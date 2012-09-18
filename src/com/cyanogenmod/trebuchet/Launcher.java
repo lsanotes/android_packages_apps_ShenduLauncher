@@ -606,15 +606,15 @@ public final class Launcher extends Activity
         if (preferencesChanged()) {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
-        //remove by zlf
-//        if (mRestoring || mOnResumeNeedsLoad) {
-//            mWorkspaceLoading = true;
-//            
-//        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
-//            mModel.startLoader(this, true);
-//            mRestoring = false;
-//            mOnResumeNeedsLoad = false;
-//        }
+      //  remove by zlf
+        if (mRestoring || mOnResumeNeedsLoad) {
+            mWorkspaceLoading = true;
+            
+        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
+            mModel.startLoader(this, true);
+            mRestoring = false;
+            mOnResumeNeedsLoad = false;
+        }
         if (mWaitingForResume != null) {
             mWaitingForResume.setStayPressed(false);
         }
@@ -3505,19 +3505,18 @@ public final class Launcher extends Activity
      */
     public void bindAppsRemoved(ArrayList<ShortcutInfo> apps, boolean permanent) {
     	Log.i(Launcher.TAG,TAG+ "..........................bindAppsRemoved()"+permanent);
-    	
-    	//remove by zlf
         removeDialog(DIALOG_CREATE_SHORTCUT);
      //   if (permanent) {
             mWorkspace.removeItems(apps);
      //   }
-
-
         // Notify the drag controller
        // mDragController.onAppsRemoved(apps, this);
+            
+        if (mAppsCustomizeContent != null) {
+           Log.i(Launcher.TAG, TAG+"...bindAppsRemoved...........emoveApps(apps)............item:");    
+           mAppsCustomizeContent.removeApps(apps);
+        }
         
-     
-     
     }
 
     /**

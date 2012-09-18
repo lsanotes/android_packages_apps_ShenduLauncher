@@ -588,11 +588,18 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // Get the list of widgets and shortcuts
         boolean wasEmpty = mWidgets.isEmpty();
         mWidgets.clear();
+        Log.i(Launcher.TAG, LOG_TAG+"              mWidgets.clear();.......      " );
+        
         List<AppWidgetProviderInfo> widgets =
             AppWidgetManager.getInstance(mLauncher).getInstalledProviders();
+        
+        
         Intent shortcutsIntent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
         List<ResolveInfo> shortcuts = mPackageManager.queryIntentActivities(shortcutsIntent, 0);
         for (AppWidgetProviderInfo widget : widgets) {
+        	
+            Log.i(Launcher.TAG, LOG_TAG+"              mWidgets.clear();.......      " +widget.icon);
+          
             if (widget.minWidth > 0 && widget.minHeight > 0) {
                 mWidgets.add(widget);
             } else {

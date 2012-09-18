@@ -52,6 +52,7 @@ import com.cyanogenmod.trebuchet.FolderInfo.FolderListener;
 import com.cyanogenmod.trebuchet.Launcher.State;
 import com.cyanogenmod.trebuchet.preference.PreferencesProvider;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 
 /**
@@ -760,8 +761,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     private void updateItemLocationsInDatabase() {
         ArrayList<View> list = getItemsInReadingOrder();
+        
+        if(list.size()<=1){
+        	return;
+        }
         for (View v : list) {
             ItemInfo info = (ItemInfo) v.getTag();
+    
             LauncherModel.moveItemInDatabase(mLauncher, info, mInfo.id, 0,
                     info.cellX, info.cellY);
         }
@@ -970,17 +976,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
         mLauncher.removeFolder(mInfo);
 
-        
-        
-    	Log.i(Launcher.TAG, TAG+"  ........./////////////////finalItem: "+finalItem+"  .container:."+mInfo.container);
         if (finalItem != null) {
         	
-        
             LauncherModel.addOrMoveItemInDatabase(mLauncher, finalItem, mInfo.container,
                     mInfo.screen, mInfo.cellX, mInfo.cellY);
         }
         
-        LauncherModel.deleteItemFromDatabase(mLauncher, mInfo);
+       LauncherModel.deleteItemFromDatabase(mLauncher, mInfo);
 
         // Add the last remaining child to the workspace in place of the folder
         if (finalItem != null) {

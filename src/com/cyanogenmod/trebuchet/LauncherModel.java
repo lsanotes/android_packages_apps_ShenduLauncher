@@ -46,6 +46,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.View;
 
 import com.cyanogenmod.trebuchet.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
 
@@ -215,7 +216,7 @@ public class LauncherModel extends BroadcastReceiver {
      */
     static void addOrMoveItemInDatabase(Context context, ItemInfo item, long container,
             int screen, int cellX, int cellY) {
-    //    Log.i(Launcher.TAG,TAG+ "..........................addOrMoveItemInDatabase..."+item.container  +item+ItemInfo.NO_ID); 
+        Log.i(Launcher.TAG,TAG+ "..........................addOrMoveItemInDatabase..."+item.container  +item+ItemInfo.NO_ID+container); 
         if (item.container == ItemInfo.NO_ID) {
         	
             // From all apps
@@ -291,7 +292,9 @@ public class LauncherModel extends BroadcastReceiver {
         values.put(LauncherSettings.Favorites.CELLX, item.cellX);
         values.put(LauncherSettings.Favorites.CELLY, item.cellY);
         values.put(LauncherSettings.Favorites.SCREEN, item.screen);
+      Log.i(Launcher.TAG, TAG+"..moveItemInDatabase..........22.item.container."+item.container+item);
 
+      
         updateItemInDatabaseHelper(context, values, item, "moveItemInDatabase");
     }
 
@@ -1729,7 +1732,9 @@ public class LauncherModel extends BroadcastReceiver {
             ArrayList<ShortcutInfo> added = null;
             ArrayList<ShortcutInfo> removed = null;
             ArrayList<ShortcutInfo> modified = null;
-
+            
+            Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() .mAllAppsList..size()................ mOp != OP_UNAVAILABLE: "+mAllAppsList.added.size()+mAllAppsList.removed.size()+ mAllAppsList.modified.size() );
+          
             if (mAllAppsList.added.size() > 0) {
                 added = mAllAppsList.added;
                 mAllAppsList.added = new ArrayList<ShortcutInfo>();
@@ -1745,6 +1750,9 @@ public class LauncherModel extends BroadcastReceiver {
                 modified = mAllAppsList.modified;
                 mAllAppsList.modified = new ArrayList<ShortcutInfo>();
             }
+            
+            
+          
 
             final Callbacks callbacks = mCallbacks != null ? mCallbacks.get() : null;
             if (callbacks == null) {
@@ -1754,11 +1762,13 @@ public class LauncherModel extends BroadcastReceiver {
 
             if (added != null) {
                 final ArrayList<ShortcutInfo> addedFinal = added;
+                Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ..added != null.................... mOp != OP_UNAVAILABLE: "+mOp+ OP_UNAVAILABLE);
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
                             callbacks.bindAppsAdded(addedFinal);
+                            callbacks.bindPackagesUpdated();
                         }
                     }
                 });
@@ -1770,23 +1780,26 @@ public class LauncherModel extends BroadcastReceiver {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
                             callbacks.bindAppsUpdated(modifiedFinal);
+                            callbacks.bindPackagesUpdated();
                         }
                     }
                 });
             }
             if (removed != null) {
                 final boolean permanent = mOp != OP_UNAVAILABLE;
+                Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ..removed != null.................... mOp != OP_UNAVAILABLE: "+mOp+ OP_UNAVAILABLE);
                 final ArrayList<ShortcutInfo> removedFinal = removed;
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
                             callbacks.bindAppsRemoved(removedFinal, permanent);
+                            callbacks.bindPackagesUpdated();
                         }
                     }
                 });
             }
-
+           //remove by zlf
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
