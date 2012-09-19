@@ -334,6 +334,7 @@ public final class Launcher extends Activity
         if (mAppsCustomizeContent != null) {
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
+            mAppsCustomizeContent.onEffectChanged();
             //Log.i("hhl", "====Launcher.java====onCreate()=======");
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
@@ -607,14 +608,14 @@ public final class Launcher extends Activity
             android.os.Process.killProcess(android.os.Process.myPid());
         }
       //  remove by zlf
-        if (mRestoring || mOnResumeNeedsLoad) {
-            mWorkspaceLoading = true;
-            
-        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
-            mModel.startLoader(this, true);
-            mRestoring = false;
-            mOnResumeNeedsLoad = false;
-        }
+//        if (mRestoring || mOnResumeNeedsLoad) {
+//            mWorkspaceLoading = true;
+//            
+//        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
+//            mModel.startLoader(this, true);
+//            mRestoring = false;
+//            mOnResumeNeedsLoad = false;
+//        }
         if (mWaitingForResume != null) {
             mWaitingForResume.setStayPressed(false);
         }

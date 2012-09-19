@@ -371,4 +371,10 @@ s -->
     <string name="editstate_effect_string_cubeout">CubeOut</string>
     <string name="editstate_effect_string_stack">Stack</string>
     
+      <string name="deletefolder_dialog_title">Uninstall App</string>
+      <string name="deletefolder_dialog_message">"Whether or Not  Uninstall App ?"</string>
+         <string name="uninstall_action" >OK</string>
+	 
+	     <string name="editstate_wallpaper_current_mark">Using</string>
+    <string name="delete_folder_toast_message">Folder do not support delete !</string>
 </resources>

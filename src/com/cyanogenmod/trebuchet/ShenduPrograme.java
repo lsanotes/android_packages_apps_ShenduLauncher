@@ -6,6 +6,12 @@ import android.graphics.drawable.Drawable;
 
 public class ShenduPrograme {
 
+	public boolean isEffectCurrent() {
+		return effectCurrent;
+	}
+	public void setEffectCurrent(boolean effectCurrent) {
+		this.effectCurrent = effectCurrent;
+	}
 	public int getEffectStrId() {
 		return effectStrId;
 	}
@@ -79,5 +85,6 @@ public class ShenduPrograme {
 	private ComponentName componentname;
 	private int effectStrId;
 	private int effectDrawableId;
+	private boolean effectCurrent;
 
 }

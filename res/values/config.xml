@@ -92,7 +92,7 @@
          >= folder_max_num_items. When these are set to -1, they are automatically determined. -->
     <integer name="folder_max_count_x">4</integer>
     <integer name="folder_max_count_y">3</integer>
-    <integer name="folder_max_num_items">12</integer>
+    <integer name="folder_max_num_items">16</integer>
 
     <!-- Workspace grid size -->
     <integer name="config_workspaceRows">4</integer>
@@ -100,5 +100,5 @@
     
     
     
-    <string name="config_folder_style_default">Ring</string>
+    <string name="config_folder_style_default">Square</string>
 </resources>

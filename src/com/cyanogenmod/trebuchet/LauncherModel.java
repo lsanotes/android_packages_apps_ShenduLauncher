@@ -46,7 +46,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
+
 
 import com.cyanogenmod.trebuchet.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
 
@@ -602,7 +602,9 @@ public class LauncherModel extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
-
+        Log.i(Launcher.TAG, TAG+"....onReceive.......##.............. "+intent);
+        
+        Log.i(Launcher.TAG, TAG+"....onReceive..................... "+Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE+Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE+Intent.ACTION_LOCALE_CHANGED+Intent.ACTION_CONFIGURATION_CHANGED);
         final String action = intent.getAction();
 
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
@@ -633,7 +635,7 @@ public class LauncherModel extends BroadcastReceiver {
                     op = PackageUpdatedTask.OP_UPDATE;
                 }
             }
-
+       
             if (op != PackageUpdatedTask.OP_NONE) {
                 enqueuePackageUpdated(new PackageUpdatedTask(op, new String[] { packageName }));
             }
@@ -1788,19 +1790,20 @@ public class LauncherModel extends BroadcastReceiver {
             if (removed != null) {
                 final boolean permanent = mOp != OP_UNAVAILABLE;
                 Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ..removed != null.................... mOp != OP_UNAVAILABLE: "+mOp+ OP_UNAVAILABLE);
+           
                 final ArrayList<ShortcutInfo> removedFinal = removed;
                 mHandler.post(new Runnable() {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
                             callbacks.bindAppsRemoved(removedFinal, permanent);
-                            callbacks.bindPackagesUpdated();
+                            //callbacks.bindPackagesUpdated();
                         }
                     }
                 });
             }
-           //remove by zlf
-            mHandler.post(new Runnable() {
+
+            /*mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
@@ -1809,7 +1812,7 @@ public class LauncherModel extends BroadcastReceiver {
                         callbacks.bindPackagesUpdated();
                     }
                 }
-            });
+            });*/
         }
     }
    

@@ -26,22 +26,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_vertical|center_horizontal"
+   
     >
+    <!-- 
+         android:paddingLeft="4dp"
+         android:paddingRight="6dp"
+         android:paddingBottom="8dp"
+     -->
+     
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/app_effect_bg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
     <FrameLayout 
         android:layout_width="@dimen/app_icon_size"
         android:layout_height="@dimen/app_icon_size"
+         android:background="@drawable/app_bg"
         >
 	    <TextView
 	        android:id="@+id/app_shortcutinfo_icon_id"
 	        android:layout_gravity="center_horizontal"
 	        android:layout_width="@dimen/app_icon_size"
-	        android:layout_height="@dimen/app_icon_size"	      
+	        android:layout_height="@dimen/app_icon_size"
 	        />
         <TextView 
             android:id="@+id/app_shortcutinfo_mark_id"
             style="@style/WorkspaceAppMark"
             />
     </FrameLayout>
+</LinearLayout>
     <com.cyanogenmod.trebuchet.BubbleTextView
         android:id="@+id/app_shortcutinfo_name_id"
         style="@style/WorkspaceIcon.Portrait"

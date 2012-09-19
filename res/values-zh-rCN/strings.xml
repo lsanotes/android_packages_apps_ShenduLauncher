@@ -198,4 +198,12 @@
     <string name="editstate_effect_string_cubeout">立方飞出</string>
     <string name="editstate_effect_string_stack">堆叠</string>
     
+      <string name="deletefolder_dialog_title">卸载应用</string>
+      <string name="deletefolder_dialog_message">"确定要卸载这个应用?"</string>
+      
+          <string name="uninstall_action" >"确定"</string>
+	  
+    <string name="editstate_wallpaper_current_mark">正在使用</string>
+    <string name="delete_folder_toast_message">文件夹不支持删除！</string>
+    
 </resources>

@@ -19,8 +19,8 @@
     xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/portal_container_holo">
+    android:background="@android:color/black"
+    android:orientation="vertical">
 
     
 
@@ -33,10 +33,9 @@
         android:layout_centerHorizontal="true"
         android:paddingTop="@dimen/folder_name_padding"
         android:paddingBottom="@dimen/folder_name_padding"
-        android:background="#00000000"
         android:hint="@string/folder_hint_text"
         android:textSize="14sp"
-        android:textColor="@android:color/holo_blue_light"
+        android:textColor="@android:color/white"
         android:textColorHighlight="#ff333333"
         android:gravity="center_horizontal"
         android:singleLine="true"
@@ -50,7 +49,6 @@
         android:paddingRight="0dip"
         android:paddingTop="0dip"
         android:paddingBottom="0dip"
-         android:background="#ffffffff"
         android:cacheColorHint="#ff333333"
         android:hapticFeedbackEnabled="false"
         launcher:widthGap="@dimen/folder_width_gap"

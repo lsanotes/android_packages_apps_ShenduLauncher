@@ -14,7 +14,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
+<!--
 <com.cyanogenmod.trebuchet.PagedViewWallpaper 
     xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/editstate_tabhost_tabcontent_wallpaper_id"
@@ -23,5 +23,34 @@
         android:padding="1px"
         android:scaleType="fitXY"
         >
+
+</com.cyanogenmod.trebuchet.PagedViewWallpaper>
+-->
+<com.cyanogenmod.trebuchet.PagedViewWallpaper 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <ImageView
+        android:id="@+id/editstate_tabhost_tabcontent_wallpaper_id"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="1px"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/editstate_tabhost_tabcontent_wallpaper_mark_id"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:paddingTop="61dp"
+        android:text="@string/editstate_wallpaper_current_mark"
+        android:textSize="11sp"
+        android:textColor="@android:color/white"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:visibility="gone"
+        android:background="@drawable/editstate_tabhost_tabcontent_wallpaper_current_bg"
+        />
 
 </com.cyanogenmod.trebuchet.PagedViewWallpaper>

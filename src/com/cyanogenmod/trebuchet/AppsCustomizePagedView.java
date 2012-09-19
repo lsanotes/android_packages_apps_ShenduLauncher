@@ -29,6 +29,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
@@ -44,6 +45,7 @@ import android.graphics.Rect;
 import android.graphics.TableMaskFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.effect.Effect;
 import android.os.AsyncTask;
 import android.os.Process;
 import android.service.wallpaper.WallpaperService;
@@ -248,6 +250,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         Stack
     }
     private TransitionEffect mTransitionEffect;
+    private SharedPreferences mSharedPreferences;
+
 
 
     // Previews & outlines
@@ -579,9 +583,20 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 		postDelayed(new Runnable() {
 			public void run() {
 				shenduFindWallpapers();
+			}
+	    }, 100);
+	}
+	
+	/** 
+	 * 2012-9-19 hhl
+     * TODO: userd to init effectList data when listener effect is changed or first open launcher
+	 */
+	public void onEffectChanged() {
+		postDelayed(new Runnable() {
+			public void run() {
 				shenduFindEffects();
 			}
-	    }, 500);
+	    }, 100);
 	}
 
     public void updatePackages() {
@@ -632,6 +647,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     	//TransitionEffect mTransitionEffect;
     	mEffectsList.clear();
     	Resources resources = getResources();
+        String currentEffect = mSharedPreferences.getString(PreferencesProvider.PREFERENCES_EFFECT,"Standard");
     	String[] extras = resources.getStringArray(R.array.effects);
     	for (String extra:extras) {
     		ShenduPrograme shendParograme = new ShenduPrograme();
@@ -643,6 +659,11 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     		shendParograme.setName(extra);
     		shendParograme.setEffectStrId(effectStrId);
     		shendParograme.setEffectDrawableId(effectDrawableId);
+    		if(currentEffect.equals(extra)){
+        		shendParograme.setEffectCurrent(true);
+    		}else{
+        		shendParograme.setEffectCurrent(false);
+    		}
     		mEffectsList.add(shendParograme);
         	//Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindEffects=="+extra);
     	}
@@ -741,7 +762,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         					wallpaperManager.setResource(shenduPrograme.getResId());
                     		break;
                     	case ShenduPrograme.CHOICE_WALLPAPER_CURRENT:
-                    		if(shenduPrograme.isLiveWallpaper()){
+                    		/*if(shenduPrograme.isLiveWallpaper()){
                                 //Log.i("hhl", "===AppsCustonizepagedView.java===onClick==live wallpaper=="+
                                 		//shenduPrograme.getComponentname());
                                 wallpaperManager.getIWallpaperManager().setWallpaperComponent(
@@ -752,7 +773,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             					//wallpaperManager.setWallpaperOffsets(view.getRootView().getWindowToken(), 0.5f, 0.0f);
                     		}else{
                     			wallpaperManager.setBitmap(((BitmapDrawable)shenduPrograme.getResDrawable()).getBitmap());
-                    		}
+                    		}*/
                     		break;
                     	case ShenduPrograme.CHOICE_WALLPAPER_MORE:
                     		mLauncher.startActivity(shenduPrograme.getIntent());
@@ -769,9 +790,9 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         } else if (view instanceof PagedViewEffect){
         	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
         	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
-            SharedPreferences prefs =
-                mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
+            //SharedPreferences prefs =
+                //mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putString(PreferencesProvider.PREFERENCES_EFFECT, shenduPrograme.getName());
             editor.commit();
         	//Log.i("hhl", "===AppsCustonizepagedView.java===onClick==PagedViewEffect=="+view.getTag());
@@ -2156,6 +2177,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     @Override
     public void setup(Launcher launcher, DragController dragController) {
         mLauncher = launcher;
+        mSharedPreferences = mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         mDragController = dragController;
         /**
          * init the left、right arrow imageview
@@ -2169,6 +2192,18 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
   	    mDisplayWidth = display.getWidth();
        mDisplayHeight = display.getHeight();
     }
+    
+    /**
+     * add by hhl, used to listener the launcher settings changed
+     */
+    OnSharedPreferenceChangeListener mOnSharedPreferenceChangeListener = new OnSharedPreferenceChangeListener(){
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,String str) {
+			Log.i("hhl", "!!!!!!!!!!!!!!!AppsCustomizePaged.java...OnSharedPreferenceChangeListener==="+str);
+			if(str.equals(PreferencesProvider.PREFERENCES_EFFECT)){
+				onEffectChanged();
+			}
+		}
+    };
 
     /*public SortMode getSortMode() {
         return mSortMode;

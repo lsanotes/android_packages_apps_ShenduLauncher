@@ -18,6 +18,8 @@ package com.cyanogenmod.trebuchet;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,7 +31,7 @@ import android.widget.TextView;
  * Trebuchet
  * TODO: editstate bottom layout choice wallpaper display item view
  */
-public class PagedViewWallpaper extends ImageView {
+public class PagedViewWallpaper extends FrameLayout {
 	
 	//private TextView mTextView; //used for the parent is linearlayout
 	
@@ -43,26 +45,25 @@ public class PagedViewWallpaper extends ImageView {
 
     public PagedViewWallpaper(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        //mTextView = (TextView)this.findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_id);
     }
 
     public void applyFromShenduPrograme(ShenduPrograme info,HolographicOutlineHelper holoOutlineHelper) {
         int bgResId = 0;
-        /*if(mTextView==null){
-        	mTextView = (TextView)this.findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_id);
-        }*/
+        ImageView wallpaperIcon = (ImageView)findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_id);
+        TextView wallpaperMark = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_mark_id);
         if(info.getChoice()==ShenduPrograme.CHOICE_WALLPAPER_LAUNCHER){
         	bgResId = R.drawable.editstate_tabhost_tabcontent_wallpaper_bg;
-        	setImageResource(info.getResSmallId());
-        	//mTextView.setBackgroundResource(info.getResSmallId());
+        	wallpaperIcon.setImageResource(info.getResSmallId());
+        	//setImageResource(info.getResSmallId());
         }else if(info.getChoice()==ShenduPrograme.CHOICE_WALLPAPER_CURRENT){
         	bgResId = R.drawable.editstate_tabhost_tabcontent_wallpaper_bg;
-        	setImageDrawable(info.getResDrawable());
-        	//mTextView.setBackgroundDrawable(info.getResDrawable());
+        	wallpaperIcon.setImageDrawable(info.getResDrawable());
+        	wallpaperMark.setVisibility(View.VISIBLE);
+        	//setImageDrawable(info.getResDrawable());
         }else if(info.getChoice()==ShenduPrograme.CHOICE_WALLPAPER_MORE){
         	bgResId = info.getResSmallId();
         }
-        setBackgroundResource(bgResId);
+        wallpaperIcon.setBackgroundResource(bgResId);
         setTag(info);
     }
 

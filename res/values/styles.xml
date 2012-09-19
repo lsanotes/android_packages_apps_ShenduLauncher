@@ -78,7 +78,7 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
-        <item name="android:paddingTop">@dimen/app_icon_padding_top</item>
+        <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">4dp</item>
     </style>
 
@@ -94,10 +94,12 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">top|right</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:paddingRight">4dp</item>
-        <item name="android:minHeight">31px</item>
-        <item name="android:minWidth">29px</item>
+        <item name="android:minHeight">33px</item>
+        <item name="android:minWidth">32px</item>
         <item name="android:maxHeight">@dimen/app_icon_size</item>
         <item name="android:maxWidth">@dimen/app_icon_size</item>
         <item name="android:singleLine">true</item>

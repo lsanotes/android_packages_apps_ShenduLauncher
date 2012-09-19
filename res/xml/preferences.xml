@@ -54,12 +54,14 @@
                     launcher:max="10"
                     launcher:min="0" />
                         -->
+                <!-- do not used        
                 <ListPreference android:key="ui_homescreen_screen_folder_style"
                     android:title="@string/preferences_interface_homescreen_general_screen_folder_style_title"
                     android:summary="@string/preferences_interface_homescreen_general_screen_folder_style_summary"
                     android:entries="@array/preferences_interface_homescreen_general_screen_folder_style_entries"
                     android:entryValues="@array/preferences_interface_homescreen_general_screen_folder_style_values"
                     android:defaultValue="@string/config_folder_style_default" />
+                -->
                 <CheckBoxPreference android:key="ui_homescreen_general_search"
                     android:title="@string/preferences_interface_homescreen_general_search_title"
                     android:summary="@string/preferences_interface_homescreen_general_search_summary"

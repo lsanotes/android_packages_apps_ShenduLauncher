@@ -18,6 +18,9 @@ package com.cyanogenmod.trebuchet;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -27,7 +30,7 @@ import android.widget.TextView;
  * Trebuchet
  * TODO: editstate bottom layout choice effect display item view
  */
-public class PagedViewEffect extends TextView {
+public class PagedViewEffect extends RelativeLayout {
 	
 	
     public PagedViewEffect(Context context) {
@@ -43,9 +46,19 @@ public class PagedViewEffect extends TextView {
     }
 
     public void applyFromShenduPrograme(ShenduPrograme info,HolographicOutlineHelper holoOutlineHelper) {
-        setCompoundDrawablesWithIntrinsicBounds(0,info.getEffectDrawableId(),0,0);
+    	
+    	TextView effectName = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_name_id);
+    	TextView effectIcon = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_icon_id);
+    	TextView effectMark = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_mark_id);
+    	effectName.setText(info.getEffectStrId());
+    	effectIcon.setBackgroundResource(info.getEffectDrawableId());
+    	if(info.isEffectCurrent()){
+        	effectMark.setVisibility(View.VISIBLE);
+    	}
+    	setTag(info);
+        /*setCompoundDrawablesWithIntrinsicBounds(0,info.getEffectDrawableId(),info.getEffectMarkDrawableId(),0);
         setText(info.getEffectStrId());
-        setTag(info);
+        setTag(info);*/
     }
 
 }

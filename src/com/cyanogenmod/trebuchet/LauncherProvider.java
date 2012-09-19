@@ -701,7 +701,7 @@ public class LauncherProvider extends ContentProvider {
             Intent intent = new Intent(Intent.ACTION_MAIN, null);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             ContentValues values = new ContentValues();
-
+       
             PackageManager packageManager = mContext.getPackageManager();
             int i = 0;
             try {
@@ -721,7 +721,7 @@ public class LauncherProvider extends ContentProvider {
 
                     boolean added = false;
                     final String name = parser.getName();
-
+                    Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites................name."+name);
                     TypedArray a = mContext.obtainStyledAttributes(attrs, R.styleable.Favorite);
 
                     long container = LauncherSettings.Favorites.CONTAINER_DESKTOP;
@@ -755,6 +755,8 @@ public class LauncherProvider extends ContentProvider {
                     } else if (TAG_CLOCK.equals(name)) {
                         added = addClockWidget(db, values);
                     } else if (TAG_APPWIDGET.equals(name)) {
+                    	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites.................");
+                    	
                         added = addAppWidget(db, values, a, packageManager);
                     } else if (TAG_SHORTCUT.equals(name)) {
                         long id = addUriShortcut(db, values, a);
@@ -924,18 +926,24 @@ public class LauncherProvider extends ContentProvider {
             if (packageName == null || className == null) {
                 return false;
             }
-
+         	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget...............");
             boolean hasPackage = true;
             ComponentName cn = new ComponentName(packageName, className);
             try {
+              	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget.11..............");
                 packageManager.getReceiverInfo(cn, 0);
             } catch (Exception e) {
+            	 e.printStackTrace();
+              	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget...22............");
                 String[] packages = packageManager.currentToCanonicalPackageNames(
                         new String[] { packageName });
                 cn = new ComponentName(packages[0], className);
                 try {
+                  	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget...33............");
                     packageManager.getReceiverInfo(cn, 0);
                 } catch (Exception e1) {
+               	   e.printStackTrace();
+                  	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget...44............");
                     hasPackage = false;
                 }
             }
@@ -943,6 +951,7 @@ public class LauncherProvider extends ContentProvider {
             if (hasPackage) {
                 int spanX = a.getInt(R.styleable.Favorite_spanX, 0);
                 int spanY = a.getInt(R.styleable.Favorite_spanY, 0);
+              	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget..55.............");
                 return addAppWidget(db, values, cn, spanX, spanY);
             }
             
@@ -955,6 +964,7 @@ public class LauncherProvider extends ContentProvider {
             final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
 
             try {
+              	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites..addAppWidget..66............");
                 int appWidgetId = mAppWidgetHost.allocateAppWidgetId();
                 
                 values.put(Favorites.ITEM_TYPE, Favorites.ITEM_TYPE_APPWIDGET);

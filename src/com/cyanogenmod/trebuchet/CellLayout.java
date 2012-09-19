@@ -1142,7 +1142,11 @@ public class CellLayout extends ViewGroup {
 //        	 Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........######################################:");
 //        	return false ;
 //        }
-        
+        if(cellX>=mCountX||cellX>=mCountX){
+        	
+        	return false;
+        }
+    
         if (clc.indexOfChild(child) != -1 && !mOccupied[cellX][cellY]) {
         	
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
