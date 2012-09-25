@@ -86,9 +86,12 @@
         <item name="android:layout_marginTop">-2dp</item>
     </style>
 
-    <style name="Theme" parent="android:Theme.Holo.Wallpaper.NoTitleBar">
-        <item name="android:windowActionModeOverlay">true</item>
-    </style>
+    <style name="Theme" parent="@android:style/Theme.Holo.Light.NoActionBar">
+   
+       <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
+     </style>
 
     <style name="Theme.WallpaperPicker">
         <item name="android:screenOrientation">unspecified</item>

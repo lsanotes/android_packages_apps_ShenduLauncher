@@ -329,7 +329,7 @@ public final class Launcher extends Activity
 
         mSavedState = savedInstanceState;
         restoreState(mSavedState);
-
+        Log.i(Launcher.TAG, TAG+" onCreate(......   ");
         // Update customization drawer _after_ restoring the states
         if (mAppsCustomizeContent != null) {
             mAppsCustomizeContent.onPackagesUpdated();
@@ -340,14 +340,12 @@ public final class Launcher extends Activity
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
         }
-
         if (PROFILE_STARTUP) {
             android.os.Debug.stopMethodTracing();
         }
 
         if (!mRestoring) {
         	
-        	 Log.i(Launcher.TAG, TAG+" onCreate(......    mModel.startLoader(...............");   
             mModel.startLoader(this, true);
         }
 
@@ -362,7 +360,7 @@ public final class Launcher extends Activity
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         registerReceiver(mCloseSystemDialogsReceiver, filter);
-
+     
         boolean searchVisible = false;
         boolean voiceVisible = false;
         // If we have a saved version of these external icons, we load them up immediately
@@ -385,7 +383,6 @@ public final class Launcher extends Activity
 //            updateAppMarketIcon(sAppMarketIcon[coi]);
 //        }
         mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
-
         syncOrientation();
         
         mWindow = getWindow();
@@ -599,8 +596,7 @@ public final class Launcher extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-        
-    	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);    
+
         mPaused = false;
         
         // Restart launcher when preferences are changed
@@ -930,6 +926,19 @@ public final class Launcher extends Activity
         		+"==="+favorite.getHeight()+"*"+favorite.getWidth()+"===="+favorite.getPaddingTop()+"*"+
         		favorite.getPaddingBottom()+"*"+favorite.getPaddingLeft()+"*"+favorite.getPaddingRight());
         return favorite;*/
+    }
+    
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+      // TODO Auto-generated method stub
+    	
+    	Log.i(Launcher.TAG, "........onConfigurationChanged ####### ");
+       if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){  
+    
+    	  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);   
+    	  }   
+       super.onConfigurationChanged(newConfig);
     }
     
     /**
@@ -3720,6 +3729,7 @@ public final class Launcher extends Activity
                     editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, false);
                     editor.commit();
         }
+        Log.i(Launcher.TAG, TAG+"...preferencesChanged......................preferencesChanged:"+preferencesChanged);    
         return preferencesChanged;
     }
 

@@ -63,6 +63,7 @@
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
   	<uses-permission android:name="android.permission.READ_CONTACTS"/>
   	<uses-permission android:name="android.permission.READ_SMS" />
+  	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <uses-sdk android:minSdkVersion="14"
         android:targetSdkVersion="15" />
@@ -72,14 +73,17 @@
         android:label="@string/application_name"
         android:icon="@drawable/ic_launcher_home"
         android:hardwareAccelerated="@bool/config_hardwareAccelerated"
-        android:largeHeap="@bool/config_largeHeap">
+        android:largeHeap="@bool/config_largeHeap"
+        >
         <activity
             android:name="com.cyanogenmod.trebuchet.Launcher"
             android:launchMode="singleTask"
             android:clearTaskOnLaunch="true"
             android:stateNotNeeded="true"
             android:theme="@style/Theme"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="orientation|screenSize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />

@@ -3536,16 +3536,15 @@ public class Workspace extends PagedView
         	
         	target[0] =mReorderAlarmTarget[0];
         	target[1] =mReorderAlarmTarget[1];
-   
+        	
+
         	View view =null;
         	if(mDragInfo!=null){
         		view =mDragInfo.cell;
         	}
    
             	dragCellLayout.realTimeReorder(empty, target,view );
-        	
 
-            
             mReorderAlarmFinish=true;
         }
     };
@@ -3755,13 +3754,7 @@ public class Workspace extends PagedView
             
         int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
         
-        
-//   Log.i(Launcher.TAG,TAG+ "..onDragOver.  ..、mReorderAlarmFinish：. "+mReorderAlarmFinish
-//		   +"  //distanceX:"+distanceX
-//		   + "// item.spanX+item.spanY: "+(item.spanX+item.spanY)
-//		   +" // mReorderAlarmTarget==mPreviousTargetCell:"+(mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1])
-//		   +" // testH:"+testH + "  testF:"+testF 
-//		   +"// mOccupied:"+mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]); 
+
        if(mReorderAlarmFinish && ((item.spanX+item.spanY)<=2)){
     	   mReorderAlarmTarget[0] =mTargetCell[0];
     	   mReorderAlarmTarget[1] =mTargetCell[1];
@@ -3845,7 +3838,7 @@ public class Workspace extends PagedView
      mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
 
          //push  
-
+     Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForPush.....testI.:  "+"  testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mTargetCell[0]+mTargetCell[1]);	
        if(mEmptyCell!=null){
    
              dragHeaderIndex =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
@@ -3858,7 +3851,7 @@ public class Workspace extends PagedView
        			dragFooterIndex=temp;
               }
   
-	           mLastEmptyCell[0]=mEmptyCell[0];
+	          mLastEmptyCell[0]=mEmptyCell[0];
               mLastEmptyCell[1]=mEmptyCell[1];  
 
               dragFromTargetcellToEmptycell();
@@ -3877,7 +3870,7 @@ public class Workspace extends PagedView
     
     private void dragForExchanged(){
 
-        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.jiaohuan.....testI.:  "+"  testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mTargetCell[0]+mTargetCell[1]);	
+        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForExchanged.....testI.:  "+"  testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mTargetCell[0]+mTargetCell[1]);	
          	//changed
           mEmptyCell[0] =mPreviousTargetCell[0];
           mEmptyCell[1] =mPreviousTargetCell[1];
@@ -3889,7 +3882,7 @@ public class Workspace extends PagedView
      * all Items back to them's original position
      * 
      */
-    private void dragForRecovery(){
+    public void dragForRecovery(){
         mEmptyCell[0] =mPreviousTargetCell[0];
         mEmptyCell[1] =mPreviousTargetCell[1];
           	
@@ -3897,7 +3890,7 @@ public class Workspace extends PagedView
         mReorderAlarmTarget[1]=mLastEmptyCell[1];
        	
 
-        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.huifu.....//:testI  "+dragHeaderIndex+"  testF:"+mEmptyCell[0]+mEmptyCell[1]);	
+        Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.huifu.....//:testI  "+dragHeaderIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mReorderAlarmTarget[0]+mReorderAlarmTarget[1]);	
 
         dragFromTargetcellToEmptycell();
           	
@@ -3917,12 +3910,9 @@ public class Workspace extends PagedView
    private void dragFromTargetcellToEmptycell(){
     
                mReorderAlarmFinish=false;
-               
-               
+    
                dragCellLayout=mDragTargetLayout;
-               
-     
-                 
+      
                mReorderAlarm.cancelAlarm();
                mReorderAlarm.setOnAlarmListener(mReorderAlarmListener);
                mReorderAlarm.setAlarm(200);

@@ -659,10 +659,16 @@ public class LauncherModel extends BroadcastReceiver {
              // and we would need to clear out the labels in all apps/workspace. Same handling as
              // above for ACTION_LOCALE_CHANGED
              Configuration currentConfig = context.getResources().getConfiguration();
+             
+             Log.d(TAG, "#################################################################################################################Reload apps on config change. curr_mcc:"
+                     + currentConfig.mcc + " prevmcc:" + mPreviousConfigMcc);
+             
+             
              if (mPreviousConfigMcc != currentConfig.mcc) {
-                   Log.d(TAG, "Reload apps on config change. curr_mcc:"
+                   Log.d(TAG, "         **********                     Reload apps on config change. curr_mcc:"
                        + currentConfig.mcc + " prevmcc:" + mPreviousConfigMcc);
-                   forceReload();
+                 //remove by zlf
+                  forceReload();
              }
              // Update previousConfig
              mPreviousConfigMcc = currentConfig.mcc;

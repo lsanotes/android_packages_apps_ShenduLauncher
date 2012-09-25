@@ -1040,16 +1040,7 @@ public class CellLayout extends ViewGroup {
         int delay = 0;
         float delayAmount = 30;
      
-      //  float delayAmount = 100;
-//        if(isInHotseat){
-//        	currentLayout =mLauncher.getHotseat().getLayout();
-//        }else{
-       
-        	
-        	//currentLayout = cellLayout;
-      //  }
-        
-    //	Log.i(Launcher.TAG,TAG+ "..realTimeReorder..---...............empty:."+empty[0]+empty[1]+"  target:"+target[0]+target[1]+mReorderAlarmFinish+currentLayout);
+    
         ItemInfo info =null;
         if (readingOrderGreaterThan(target, empty)) {
         	
@@ -1079,7 +1070,7 @@ public class CellLayout extends ViewGroup {
                     	    }
                     	
                     }
-                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder...............empty:."+empty[0]+empty[1]+"  :");  
+                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder...............empty:."+empty[0]+empty[1]+"  :"+v);  
                     if (animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay)) {
                     	

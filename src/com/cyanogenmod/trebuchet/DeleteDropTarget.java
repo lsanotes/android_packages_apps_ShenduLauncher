@@ -37,8 +37,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
-import android.content.pm.IPackageDeleteObserver;
-
 public class DeleteDropTarget extends ButtonDropTarget {
 
 	//private static final int MODE_DELETE = 0;
@@ -149,29 +147,14 @@ public class DeleteDropTarget extends ButtonDropTarget {
                   	 flag = false;
                  	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstallunable_label),Toast.LENGTH_SHORT).show();
                    }else{
-                   	
-//                   	AlertDialog deleteDialog =new AlertDialog.Builder(mLauncher)
-//                   	                   .setTitle(mLauncher.getString(R.string.deletefolder_dialog_title))
-//       				                   .setMessage(mLauncher.getString(R.string.deletefolder_dialog_message))
-//       				                   .setPositiveButton(mLauncher.getString(R.string.uninstall_action),
-//       					                    new DialogInterface.OnClickListener() {
-//       				                	   public void onClick(DialogInterface dialog,int which) {
-//       				                		   
-//       				                		
-//       										   return;
-//       									   } 
-//       				                   })	
-//       									.setNegativeButton(mLauncher.getString(R.string.cancel_action),null)
-//       									.show();
-                   	
-                 
+
            	 	 flag = true;
                    }
         	}
     	 }else{
     		 if(isWorkspaceFolder(d.dragSource,d.dragInfo)){
         		 flag = false;
-        		 Toast.makeText(getContext(),getContext().getString(R.string.delete_folder_toast_message),Toast.LENGTH_SHORT).show();
+        		 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
     		 }else{
         		 flag = true;
     		 }
@@ -361,6 +344,22 @@ public class DeleteDropTarget extends ButtonDropTarget {
             	Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
             }else{*/
             	final String pkgName = shortcutInfo.intent.getComponent().getPackageName();
+            	
+            	
+//            	AlertDialog deleteDialog =new AlertDialog.Builder(mLauncher)
+//            	                   .setTitle(mLauncher.getString(R.string.deletefolder_dialog_title))
+//				                   .setMessage(mLauncher.getString(R.string.deletefolder_dialog_message))
+//				                   .setPositiveButton(mLauncher.getString(R.string.uninstall_action),
+//					                    new DialogInterface.OnClickListener() {
+//				                	   public void onClick(DialogInterface dialog,int which) {
+				                		   
+				                		   getContext().getPackageManager().deletePackage(pkgName, null, 0); 
+										   
+//									   } 
+//				                   })	
+//									.setNegativeButton(mLauncher.getString(R.string.cancel_action),null)
+//									.show();
+						
             	/*if(mLauncher.getWorkspace().mDragInfo != null){
             		mLauncher.getWorkspace().mDragInfo.cell.setVisibility(View.VISIBLE);
             	}
@@ -370,7 +369,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
                 .setPositiveButton(getContext().getString(R.string.dialog_uninstall_app_ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {*/
-                                getContext().getPackageManager().deletePackage(pkgName, mHideUninstallAppObserver, 0);
+                              
                            /* }
                         })
                 .setNegativeButton(mLauncher.getString(R.string.dialog_uninstall_app_cancle), null)
@@ -441,24 +440,6 @@ public class DeleteDropTarget extends ButtonDropTarget {
                 }
                 break;
         }*/
-    }
-    
-    HideUninstallAppObserver mHideUninstallAppObserver = new HideUninstallAppObserver();
-    
-    
-    /**
-     * 2012-9-19 hhl
-     * DeleteDropTarget.java
-     * Trebuchet
-     * TODO: listener uninstall app result , if returnCode is success then update widget data
-     */
-    class HideUninstallAppObserver extends IPackageDeleteObserver.Stub {
-    	public void packageDeleted(String packageName, int returnCode){
-    		Log.i(Launcher.TAG,"**************DeleteDropTarget.java===="+packageName+"======="+returnCode);
-    		if(returnCode==mLauncher.getPackageManager().DELETE_SUCCEEDED){
-    			mLauncher.bindPackagesUpdated();
-    		}
-    	}
     }
 
     public void onDrop(DragObject d) {

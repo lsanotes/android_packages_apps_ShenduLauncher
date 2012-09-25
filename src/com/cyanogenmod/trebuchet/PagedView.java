@@ -197,6 +197,7 @@ public abstract class PagedView extends ViewGroup {
 
     public PagedView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        
     }
 
     public PagedView(Context context, AttributeSet attrs, int defStyle) {

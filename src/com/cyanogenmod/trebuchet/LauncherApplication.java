@@ -152,6 +152,7 @@ public class LauncherApplication extends Application {
     
     LauncherModel setLauncher(Launcher launcher) {
         mModel.initialize(launcher);
+       Log.i(Launcher.TAG,"LauncherModel==setLauncher ()initialize.........................r==");
         return mModel;
     }
 

@@ -475,9 +475,13 @@ public class DragController {
             if (mLastDropTarget != dropTarget) {
                 if (mLastDropTarget != null) {
                     mLastDropTarget.onDragExit(mDragObject);
+                    
+                    //add by zlf
+                    if(mLastDropTarget instanceof Workspace){
+                  Log.i(Launcher.TAG, TAG+" ...handleMoveEvent   Workspace.dragForRecovery()......    ")  ;	
+                    	((Workspace)mLastDropTarget).dragForRecovery();
+                    }
                 }
-                
-                
                 dropTarget.onDragEnter(mDragObject);
             }
         
@@ -497,9 +501,6 @@ public class DragController {
         mLastTouch[0] = x;
         mLastTouch[1] = y;
         
-    //    Log.i(Launcher.TAG,TAG+ "    ScrollRunnable()......................x.:"+ x
-//        		+"  :mScrollView.getWidth():"+mScrollView.getWidth()+"    :  "
-//        		+ mScrollZone+"  mScrollState:"+mScrollState+(mDistanceSinceScroll > slop));
        //left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
