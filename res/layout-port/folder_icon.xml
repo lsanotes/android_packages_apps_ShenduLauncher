@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<com.cyanogenmod.trebuchet.FolderIcon xmlns:android="http://schemas.android.com/apk/res/android"
+<com.shendu.launcher.FolderIcon xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -34,11 +34,11 @@
             android:id="@+id/preview_background"
         	android:layout_width="@dimen/app_icon_size"
         	android:layout_height="@dimen/app_icon_size"
-        	android:src="@drawable/portal_square_inner_holo"
+        	android:background="@drawable/folder_bg"
             />
     </LinearLayout>
 
-    <com.cyanogenmod.trebuchet.BubbleTextView
+    <com.shendu.launcher.BubbleTextView
         android:id="@+id/folder_icon_name"
         style="@style/WorkspaceIcon.Portrait"
         android:layout_height="wrap_content"
@@ -46,4 +46,4 @@
         android:singleLine="true"
         android:textColor="@android:color/white" />
 
-</com.cyanogenmod.trebuchet.FolderIcon>
+</com.shendu.launcher.FolderIcon>

@@ -17,7 +17,7 @@
 <resources>
 <!-- QSB -->
     <dimen name="qsb_bar_height_inset">42dp</dimen>
-    <dimen name="qsb_bar_height">42dip</dimen>
+    <dimen name="qsb_bar_height">42dp</dimen>
     <dimen name="qsb_padding_left">3dp</dimen>
     <dimen name="qsb_padding_right">3dp</dimen>
 
@@ -28,7 +28,7 @@
          for the portals to look right. -->
     <dimen name="workspace_top_padding">0dp</dimen>
     <dimen name="workspace_bottom_padding">0dp</dimen>
-    <dimen name="workspace_page_spacing">10dp</dimen>
+      <dimen name="workspace_page_spacing">10dp</dimen>
 
 <!-- AppsCustomize -->
     <dimen name="apps_customize_pageLayoutWidthGap">-1dp</dimen>

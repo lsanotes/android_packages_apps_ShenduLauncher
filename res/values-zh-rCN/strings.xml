@@ -40,7 +40,7 @@
     <string name="group_shortcuts" msgid="9133529424900391877">"快捷方式"</string>
     <string name="group_widgets" msgid="6704978494073105844">"窗口小部件"</string>
     <string name="group_wallpapers" msgid="1568191644272224858">"壁纸"</string>
-      <string name="group_more_wallpapers" msgid="1568191644272224858">"更多壁纸"</string>
+      <string name="group_more_wallpapers" >"更多壁纸"</string>
     <string name="out_of_space" msgid="8365249326091984698">"此主屏幕上已没有空间。"</string>
     <string name="invalid_hotseat_item" msgid="6545340627805449250">"该窗口小部件太大，超出基座区域可用空间。"</string>
     <string name="shortcut_installed" msgid="7071557296331322355">"已创建“<xliff:g id="NAME">%s</xliff:g>”快捷方式。"</string>
@@ -54,7 +54,7 @@
     <string name="delete_zone_label_all_apps" msgid="6664588234817475108">"卸载"</string>
     <string name="delete_target_label" msgid="665300185123139530">"删除"</string>
     <string name="delete_target_uninstall_label" msgid="748894921183769150">"卸载"</string>
-     <string name="delete_target_uninstallunable_label" msgid="748894921183769150">"系统应用，不可卸载"</string>
+     <string name="delete_target_uninstallunable_label">"系统应用，不可卸载"</string>
     
     <string name="info_target_label" msgid="4019495079517426980">"应用程序信息"</string>
     <string name="accessibility_search_button" msgid="816822994629942611">"搜索"</string>
@@ -109,16 +109,13 @@
     <string name="folder_renamed" msgid="781234745487414781">"已将文件夹重命名为“%1$s”"</string>
     <string name="folder_name_format" msgid="4513766553514769310">"文件夹：%1$s"</string>
     
-    <!--             -->
     <!-- Preferences -->
-    <!--             -->
     <string name="preferences_title">桌面选项</string>
     <!-- UI -->
     <string name="preferences_interface_title">界面</string>
     <!-- Application -->
     <string name="preferences_application_title">应用</string>
 
-    <!-- UI -->
     <!-- Homescreen -->
     <string name="preferences_interface_homescreen_title">屏幕</string>
     <string name="preferences_interface_homescreen_general_category">常规</string>
@@ -198,10 +195,9 @@
     <string name="editstate_effect_string_cubeout">立方飞出</string>
     <string name="editstate_effect_string_stack">堆叠</string>
     
-      <string name="deletefolder_dialog_title">卸载应用</string>
-      <string name="deletefolder_dialog_message">"确定要卸载这个应用?"</string>
-      
-          <string name="uninstall_action" >"确定"</string>
+	<string name="deletefolder_dialog_title">卸载应用</string>
+	<string name="deletefolder_dialog_message">"确定要卸载这个应用?"</string>
+	<string name="uninstall_action" >"确定"</string>
 	  
     <string name="editstate_wallpaper_current_mark">正在使用</string>
     <string name="delete_folder_toast_message">文件夹不支持删除！</string>

@@ -29,7 +29,8 @@
     <color name="bubble_dark_background">#20000000</color>
 
     <color name="appwidget_error_color">#FCCC</color>
-
+    <!-- do not used,remobe by hhl 20120926
     <color name="workspace_all_apps_and_delete_zone_text_color">#CCFFFFFF</color>
     <color name="workspace_all_apps_and_delete_zone_text_shadow_color">#A0000000</color>
+    -->
 </resources>

@@ -202,7 +202,7 @@
     <style name="TabIndicator.AppsCustomize">
         <!-- Overridden in values-land -->
     </style>
-
+	<!-- do not used remove by hhl
     <style name="MarketButton">
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>
@@ -213,7 +213,7 @@
         <item name="android:shadowDy">0.0</item>
         <item name="android:shadowRadius">2.0</item>
     </style>
-    
+    -->
     <!-- Launcher Setting -->
     <style name="PreferenceStyle" parent="@android:style/Theme.Holo.Light">  
     <item name="android:actionBarStyle">@style/SettingActionBarStyle</item>

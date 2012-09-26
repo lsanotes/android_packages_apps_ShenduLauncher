@@ -19,6 +19,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name" translatable="false">深度桌面</string>
     <string name="uid_name" msgid="3371120195364560632">"Android 核心應用程式"</string>
     <string name="folder_name" msgid="8551881338202938211"></string>
     <string name="chooser_wallpaper" msgid="6063168087625352235">"選擇桌布來源"</string>
@@ -39,6 +40,7 @@
     <string name="group_shortcuts" msgid="9133529424900391877">"捷徑"</string>
     <string name="group_widgets" msgid="6704978494073105844">"小工具"</string>
     <string name="group_wallpapers" msgid="1568191644272224858">"桌布"</string>
+    <string name="group_more_wallpapers" >"更多壁纸"</string>
     <string name="out_of_space" msgid="8365249326091984698">"主螢幕已無空間"</string>
     <string name="invalid_hotseat_item" msgid="6545340627805449250">"這個小工具過大，超出可用的空間。"</string>
     <string name="shortcut_installed" msgid="7071557296331322355">"已建立「<xliff:g id="NAME">%s</xliff:g>」捷徑。"</string>
@@ -52,6 +54,7 @@
     <string name="delete_zone_label_all_apps" msgid="6664588234817475108">"解除安裝"</string>
     <string name="delete_target_label" msgid="665300185123139530">"移除"</string>
     <string name="delete_target_uninstall_label" msgid="748894921183769150">"解除安裝"</string>
+    <string name="delete_target_uninstallunable_label">"系統應用，不可卸載"</string>
     <string name="info_target_label" msgid="4019495079517426980">"應用程式資訊"</string>
     <string name="accessibility_search_button" msgid="816822994629942611">"搜尋"</string>
     <string name="accessibility_voice_search_button" msgid="3938249215065842475">"語音搜尋"</string>
@@ -60,6 +63,9 @@
     <string name="delete_zone_label_all_apps_system_app" msgid="3683920959591819044">"解除安裝更新"</string>
     <string name="menu_add" msgid="3065046628354640854">"新增"</string>
     <string name="menu_manage_apps" msgid="2308685199463588895">"管理應用程式"</string>
+
+    <string name="menu_editmode" >"編輯模式"</string>
+    <string name="menu_preferences">"桌面設置"</string>
     <string name="menu_wallpaper" msgid="5837429080911269832">"桌布"</string>
     <string name="menu_search" msgid="4826514464423239041">"搜尋"</string>
     <string name="menu_notifications" msgid="6424587053194766192">"通知"</string>
@@ -102,4 +108,97 @@
     <string name="folder_closed" msgid="3130534551370511932">"已關閉資料夾"</string>
     <string name="folder_renamed" msgid="781234745487414781">"已將資料夾重新命名為「%1$s」"</string>
     <string name="folder_name_format" msgid="4513766553514769310">"資料夾：%1$s"</string>
+    
+    <!-- Preferences -->
+    <string name="preferences_title">桌面選項</string>
+    <!-- UI -->
+    <string name="preferences_interface_title">界面</string>
+    <!-- Application -->
+    <string name="preferences_application_title">應用</string>
+
+    <!-- Homescreen -->
+    <string name="preferences_interface_homescreen_title">屏幕</string>
+    <string name="preferences_interface_homescreen_general_category">常規</string>
+    <string name="preferences_interface_homescreen_general_screens_title">屏幕數量</string>
+    <string name="preferences_interface_homescreen_general_screens_summary">屏幕上的頁面數量</string>
+    <string name="preferences_interface_homescreen_general_default_screen_title">默認主屏幕</string>
+    <string name="preferences_interface_homescreen_general_default_screen_summary">选择默认的屏幕</string>
+    <string name="preferences_interface_homescreen_general_grid_title">網格大小</string>
+    <string name="preferences_interface_homescreen_general_grid_summary">選擇屏幕上的行/列數</string>
+    <string name="preferences_interface_homescreen_general_grid_rows_title">行</string>
+    <string name="preferences_interface_homescreen_general_grid_columns_title">列</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_vertical_title">垂直間隔</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_vertical_summary">在屏幕上加上額外的垂直間隔</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_horizontal_title">水平間隔</string>
+    <string name="preferences_interface_homescreen_general_screen_padding_horizontal_summary">在屏幕上加上額外的水平間隔</string>
+    <string name="preferences_interface_homescreen_general_search_title">搜索欄</string>
+    <string name="preferences_interface_homescreen_general_search_summary">啟用搜索欄</string>
+    <string name="preferences_interface_homescreen_general_resize_any_widget_title">調整任何小部件的大小</string>
+    <string name="preferences_interface_homescreen_general_resize_any_widget_summary">允許小部件的大小調整</string>
+    <string name="preferences_interface_homescreen_general_hide_icon_labels_title">隱藏圖標標籤</string>
+    <string name="preferences_interface_homescreen_general_hide_icon_labels_summary">隱藏在屏幕上圖標的標籤</string>
+    <string name="preferences_interface_homescreen_scrolling_category">滾動</string>
+    <string name="preferences_interface_homescreen_scrolling_transition_effect_title">過渡效果</string>
+    <string name="preferences_interface_homescreen_scrolling_transition_effect_summary">選擇滾動屏幕時的過渡效果</string>
+    <string name="preferences_interface_homescreen_scrolling_fade_adjacent_screens_title">淡出邊界</string>
+    <string name="preferences_interface_homescreen_scrolling_fade_adjacent_screens_summary">滾動屏幕時淡出邊界</string>
+    <string name="preferences_interface_homescreen_scrolling_scroll_wallpaper_title">滾動壁紙</string>
+    <string name="preferences_interface_homescreen_scrolling_scroll_wallpaper_summary">屏幕滾動時壁紙將會一起滾動</string>
+    <string name="preferences_interface_homescreen_indicator_category">指示器</string>
+    <string name="preferences_interface_homescreen_indicator_enable_title">啟用頁面指示器</string>
+    <string name="preferences_interface_homescreen_indicator_enable_summary">在屏幕的底部顯示當前頁面的指示器</string>
+    <string name="preferences_interface_homescreen_indicator_fade_title">淡出指示器</string>
+    <string name="preferences_interface_homescreen_indicator_fade_summary">改變屏幕後將淡出指示器</string>
+    <string name="preferences_interface_homescreen_indicator_background_title">顯示底座分隔器</string>
+    <string name="preferences_interface_homescreen_indicator_background_summary">顯示指示器後面的背景</string>
+
+    <!-- Drawer -->
+    <string name="preferences_interface_drawer_title">抽屜</string>
+    <string name="preferences_interface_drawer_widgets_category">小部件</string>
+    <string name="preferences_interface_drawer_widgets_join_apps_title">與應用程序關聯</string>
+    <string name="preferences_interface_drawer_widgets_join_apps_summary">從應用程序菜單直接滑動到小部件菜單</string>
+    <string name="preferences_interface_drawer_scrolling_category">滾動</string>
+    <string name="preferences_interface_drawer_scrolling_transition_effect_title">過渡效果</string>
+    <string name="preferences_interface_drawer_scrolling_transition_effect_summary">選擇滾動屏幕時的過渡效果</string>
+    <string name="preferences_interface_drawer_scrolling_fade_adjacent_screens_title">淡出邊界</string>
+    <string name="preferences_interface_drawer_scrolling_fade_adjacent_screens_summary">滾動屏幕時淡出邊界</string>
+    <string name="preferences_interface_drawer_indicator_category">指示器</string>
+    <string name="preferences_interface_drawer_indicator_enable_title">啟用頁面指示器</string>
+    <string name="preferences_interface_drawer_indicator_enable_summary">在屏幕的底部顯示當前頁面的指示器</string>
+    <string name="preferences_interface_drawer_indicator_fade_title">淡出指示器</string>
+    <string name="preferences_interface_drawer_indicator_fade_summary">改變頁面後將淡出指示器</string>
+
+    <!-- Dock -->
+    <string name="preferences_interface_dock_title">底座</string>
+
+    <!-- Icons -->
+    <string name="preferences_interface_icons_title">圖標</string>
+
+    <!-- General -->
+    <string name="preferences_interface_general_title">常規</string>
+    <string name="preferences_interface_general_orientation_title">自動旋轉屏幕</string>
+    
+    <string name="preferences_interface_homescreen_general_screen_folder_style_title">文件夾樣式</string>
+    <string name="preferences_interface_homescreen_general_screen_folder_style_summary">選擇文件夾顯示的樣式</string>
+    <string name="editstate_choice_widget">插件</string>
+    <string name="editstate_choice_wallpaper">壁紙</string>
+    <string name="editstate_choice_theme">主題</string>
+    <string name="editstate_choice_specially_effect">特效</string>
+    <!-- Effects style -->
+    <string name="editstate_effect_string_standard">標準</string>
+    <string name="editstate_effect_string_tablet">平板</string>
+    <string name="editstate_effect_string_zoomin">縮小</string>
+    <string name="editstate_effect_string_zoomout">放大</string>
+    <string name="editstate_effect_string_rotateup">向上旋轉</string>
+    <string name="editstate_effect_string_rotatedown">向下旋轉</string>
+    <string name="editstate_effect_string_cubein">立方飛入</string>
+    <string name="editstate_effect_string_cubeout">立方飛出</string>
+    <string name="editstate_effect_string_stack">堆疊</string>
+    
+	<string name="deletefolder_dialog_title">卸載應用</string>
+	<string name="deletefolder_dialog_message">"確定要卸載這個應用?"</string>
+	<string name="uninstall_action" >"確定"</string>
+	  
+    <string name="editstate_wallpaper_current_mark">正在使用</string>
+    <string name="delete_folder_toast_message">文件夾不支持删除！</string>
 </resources>

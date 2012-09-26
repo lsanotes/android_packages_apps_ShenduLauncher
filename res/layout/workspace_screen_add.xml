@@ -19,9 +19,9 @@
      changed the background 
 -->
 
-<com.cyanogenmod.trebuchet.CellLayout
+<com.shendu.launcher.CellLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
+    xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
     style="@style/WorkspaceScreen"
 
     android:paddingLeft="@dimen/workspace_left_padding"

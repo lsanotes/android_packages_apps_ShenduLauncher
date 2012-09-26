@@ -15,7 +15,7 @@
      limitations under the License.
 -->
 
-<com.cyanogenmod.trebuchet.PagedViewEffect 
+<com.shendu.launcher.PagedViewEffect 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
@@ -52,4 +52,4 @@
 	    	android:background="@drawable/editstate_effect_drawable_current_mark"
 		    />
 	</FrameLayout>
-</com.cyanogenmod.trebuchet.PagedViewEffect>
+</com.shendu.launcher.PagedViewEffect>

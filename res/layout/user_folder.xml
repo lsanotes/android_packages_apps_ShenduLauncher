@@ -14,9 +14,9 @@
      limitations under the License.
 -->
 
-<com.cyanogenmod.trebuchet.Folder
+<com.shendu.launcher.Folder
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
+    xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@android:color/black"
@@ -26,7 +26,7 @@
 
    
 	
-   <com.cyanogenmod.trebuchet.FolderEditText
+   <com.shendu.launcher.FolderEditText
         android:id="@+id/folder_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
         android:singleLine="true"
         android:imeOptions="flagNoExtractUi"/>
     
-    <com.cyanogenmod.trebuchet.CellLayout
+    <com.shendu.launcher.CellLayout
         android:id="@+id/folder_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,4 +58,4 @@
 
    
     
-</com.cyanogenmod.trebuchet.Folder>
+</com.shendu.launcher.Folder>

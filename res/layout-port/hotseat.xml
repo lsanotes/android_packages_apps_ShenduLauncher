@@ -15,13 +15,13 @@
      
          android:background="@drawable/hotseat_bg_panel"
 -->
-<com.cyanogenmod.trebuchet.Hotseat
+<com.shendu.launcher.Hotseat
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
+    xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
     android:layout_gravity="center_vertical"
     launcher:cellCountX="5"
     launcher:cellCountY="1">
-    <com.cyanogenmod.trebuchet.CellLayout
+    <com.shendu.launcher.CellLayout
         android:id="@+id/layout"
      
         android:layout_width="wrap_content"
@@ -37,4 +37,4 @@
         launcher:widthGap="@dimen/hotseat_width_gap"
         launcher:heightGap="@dimen/hotseat_height_gap"
         launcher:maxGap="@dimen/workspace_max_gap" />
-</com.cyanogenmod.trebuchet.Hotseat>
+</com.shendu.launcher.Hotseat>

@@ -49,9 +49,10 @@
     <dimen name="workspace_overscroll_drawable_padding">0dp</dimen>
 
     <dimen name="app_icon_padding_top">8dp</dimen>
-    <dimen name="qsb_bar_height">42dip</dimen>
-       <dimen name="workspace_page_spacing">10dp</dimen>
-
+    
+<!-- The corner radius to draw the external drop icon rounded rect -->
+    <dimen name="external_drop_icon_rect_radius">10dp</dimen>
+    
 <!-- QSB -->
     <dimen name="toolbar_button_vertical_padding">0dip</dimen>
     <dimen name="toolbar_button_horizontal_padding">12dip</dimen>
@@ -66,7 +67,7 @@
          external icon width/height above to compensate -->
     <dimen name="apps_customize_tab_bar_height">34dp</dimen>
     <dimen name="apps_customize_tab_bar_margin_top">0dp</dimen>
-    <dimen name="app_icon_size">56dp</dimen>
+    <dimen name="app_icon_size">76px</dimen>
     <!-- The width can be 72dp because we don't have L/R padding -->
     <dimen name="apps_customize_cell_width">100px</dimen>
     <dimen name="apps_customize_cell_height">200px</dimen>
@@ -83,7 +84,7 @@
     <dimen name="button_bar_height_bottom_padding">0dp</dimen>
     <dimen name="button_bar_width_left_padding">0dp</dimen>
     <dimen name="button_bar_width_right_padding">0dp</dimen>
-    <dimen name="button_bar_height_plus_padding">84dip</dimen>
+    <dimen name="button_bar_height_plus_padding">84dp</dimen>
 
     <!-- extra horizontal spacing between mini screen thumbnails ie. in all
          apps and in customization mode -->
@@ -124,7 +125,7 @@
 
 <!-- Folders -->
     <!-- The size of the image which sits behind the preview of the folder contents -->
-    <dimen name="folder_preview_size">62dp</dimen>
+    <!--<dimen name="folder_preview_size">62dp</dimen> -->
     <!-- The amount that the preview contents are inset from the preview background -->
     <dimen name="folder_preview_padding">4dp</dimen>
     <dimen name="folder_name_padding">10dp</dimen>

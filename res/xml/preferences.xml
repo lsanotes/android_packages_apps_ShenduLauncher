@@ -15,11 +15,11 @@
 -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:launcher="http://schemas.android.com/apk/res/com.cyanogenmod.trebuchet"
+        xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
       >
 
            <PreferenceCategory android:title="@string/preferences_interface_homescreen_general_category">
-                <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_default_screen"
+                <com.shendu.launcher.preference.NumberPickerPreference android:key="ui_homescreen_default_screen"
                     android:title="@string/preferences_interface_homescreen_general_default_screen_title"
                     android:summary="@string/preferences_interface_homescreen_general_default_screen_summary"
                     android:defaultValue="2"
@@ -28,7 +28,7 @@
                     launcher:min="1" />
                 
                 <!-- 
-                <com.cyanogenmod.trebuchet.preference.DoubleNumberPickerPreference android:key="ui_homescreen_grid"
+                <com.shendu.launcher.preference.DoubleNumberPickerPreference android:key="ui_homescreen_grid"
                     android:title="@string/preferences_interface_homescreen_general_grid_title"
                     android:summary="@string/preferences_interface_homescreen_general_grid_summary"
                     launcher:pickerTitle1="@string/preferences_interface_homescreen_general_grid_rows_title"
@@ -41,13 +41,13 @@
                     launcher:min2="3" />
                     
                  
-                <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_screen_padding_vertical"
+                <com.shendu.launcher.preference.NumberPickerPreference android:key="ui_homescreen_screen_padding_vertical"
                     android:title="@string/preferences_interface_homescreen_general_screen_padding_vertical_title"
                     android:summary="@string/preferences_interface_homescreen_general_screen_padding_vertical_summary"
                     android:defaultValue="0"
                     launcher:max="10"
                     launcher:min="0" />
-                <com.cyanogenmod.trebuchet.preference.NumberPickerPreference android:key="ui_homescreen_screen_padding_horizontal"
+                <com.shendu.launcher.preference.NumberPickerPreference android:key="ui_homescreen_screen_padding_horizontal"
                     android:title="@string/preferences_interface_homescreen_general_screen_padding_horizontal_title"
                     android:summary="@string/preferences_interface_homescreen_general_screen_padding_horizontal_summary"
                     android:defaultValue="0"

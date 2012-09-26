@@ -279,16 +279,13 @@ s -->
     <string name="folder_name_format">Folder: %1$s</string>
 
     <skip />
-    <!--             -->
     <!-- Preferences -->
-    <!--             -->
     <string name="preferences_title">Preferences</string>
     <!-- UI -->
     <string name="preferences_interface_title">Interface</string>
     <!-- Application -->
     <string name="preferences_application_title">Application</string>
 
-    <!-- UI -->
     <!-- Homescreen -->
     <string name="preferences_interface_homescreen_title">Homescreen</string>
     <string name="preferences_interface_homescreen_general_category">General</string>
@@ -351,8 +348,6 @@ s -->
     <string name="preferences_interface_general_title">General</string>
     <string name="preferences_interface_general_orientation_title">Auto-rotate screen</string>
     
-    
-    
     <string name="preferences_interface_homescreen_general_screen_folder_style_title">Folder Style</string>
     <string name="preferences_interface_homescreen_general_screen_folder_style_summary">Choose Folder Display Style</string>
 
@@ -371,10 +366,10 @@ s -->
     <string name="editstate_effect_string_cubeout">CubeOut</string>
     <string name="editstate_effect_string_stack">Stack</string>
     
-      <string name="deletefolder_dialog_title">Uninstall App</string>
-      <string name="deletefolder_dialog_message">"Whether or Not  Uninstall App ?"</string>
-         <string name="uninstall_action" >OK</string>
+	<string name="deletefolder_dialog_title">Uninstall App</string>
+	<string name="deletefolder_dialog_message">"Whether or Not  Uninstall App ?"</string>
+	<string name="uninstall_action" >OK</string>
 	 
-	     <string name="editstate_wallpaper_current_mark">Using</string>
+	<string name="editstate_wallpaper_current_mark">Using</string>
     <string name="delete_folder_toast_message">Folder do not support delete !</string>
 </resources>
