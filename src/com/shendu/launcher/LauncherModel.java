@@ -1166,7 +1166,7 @@ public class LauncherModel extends BroadcastReceiver {
                                     FolderInfo folderInfo =
                                             findOrMakeFolder(sFolders, container);
                                     folderInfo.add(info);
-                                    sWorkspaceItems.add(info);
+                               
                                     break;
                                 }
                                 sItemsIdMap.put(info.id, info);
@@ -1209,7 +1209,7 @@ public class LauncherModel extends BroadcastReceiver {
                                     break;
                             }
 
-                          //  sItemsIdMap.put(folderInfo.id, folderInfo);
+                            sItemsIdMap.put(folderInfo.id, folderInfo);
                             sFolders.put(folderInfo.id, folderInfo);
                             break;
 
