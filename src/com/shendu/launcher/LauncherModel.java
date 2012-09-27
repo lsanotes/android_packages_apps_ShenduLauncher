@@ -532,7 +532,7 @@ public class LauncherModel extends BroadcastReceiver {
         final Uri uriToDelete = LauncherSettings.Favorites.getContentUri(item.id, false);
         Runnable r = new Runnable() {
             public void run() {
-               // cr.delete(uriToDelete, null, null);
+                cr.delete(uriToDelete, null, null);
                 
                 //Log.i(Launcher.TAG,TAG+ ".deleteItemFromDatabase........."+item+"  "+uriToDelete+"     :"+ cr.delete(uriToDelete, null, null));
                 switch (item.itemType) {

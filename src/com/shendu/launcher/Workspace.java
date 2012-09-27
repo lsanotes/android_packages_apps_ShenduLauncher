@@ -3836,7 +3836,9 @@ public class Workspace extends PagedView
      mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
 
          //push  
-     Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForPush.....testI.:  "+"  testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mTargetCell[0]+mTargetCell[1]);	
+     //Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForPush.....testI.:  "+"  " +
+     		//"testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "
+    		 //+mTargetCell[0]+mTargetCell[1]);	
        if(mEmptyCell!=null){
    
              dragHeaderIndex =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;

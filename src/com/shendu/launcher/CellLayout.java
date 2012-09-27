@@ -516,7 +516,7 @@ public class CellLayout extends ViewGroup {
 //            canvas.restore();
         }
 
-        /*if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) {
+        if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) {
             Drawable d = FolderIcon.sSharedFolderLeaveBehind;
             int width = d.getIntrinsicWidth();
             int height = d.getIntrinsicHeight();
@@ -530,7 +530,7 @@ public class CellLayout extends ViewGroup {
             d.setBounds(0, 0, width, height);
             d.draw(canvas);
             canvas.restore();
-        }*/
+        }
     }
 
     @Override

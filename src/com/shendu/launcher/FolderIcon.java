@@ -79,7 +79,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     // (0 means it's not scaled at all, 1 means it's scaled to nothing)
     private static final float PERSPECTIVE_SCALE_FACTOR = 0.35f;
 
-    //public static Drawable sSharedFolderLeaveBehind = null;
+    public static Drawable sSharedFolderLeaveBehind = null;
 
     private ImageView mPreviewBackground;
     private BubbleTextView mFolderName;
@@ -190,7 +190,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
                     sSharedOuterRingDrawable = res.getDrawable(R.drawable.portal_square_outer_holo);
                 	//sSharedInnerRingDrawable = res.getDrawable(R.drawable.portal_square_inner_holo);
                 }
-                //sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest);
+                sSharedFolderLeaveBehind = res.getDrawable(R.drawable.portal_ring_rest);
                 sStaticValuesDirty = false;
             }
         }
@@ -322,8 +322,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void onDragEnter(Object dragInfo) {
     	//Log.i("hhl", "FolderIcon.java....onDragEnter==111==="+dragInfo+"==="+mFolder);
-    	shenduDisplayFolderBg(mFolder.mFolderIcon.mPreviewBackground,false);
     	if (!willAcceptItem((ItemInfo) dragInfo)) return;
+    	shenduDisplayFolderBg(mFolder.mFolderIcon.mPreviewBackground,false);
         //Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
         //if(folderStyle == Workspace.FolderStyle.Ring){
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) getLayoutParams();
@@ -364,13 +364,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     public void onDragExit(Object dragInfo) {
-    	//Log.i("hhl", "FolderIcon.java...onDragExit====="+dragInfo.toString());
+    	//Log.i("hhl", "FolderIcon.java...onDragExit====="+dragInfo.toString()+"==="+
+    			//(willAcceptItem((ItemInfo) dragInfo)));
         if (!willAcceptItem((ItemInfo) dragInfo)) return;
         //Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
         //if(folderStyle == Workspace.FolderStyle.Ring){
             mFolderRingAnimator.animateToNaturalState();
         //}
-       	shenduDisplayFolderBg(mFolder.mFolderIcon.mPreviewBackground,true);
+        shenduDisplayFolderBg(mFolder.mFolderIcon.mPreviewBackground,true);
     }
     
     public Drawable shenduCreateFolderThumBitmap(FolderInfo folderInfo){
