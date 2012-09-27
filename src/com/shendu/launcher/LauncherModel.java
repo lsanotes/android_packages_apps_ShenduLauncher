@@ -54,6 +54,7 @@ import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1208,7 +1209,7 @@ public class LauncherModel extends BroadcastReceiver {
                                     break;
                             }
 
-                            sItemsIdMap.put(folderInfo.id, folderInfo);
+                          //  sItemsIdMap.put(folderInfo.id, folderInfo);
                             sFolders.put(folderInfo.id, folderInfo);
                             break;
 
@@ -1697,20 +1698,21 @@ public class LauncherModel extends BroadcastReceiver {
     
     private ArrayList<ShortcutInfo> addAppsWithoutInvalidate(ArrayList<ShortcutInfo> list) {
         // We add it in place, in alphabetical order
-     	final ArrayList<ShortcutInfo> mTmpWorkspaceItems =new ArrayList<ShortcutInfo>(list);
+     	final ArrayList<ShortcutInfo> mPenddingWorkspaceItems =new ArrayList<ShortcutInfo>(list);
        int i =0;
        int listCount =list.size();
-     	int count1 =sWorkspaceItems.size();
-     	//Log.i(Launcher.TAG, TAG+" ....addAppsWithoutInvalidate..........."+listCount+"   count1:"+ count1+list.size());
-     	for(ItemInfo info:sWorkspaceItems){
+       
+     //	int count1 =sWorkspaceItems.size();
+     	final Collection<ItemInfo> mTmpWorkspaceItems =sItemsIdMap.values();
+//     	
+//       	mTmpWorkspaceItems.add(sItemsIdMap);
+     	for(ItemInfo info:mTmpWorkspaceItems){
      		
      	if(info instanceof ShortcutInfo){
-     			
-     	
+  
      	 for(ShortcutInfo sInfo:list){
-     		//Log.i(Launcher.TAG, TAG+" ....addAppsWithoutInvalidate33..........."+sInfo.componentName+"   :"+ info+"     :::" +((ShortcutInfo)info).componentName);
      		 if(sInfo.componentName.equals(((ShortcutInfo)info).componentName)){
-     			mTmpWorkspaceItems.remove(sInfo);
+     			mPenddingWorkspaceItems.remove(sInfo);
      			i++;
      			continue;
      		 }
@@ -1721,9 +1723,8 @@ public class LauncherModel extends BroadcastReceiver {
         }
      	}
      		
-     	//Log.i(Launcher.TAG, TAG+" ....addAppsWithoutInvalidate22..........."+ mTmpWorkspaceItems.size());
-       return mTmpWorkspaceItems;
-    }
+     	Log.i(Launcher.TAG, TAG+" ....addAppsWithoutInvalidate22..........."+ mPenddingWorkspaceItems.size());
+       return mPenddingWorkspaceItems;}
 
     void enqueuePackageUpdated(PackageUpdatedTask task) {
         sWorker.post(task);
