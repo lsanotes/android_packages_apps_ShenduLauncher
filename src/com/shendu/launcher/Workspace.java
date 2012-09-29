@@ -2332,7 +2332,7 @@ public class Workspace extends PagedView
                     // For FolderIcons the text can bleed into the icon area, and so we need to
                     // hide the text completely (which can't be achieved by clipping).
                     if (((FolderIcon) v).getTextVisible()) {
-                        ((FolderIcon) v).setTextVisible(false);
+                        //((FolderIcon) v).setTextVisible(false);
                         textVisible = true;
                     }
                 }
@@ -2870,22 +2870,18 @@ public class Workspace extends PagedView
     boolean addToExistingFolderIfNecessary(View newView, CellLayout target, int[] targetCell,
             DragObject d, boolean external) {
         View dropOverView = target.getChildAt(targetCell[0], targetCell[1]);
-        Log.i(Launcher.TAG,TAG+ "..addToExistingFolderIfNecessary.........1111...............  "+(dropOverView instanceof FolderIcon));
         if (dropOverView instanceof FolderIcon) {
             FolderIcon fi = (FolderIcon) dropOverView;
-            Log.i(Launcher.TAG,TAG+ "..addToExistingFolderIfNecessary........222..............");
             if (fi.acceptDrop(d.dragInfo)) {
                 fi.onDrop(d);
 
                 // if the drag started here, we need to remove it from the workspace
                 if (!external) {
                 	CellLayout cellLayout= getParentCellLayoutForView(mDragInfo.cell);
-                	  Log.i(Launcher.TAG,TAG+ "..addToExistingFolderIfNecessary.........333...............  "+cellLayout);
                  	if(cellLayout!=null){
                  		cellLayout.removeView(mDragInfo.cell);
-                 		
-                           if(cellLayout==mHotseat.getLayout()){
-                        	   Log.i(Launcher.TAG,TAG+ "..addToExistingFolderIfNecessary.........333...............  "+cellLayout);
+            
+                           if(target==mHotseat.getLayout()){
                            mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false);
                        }
                  	
@@ -3520,7 +3516,7 @@ public class Workspace extends PagedView
     
     private int[] mPreviousTargetCell = new int[2];
     private Alarm mReorderAlarm = new Alarm();
-    
+    private boolean isCreateFolder =true;
     
     OnAlarmListener mReorderAlarmListener = new OnAlarmListener() {
         public void onAlarm(Alarm alarm) {
@@ -3560,11 +3556,17 @@ public class Workspace extends PagedView
     private Hotseat mHotseat=null;
     
     private CellLayout dragCellLayout;
+    
+    
+    
+    private boolean lastDragDerection=true;
+    private boolean thisDragDerection=true;
+    
+   private int[] lastDragcell =new int[2];
 
     public void onDragOver(DragObject d) {
         // Skip drag over events while we are dragging over side pages
     	
-//    	Log.i(Launcher.TAG,TAG+ "..onDragOver...................... ........................... ");
         if (mInScrollArea) return;
         if (mIsSwitchingState) return;
 
@@ -3574,13 +3576,10 @@ public class Workspace extends PagedView
         
         isInHotseat=false;
      
-
         // Ensure that we have proper spans for the item that we are dropping
         if (item.spanX < 0 || item.spanY < 0) throw new RuntimeException("Improper spans found");
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset,
             d.dragView, mDragViewVisualCenter);
-      //  Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()  d.x:"+d.x+"  d.y:"+d.y+"  d.xOffset:"+d.xOffset+"  d.yOffset:"+ d.yOffset+"   "+mDragViewVisualCenter[0]+"  y;"+mDragViewVisualCenter[1]);
-        // Identify whether we have dragged over a side page
         if (isSmall()) {
             if (mLauncher.getHotseat() != null && !isExternalDragWidget(d)) {
                 mLauncher.getHotseat().getHitRect(r);
@@ -3591,10 +3590,8 @@ public class Workspace extends PagedView
             }
             if (layout == null) {
                 layout = findMatchingPageForDragOver(d.dragView, d.x, d.y, false);
-             // 	Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()   findMatchingPageForDragOver"+(layout != mDragTargetLayout)+(layout != null));
             }
             if (layout != mDragTargetLayout) {
-                // Cancel all intermediate folder states
                 cleanupFolderCreation(d);
 
                 if (mDragTargetLayout != null) {
@@ -3602,17 +3599,13 @@ public class Workspace extends PagedView
                     mDragTargetLayout.onDragExit();
                 }
                 mDragTargetLayout = layout;
-            //    Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()11   mDragTargetLayout.onDragEnter()");
                 if (mDragTargetLayout != null) {
                     mDragTargetLayout.setIsDragOverlapping(true);
-            //        Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()22   mDragTargetLayout.onDragEnter()");
                     mDragTargetLayout.onDragEnter();
                
                 } else {
-             //   	 Log.i(Launcher.TAG,TAG+ "..onDragOver........................onDragOver()33   mDragTargetLayout.onDragEnter()");
                     mLastDragOverView = null;
                 }
-     //
                 boolean isInSpringLoadedMode = (mState == State.SPRING_LOADED);
                 if (isInSpringLoadedMode) {
                     if (mLauncher.isHotseatLayout(layout)) {
@@ -3641,16 +3634,10 @@ public class Workspace extends PagedView
                     mDragTargetLayout.setIsDragOverlapping(false);
                     mDragTargetLayout.onDragExit();
                     
-                //    Log.i(Launcher.TAG, TAG+"...onDragOver,,,,,,,,,#####,,,,,,,,,,,,layout != mDragTargetLayout:, testH: " +testH); 	  
-//                    if(testH>=0){
-//                        dragForRecovery();	
-//                    }
               
                   if(mDragTargetLayout == mHotseat.getLayout()){
-                  Log.i(Launcher.TAG,TAG+ ".onDragOver..........setGridSize(--1)...............:"+(mDragTargetLayout == mLauncher.getHotseat().getLayout())+mDragTargetLayout.toString());
          
                 	//  getParentCellLayoutForView(d.dragView).removeView(d.dragView);
-                	  Log.i(Launcher.TAG, TAG+"   .,onDragOver,,,,,,,,,,,,,,,,,,,,,,getChildCount(),,mDragInfo:,  " +mDragInfo); 	  
                 	  
                 	 
                 	  if(mDragInfo!=null){
@@ -3732,6 +3719,7 @@ public class Workspace extends PagedView
             ItemInfo info = (ItemInfo) d.dragInfo;
 
             
+            
             mTargetCell = findNearestArea((int) mDragViewVisualCenter[0],
                     (int) mDragViewVisualCenter[1], 1, 1, mDragTargetLayout, mTargetCell);
  
@@ -3744,53 +3732,84 @@ public class Workspace extends PagedView
 
      //       Log.i(Launcher.TAG,TAG+ ".onDragOver..cellToCenterPoint....................cellXY:"+cellXY[0]+"  "+cellXY[1]+"   mDragViewVisualCenter:"+mDragViewVisualCenter[0]+mDragViewVisualCenter[1]); 
             
-            double distance = Math.sqrt(Math.pow(cellXY[0] - (int) mDragViewVisualCenter[0], 2)
-                    + Math.pow(cellXY[1] - (int) mDragViewVisualCenter[1], 2));
+//            double distance = Math.sqrt(Math.pow(cellXY[0] - (int) mDragViewVisualCenter[0], 2)
+//                    + Math.pow(cellXY[1] - (int) mDragViewVisualCenter[1], 2));
             
       //  int distanceX =(int) (cellXY[0] - mDragViewVisualCenter[0]);
-            int distanceX =(int) (cellXY[0] - mDragViewVisualCenter[0]);
+         int distanceX =(int) (cellXY[0] - mDragViewVisualCenter[0]);
             
-        int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
-                  ItemInfo mTargetCellinfo=null;
-                     if(dragOverView!=null){
+         int distanceY =(int) Math.abs(cellXY[1] - mDragViewVisualCenter[1]);
+         
+        ItemInfo mTargetCellinfo=null;
+        
+       if(dragOverView!=null){
            	      mTargetCellinfo =(ItemInfo) dragOverView.getTag();
-                    }
-
-       if(mReorderAlarmFinish && ((item.spanX+item.spanY)<=2)&&(mTargetCellinfo!=null && mTargetCellinfo.spanX+ mTargetCellinfo.spanY==2)){
+             }
+      
+       if(lastDragcell[0]!=mTargetCell[0] || lastDragcell[1]!=mTargetCell[1]){
+    	   if(distanceX>0){
+    		   lastDragDerection=thisDragDerection =true;
+    	   }else{
+     		   lastDragDerection=thisDragDerection =false;
+    	   }
+     
+       }else{
+    	   if(distanceX>0){
+    		   thisDragDerection =true;
+    	   }else{
+    		   thisDragDerection =false;
+    	   }
+    	   
+       }
+                     
+        isCreateFolder=true;
+        
+       if(mReorderAlarmFinish && ((item.spanX+item.spanY)<=2)&&!(mTargetCellinfo!=null && mTargetCellinfo.spanX+ mTargetCellinfo.spanY>2)){
     	   mReorderAlarmTarget[0] =mTargetCell[0];
     	   mReorderAlarmTarget[1] =mTargetCell[1];
     	   
     	   int count =mReorderAlarmTarget[0]  +  mReorderAlarmTarget[1] * 4;
-            	
-         if (mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1])
+    	   
+    	   if ((mReorderAlarmTarget[0] != mPreviousTargetCell[0] || mReorderAlarmTarget[1] != mPreviousTargetCell[1]) || (thisDragDerection!=lastDragDerection))
             {
-        
+
              if(dragHeaderIndex==-1&&mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]&&distanceX>10&&distanceX<60){
-        	   
+          //  if(dragHeaderIndex==-1&&mDragTargetLayout.mOccupied[mReorderAlarmTarget[0]][mReorderAlarmTarget[1]]){  
         	   dragForPush(); 
+               
+               mPreviousTargetCell[0] = mReorderAlarmTarget[0];
+               mPreviousTargetCell[1] = mReorderAlarmTarget[1];
 
              }else if(count>=dragHeaderIndex&&count<=dragFooterIndex&&dragHeaderIndex>=0){
-      
-        	  dragForExchanged();
-        	  
+                if(thisDragDerection!=lastDragDerection){
+               	  dragForExchanged();
+               	cancelFolderCreation();
+                  mPreviousTargetCell[0] = mReorderAlarmTarget[0];
+                  mPreviousTargetCell[1] = mReorderAlarmTarget[1];
+                }
+       
              }else if ((count<dragHeaderIndex||count>dragFooterIndex)&&dragHeaderIndex>=0){
+            	 
             	//huifu  
-            	
         	  dragForRecovery();
+              
+              mPreviousTargetCell[0] = mReorderAlarmTarget[0];
+              mPreviousTargetCell[1] = mReorderAlarmTarget[1];
               }
            }
-           
-         mPreviousTargetCell[0] = mReorderAlarmTarget[0];
-         mPreviousTargetCell[1] = mReorderAlarmTarget[1];
+
          }
+
+       lastDragcell[0]=mTargetCell[0];
+       lastDragcell[1]=mTargetCell[1];
        
-       //if target == shortCut
+      if( isCreateFolder){
+    
        boolean userFolderPending = willCreateUserFolder(info, mDragTargetLayout,
                mTargetCell, false);
 
        boolean isOverFolder = dragOverView instanceof FolderIcon;
        
-       //    Log.i(TAG, TAG+"       willCreateUserFolder22  "  +(dragOverView != mLastDragOverView)+"   "+userFolderPending);
             if (dragOverView != mLastDragOverView) {
                 cancelFolderCreation();
                 if (mLastDragOverView != null && mLastDragOverView instanceof FolderIcon) {
@@ -3822,8 +3841,8 @@ public class Workspace extends PagedView
                         item.spanX, item.spanY, d.dragView.getDragVisualizeOffset(),
                         d.dragView.getDragRegion());
             }
-        
-        }
+       }
+       }
     }
     
     
@@ -3836,11 +3855,9 @@ public class Workspace extends PagedView
      mEmptyCell=mDragTargetLayout.findFooterOfPushList(mReorderAlarmTarget);
 
          //push  
-     //Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForPush.....testI.:  "+"  " +
-     		//"testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "
-    		 //+mTargetCell[0]+mTargetCell[1]);	
+    
        if(mEmptyCell!=null){
-   
+    	   isCreateFolder=false;
              dragHeaderIndex =mReorderAlarmTarget[0]+mReorderAlarmTarget[1]*4;
              dragFooterIndex =mEmptyCell[0]+mEmptyCell[1]*4;
 
@@ -3871,10 +3888,11 @@ public class Workspace extends PagedView
     private void dragForExchanged(){
 
         Log.i(Launcher.TAG,TAG+ "..onDragOver.....#####.....in.dragForExchanged.....testI.:  "+"  testF:"+dragFooterIndex+"  mEmptyCell:"+mEmptyCell[0]+mEmptyCell[1]+"  mTargetCell[0]: "+mTargetCell[0]+mTargetCell[1]);	
-         	//changed
+   
+        //changed
           mEmptyCell[0] =mPreviousTargetCell[0];
           mEmptyCell[1] =mPreviousTargetCell[1];
-  
+          isCreateFolder=false;
           dragFromTargetcellToEmptycell();
     }
     
@@ -3884,6 +3902,8 @@ public class Workspace extends PagedView
      */
     public void dragForRecovery(){
     	if(dragHeaderIndex>0){
+    		
+    	    isCreateFolder=false;
 	        mEmptyCell[0] =mPreviousTargetCell[0];
 	        mEmptyCell[1] =mPreviousTargetCell[1];
 	          	
@@ -3904,7 +3924,7 @@ public class Workspace extends PagedView
 	               	  
 	               	  dragHeaderIndex=-1;
 	                 }
-	       	  },200);
+	       	  },100);
     	}
     }
 
@@ -3921,27 +3941,7 @@ public class Workspace extends PagedView
                
                mLastTargetCell[0] =mTargetCell[0];
                mLastTargetCell[1] =mTargetCell[1];
-           
-                   
-//               int[] empty=new int[2];
-//            	int[] target=new int[2];
-//            	
-//            Log.i(Launcher.TAG,TAG+ "..tuiji tuiji le(dragFromTargetcellToEmptycell) ...............00 :mEmptyCell:"+"  :"+mEmptyCell[0]+mEmptyCell[1]+"   targetCell:"+mTargetCell[0]+mTargetCell[1]+mReorderAlarmFinish);
-//            	empty[0] =mEmptyCell[0];
-//            	empty[1] =mEmptyCell[1];
-//            	
-//            	target[0] =mReorderAlarmTarget[0];
-//            	target[1] =mReorderAlarmTarget[1];
-//            	
-//            	
-//                realTimeReorder(empty, target);
-//       
-//                
-//                mLastTargetCell[0] =mTargetCell[0];
-//                mLastTargetCell[1] =mTargetCell[1];
-                  
-          // }
-    
+
     }
 
     private void cleanupFolderCreation(DragObject d) {
@@ -4277,10 +4277,8 @@ public class Workspace extends PagedView
      */
 
     public void onDropCompleted(View target, DragObject d, boolean success) {
-  
-    	   
+ 
     	dragHeaderIndex=-1;
-    	Log.i(Launcher.TAG,TAG+ ".onDropCompleted..........................success:"+success+(target.getClass().getName())+(mDragInfo .getClass().getName())+"  startMovedPage"+startMovedPage);
         if (success) {
         	CellLayout cell =null;
          	cell= getParentCellLayoutForView(mDragInfo.cell);
@@ -4288,7 +4286,6 @@ public class Workspace extends PagedView
             if (target != this) {
                 if (mDragInfo != null) {
                
-                	Log.i(Launcher.TAG,TAG+ ".onDropCompleted..........................cell"+cell);
                 	if(cell!=null){
                 		cell.removeView(mDragInfo.cell);
                 	}
@@ -4304,7 +4301,6 @@ public class Workspace extends PagedView
                 }
             }
             
-            Log.i(Launcher.TAG,TAG+ ".onDropCompleted..........................startMovedPage:"+startMovedPage+cell);
             if(startMovedPage !=-1){
     	  //  if(cell!=null){
     
@@ -4331,7 +4327,6 @@ public class Workspace extends PagedView
             // calling onDropCompleted(). We call it ourselves here, but maybe this should be
             // moved into DragController.cancelDrag().
         	
-        	Log.i(Launcher.TAG,TAG+ ".onDropCompleted...222.......................mDragInfo.container:"+mDragInfo.container);
             doDragExit(null);
             CellLayout cellLayout;
        
@@ -4345,20 +4340,14 @@ public class Workspace extends PagedView
             cellLayout.onDropChild(mDragInfo.cell);
             
         if( mDragInfo.container== LauncherSettings.Favorites.CONTAINER_HOTSEAT){
-          	Log.i(Launcher.TAG,TAG+ ".onDropCompleted...333.......................cell"
-        +mHotseat.getLayout().getChildrenLayout().getChildCount()+"  "
-        +mDragInfo.cellX+ mDragInfo.cellX+ mDragInfo.cellY+ mDragInfo.spanX+ mDragInfo.spanY);
           	
           	mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false);  
           	
          addInScreen(mDragInfo.cell, -101,  
         		 mHotseat.mCellCountX-1, mHotseat.mCellCountX-1, mDragInfo.cellY, mDragInfo.spanX, mDragInfo.spanY);
-           
-        	Log.i(Launcher.TAG,TAG+ ".onDropCompleted...4444......................cell"+mHotseat.getLayout().getChildrenLayout().getChildCount());   	  
-                
+   
             }
-     
-     
+  
         }
 
         
@@ -4382,7 +4371,6 @@ public class Workspace extends PagedView
         if(cell !=null){
             int [] lastOccupiedCell=  cell.existsLastOccupiedCell();
          	
-            Log.i(Launcher.TAG,TAG+ ".onDropCompleted..222........................success:"+lastOccupiedCell[0]+"  startMovedPage:"+startMovedPage);
              if(lastOccupiedCell[0]==-1){
             
             	removeView(cell,index); 
@@ -4404,7 +4392,6 @@ public class Workspace extends PagedView
     @Override
     public void scrollLeft() {
     	
-    	Log.i(Launcher.TAG, TAG+"    .scrollLeft()......................"+!isSmall() +mIsSwitchingState);
         if (!isSmall() && !mIsSwitchingState) {
             super.scrollLeft();
         }
@@ -4417,7 +4404,6 @@ public class Workspace extends PagedView
     @Override
     public void scrollRight() {
     
-    	Log.i(Launcher.TAG, TAG+"    .scrollRight()......................"+!isSmall() +mIsSwitchingState);
         if (!isSmall() && !mIsSwitchingState) {
             super.scrollRight();
         }
@@ -4613,11 +4599,7 @@ public class Workspace extends PagedView
         }
 
         ArrayList<CellLayout> cellLayouts = getWorkspaceAndHotseatCellLayouts();
-        
-        
-    
-    
-        
+
         for (final CellLayout layoutParent: cellLayouts) {
             final ViewGroup layout = layoutParent.getChildrenLayout();
    
@@ -4626,9 +4608,7 @@ public class Workspace extends PagedView
                 public void run() {
                     final ArrayList<View> childrenToRemove = new ArrayList<View>();
                     childrenToRemove.clear();
-                    
-                  
-                    
+ 
                     int childCount = layout.getChildCount();
                     for (int j = 0; j < childCount; j++) {
                         final View view = layout.getChildAt(j);

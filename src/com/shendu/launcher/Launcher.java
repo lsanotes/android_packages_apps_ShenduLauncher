@@ -263,7 +263,8 @@ public final class Launcher extends Activity
     static final ArrayList<String> sDumpLogs = new ArrayList<String>();
 
 
-    private BubbleTextView mWaitingForResume;
+    //private BubbleTextView mWaitingForResume;
+    private BubbleLinearLayout mWaitingForResume2;
 
     // Preferences
     private boolean mShowSearchBar;
@@ -612,8 +613,11 @@ public final class Launcher extends Activity
 //            mRestoring = false;
 //            mOnResumeNeedsLoad = false;
 //        }
-        if (mWaitingForResume != null) {
+        /*if (mWaitingForResume != null) {
             mWaitingForResume.setStayPressed(false);
+        }*/
+        if (mWaitingForResume2 != null) {
+            mWaitingForResume2.setStayPressed(false);
         }
         // When we resume Launcher, a different Activity might be responsible for the app
         // market intent, so refresh the icon
@@ -1972,7 +1976,6 @@ public final class Launcher extends Activity
         if (mWorkspace.isSwitchingState()) {
             return;
         }
-
         Object tag = v.getTag();
         if (tag instanceof ShortcutInfo) {
             // Open shortcut
@@ -1982,10 +1985,13 @@ public final class Launcher extends Activity
             intent.setSourceBounds(new Rect(pos[0], pos[1],
                     pos[0] + v.getWidth(), pos[1] + v.getHeight()));
             boolean success = startActivitySafely(intent, tag);
-
-            if (success && v instanceof BubbleTextView) {
-                mWaitingForResume = (BubbleTextView) v;
-                mWaitingForResume.setStayPressed(true);
+            //Log.i("hhl", "===launcher.java===onClick=1111="+success+"==="+v+"==="+pos[0]+"*"+pos[1]);
+            //if (success && v instanceof BubbleTextView) {
+            if (success && v instanceof BubbleLinearLayout) {
+                //mWaitingForResume = (BubbleTextView) v;
+                //mWaitingForResume.setStayPressed(true);
+            	mWaitingForResume2 = (BubbleLinearLayout)v;
+            	mWaitingForResume2.setStayPressed(true);
             }
         } else if (tag instanceof FolderInfo) {
         	

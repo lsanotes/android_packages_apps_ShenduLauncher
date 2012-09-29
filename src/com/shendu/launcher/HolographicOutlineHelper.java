@@ -73,7 +73,7 @@ public class HolographicOutlineHelper {
         mErasePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
         mErasePaint.setFilterBitmap(true);
         mErasePaint.setAntiAlias(true);
-        MaskFilter alphaClipTable = TableMaskFilter.CreateClipTable(180, 255);
+        MaskFilter alphaClipTable = TableMaskFilter.CreateClipTable(0, 30);
         mAlphaClipPaint.setMaskFilter(alphaClipTable);
     }
 

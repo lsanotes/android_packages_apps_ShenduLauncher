@@ -36,6 +36,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
@@ -120,6 +121,7 @@ public class CellLayout extends ViewGroup {
     private final Paint mDragOutlinePaint = new Paint();
 
     private BubbleTextView mPressedOrFocusedIcon;
+    private BubbleLinearLayout mPressedOrFocusedIcon2;
 
     private Drawable mCrosshairsDrawable = null;
     private InterruptibleInOutAnimator mCrosshairsAnimator = null;
@@ -311,6 +313,14 @@ public class CellLayout extends ViewGroup {
                 icon.getRight() + getPaddingLeft() + padding,
                 icon.getBottom() + getPaddingTop() + padding);
     }
+    
+    private void invalidateBubbleTextView2(BubbleLinearLayout icon) {
+        final int padding = icon.getPressedOrFocusedBackgroundPadding();
+        invalidate(icon.getLeft() + getPaddingLeft() - padding,
+                icon.getTop() + getPaddingTop() - padding,
+                icon.getRight() + getPaddingLeft() + padding,
+                icon.getBottom() + getPaddingTop() + padding);
+    }
 
     void setOverScrollAmount(float r, boolean left) {
         if (left && mOverScrollForegroundDrawable != mOverScrollLeft) {
@@ -334,6 +344,19 @@ public class CellLayout extends ViewGroup {
         }
         if (mPressedOrFocusedIcon != null) {
             invalidateBubbleTextView(mPressedOrFocusedIcon);
+        }
+    }
+    
+    void setPressedOrFocusedIcon2(BubbleLinearLayout icon){
+    	BubbleLinearLayout oldIcon = mPressedOrFocusedIcon2;
+    	mPressedOrFocusedIcon2 = icon;
+    	//Log.i("hhl", "===CellLayout.java==setPressedOrFocusedIcon2=="+(oldIcon!=null)+"==="+
+        		//(mPressedOrFocusedIcon2 != null));
+        if (oldIcon != null) {
+            invalidateBubbleTextView2(oldIcon);
+        }
+        if (mPressedOrFocusedIcon2 != null) {
+            invalidateBubbleTextView2(mPressedOrFocusedIcon2);
         }
     }
 
@@ -470,9 +493,10 @@ public class CellLayout extends ViewGroup {
 
         // We draw the pressed or focused BubbleTextView's background in CellLayout because it
         // requires an expanded clip rect (due to the glow's blur radius)
-       /* if (mPressedOrFocusedIcon != null) {
+        //Log.i("hhl", "***********CellLayout.java==="+(mPressedOrFocusedIcon != null)+"==="+
+        		//(mPressedOrFocusedIcon2 != null));
+        /*if (mPressedOrFocusedIcon != null) {
             final int padding = mPressedOrFocusedIcon.getPressedOrFocusedBackgroundPadding();
-            final Bitmap b = mPressedOrFocusedIcon.getPressedOrFocusedBackground();
             if (b != null) {
                 canvas.drawBitmap(b,
                         mPressedOrFocusedIcon.getLeft() + getPaddingLeft() - padding,
@@ -480,6 +504,16 @@ public class CellLayout extends ViewGroup {
                         null);
             }
         }*/
+        if (mPressedOrFocusedIcon2 != null) {
+            final int padding = mPressedOrFocusedIcon2.getPressedOrFocusedBackgroundPadding();
+            Bitmap b = mPressedOrFocusedIcon2.getPressedOrFocusedBackground();
+            if (b != null) {
+                canvas.drawBitmap(b,
+                        mPressedOrFocusedIcon2.getLeft() + getPaddingLeft() - padding,
+                        mPressedOrFocusedIcon2.getTop() + getPaddingTop() - padding,
+                        null);
+            }
+        }
 
         // The folder outer / inner ring image(s)
         for (int i = 0; i < mFolderOuterRings.size(); i++) {
