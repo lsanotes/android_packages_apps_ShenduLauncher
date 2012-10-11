@@ -826,15 +826,15 @@ public final class Launcher extends Activity
         mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
 
         //final View qsbDivider = findViewById(R.id.qsb_divider);
-        final View dockDivider = findViewById(R.id.dock_divider);
+        //final View dockDivider = findViewById(R.id.dock_divider);//do not used,remove by hhl
         // Hide the search divider if we are hiding search bar
         /*if (!mShowSearchBar && qsbDivider != null) {
             qsbDivider.setVisibility(View.GONE);
         }*/
 
-        if (!mShowDockDivider && dockDivider != null) {
-            dockDivider.setVisibility(View.GONE);
-        }
+        //if (!mShowDockDivider && dockDivider != null) {
+            //dockDivider.setVisibility(View.GONE);
+        //}
 
 
         // Setup AppsCustomize
@@ -2778,34 +2778,34 @@ public final class Launcher extends Activity
             mDockDivider.setVisibility(View.INVISIBLE);
         }*/
         //if (mQsbDivider != null && mDockDivider != null) {
-        if (mDockDivider != null) {
+        //if (mDockDivider != null) {
            /* if (mShowSearchBar) {
                 mQsbDivider.setVisibility(View.INVISIBLE);
             }*/
-            if (mShowDockDivider) {
+            /*if (mShowDockDivider) {//do not used,remove by hhl
                 mDockDivider.setVisibility(View.INVISIBLE);
-            }
-        }
+            }*/
+        //}
     }
 
     void showDockDivider(boolean animated) {
-    	if (mShowDockDivider) {
+    	/*if (mShowDockDivider) {
             mDockDivider.setVisibility(View.VISIBLE);
-        }
+        }*/
         //if (mQsbDivider != null && mDockDivider != null) {
         if (mDockDivider != null) {
             /*if (mShowSearchBar) {
                 mQsbDivider.setVisibility(View.VISIBLE);
             }*/
             if (mShowDockDivider) {
-                mDockDivider.setVisibility(View.VISIBLE);
+                //mDockDivider.setVisibility(View.VISIBLE);
             }
             if (mDividerAnimator != null) {
                 mDividerAnimator.cancel();
                 /*if (mShowSearchBar) {
                     mQsbDivider.setAlpha(1f);
                 }*/
-                mDockDivider.setAlpha(1f);
+                //mDockDivider.setAlpha(1f);
                 mDividerAnimator = null;
             }
             if (animated) {
@@ -3540,7 +3540,7 @@ public final class Launcher extends Activity
     /**
      * A number of packages were updated.
      */
-    public void bindPackagesUpdated() {
+    public void bindPackagesUpdated() {   
         if (mAppsCustomizeContent != null) {
             mAppsCustomizeContent.onPackagesUpdated();
         }

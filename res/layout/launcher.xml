@@ -35,9 +35,9 @@
         android:id="@+id/paged_view_indicator"
         layout="@layout/scroll_indicator"
         android:layout_width="wrap_content"
-        android:layout_height="20dip"
+        android:layout_height="11px"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="80dip" />
+        android:layout_marginBottom="@dimen/button_bar_height_plus_padding" />
 
     <!-- The workspace contains 5 screens of cells -->
     <com.shendu.launcher.Workspace

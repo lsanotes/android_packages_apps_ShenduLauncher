@@ -4909,12 +4909,12 @@ public class Workspace extends PagedView
         final ViewGroup parent = (ViewGroup) getParent();
 
         //final ImageView qsbDivider = (ImageView) (parent.findViewById(R.id.qsb_divider));
-        final ImageView dockDivider = (ImageView) (parent.findViewById(R.id.dock_divider));
+        //final ImageView dockDivider = (ImageView) (parent.findViewById(R.id.dock_divider)); //do not used,remove by hhl
         final View scrollIndicator = getScrollingIndicator();
 
         cancelScrollingIndicatorAnimations();
         //if (qsbDivider != null && mShowSearchBar) qsbDivider.setAlpha(reducedFade);
-        if (dockDivider != null && mShowDockDivider) dockDivider.setAlpha(reducedFade);
+        //if (dockDivider != null && mShowDockDivider) dockDivider.setAlpha(reducedFade);
         if (scrollIndicator != null && mShowScrollingIndicator) scrollIndicator.setAlpha(1 - fade);
     }
 }

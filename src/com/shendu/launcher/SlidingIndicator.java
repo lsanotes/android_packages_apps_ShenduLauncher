@@ -40,6 +40,7 @@ public class SlidingIndicator extends View {
     
    
 	private  Bitmap defaultPoint, highLightPoint ,flashPoint;
+	private int defaultPointW,highLightPointW;
 
   
     public SlidingIndicator(Context context, AttributeSet attrs, int defStyle) {  
@@ -96,6 +97,8 @@ public class SlidingIndicator extends View {
         
         highLightPoint = BitmapFactory.decodeResource(res,R.drawable.high_lightpoint1);
         flashPoint     =  BitmapFactory.decodeResource(res,R.drawable.flash_point);
+        defaultPointW = defaultPoint.getWidth();
+        highLightPointW = highLightPoint.getWidth();
     }  
   
     public void setPageAmount(int num) {  
@@ -152,18 +155,21 @@ public class SlidingIndicator extends View {
   
     protected void onDraw(Canvas canvas) {  
     
-        // getWidth()/2-(amount-1)*20/2-8（图片的半径）;  
-    	int position=getWidth()/2-(amount-1)*15-8;
-    	int positionY =getHeight()-13;
+        // getWidth()/2-(amount-1)*20/2-8(point radius);  
+    	//int position=getWidth()/2-(amount-1)*10-8;
+    	int position=getWidth()/2-(amount-1)*20/2;
+    	int positionY =getHeight()-highLightPointW;
     	for(int i=0;i<amount;i++){
     	
     		  //  rectFBody.set(position+40*i,0, position+40*i+20, 20);  
     		
     		if(currentPage == i){
-    			canvas.drawBitmap(highLightPoint, position+30*i, positionY, null);
+    			canvas.drawBitmap(highLightPoint, position-highLightPointW/2+20*i, positionY, null);
+    			//canvas.drawBitmap(highLightPoint, position+20*i, positionY, null);
     		//	canvas.drawCircle(position+40*i, positionY-6, 6, highlightPaint);  
     		}else{
-    			canvas.drawBitmap(defaultPoint, position+30*i, positionY+1, null);
+    			canvas.drawBitmap(defaultPoint, position-defaultPointW/2+20*i, positionY+1, null);
+    			//canvas.drawBitmap(defaultPoint, position+20*i, positionY+1, null);
     		//	canvas.drawCircle(position+40*i, positionY-6, 6, barPaint);  
     		}
     	        
