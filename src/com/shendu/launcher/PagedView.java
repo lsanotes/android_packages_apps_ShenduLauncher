@@ -1841,7 +1841,6 @@ public abstract class PagedView extends ViewGroup {
         if(immediately){
             hideScrollingIndicator(immediately, sScrollIndicatorFadeOutDuration);
         }else{
-            Log.i("hhl", "%%%%%%%%%%%%%%%PagedView.java==updateScrollingIndicatorPosition=3333333333=");
             updateScrollingIndicatorPosition();
         }
     }
