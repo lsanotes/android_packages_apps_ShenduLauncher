@@ -197,7 +197,7 @@ public final class Launcher extends Activity
 
     private Workspace mWorkspace;
     //private View mQsbDivider;
-    private View mDockDivider;
+    //private View mDockDivider;
     private DragLayer mDragLayer;
     private DragController mDragController;
 
@@ -805,7 +805,7 @@ public final class Launcher extends Activity
         mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
         mWorkspace = (Workspace) mDragLayer.findViewById(R.id.workspace);
         //mQsbDivider = (ImageView) findViewById(R.id.qsb_divider);
-        mDockDivider = (ImageView) findViewById(R.id.dock_divider);
+        //mDockDivider = (ImageView) findViewById(R.id.dock_divider);
 
         // Setup the drag layer
         mDragLayer.setup(this, dragController);
@@ -2612,7 +2612,7 @@ public final class Launcher extends Activity
 			if (!springLoaded && !LauncherApplication.isScreenLarge()) {
 				// Hide the workspace scrollbar
 				mWorkspace.hideScrollingIndicator(true);
-				hideDockDivider();
+				//hideDockDivider();
 			}
 		}
     }
@@ -2697,7 +2697,7 @@ public final class Launcher extends Activity
             }*/
         }
 
-        mWorkspace.flashScrollingIndicator(animated);
+        //mWorkspace.flashScrollingIndicator(animated);
 
         // Change the state *after* we've called all the transition code
         mState = State.WORKSPACE;
@@ -2735,7 +2735,7 @@ public final class Launcher extends Activity
         if (mState == State.APPS_CUSTOMIZE) {
             mWorkspace.changeState(Workspace.State.SPRING_LOADED);
             hideAppsCustomizeHelper(true, true);
-            hideDockDivider();
+            //hideDockDivider();
             mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
         }
     }
@@ -2788,28 +2788,28 @@ public final class Launcher extends Activity
         //}
     }
 
-    void showDockDivider(boolean animated) {
+    void showDockDivider(boolean animated) {//do not used,remove by hhl
     	/*if (mShowDockDivider) {
             mDockDivider.setVisibility(View.VISIBLE);
         }*/
         //if (mQsbDivider != null && mDockDivider != null) {
-        if (mDockDivider != null) {
+        //if (mDockDivider != null) {
             /*if (mShowSearchBar) {
                 mQsbDivider.setVisibility(View.VISIBLE);
             }*/
-            if (mShowDockDivider) {
+           // if (mShowDockDivider) {
                 //mDockDivider.setVisibility(View.VISIBLE);
-            }
-            if (mDividerAnimator != null) {
-                mDividerAnimator.cancel();
+            //}
+           // if (mDividerAnimator != null) {
+               // mDividerAnimator.cancel();
                 /*if (mShowSearchBar) {
                     mQsbDivider.setAlpha(1f);
                 }*/
                 //mDockDivider.setAlpha(1f);
-                mDividerAnimator = null;
-            }
-            if (animated) {
-                mDividerAnimator = new AnimatorSet();
+                //mDividerAnimator = null;
+          //  }
+            //if (animated) {
+               // mDividerAnimator = new AnimatorSet();
                 /*if (mShowSearchBar && mShowDockDivider) {
                     mDividerAnimator.playTogether(ObjectAnimator.ofFloat(mQsbDivider, "alpha", 1f),
                             ObjectAnimator.ofFloat(mDockDivider, "alpha", 1f));
@@ -2818,10 +2818,10 @@ public final class Launcher extends Activity
                 } else if (mShowDockDivider) {
                     mDividerAnimator.play(ObjectAnimator.ofFloat(mDockDivider, "alpha", 1f));
                 }*/
-                mDividerAnimator.setDuration(mSearchDropTargetBar.getTransitionInDuration());
-                mDividerAnimator.start();
-            }
-        }
+               // mDividerAnimator.setDuration(mSearchDropTargetBar.getTransitionInDuration());
+               // mDividerAnimator.start();
+           // }
+       // }
     }
 
     void lockAllApps() {

@@ -29,17 +29,18 @@ public class SlidingIndicator extends View {
     public static final int FADE_DURATION = 0;  
   
     private int amount, currentPage;  
-    private Paint barPaint, highlightPaint;  
-    private int fadeDelay, fadeDuration;  
-    private float ovalRadius;  
-    private Animation animFadeout;  
+    //private Paint barPaint, highlightPaint;  
+    //private int fadeDelay;
+    private int fadeDuration;  
+    //private float ovalRadius;  
+    //private Animation animFadeout;  
    
-    private RectF rectFBody, rectFIndicator;  
-    private Handler handler;
+    //private RectF rectFBody, rectFIndicator;  
+    //private Handler handler;
     
     
    
-	private  Bitmap defaultPoint, highLightPoint ,flashPoint;
+	private  Bitmap defaultPoint, highLightPoint ;//,flashPoint;
 	private int defaultPointW,highLightPointW;
 
   
@@ -47,15 +48,15 @@ public class SlidingIndicator extends View {
         super(context, attrs, defStyle);  
     
         int barColor = BAR_COLOR, highlightColor = HIGHLIGHT_COLOR;  
-        fadeDelay = FADE_DELAY;  
+        //fadeDelay = FADE_DELAY;  
         fadeDuration = FADE_DURATION;  
         if (attrs != null) {  
             TypedArray typedArr = context.obtainStyledAttributes(attrs, R.styleable.sliding_SlidingIndicator);  
             barColor = typedArr.getColor(R.styleable.sliding_SlidingIndicator_barColor, BAR_COLOR);  
             highlightColor = typedArr.getColor(R.styleable.sliding_SlidingIndicator_highlightColor, HIGHLIGHT_COLOR);  
-            fadeDelay = typedArr.getInteger(R.styleable.sliding_SlidingIndicator_fadeDelay, FADE_DELAY);  
+            //fadeDelay = typedArr.getInteger(R.styleable.sliding_SlidingIndicator_fadeDelay, FADE_DELAY);  
             fadeDuration = typedArr.getInteger(R.styleable.sliding_SlidingIndicator_fadeDuration, FADE_DURATION);  
-            ovalRadius = typedArr.getDimension(R.styleable.sliding_SlidingIndicator_roundRectRadius, 2.0f);  
+            //ovalRadius = typedArr.getDimension(R.styleable.sliding_SlidingIndicator_roundRectRadius, 2.0f);  
             typedArr.recycle();  
         }  
         initialization(barColor, highlightColor, fadeDuration);  
@@ -89,14 +90,14 @@ public class SlidingIndicator extends View {
 //        animFadeout.setFillEnabled(true);  
 //        animFadeout.setFillAfter(true);  
   
-        rectFBody = new RectF();  
-        rectFIndicator = new RectF();  
+        //rectFBody = new RectF();  
+        //rectFIndicator = new RectF();  
         
         Resources res = getResources(); 
         defaultPoint   = BitmapFactory.decodeResource(res, R.drawable.default_point1);  ;
         
         highLightPoint = BitmapFactory.decodeResource(res,R.drawable.high_lightpoint1);
-        flashPoint     =  BitmapFactory.decodeResource(res,R.drawable.flash_point);
+        //flashPoint     =  BitmapFactory.decodeResource(res,R.drawable.flash_point);
         defaultPointW = defaultPoint.getWidth();
         highLightPointW = highLightPoint.getWidth();
     }  

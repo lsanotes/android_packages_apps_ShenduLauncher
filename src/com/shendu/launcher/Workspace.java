@@ -301,6 +301,8 @@ public class Workspace extends PagedView
     
     private int mStartBarHeight=0,mStartBarWidth=0; //used to calculate the workspace translation Y
     
+    public static boolean INIT_FLAG = false;
+    
     private long firstClickTime=0;
     
     private float OpenStatusBarBeginY;
@@ -543,6 +545,7 @@ public class Workspace extends PagedView
      * Initializes various states for this workspace.
      */
     protected void initWorkspace() {
+    	INIT_FLAG = true;
         Context context = getContext();
         mCurrentPage = mDefaultHomescreen;
         Launcher.setScreen(mCurrentPage);
@@ -579,9 +582,9 @@ public class Workspace extends PagedView
             setPadding(0, paddingTop, getPaddingRight(), getPaddingBottom());
         }*/
 
-        if (!mShowScrollingIndicator) {
+        /*if (!mShowScrollingIndicator) {
             disableScrollingIndicator();
-        }
+        }*/
 
         mChangeStateAnimationListener = new AnimatorListenerAdapter() {
             @Override
@@ -2076,6 +2079,7 @@ public class Workspace extends PagedView
                 setLayoutScale(finalScaleFactor);
             }
         } else {
+             showScrollingIndicator(true, sScrollIndicatorFadeInDuration);
             setLayoutScale(1.0f);
         }
 
@@ -4912,7 +4916,7 @@ public class Workspace extends PagedView
         //final ImageView dockDivider = (ImageView) (parent.findViewById(R.id.dock_divider)); //do not used,remove by hhl
         final View scrollIndicator = getScrollingIndicator();
 
-        cancelScrollingIndicatorAnimations();
+        //cancelScrollingIndicatorAnimations();
         //if (qsbDivider != null && mShowSearchBar) qsbDivider.setAlpha(reducedFade);
         //if (dockDivider != null && mShowDockDivider) dockDivider.setAlpha(reducedFade);
         if (scrollIndicator != null && mShowScrollingIndicator) scrollIndicator.setAlpha(1 - fade);
