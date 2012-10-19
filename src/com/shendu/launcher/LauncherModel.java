@@ -1844,17 +1844,20 @@ public class LauncherModel extends BroadcastReceiver {
                     }
                 });
             }
-
-            /*mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
-                    if (callbacks == cb && cb != null) {
-                    	Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ......................  " );
-                        callbacks.bindPackagesUpdated();
+        	//Log.i(Launcher.TAG,TAG + " ..only update ....."+(added==null)+"==="+(modified==null)+"==="+(removed==null));
+           if(added==null && modified==null && removed==null){
+            	mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
+                        if (callbacks == cb && cb != null) {
+                        	Log.i(Launcher.TAG,TAG + " ...callbacks.bindPackagesUpdated() ......................  " );
+                            callbacks.bindPackagesUpdated();
+                        }
                     }
-                }
-            });*/
+                });
+            }
+            
         }
     }
    

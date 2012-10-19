@@ -4370,7 +4370,7 @@ public class Workspace extends PagedView
 
     }
     
-    private void removeEmptyScreen(int index){
+    public void removeEmptyScreen(int index){
     	
  	   
         CellLayout   cell = (CellLayout) getChildAt(index);

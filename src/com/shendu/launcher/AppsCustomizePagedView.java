@@ -572,7 +572,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
            public void run() {
                updatePackages();
            }
-        }, 500);
+        }, 1500);
     }
 
 	/** 
@@ -607,7 +607,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         
         List<AppWidgetProviderInfo> widgets =
             AppWidgetManager.getInstance(mLauncher).getInstalledProviders();
-        
+
+        //Log.i(Launcher.TAG, LOG_TAG+"22222222mWidgets.clear();.......      "+widgets.size());
         Intent shortcutsIntent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
         List<ResolveInfo> shortcuts = mPackageManager.queryIntentActivities(shortcutsIntent, 0);
         for (AppWidgetProviderInfo widget : widgets) {

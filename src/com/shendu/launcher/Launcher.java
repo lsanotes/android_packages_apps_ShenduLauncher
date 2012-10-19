@@ -585,7 +585,10 @@ public final class Launcher extends Activity
                 if (appWidgetId != -1) {
                     mAppWidgetHost.deleteAppWidgetId(appWidgetId);
                 }
-            }
+            }else{
+            	//add by hhl,used to delete last empty screen when create no data widget
+            	mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
+              }
         }
 
         // Exit spring loaded mode if necessary after cancelling the configuration of a widget
