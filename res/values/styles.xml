@@ -217,13 +217,13 @@
     -->
     <!-- Launcher Setting -->
     <style name="PreferenceStyle" parent="@android:style/Theme.Holo.Light">  
-    <item name="android:actionBarStyle">@style/SettingActionBarStyle</item>
+    <item name="android:actionBarStyle">@*android:style/Widget.Holo.Light.ActionBar</item>
     </style>
     
-    <!-- Launcher Setting ActionBar-->
+    <!-- Launcher Setting ActionBar
     <style name="SettingActionBarStyle" parent="@android:style/Widget.Holo.ActionBar">  
         <item name="android:background">@drawable/launcher_setting_actionbar</item>
     </style>
-    
+    -->
 
 </resources>

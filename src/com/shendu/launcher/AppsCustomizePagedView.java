@@ -67,6 +67,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.shendu.launcher.DropTarget.DragObject;
+import com.shendu.launcher.Workspace.State;
 import com.shendu.launcher.preference.PreferencesProvider;
 
 import static com.shendu.launcher.AppsCustomizeView.ContentType;
@@ -791,6 +792,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             });
         } else if (view instanceof PagedViewEffect){
         	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
+        	mLauncher.getWorkspace().recoveryState(State.NORMAL,State.SMALL,true);
         	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
             //SharedPreferences prefs =
                 //mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);

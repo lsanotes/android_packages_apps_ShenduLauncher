@@ -531,7 +531,6 @@ public class Workspace extends PagedView
     
     void savedThePageCount(){
     	
-    	Log.i(Launcher.TAG,TAG+ "........savedThePageCount................"+getChildCount());
         setHapticFeedbackEnabled(false);
         setOnLongClickListener(mLauncher);
         
@@ -1413,7 +1412,7 @@ public class Workspace extends PagedView
         return Math.min(r / threshold, 1.0f);
     }
 
-    private void screenScrolledStandard(int screenScroll) {
+    public void screenScrolledStandard(int screenScroll) {
         for (int i = 0; i < getChildCount(); i++) {
             CellLayout cl = (CellLayout) getPageAt(i);
             if (cl != null) {
@@ -1448,30 +1447,102 @@ public class Workspace extends PagedView
     }
 
     private void screenScrolledZoom(int screenScroll, boolean in) {
-        for (int i = 0; i < getChildCount(); i++) {
-            CellLayout cl = (CellLayout) getPageAt(i);
-            if (cl != null) {
-                float scrollProgress = getScrollProgress(screenScroll, cl, i);
-                float scale = 1.0f + (in ? -0.2f : 0.1f) * Math.abs(scrollProgress);
+    	if(isSmall()){
+    		   for (int i = 0; i < getChildCount(); i++) {
+    	            CellLayout cl = (CellLayout) getPageAt(i);
+    	            if (cl != null) {
+    	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+    	                float scale = 1.0f + (in ? -0.2f : 0.1f) * Math.abs(scrollProgress);
 
-                // Extra translation to account for the increase in size
-                if (!in) {
-                    float translationX = cl.getMeasuredWidth() * 0.1f * -scrollProgress;
-                    cl.setFastTranslationX(translationX);
-                }
+    	                // Extra translation to account for the increase in size
+    	                if (!in) {
+    	                    float translationX = cl.getMeasuredWidth() * 0.1f * -scrollProgress;
+    	                    cl.setFastTranslationX(translationX);
+    	                }
 
-                cl.setFastScaleX(scale);
-                cl.setFastScaleY(scale);
-                if (mFadeInAdjacentScreens && !isSmall()) {
-                    float alpha = 1 - Math.abs(scrollProgress);
-                    cl.setFastAlpha(alpha);
-                }
-                cl.fastInvalidate();
-            }
-        }
+    	                cl.setFastScaleX(scale*0.75f);
+    	                cl.setFastScaleY(scale*0.75f);
+    	                if (mFadeInAdjacentScreens && !isSmall()) {
+    	                    float alpha = 1 - Math.abs(scrollProgress);
+    	                    cl.setFastAlpha(alpha);
+    	                }
+    	                cl.fastInvalidate();
+    	            }
+    	        }
+    	}else{
+    		   for (int i = 0; i < getChildCount(); i++) {
+    	            CellLayout cl = (CellLayout) getPageAt(i);
+    	            if (cl != null) {
+    	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+    	                float scale = 1.0f + (in ? -0.2f : 0.1f) * Math.abs(scrollProgress);
+
+    	                // Extra translation to account for the increase in size
+    	                if (!in) {
+    	                    float translationX = cl.getMeasuredWidth() * 0.1f * -scrollProgress;
+    	                    cl.setFastTranslationX(translationX);
+    	                }
+
+    	                cl.setFastScaleX(scale);
+    	                cl.setFastScaleY(scale);
+    	                if (mFadeInAdjacentScreens && !isSmall()) {
+    	                    float alpha = 1 - Math.abs(scrollProgress);
+    	                    cl.setFastAlpha(alpha);
+    	                }
+    	                cl.fastInvalidate();
+    	            }
+    	        }
+    	}
+     
     }
 
     private void screenScrolledRotate(int screenScroll, boolean up) {
+    	
+    	if(isSmall()){
+            for (int i = 0; i < getChildCount(); i++) {
+                CellLayout cl = (CellLayout) getPageAt(i);
+                if (cl != null) {
+                    float scrollProgress = getScrollProgress(screenScroll, cl, i);
+                    float rotation =
+                            (up ? WORKSPACE_ROTATION_ANGLE : -WORKSPACE_ROTATION_ANGLE) * scrollProgress;
+                    float translationX = cl.getMeasuredWidth() * scrollProgress;
+
+                    float rotatePoint =
+                            (cl.getMeasuredWidth() * 0.5f) /
+                            (float) Math.tan(Math.toRadians((double) (WORKSPACE_ROTATION_ANGLE * 0.5f)));
+
+                    cl.setPivotX(cl.getMeasuredWidth() * 0.5f);
+                    if (up) {
+                    	//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...rotatePoint   up..:......."+rotatePoint);
+                    	   cl.setPivotY(-rotatePoint*0.30f);
+                    	   cl.setTranslationY(185);
+                    	    cl.setRotation(rotation);
+                     } else {
+                    	 //  cl.setTranslationX(20);
+                    	  cl.setPivotY((cl.getMeasuredHeight() + rotatePoint)*0.30f);
+                    	  //Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...rotatePoint  down.:......."+rotatePoint);
+                    	  cl.setTranslationY(-235);
+                    	  cl.setRotation(rotation*2);
+                      }
+                    	  /*if(Math.abs(scrollProgress)==1 && i!=0 && i!=getChildCount()-1){
+                    	      cl.setFastAlpha(0);
+                    	                        cl.setFastBackgroundAlpha(0);
+                    	      }else{
+                    	                        cl.setFastAlpha(1);
+                    	                        cl.setFastBackgroundAlpha(1);
+                    	                    }*/
+                    	// cl.setRotation(rotation);
+                    	
+                    if (mFadeInAdjacentScreens && !isSmall()) {
+                        float alpha = 1 - Math.abs(scrollProgress);
+                        cl.setFastAlpha(alpha);
+                    }
+                    cl.fastInvalidate();
+                }
+                }
+          
+    	}else{
+    		
+    
         for (int i = 0; i < getChildCount(); i++) {
             CellLayout cl = (CellLayout) getPageAt(i);
             if (cl != null) {
@@ -1500,84 +1571,165 @@ public class Workspace extends PagedView
                 cl.fastInvalidate();
             }
         }
+    	}
     }
 
     private void screenScrolledCube(int screenScroll, boolean in) {
-        for (int i = 0; i < getChildCount(); i++) {
-            CellLayout cl = (CellLayout) getPageAt(i);
-            if (cl != null) {
-                float scrollProgress = getScrollProgress(screenScroll, cl, i);
-                float rotation = (in ? 90.0f : -90.0f) * scrollProgress;
-                float alpha = 1 - Math.abs(scrollProgress);
 
-                if (in) {
-                    cl.setCameraDistance(mDensity * CAMERA_DISTANCE);
-                }
+    	if(isSmall()){
+    		  for (int i = 0; i < getChildCount(); i++) {
+    	            CellLayout cl = (CellLayout) getPageAt(i);
+    	            if (cl != null) {
+    	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+    	                float rotation = (in ? 90.0f : -90.0f) * scrollProgress;
+    	                float alpha = 1 - Math.abs(scrollProgress*0.75f);
+    	              //  float translationX = Math.min(0, scrollProgress) * cl.getMeasuredWidth()*0.75f;
+    	                if (in) {
+    	                    cl.setCameraDistance(mDensity * CAMERA_DISTANCE);
+    	                }
+          //Log.i(Launcher.TAG,TAG+"      screenScrolledCube............"+ scrollProgress+isSmall()+cl.getMeasuredWidth()+alpha);
+    	              
+                   //  cl.setPivotX(scrollProgress < 0 ? 0 : cl.getMeasuredWidth());
+                       cl.setPivotX(240);
+    	 
+    	                cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
+    	                cl.setRotationY(rotation);
+    	                cl.setFastAlpha(alpha);
+    	                
+//    	                if(i==mCurrentPage){
+//    	                  cl.setFastBackgroundAlpha(1);	
+//    	                }
+//    	             
+    	                cl.fastInvalidate();
+    	            }
+    		
+    	}
+      
+        }else{
+    		  for (int i = 0; i < getChildCount(); i++) {
+  	            CellLayout cl = (CellLayout) getPageAt(i);
+  	            if (cl != null) {
+  	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+  	                float rotation = (in ? 90.0f : -90.0f) * scrollProgress;
+  	                float alpha = 1 - Math.abs(scrollProgress);
 
-                cl.setPivotX(scrollProgress < 0 ? 0 : cl.getMeasuredWidth());
-                cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
-                cl.setRotationY(rotation);
-                cl.setFastAlpha(alpha);
-                cl.fastInvalidate();
-            }
+  	                if (in) {
+  	                    cl.setCameraDistance(mDensity * CAMERA_DISTANCE);
+  	                }
+
+  	                cl.setPivotX(scrollProgress < 0 ? 0 : cl.getMeasuredWidth());
+  	                cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
+  	                cl.setRotationY(rotation);
+  	                cl.setFastAlpha(alpha);
+  	                cl.fastInvalidate();
+  	            }
+  		
+  	}
         }
     }
 
     private void screenScrolledStack(int screenScroll) {
-        for (int i = 0; i < getChildCount(); i++) {
-            CellLayout cl = (CellLayout) getPageAt(i);
-            if (cl != null) {
-                float scrollProgress = getScrollProgress(screenScroll, cl, i);
-                float interpolatedProgress =
-                        mZInterpolator.getInterpolation(Math.abs(Math.min(scrollProgress, 0)));
-                float scale = (1 - interpolatedProgress) + interpolatedProgress * 0.76f;
-                float translationX = Math.min(0, scrollProgress) * cl.getMeasuredWidth();
-                float alpha;
+    	
+    	if(isSmall()){
+    	       for (int i = 0; i < getChildCount(); i++) {
+    	            CellLayout cl = (CellLayout) getPageAt(i);
+    	            if (cl != null) {
+    	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+    	                float interpolatedProgress =
+    	                        mZInterpolator.getInterpolation(Math.abs(Math.min(scrollProgress, 0)));
+    	                float scale = (1 - interpolatedProgress) + interpolatedProgress * 0.76f;
+    	                float translationX = Math.min(0, scrollProgress) * cl.getMeasuredWidth()*0.75f;
+    	                float alpha;
 
-                if (!LauncherApplication.isScreenLarge() || scrollProgress < 0) {
-                    alpha = scrollProgress < 0 ? mAlphaInterpolator.getInterpolation(
-                        1 - Math.abs(scrollProgress)) : 1.0f;
-                } else {
-                    // On large screens we need to fade the page as it nears its leftmost position
-                    alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
-                }
+    	                if (!LauncherApplication.isScreenLarge() || scrollProgress < 0) {
+    	                    alpha = scrollProgress < 0 ? mAlphaInterpolator.getInterpolation(
+    	                        1 - Math.abs(scrollProgress)) : 1.0f;
+    	                } else {
+    	                    // On large screens we need to fade the page as it nears its leftmost position
+    	                    alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
+    	                }
+    	                if(Math.abs(scrollProgress)==1.0){
+                       	 alpha=0.0f; 
+                        }
+    	                cl.setFastTranslationX(translationX);
+    	                cl.setFastScaleX(scale*0.75f);
+    	                cl.setFastScaleY(scale*0.75f);
+    	                cl.setFastAlpha(alpha);
+    	           
+    	                Log.i(Launcher.TAG,TAG+"      screenScrolledStack11............"+ scrollProgress+isSmall()+(alpha <= 0.1));
+    	                // If the view has 0 alpha, we set it to be invisible so as to prevent
+    	                // it from accepting touches
+    	                if (alpha <= 0) {
+    	                    cl.setFastBackgroundAlpha(alpha);
+    	                    cl.setVisibility(INVISIBLE);
+    	                } else {
+    	                    cl.setFastBackgroundAlpha(alpha);
+    	                    cl.setVisibility(VISIBLE);
+    	                }
+    	               cl.fastInvalidate();
+    	            }
+    	        }
+    	}else{
+    	       for (int i = 0; i < getChildCount(); i++) {
+    	            CellLayout cl = (CellLayout) getPageAt(i);
+    	            if (cl != null) {
+    	                float scrollProgress = getScrollProgress(screenScroll, cl, i);
+    	                float interpolatedProgress =
+    	                        mZInterpolator.getInterpolation(Math.abs(Math.min(scrollProgress, 0)));
+    	                float scale = (1 - interpolatedProgress) + interpolatedProgress * 0.76f;
+    	                float translationX = Math.min(0, scrollProgress) * cl.getMeasuredWidth();
+    	                float alpha;
 
-                cl.setFastTranslationX(translationX);
-                cl.setFastScaleX(scale);
-                cl.setFastScaleY(scale);
-                cl.setFastAlpha(alpha);
-
-                // If the view has 0 alpha, we set it to be invisible so as to prevent
-                // it from accepting touches
-                if (alpha <= 0) {
-                    cl.setVisibility(INVISIBLE);
-                } else if (cl.getVisibility() != VISIBLE) {
-                    cl.setVisibility(VISIBLE);
-                }
-                cl.fastInvalidate();
-            }
-        }
-        invalidate();
+    	                if (!LauncherApplication.isScreenLarge() || scrollProgress < 0) {
+    	                    alpha = scrollProgress < 0 ? mAlphaInterpolator.getInterpolation(
+    	                        1 - Math.abs(scrollProgress)) : 1.0f;
+    	                } else {
+    	                    // On large screens we need to fade the page as it nears its leftmost position
+    	                    alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
+    	                }
+                      
+    	                cl.setFastTranslationX(translationX);
+    	                cl.setFastScaleX(scale);
+    	                cl.setFastScaleY(scale);
+    	                cl.setFastAlpha(alpha);
+    	                Log.i(Launcher.TAG,TAG+"      screenScrolledStack22............"+ scrollProgress+isSmall()+alpha);
+    	                // If the view has 0 alpha, we set it to be invisible so as to prevent
+    	                // it from accepting touches
+    	                if (alpha <= 0) {
+    	                    cl.setVisibility(INVISIBLE);
+    	                } else if (cl.getVisibility() != VISIBLE) {
+    	                    cl.setVisibility(VISIBLE);
+    	                }
+    	                cl.fastInvalidate();
+    	            }
+    	        }
+    	}
+ 
+      //  invalidate();
     }
 
     @Override
     protected void screenScrolled(int screenScroll) {
         super.screenScrolled(screenScroll);
         if (isSwitchingState()) return;
-        if (isSmall()) {
-            for (int i = 0; i < getChildCount(); i++) {
-                CellLayout cl = (CellLayout) getPageAt(i);
-                if (cl != null) {
-                    float scrollProgress = getScrollProgress(screenScroll, cl, i);
-                    float rotation = WORKSPACE_ROTATION * scrollProgress;
-                    cl.setFastTranslationX(0.0f);
-                    //cl.setFastRotationY(rotation);
-                    cl.fastInvalidate();
-                }
-            }
-        } else if (mOverScrollX < 0 || mOverScrollX > mMaxScrollX) {
+   //     Log.i(Launcher.TAG, TAG+"screenScrolled.............................. "+isSmall()+LauncherApplication.isScreenLarge());
+//        if (isSmall()) {
+//            for (int i = 0; i < getChildCount(); i++) {
+//                CellLayout cl = (CellLayout) getPageAt(i);
+//                if (cl != null) {
+//                    float scrollProgress = getScrollProgress(screenScroll, cl, i);
+//                    float rotation = WORKSPACE_ROTATION * scrollProgress;
+//                    cl.setFastTranslationX(0.0f);
+//                    //cl.setFastRotationY(rotation);
+//                    cl.fastInvalidate();
+//                }
+//            }
+//        } else
+        	if (mOverScrollX < 0 || mOverScrollX > mMaxScrollX) {
             int index = mOverScrollX < 0 ? 0 : getChildCount() - 1;
             CellLayout cl = (CellLayout) getPageAt(index);
+            //Log.i(Launcher.TAG, "==========workspace.java==screenScrolled==="+LauncherApplication.isScreenLarge()+"==="+
+                //isSmall());
             if (!LauncherApplication.isScreenLarge()) {
                 if (cl != null) {
                     float scrollProgress = getScrollProgress(screenScroll, cl, index);
@@ -1604,18 +1756,30 @@ public class Workspace extends PagedView
                     cl.setOverscrollTransformsDirty(true);
                 }
             }
-        } else {
-            if (LauncherApplication.isScreenLarge()) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    if (mOverScrollPageIndex != i) {
-                        CellLayout cl = (CellLayout) getPageAt(i);
-                        if (cl != null) {
-                            float scrollProgress = getScrollProgress(screenScroll, cl, i);
-                            cl.setBackgroundAlphaMultiplier(backgroundAlphaInterpolator(Math.abs(scrollProgress)));
-                        }
-                    }
-                }
-            }
+        } else
+        {
+//            if (LauncherApplication.isScreenLarge()) {
+//                for (int i = 0; i < getChildCount(); i++) {
+//                    if (mOverScrollPageIndex != i) {
+//                        CellLayout cl = (CellLayout) getPageAt(i);
+//                        if (cl != null) {
+//                            float scrollProgress = getScrollProgress(screenScroll, cl, i);
+//                            cl.setBackgroundAlphaMultiplier(backgroundAlphaInterpolator(Math.abs(scrollProgress)));
+//                        }
+//                    }
+//                }
+//            }else if (isSmall()) {
+//              for (int i = 0; i < getChildCount(); i++) {
+//              CellLayout cl = (CellLayout) getPageAt(i);
+//              if (cl != null) {
+//                  float scrollProgress = getScrollProgress(screenScroll, cl, i);
+//                  float rotation = WORKSPACE_ROTATION * scrollProgress;
+//               //   cl.setFastTranslationX(0.0f);
+//                  //cl.setFastRotationY(rotation);
+//                 // cl.fastInvalidate();
+//              }
+//          }
+//      }
 
             if (mOverscrollFade != 0) {
                 setFadeForOverScroll(0);
@@ -1660,10 +1824,14 @@ public class Workspace extends PagedView
 
     @Override
     protected void overScroll(float amount) {
+            //Log.i(Launcher.TAG, "==========workspace.java==overScroll==="+LauncherApplication.isScreenLarge()+"==="+
+                //isSmall());
         if (LauncherApplication.isScreenLarge()) {
             dampedOverScroll(amount);
         } else {
+        	if(!isSmall()){
             acceleratedOverScroll(amount);
+        	}
         }
     }
 
@@ -2024,7 +2192,6 @@ public class Workspace extends PagedView
             return;
         }
         if (mFirstLayout) {
-            // (mFirstLayout == "first layout has not happened yet")
             // cancel any pending shrinks that were set earlier
             mSwitchStateAfterFirstLayout = false;
             mStateAfterFirstLayout = state;
@@ -2109,8 +2276,8 @@ public class Workspace extends PagedView
                     finalAlpha = 1f;
                     finalAlphaMultiplierValue = 0f;
                 } else {
-                    initialAlpha = 0f;
-                    finalAlpha = 0f;
+                    initialAlpha = 1f;
+                   // finalAlpha = 0f;
                 }
             }
 
@@ -2157,7 +2324,6 @@ public class Workspace extends PagedView
                 cl.setPivotX(cl.getMeasuredWidth() * 0.5f);
                 cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
             }
-            Log.i(Launcher.TAG,TAG+ ".. initAnimationArrays().22......................mOldAlphas.."+i+"  "+mOldAlphas.length);
             mOldAlphas[i] = initialAlpha;
             mNewAlphas[i] = finalAlpha;
             if (animated) {
@@ -2193,8 +2359,6 @@ public class Workspace extends PagedView
             }
         } //end for
 
-        
-       
         if (animated) {
             ValueAnimator animWithInterpolator =
                 ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
@@ -2236,9 +2400,10 @@ public class Workspace extends PagedView
                         	 
                         //}else{
                         	//cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-60);
-                        cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
+                      cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
+                      //  cl.setFastTranslationY(-92.25f);
                         //}
-                      
+                        Log.i(Launcher.TAG,TAG+"..............mTranslationYExtra::"+mTranslationYExtra+"..,.,,,:"+(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra));
                         
                         //set width and height
                         //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
@@ -2255,7 +2420,8 @@ public class Workspace extends PagedView
                                 a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
                         cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
                                 b * mNewBackgroundAlphaMultipliers[i]);
-                        cl.setFastAlpha(a * mOldAlphas[i] + b * mNewAlphas[i]);
+                      //  cl.setFastAlpha(a * mOldAlphas[i] + b * mNewAlphas[i]);
+                        cl.setFastAlpha(1f);
                         cl.invalidate();
                     }
                     syncChildrenLayersEnabledOnVisiblePages();
@@ -2301,16 +2467,286 @@ public class Workspace extends PagedView
         }
        syncChildrenLayersEnabledOnVisiblePages();
     }
+    
+    
+    /**
+     * add by  :zlf
+     * recovery TransitionEffect to Standard
+     * @param state1  Initial NORMAL state
+     * @param state   SMALL state
+     * @param animated true
+     */
+    
+    public void  recoveryState(State state1,State state ,boolean animated){
+         // Initialize animation arrays for the first time if necessary
+         initAnimationArrays();
+         // Cancel any running transition animations
+         if (mAnimator != null) mAnimator.cancel();
+         mAnimator = new AnimatorSet();
+         // Stop any scrolling, move to the current page right away
+         setCurrentPage((mNextPage != INVALID_PAGE) ? mNextPage : mCurrentPage);
+         final State oldState = state1;
+         final boolean oldStateIsNormal = (oldState == State.NORMAL);
+         final boolean oldStateIsSmall = (oldState == State.SMALL);
+       //  mState = state;
+         final boolean stateIsNormal = (state == State.NORMAL);
+         final boolean stateIsSpringLoaded = (state == State.SPRING_LOADED);
+         final boolean stateIsSmall = (state == State.SMALL);
+         float finalScaleFactor = 1.0f;
+         float finalBackgroundAlpha = stateIsSpringLoaded ? 1.0f : 0f;
+         float translationX = 0;
+         float translationY = 0;
+         boolean zoomIn = true;
+         float translationYExtra = 0;
 
+         if (state != State.NORMAL) {
+             finalScaleFactor = mSpringLoadedShrinkFactor - (stateIsSmall ? 0.1f : 0);
+             //finalScaleFactor = finalScaleFactor>(455.0f/getMeasuredHeight())?(455.0f/getMeasuredHeight()):finalScaleFactor;
+             finalScaleFactor = finalScaleFactor>0.75f?0.75f:finalScaleFactor;
+             if (oldStateIsNormal && stateIsSmall) {
+                 zoomIn = false;
+                if (animated) {
+                     hideScrollingIndicator(false, sScrollIndicatorFadeOutShortDuration);
+                  }
+                 setLayoutScale(finalScaleFactor);
+                 updateChildrenLayersEnabled();
+             } else {
+                 finalBackgroundAlpha = 1.0f;
+                 setLayoutScale(finalScaleFactor);
+             }
+         } else {
+              showScrollingIndicator(true, sScrollIndicatorFadeInDuration);
+             setLayoutScale(1.0f);
+         }
+
+         final int duration = zoomIn ? 
+                 getResources().getInteger(R.integer.config_workspaceUnshrinkTime) :
+                 getResources().getInteger(R.integer.config_appsCustomizeWorkspaceShrinkTime);
+         for (int i = 0; i < getChildCount(); i++) {
+             final CellLayout cl = (CellLayout) getPageAt(i);
+             if(i==mCurrentPage){
+             	cl.mIsCurrentPage = true;
+             }else{
+             	cl.mIsCurrentPage = false;
+             }
+             float rotation = 0f;
+             float rotationY = 0f;
+             float initialAlpha = 1;
+             
+             //Log.i(Launcher.TAG,TAG+"..............initialAlpha::"+i+"   :"+initialAlpha);
+             float finalAlphaMultiplierValue = 1f;
+             float finalAlpha = (!mFadeInAdjacentScreens || stateIsSpringLoaded ||
+                     (i == mCurrentPage)) ? 1f : 0f;
+             translationYExtra = (float)(cl.getMeasuredHeight()*(1-finalScaleFactor)/2.0);
+             // Determine the pages alpha during the state transition
+             if ((oldStateIsSmall && stateIsNormal) ||
+                 (oldStateIsNormal && stateIsSmall)) {
+                 // To/from workspace - only show the current page unless the transition is not
+                 //                     animated and the animation end callback below doesn't run
+                 if (i == mCurrentPage || !animated) {
+                     finalAlpha = 1f;
+                     finalAlphaMultiplierValue = 0f;
+                 } else {
+                     initialAlpha = 1f;
+                     finalAlpha = 0f;
+                 }
+             }
+
+             // Update the rotation of the screen
+             // do not used rotate Y on small screen
+             /*if (mTransitionEffect == TransitionEffect.Tablet || stateIsSmall || stateIsSpringLoaded) {
+                 if (i < mCurrentPage) {
+                     rotationY = WORKSPACE_ROTATION;
+                 } else if (i > mCurrentPage) {
+                     rotationY = -WORKSPACE_ROTATION;
+                 }
+             }*/
+
+             // Make sure the pages are visible with the stack effect
+             if (mTransitionEffect == TransitionEffect.Stack) {
+                 if (stateIsSmall || stateIsSpringLoaded) {
+                     cl.setVisibility(VISIBLE);
+                 } else if (stateIsNormal) {
+                     if (i <= mCurrentPage) {
+                         cl.setVisibility(VISIBLE);
+                     } else {
+                         cl.setVisibility(GONE);
+                     }
+                 }
+             }
+
+             if ((mTransitionEffect == TransitionEffect.Tablet && stateIsNormal) ||
+                     (LauncherApplication.isScreenLarge() && (stateIsSmall || stateIsSpringLoaded))) {
+                 translationX = getOffsetXForRotation(rotationY, cl.getWidth(), cl.getHeight());
+             }
+
+             if (stateIsNormal && (mTransitionEffect == TransitionEffect.RotateUp ||
+                     mTransitionEffect == TransitionEffect.RotateDown)) {
+                 rotation = (mTransitionEffect == TransitionEffect.RotateUp ? WORKSPACE_ROTATION_ANGLE : -WORKSPACE_ROTATION_ANGLE) *
+                         Math.abs(mCurrentPage - i);
+             }
+
+             if (stateIsSmall || stateIsSpringLoaded) {
+                 cl.setCameraDistance(1280 * mDensity);
+                 if (mTransitionEffect == TransitionEffect.RotateUp ||
+                         mTransitionEffect == TransitionEffect.RotateDown) {
+                     cl.setTranslationX(0.0f);
+                 }
+                 cl.setPivotX(cl.getMeasuredWidth() * 0.5f);
+                 cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
+             }
+             mOldAlphas[i] = initialAlpha;
+             mNewAlphas[i] = finalAlpha;
+             if (animated) {
+                 mOldTranslationXs[i] = cl.getTranslationX();
+                 mOldTranslationYs[i] = cl.getTranslationY();
+                 mOldScaleXs[i] = cl.getScaleX();
+                 mOldScaleYs[i] = cl.getScaleY();
+                 mOldBackgroundAlphas[i] = cl.getBackgroundAlpha();
+                 mOldBackgroundAlphaMultipliers[i] = cl.getBackgroundAlphaMultiplier();
+                 mOldRotations[i] = cl.getRotation();
+                 mOldRotationYs[i] = cl.getRotationY();
+
+                 mNewTranslationXs[i] = translationX;
+                 mNewTranslationYs[i] = translationY;
+                 mNewScaleXs[i] = finalScaleFactor;
+                 mNewScaleYs[i] = finalScaleFactor;
+                 mNewBackgroundAlphas[i] = finalBackgroundAlpha;
+                 mNewBackgroundAlphaMultipliers[i] = finalAlphaMultiplierValue;
+                 mNewRotations[i] = rotation;
+                 mNewRotationYs[i] = rotationY;
+                 mTranslationYExtra = translationYExtra;
+             } else {
+                 cl.setTranslationX(translationX);
+                 cl.setTranslationY(translationY-translationYExtra);
+                 cl.setScaleX(finalScaleFactor);
+                 cl.setScaleY(finalScaleFactor);
+                 cl.setBackgroundAlpha(finalBackgroundAlpha);
+                 cl.setBackgroundAlphaMultiplier(finalAlphaMultiplierValue);
+                 cl.setAlpha(finalAlpha);
+                 cl.setRotation(rotation);
+                 cl.setRotationY(rotationY);
+                 mChangeStateAnimationListener.onAnimationEnd(null);
+             }
+         } //end for
+
+         if (animated) {
+             ValueAnimator animWithInterpolator =
+                 ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
+
+             if (zoomIn) {
+                 animWithInterpolator.setInterpolator(mZoomInInterpolator);
+             }
+
+             animWithInterpolator.addListener(new AnimatorListenerAdapter() {
+                 @Override
+                 public void onAnimationEnd(android.animation.Animator animation) {
+                     // The above code to determine initialAlpha and finalAlpha will ensure that only
+                     // the current page is visible during (and subsequently, after) the transition
+                     // animation.  If fade adjacent pages is disabled, then re-enable the page
+                     // visibility after the transition animation.
+                     if (!mFadeInAdjacentScreens) {
+                         for (int i = 0; i < getChildCount(); i++) {
+                             final CellLayout cl = (CellLayout) getPageAt(i);
+                             cl.setAlpha(1f);
+                             cl.setBackgroundAlpha(1f);
+                             //Log.i(Launcher.TAG,TAG+"..............initialAlpha222::"+i+"   :");
+                         }
+                     }
+                 }
+             });
+             animWithInterpolator.addUpdateListener(new LauncherAnimatorUpdateListener() {
+                 public void onAnimationUpdate(float a, float b) {
+                     mTransitionProgress = b;
+                     if (b == 0f) {
+                         // an optimization, but not required
+                         return;
+                     }
+                     invalidate();
+                     for (int i = 0; i < getChildCount(); i++) {
+                         final CellLayout cl = (CellLayout) getPageAt(i);
+
+                         cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
+
+                    //    cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
+                       
+                       cl.setFastTranslationY(-75f);
+                         
+                         Log.i(Launcher.TAG,TAG+"..............mTranslationYExtra::"+mTranslationYExtra+"..,.,,,:"+(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra));
+                         
+
+                          cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
+                          cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+
+                         cl.invalidate();
+                     }
+                     syncChildrenLayersEnabledOnVisiblePages();
+                 }
+             });
+
+             ValueAnimator rotationAnim =
+                 ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
+             rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
+             rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
+                 public void onAnimationUpdate(float a, float b) {
+                     if (b == 0f) {
+                         // an optimization, but not required
+                         return;
+                     }
+                     for (int i = 0; i < getChildCount(); i++) {
+                         final CellLayout cl = (CellLayout) getPageAt(i);
+                         if (mOldRotations[i] != mNewRotations[i]) {
+                             cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
+                         }
+                         cl.setFastRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
+                     }
+                 }
+             });
+
+             mAnimator.playTogether(animWithInterpolator, rotationAnim);
+             mAnimator.setStartDelay(0);
+             // If we call this when we're not animated, onAnimationEnd is never called on
+             // the listener; make sure we only use the listener when we're actually animating
+             mAnimator.addListener(mChangeStateAnimationListener);
+             mAnimator.start();
+         }
+    }
+    
+    
+/**
+ * transitionEffect Demonstration :snap to  next page ,then Flip back.
+ * 
+ */
+    public void transitionEffectDemonstration(){
+    	
+//    	
+//        post(new Runnable() {
+//            
+//            public void run() {
+//            	
+//             	snapToPage(mCurrentPage+1);
+//                 try{
+//                	 Thread.sleep(500); 
+//                 }catch(Exception e){
+//                	 
+//                 }
+//             	
+//
+//            	snapToPage(mCurrentPage);
+//            }
+//           	
+//        });
+//   
+    }
+    
+    
+    
     public void onWindowFocusChanged(boolean hasWindowFocus) {
     	super.onWindowFocusChanged(hasWindowFocus);
     	View view = mLauncher.getWindow().findViewById(Window.ID_ANDROID_CONTENT);
     	mStartBarHeight = view.getTop();
     	mStartBarWidth = view.getRight();
-    	//Log.i("hhl", "====Workspace.java==onWindowFocusChanged=="+hasWindowFocus+"=="+mStartBarHeight+"*"+mStartBarWidth+
-    			//"==="+mLauncher.getWindow().getAttributes().height+"*"+mLauncher.getWindow().getAttributes().width);
     }
-    
     /**
      * Draw the View v into the given Canvas.
      *
@@ -4728,7 +5164,6 @@ public class Workspace extends PagedView
             	}
               	
                	}
-
  
             }
         }) ;
@@ -4739,11 +5174,8 @@ public class Workspace extends PagedView
 
     public void removeView( View cellLayout,final int pageCount){
     	super.removeView(cellLayout);
-      	Log.i(Launcher.TAG,TAG+ "..removeView(cellLayout)...................pageCount:"+pageCount);
       	int count =getChildCount();
       
-      	
-      	
     	if(mCurrentPage > pageCount){
        		setCurrentPage(Math.max(mCurrentPage-1,0));
        	}else if( mCurrentPage==pageCount){
@@ -4757,8 +5189,6 @@ public class Workspace extends PagedView
  
          savedThePageCount();
        
-      	Log.i(Launcher.TAG,TAG+ "..removeView(cellLayout)...................pageCount:"+pageCount+"  count  :"+count);
-      	
       	if(pageCount>=count||pageCount<0){
        		
        		return;
@@ -4805,7 +5235,6 @@ public class Workspace extends PagedView
     public void updateScreensFromIndex(int index){
     	
     	int  screenNum = getChildCount();
-    	 Log.i(Launcher.TAG,TAG+ "...updateScreensFromIndex......................index:"+index+"   screenNum:"+screenNum);
      	CellLayoutChildren cellLayoutChildren=null;
     
     	for(int i = index ; i < screenNum ; i++){
