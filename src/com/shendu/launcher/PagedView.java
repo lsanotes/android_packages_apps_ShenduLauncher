@@ -1242,20 +1242,14 @@ public abstract class PagedView extends ViewGroup {
                         (isFling && velocityX > 0)) && mCurrentPage > 0) {
                     finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage - 1;
                     snapToPageWithVelocity(finalPage, velocityX);
-                    /*if(mScrollIndicator!=null){
-                    	  mScrollIndicator.setCurrentPage(finalPage);	
-                    }*/
+                 
                   
                 } else if (((isSignificantMove && deltaX < 0 && !isFling) ||
                         (isFling && velocityX < 0)) &&
                         mCurrentPage < getChildCount() - 1) {
                     finalPage = returnToOriginalPage ? mCurrentPage : mCurrentPage + 1;
                     snapToPageWithVelocity(finalPage, velocityX);
-                    
-                    //add by zlf
-                    /*if(mScrollIndicator!=null ){
-                        mScrollIndicator.setCurrentPage(finalPage);
-                    }*/
+                
                
                 } else {
                     snapToDestination();

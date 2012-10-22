@@ -884,9 +884,6 @@ public class Workspace extends PagedView
         }
       }
     
-   
-
-    
     @Override
     protected void determineScrollingStart(MotionEvent ev) {
     	//remove by zlf
@@ -1137,10 +1134,12 @@ public class Workspace extends PagedView
 
     @Override
     protected void snapToPage(int whichPage) {
+ 
         super.snapToPage(whichPage);
         if (mScrollWallpaper) {
             computeWallpaperScrollRatio(whichPage);
         }
+
     }
 
     private void computeWallpaperScrollRatio(int page) {
@@ -2403,14 +2402,13 @@ public class Workspace extends PagedView
                       cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
                       //  cl.setFastTranslationY(-92.25f);
                         //}
-                        Log.i(Launcher.TAG,TAG+"..............mTranslationYExtra::"+mTranslationYExtra+"..,.,,,:"+(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra));
                         
                         //set width and height
                         //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
                         
                         //if(mState ==State.NORMAL ){
                         	  cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-                        	 cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+                        	  cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
                         //}else{
                         	  //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
                         	 //cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]-0.1f);
@@ -2519,9 +2517,11 @@ public class Workspace extends PagedView
              setLayoutScale(1.0f);
          }
 
-         final int duration = zoomIn ? 
-                 getResources().getInteger(R.integer.config_workspaceUnshrinkTime) :
-                 getResources().getInteger(R.integer.config_appsCustomizeWorkspaceShrinkTime);
+//         final int duration = zoomIn ? 
+//                 getResources().getInteger(R.integer.config_workspaceUnshrinkTime) :
+//                 getResources().getInteger(R.integer.config_appsCustomizeWorkspaceShrinkTime);
+         final int duration = 0;
+                    
          for (int i = 0; i < getChildCount(); i++) {
              final CellLayout cl = (CellLayout) getPageAt(i);
              if(i==mCurrentPage){
@@ -2672,7 +2672,6 @@ public class Workspace extends PagedView
                        
                        cl.setFastTranslationY(-75f);
                          
-                         Log.i(Launcher.TAG,TAG+"..............mTranslationYExtra::"+mTranslationYExtra+"..,.,,,:"+(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra));
                          
 
                           cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
@@ -2718,25 +2717,28 @@ public class Workspace extends PagedView
  * 
  */
     public void transitionEffectDemonstration(){
+    	final int currentPage =mCurrentPage;
+    	int nextCurrentPage =0;
+    	if(mCurrentPage == getChildCount()-1){
+    		nextCurrentPage =mCurrentPage-1;
     	
-//    	
-//        post(new Runnable() {
-//            
-//            public void run() {
-//            	
-//             	snapToPage(mCurrentPage+1);
-//                 try{
-//                	 Thread.sleep(500); 
-//                 }catch(Exception e){
-//                	 
-//                 }
-//             	
-//
-//            	snapToPage(mCurrentPage);
-//            }
-//           	
-//        });
-//   
+    	}else{
+    		nextCurrentPage=mCurrentPage+1;
+    		
+    	}
+    
+        snapToPage(nextCurrentPage);
+ 
+        postDelayed(new Runnable() {
+            
+            public void run() {
+  
+         snapToPage(currentPage);
+    
+            }
+           	
+        },800);
+  
     }
     
     

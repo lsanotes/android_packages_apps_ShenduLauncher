@@ -793,7 +793,11 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         } else if (view instanceof PagedViewEffect){
         	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
         	mLauncher.getWorkspace().recoveryState(State.NORMAL,State.SMALL,true);
+        	
         	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
+        	
+        	
+        	mLauncher.getWorkspace().transitionEffectDemonstration();
             //SharedPreferences prefs =
                 //mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = mSharedPreferences.edit();

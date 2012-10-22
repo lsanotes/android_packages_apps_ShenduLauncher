@@ -660,7 +660,6 @@ public final class Launcher extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        
 
        //  add by zlf
         backFromEditMode();
@@ -1412,6 +1411,7 @@ public final class Launcher extends Activity
 
     @Override
     protected void onNewIntent(Intent intent) {
+
         super.onNewIntent(intent);
 
         // Close the menu
@@ -1431,9 +1431,9 @@ public final class Launcher extends Activity
             }
 
             closeFolder();
-            exitSpringLoadedDragMode();
+    
+        //    exitSpringLoadedDragMode();
             
-            backFromEditMode();
             showWorkspace(alreadyOnHome);
 
             final View v = getWindow().peekDecorView();
@@ -1448,6 +1448,7 @@ public final class Launcher extends Activity
                 mAppsCustomizeTabHost.reset();
             }
         }
+    
     }
 
     @Override
@@ -1912,6 +1913,8 @@ public final class Launcher extends Activity
     }
     
      void backFromEditMode(){
+    	 
+   
     	if(mWorkspace.isSmall()){
     		CellLayout.mIsEditstate = false; //used to draw line condition
     		setScreenNoLimit();
