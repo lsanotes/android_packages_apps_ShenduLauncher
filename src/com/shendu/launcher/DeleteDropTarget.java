@@ -17,8 +17,10 @@
 package com.shendu.launcher;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
@@ -28,9 +30,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +59,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
     private Drawable mCurrentDrawable;
     private Drawable mNormalDrawableBg,mActiveDrawableBg;
     private boolean mUninstall;
+    private Toast mToast;
     //private AlertDialog mUninstallDialog;
     //private CellLayout.CellInfo mCellInfo;
     
@@ -128,42 +133,47 @@ public class DeleteDropTarget extends ButtonDropTarget {
     public boolean acceptDrop(DragObject d) {
         // We can remove everything including App shortcuts, folders, widgets, etc.
     	 boolean flag = true;
-    	
-    	
     	 if(mUninstall){
-    	
-         	ShortcutInfo shortcutInfo = (ShortcutInfo) d.dragInfo;
-         	
-       	 if(shortcutInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
+    		 ShortcutInfo shortcutInfo = (ShortcutInfo) d.dragInfo;
+    		 if(shortcutInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
        		mUninstall = false;
        		return true;
-		 }
-        	ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
-        	if(resolveInfo==null){
+    		 }
+       	 ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
+       	 if(resolveInfo==null){
         		mUninstall= false;
         		flag =true;
-        	}else{
-        		
+       	 }else{
         		if ((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
                    	 (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0){
-                  	 flag = false;
-                 	 Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstallunable_label),Toast.LENGTH_SHORT).show();
-                   }else{
-
-           	 	 flag = true;
-                   }
-        	}
+        			flag = false;
+       			shenduShowToast(getContext().getString(R.string.delete_target_uninstallunable_label));
+        			//Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstallunable_label),Toast.LENGTH_SHORT).show();
+        		}else{
+        			flag = true;
+        		}
+       	 	}
     	 }else{
     		 if(isWorkspaceFolder(d.dragSource,d.dragInfo)){
-        		 flag = false;
-        		 Toast.makeText(getContext(),getContext().getString(R.string.delete_folder_toast_message),Toast.LENGTH_SHORT).show();
+    			 flag = false;
+    			 shenduShowToast(getContext().getString(R.string.delete_folder_toast_message));
+        		 //Toast.makeText(getContext(),getContext().getString(R.string.delete_folder_toast_message),Toast.LENGTH_SHORT).show();
     		 }else{
         		 flag = true;
     		 }
     	 }
-    
     	 return flag;
-    	
+    }
+    
+    /**
+     * 2012-10-25 hhl
+     * @param string: used to toast text
+     * TODO: used to display a toast
+     */
+    private void shenduShowToast(String string){
+    	mToast = Toast.makeText(getContext(),string,Toast.LENGTH_SHORT);
+    	mToast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.TOP,0,0);
+    	mToast.show();
     }
 
     @Override
@@ -334,7 +344,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
         ItemInfo item = (ItemInfo) d.dragInfo;
 
         if(mUninstall){
-        	ShortcutInfo shortcutInfo = (ShortcutInfo) item;
+    		shenduUninstallApp(false,(ShortcutInfo) item);
         	//ResolveInfo resolveInfo = getContext().getPackageManager().resolveActivity(shortcutInfo.intent, 0);
             /*if (resolveInfo != null &&
             	((resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
@@ -345,7 +355,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
             	}
             	Toast.makeText(getContext(),getContext().getString(R.string.delete_target_uninstall_label),Toast.LENGTH_SHORT).show();
             }else{*/
-            	final String pkgName = shortcutInfo.intent.getComponent().getPackageName();
+            	//final String pkgName = shortcutInfo.intent.getComponent().getPackageName();
             	/*if(mLauncher.getWorkspace().mDragInfo != null){
             		mLauncher.getWorkspace().mDragInfo.cell.setVisibility(View.VISIBLE);
             	}
@@ -355,7 +365,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
                 .setPositiveButton(getContext().getString(R.string.dialog_uninstall_app_ok),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {*/
-                                getContext().getPackageManager().deletePackage(pkgName, mHideUninstallAppObserver, 0);
+                                //getContext().getPackageManager().deletePackage(pkgName, mHideUninstallAppObserver, 0);
                            /* }
                         })
                 .setNegativeButton(mLauncher.getString(R.string.dialog_uninstall_app_cancle), null)
@@ -428,8 +438,28 @@ public class DeleteDropTarget extends ButtonDropTarget {
         }*/
     }
     
-    HideUninstallAppObserver mHideUninstallAppObserver = new HideUninstallAppObserver();
+    /**
+     * 2012-10-25 hhl
+     * @param hideMethod: whether to use the hide uninstall method
+     * @param componentName: the app component that need to uninstall 
+     * TODO: use the hide method or from intent to uninstall app 
+     */
+    private void shenduUninstallApp(boolean hideMethod, ShortcutInfo shortcutInfo){
+    	ComponentName componentName = shortcutInfo.intent.getComponent();
+    	if(componentName!=null){
+        	String pkgName = componentName.getPackageName();
+        	if(hideMethod){
+        		getContext().getPackageManager().deletePackage(pkgName, mHideUninstallAppObserver, 0);
+        	}else{
+        		String className = componentName.getClassName();
+        		Intent intent = new Intent(Intent.ACTION_DELETE, Uri.fromParts("package",pkgName,className));
+        		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        		getContext().startActivity(intent);
+        	}
+    	}
+    }
     
+	HideUninstallAppObserver mHideUninstallAppObserver = new HideUninstallAppObserver();
     
     /**
      * 2012-9-19 hhl

@@ -1839,7 +1839,7 @@ public class LauncherModel extends BroadcastReceiver {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
                             callbacks.bindAppsRemoved(removedFinal, permanent);
-                            //callbacks.bindPackagesUpdated();
+                            callbacks.bindPackagesUpdated();
                         }
                     }
                 });

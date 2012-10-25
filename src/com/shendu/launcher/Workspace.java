@@ -4767,6 +4767,11 @@ public class Workspace extends PagedView
     public void onDropCompleted(View target, DragObject d, boolean success) {
  
     	dragHeaderIndex=-1;
+    	if(success && target instanceof DeleteDropTarget && 
+    			(((ItemInfo)d.dragInfo).itemType==LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT)){ //used for uninstall app
+    		success = false;
+    		d.cancelled = true;
+    	}
         if (success) {
         	CellLayout cell =null;
          	cell= getParentCellLayoutForView(mDragInfo.cell);
@@ -4926,6 +4931,13 @@ public class Workspace extends PagedView
                     mDragTargetLayout.setIsDragOverlapping(false);
                     mDragTargetLayout.onDragExit();
                 }
+                if(dragHeaderIndex>0&&mDragTargetLayout!=null){//uesd to icon recovery
+               	   mReorderAlarmTarget[0] =mTargetCell[0];
+              	   mReorderAlarmTarget[1] =mTargetCell[1];
+              	   int count =mReorderAlarmTarget[0]  +  mReorderAlarmTarget[1] * 4;
+                      dragForRecovery();
+                      dragHeaderIndex=-1;
+                  }
                 mDragTargetLayout = layout;
                 mDragTargetLayout.setIsDragOverlapping(true);
 
