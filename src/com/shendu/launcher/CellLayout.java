@@ -1033,7 +1033,8 @@ public class CellLayout extends ViewGroup {
 
     public void setFastAlpha(float alpha) {
         setFastChildrenAlpha(alpha);
-        super.setFastAlpha(alpha);
+        super.setAlpha(alpha);
+        //super.setFastAlpha(alpha); //moditify
     }
 
     private void setChildrenAlpha(float alpha) {
@@ -1046,7 +1047,8 @@ public class CellLayout extends ViewGroup {
     private void setFastChildrenAlpha(float alpha) {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
-            getChildAt(i).setFastAlpha(alpha);
+            getChildAt(i).setAlpha(alpha);
+            //getChildAt(i).setFastAlpha(alpha); //moditify
         }
     }
 
