@@ -61,11 +61,12 @@
                     android:entries="@array/preferences_interface_homescreen_general_screen_folder_style_entries"
                     android:entryValues="@array/preferences_interface_homescreen_general_screen_folder_style_values"
                     android:defaultValue="@string/config_folder_style_default" />
-                -->
+                  //removed by hhl
                 <CheckBoxPreference android:key="ui_homescreen_general_search"
                     android:title="@string/preferences_interface_homescreen_general_search_title"
                     android:summary="@string/preferences_interface_homescreen_general_search_summary"
                     android:defaultValue="true" />
+                    -->
                 <CheckBoxPreference android:key="ui_homescreen_general_resize_any_widget"
                     android:title="@string/preferences_interface_homescreen_general_resize_any_widget_title"
                     android:summary="@string/preferences_interface_homescreen_general_resize_any_widget_summary" />

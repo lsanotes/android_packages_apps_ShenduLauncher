@@ -605,7 +605,6 @@ public class LauncherModel extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
-        Log.i(Launcher.TAG, TAG+"....onReceive.......##.............. "+intent);
         final String action = intent.getAction();
 
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
@@ -661,9 +660,7 @@ public class LauncherModel extends BroadcastReceiver {
              // above for ACTION_LOCALE_CHANGED
              Configuration currentConfig = context.getResources().getConfiguration();
              
-             //Log.d(TAG, "#################################################################################################################Reload apps on config change. curr_mcc:"
-                     //+ currentConfig.mcc + " prevmcc:" + mPreviousConfigMcc);
-             
+          
              
              if (mPreviousConfigMcc != currentConfig.mcc) {
                    Log.d(TAG, "         **********                     Reload apps on config change. curr_mcc:"

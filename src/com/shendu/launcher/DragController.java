@@ -502,7 +502,7 @@ public class DragController {
         mLastTouch[0] = x;
         mLastTouch[1] = y;
         
-       //left
+      //left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
@@ -513,7 +513,6 @@ public class DragController {
             }
             //right
         } else if (x > mScrollView.getWidth() - mScrollZone) {
-            Log.i(Launcher.TAG,TAG+ "    ScrollRunnable( right )......................mScrollState.:"+ mScrollState);
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
                 
@@ -521,21 +520,6 @@ public class DragController {
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
                     mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
-                }else{
-                
-                	 if(!addNewScreen ){
-                		 addNewScreen= true;
-                     	 mScrollState = SCROLL_OUTSIDE_ZONE;
-                    	 mLauncher.getWorkspace().addScreen(null); 
-                    	 mLauncher.getWorkspace().savedThePageCount();
-                    	 if(mLauncher.getWorkspace().isSmall()){
-                    	   	 mLauncher.getWorkspace().changeState(Workspace.State.NORMAL);
-                        	 mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED); 
-                    	 }
-                 
-                	 }
-            
-                	
                 }
             }
         } else {
@@ -547,6 +531,7 @@ public class DragController {
             }
         }
     }
+
 
     /**
      * Call this from a drag source view.

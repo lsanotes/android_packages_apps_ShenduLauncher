@@ -62,8 +62,8 @@
     
      
      	<favorite 
-        launcher:packageName="com.android.camera"
-        launcher:className="com.android.camera.Camera"
+        launcher:packageName="com.android.gallery3d"
+        launcher:className="com.android.camera.CameraLauncher"
         launcher:screen="1"
         launcher:x="0"
         launcher:y="2" />

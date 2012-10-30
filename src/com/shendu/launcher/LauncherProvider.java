@@ -721,7 +721,6 @@ public class LauncherProvider extends ContentProvider {
 
                     boolean added = false;
                     final String name = parser.getName();
-                    Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites................name."+name);
                     TypedArray a = mContext.obtainStyledAttributes(attrs, R.styleable.Favorite);
 
                     long container = LauncherSettings.Favorites.CONTAINER_DESKTOP;
@@ -755,7 +754,6 @@ public class LauncherProvider extends ContentProvider {
                     } else if (TAG_CLOCK.equals(name)) {
                         added = addClockWidget(db, values);
                     } else if (TAG_APPWIDGET.equals(name)) {
-                    	Log.i(Launcher.TAG, TAG_APPWIDGET+" ......loadFavorites.................");
                     	
                         added = addAppWidget(db, values, a, packageManager);
                     } else if (TAG_SHORTCUT.equals(name)) {

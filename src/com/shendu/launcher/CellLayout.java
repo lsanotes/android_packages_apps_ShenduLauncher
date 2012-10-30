@@ -99,6 +99,7 @@ public class CellLayout extends ViewGroup {
     Drawable mNormalBackground;
     private Drawable mActiveGlowBackground;
     private Drawable mOverScrollForegroundDrawable;
+    private Drawable mHeaderFooterDrawable; //editstate header or footer background drawable
     private Drawable mOverScrollLeft;
     private Drawable mOverScrollRight;
     private Rect mBackgroundRect;
@@ -121,7 +122,7 @@ public class CellLayout extends ViewGroup {
     private final Paint mDragOutlinePaint = new Paint();
 
     private BubbleTextView mPressedOrFocusedIcon;
-    private BubbleLinearLayout mPressedOrFocusedIcon2;
+    private BubbleLinearLayout mPressedOrFocusedIcon2; //used to mark click state
 
     private Drawable mCrosshairsDrawable = null;
     private InterruptibleInOutAnimator mCrosshairsAnimator = null;
@@ -180,6 +181,7 @@ public class CellLayout extends ViewGroup {
         //mActiveGlowBackground = res.getDrawable(R.drawable.homescreen_blue_strong_holo);
         mNormalBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
         mActiveGlowBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
+        mHeaderFooterDrawable = res.getDrawable(R.drawable.thumbnail_new_screen_n);
 
         mOverScrollLeft = res.getDrawable(R.drawable.overscroll_glow_left);
         mOverScrollRight = res.getDrawable(R.drawable.overscroll_glow_right);
@@ -188,6 +190,7 @@ public class CellLayout extends ViewGroup {
 
         mNormalBackground.setFilterBitmap(true);
         mActiveGlowBackground.setFilterBitmap(true);
+        mHeaderFooterDrawable.setFilterBitmap(true);
 
         // Initialize the data structures used for the drag visualization.
 
@@ -296,13 +299,11 @@ public class CellLayout extends ViewGroup {
     }
 
     public void setGridSize(int x, int y) {
-    	 Log.i(Launcher.TAG, TAG+"setGridSize  ............       288   xy:"+x+y);
          
     	
         mCountX = x;
         mCountY = y;
         mOccupied = new boolean[mCountX][mCountY];
-        Log.i(Launcher.TAG, TAG+".......setGridSize....  "+mCountX+mCountY);
         requestLayout();
     }
 
@@ -350,8 +351,6 @@ public class CellLayout extends ViewGroup {
     void setPressedOrFocusedIcon2(BubbleLinearLayout icon){
     	BubbleLinearLayout oldIcon = mPressedOrFocusedIcon2;
     	mPressedOrFocusedIcon2 = icon;
-    	//Log.i("hhl", "===CellLayout.java==setPressedOrFocusedIcon2=="+(oldIcon!=null)+"==="+
-        		//(mPressedOrFocusedIcon2 != null));
         if (oldIcon != null) {
             invalidateBubbleTextView2(oldIcon);
         }
@@ -403,27 +402,26 @@ public class CellLayout extends ViewGroup {
         // When we're small, we are either drawn normally or in the "accepts drops" state (during
         // a drag). However, we also drag the mini hover background *over* one of those two
         // backgrounds
-        if (mBackgroundAlpha > 0.0f) {
+        if (mBackgroundAlpha > 0.0f && (existsLastOccupiedCell()[0]!=-1)) { //draw not empty celllayout background
             Drawable bg;
-
             if (mIsDragOverlapping) {
                 // In the mini case, we draw the active_glow bg *over* the active background
                 bg = mActiveGlowBackground;
             } else {
                 bg = mNormalBackground;
             }
-
+            //setBackgroundDrawable(null); //used to remove the thumbnail drawable
+            bg.setAlpha((int) (mBackgroundAlpha * mBackgroundAlphaMultiplier * 255));
+            bg.setBounds(mBackgroundRect);
+            bg.draw(canvas);
+        }else if(mBackgroundAlpha > 0.0f && (existsLastOccupiedCell()[0]==-1)){ //draw header/footer celllayout background
+        	 Drawable bg = mHeaderFooterDrawable;
             bg.setAlpha((int) (mBackgroundAlpha * mBackgroundAlphaMultiplier * 255));
             bg.setBounds(mBackgroundRect);
             bg.draw(canvas);
         }
-        //Log.i("hhl", "^^^^^^CellLayout.java==onDraw=="+mCellHeight+"==="+mCellWidth+"=="+
-    			//getMeasuredHeight()+"*"+getMeasuredWidth()+"==="+mIsEditstate+"*"+mIsCurrentPage+"**"+
-    			//+mWidthGap+"*"+mHeightGap);
-        if(mIsEditstate && mIsCurrentPage){
+        if(mIsEditstate && mIsCurrentPage && (existsLastOccupiedCell()[0]!=-1)){ //draw celllayout crosshairs
         	//if (mCrosshairsVisibility > 0.0f) {
-        	//Log.i("hhl", "^^^^^^CellLayout.java==onDraw=="+mCellHeight+"==="+mCellWidth+"=="+
-        			//getMeasuredHeight()+"*"+getMeasuredWidth()+"==="+mWidthGap+"*"+mHeightGap);
             final int countX = mCountX;
             final int countY = mCountY;
             final int drawCellWidth = (getMeasuredWidth()-6)/4;
@@ -439,8 +437,6 @@ public class CellLayout extends ViewGroup {
             paintLine.setStrokeWidth(1);
             paintLine.setAntiAlias(true);
             paintLine.setColor(Color.argb(51,255,255,255));
-            //Log.i("hhl", "===CellLayout.java===onDraw()==="+mCellHeight+"*"+mCellWidth+"==="+mHeightGap+"*"+mWidthGap
-            		//+"=="+getPaddingTop()+"*"+getPaddingBottom()+"*"+getPaddingLeft()+"*"+getPaddingRight());
             //int x = getPaddingLeft() - (mWidthGap / 2) - (width / 2);
             int x = -(mWidthGap/2)-(crosshairsWidth/2)+3;
             for (int col = 0; col <= countX; col++) {
@@ -481,7 +477,7 @@ public class CellLayout extends ViewGroup {
         }
         
         final Paint paint = mDragOutlinePaint;
-        for (int i = 0; i < mDragOutlines.length; i++) {
+        for (int i = 0; i < mDragOutlines.length; i++) { //draw itme when need mark drag item outline 
             final float alpha = mDragOutlineAlphas[i];
             if (alpha > 0) {
                 final Point p = mDragOutlines[i];
@@ -504,7 +500,7 @@ public class CellLayout extends ViewGroup {
                         null);
             }
         }*/
-        if (mPressedOrFocusedIcon2 != null) {
+        if (mPressedOrFocusedIcon2 != null) { //draw item when mark click item state 
             final int padding = mPressedOrFocusedIcon2.getPressedOrFocusedBackgroundPadding();
             Bitmap b = mPressedOrFocusedIcon2.getPressedOrFocusedBackground();
             if (b != null) {
@@ -516,7 +512,7 @@ public class CellLayout extends ViewGroup {
         }
 
         // The folder outer / inner ring image(s)
-        for (int i = 0; i < mFolderOuterRings.size(); i++) {
+        for (int i = 0; i < mFolderOuterRings.size(); i++) { //draw item need mark folder background when item enter folder
             FolderRingAnimator fra = mFolderOuterRings.get(i);
 
             // Draw outer ring
@@ -550,7 +546,7 @@ public class CellLayout extends ViewGroup {
 //            canvas.restore();
         }
 
-        if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) {
+        if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) { //draw item when open hotseat folder
             Drawable d = FolderIcon.sSharedFolderLeaveBehind;
             int width = d.getIntrinsicWidth();
             int height = d.getIntrinsicHeight();
@@ -677,19 +673,16 @@ public class CellLayout extends ViewGroup {
     	
         markCellsAsUnoccupiedForView(view);
         mChildren.removeView(view);
-      //  Log.i(Launcher.TAG, TAG+"removeView    ....hou.......mChildren.getChildCount():        "+mChildren.getChildCount());
     }
 
     @Override
     public void removeViewAt(int index) {
-    	// Log.i(Launcher.TAG, TAG+"removeViewAt  markCellsAsUnoccupiedForView  ...........        "+index);
         markCellsAsUnoccupiedForView(mChildren.getChildAt(index));
         mChildren.removeViewAt(index);
     }
 
     @Override
     public void removeViewInLayout(View view) {
-    	// Log.i(Launcher.TAG, TAG+"removeViewInLayout  markCellsAsUnoccupiedForView  ...........        ");
         markCellsAsUnoccupiedForView(view);
         mChildren.removeViewInLayout(view);
     }
@@ -697,7 +690,6 @@ public class CellLayout extends ViewGroup {
     @Override
     public void removeViews(int start, int count) {
         for (int i = start; i < start + count; i++) {
-        //	 Log.i(Launcher.TAG, TAG+"removeViews(for  markCellsAsUnoccupiedForView  ...........        ");
             markCellsAsUnoccupiedForView(mChildren.getChildAt(i));
         }
         mChildren.removeViews(start, count);
@@ -706,7 +698,6 @@ public class CellLayout extends ViewGroup {
     @Override
     public void removeViewsInLayout(int start, int count) {
         for (int i = start; i < start + count; i++) {
-        	 Log.i(Launcher.TAG, TAG+"removeViewsInLayout(for  markCellsAsUnoccupiedForView  ...........        ");
             markCellsAsUnoccupiedForView(mChildren.getChildAt(i));
         }
         mChildren.removeViewsInLayout(start, count);

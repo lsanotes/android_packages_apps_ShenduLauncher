@@ -455,6 +455,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
         		Intent intent = new Intent(Intent.ACTION_DELETE, Uri.fromParts("package",pkgName,className));
         		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         		getContext().startActivity(intent);
+        		//mLauncher.startActivityForResult(intent, Launcher.REQUEST_UNINSTALL_APP);
         	}
     	}
     }

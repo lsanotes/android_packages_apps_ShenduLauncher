@@ -186,6 +186,10 @@ public abstract class PagedView extends ViewGroup {
 
     // If set, will defer loading associated pages until the scrolling settles
     private boolean mDeferLoadAssociatedPagesUntilScrollCompletes;
+    
+
+    private float muiltiDistance;
+
 
     public interface PageSwitchListener {
         void onPageSwitch(View newPage, int newPageIndex);
@@ -894,6 +898,9 @@ public abstract class PagedView extends ViewGroup {
     protected boolean hitsNextPage(float x, float y) {
         return  (x > (getMeasuredWidth() - getRelativeChildOffset(mCurrentPage) + mPageSpacing));
     }
+    
+    
+    int pointerCount;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -917,15 +924,25 @@ public abstract class PagedView extends ViewGroup {
                 (mTouchState == TOUCH_STATE_SCROLLING)) {
             return true;
         }
+        
+        pointerCount = ev.getPointerCount();  
 
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_MOVE: {
-                /*
+               
+        		if(pointerCount>1&&muiltiDistance==0){
+        			
+        			muiltiDistance =(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0));
+        		
+        		}
+            
+            	
+            	/*
                  * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
                  * whether the user has moved far enough from his original down touch.
                  */
-                if (mActivePointerId != INVALID_POINTER) {
-                	 Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev): mActivePointerId."+mActivePointerId);
+        
+            	if (mActivePointerId != INVALID_POINTER) {
                     determineScrollingStart(ev);
                     break;
                 }
@@ -988,6 +1005,13 @@ public abstract class PagedView extends ViewGroup {
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
+            	
+                if((pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
+               	 showPreviews();
+               }
+
+               muiltiDistance =0;
+
                 onSecondaryPointerUp(ev);
                 releaseVelocityTracker();
                 break;
@@ -998,10 +1022,11 @@ public abstract class PagedView extends ViewGroup {
          * drag mode.
          */
         
-        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............return:."+ (mTouchState != TOUCH_STATE_REST));
         return mTouchState != TOUCH_STATE_REST;
     }
-
+   public void  showPreviews(){
+	   
+  }
     protected void animateClickFeedback(View v, final Runnable r) {
         // animate the view slightly to show click feedback running some logic after it is "pressed"
         //ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.
@@ -1030,7 +1055,6 @@ public abstract class PagedView extends ViewGroup {
          */
         final int pointerIndex = ev.findPointerIndex(mActivePointerId);
         
-        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):  pointerIndex."+pointerIndex);
         if (pointerIndex == -1) {
             return;
         }
@@ -1040,11 +1064,9 @@ public abstract class PagedView extends ViewGroup {
         final int yDiff = (int) Math.abs(y - mLastMotionY);
 
         final int touchSlop = Math.round(touchSlopScale * mTouchSlop);
-        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):."+touchSlop+"  xDiff:"+xDiff+"  mPagingTouchSlop:"+mPagingTouchSlop);
         boolean xPaged = xDiff > mPagingTouchSlop;
         boolean xMoved = xDiff > touchSlop;
         boolean yMoved = yDiff > touchSlop;
-        Log.i(Launcher.TAG, TAG+"onInterceptTouchEvent...............determineScrollingStart(ev):."+yMoved+xMoved+xPaged);
         if (xMoved || xPaged || yMoved) {
             if (mUsePagingTouchSlop ? xPaged : xMoved) {
                 // Scroll if the user moved far enough along the X axis
@@ -1294,6 +1316,13 @@ public abstract class PagedView extends ViewGroup {
             break;
 
         case MotionEvent.ACTION_POINTER_UP:
+        	
+            
+            if((pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
+           	 showPreviews();
+           }
+           muiltiDistance =0;
+           
             onSecondaryPointerUp(ev);
             break;
         }
@@ -1316,10 +1345,8 @@ public abstract class PagedView extends ViewGroup {
                         vscroll = -event.getAxisValue(MotionEvent.AXIS_VSCROLL);
                         hscroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
                     }
-                    Log.i(Launcher.TAG, TAG+"    .onGenericMotionEvent()......................"+hscroll +"  :  "+vscroll);	
                     if (hscroll != 0 || vscroll != 0) {
                     	
-                    	Log.i(Launcher.TAG, TAG+"    .onGenericMotionEvent()......................"+(hscroll > 0) +(vscroll > 0));	
                         if (hscroll > 0 || vscroll > 0) {
                             scrollRight();
                         } else {
@@ -1802,7 +1829,7 @@ public abstract class PagedView extends ViewGroup {
         postDelayed(hideScrollingIndicatorRunnable, sScrollIndicatorFlashDuration);
     }
 
-    protected void showScrollingIndicator(boolean immediately) {
+    public void showScrollingIndicator(boolean immediately) {
         showScrollingIndicator(immediately, sScrollIndicatorFadeInDuration);
     }
 
@@ -1833,7 +1860,7 @@ public abstract class PagedView extends ViewGroup {
         }
     }*/
 
-    protected void hideScrollingIndicator(boolean immediately) {
+    public void hideScrollingIndicator(boolean immediately) {
         if(immediately){
             hideScrollingIndicator(immediately, sScrollIndicatorFadeOutDuration);
         }else{

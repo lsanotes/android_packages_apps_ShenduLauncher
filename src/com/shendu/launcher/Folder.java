@@ -725,6 +725,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     public void onDropCompleted(View target, DragObject d, boolean success) {
+    	
+    	if(success && target instanceof DeleteDropTarget && 
+    			(((ItemInfo)d.dragInfo).itemType==LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT)){ //used for uninstall app
+    		success = false;
+    		d.cancelled = true;
+    	}
+    
         if (success) {
             if (mDeleteFolderOnDropCompleted && !mItemAddedBackToSelfViaIcon) {
                 replaceFolderWithFinalItem();

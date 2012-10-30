@@ -24,7 +24,7 @@ public class FolderItemsPageView extends PagedView{
 	public FolderItemsPageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		mContext =context;
-		Log.i("hhl", "^^^^^^^^^^FolderItemsPageView.java==FolderItemsPageView==="+getClass().getName());
+		//Log.i("hhl", "^^^^^^^^^^FolderItemsPageView.java==FolderItemsPageView==="+getClass().getName());
 		 
 		 mContent = (CellLayout)findViewById(R.id.folder_content);
 		 
@@ -43,7 +43,7 @@ public class FolderItemsPageView extends PagedView{
 	
 	protected void onLayout(boolean changed, int left, int top, int right,int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
-		Log.i("hhl", "^^^^^^^^^^FolderItemsPageView.java==onLayout==="+getClass().getName());
+		//Log.i("hhl", "^^^^^^^^^^FolderItemsPageView.java==onLayout==="+getClass().getName());
 	}
 	
 	/*protected void onFinishInflate(){
@@ -79,7 +79,7 @@ public class FolderItemsPageView extends PagedView{
 	
 	public int addViewToPageCellLayout(int screen,View child, int index, int childId, 
 			CellLayout.LayoutParams params, boolean markCells){
-    	Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==111=="+childId);
+    	//Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==111=="+childId);
 		int newScreen = -1;
 		CellLayout cellLayout = null;
 		if(screen>=0){
@@ -92,13 +92,13 @@ public class FolderItemsPageView extends PagedView{
 				addScreen();
 			}
 			cellLayout = (CellLayout)getChildAt(getChildCount()-1);
-	    	Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==222=="+getChildCount()+
-	    			params.cellX+"==="+params.cellY);
+	    	//Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==222=="+getChildCount()+
+	    			//params.cellX+"==="+params.cellY);
 			cellLayout.addViewToCellLayout(child,index,childId,params,markCells);
 			newScreen = getChildCount();
 		}
 
-    	Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==3333=="+newScreen);
+    	//Log.i("hhl", "===FolderItemsPageView.java...addViewToPageCellLayout()==3333=="+newScreen);
 		return newScreen;
 				
 	}

@@ -15,7 +15,7 @@
      
    
      
-     
+      android:background="@drawable/thumbnail_new_screen_n"
      changed the background 
 -->
 
@@ -30,8 +30,6 @@
     android:paddingBottom="@dimen/workspace_bottom_padding"
     android:hapticFeedbackEnabled="false"
     
-    android:background="@drawable/thumbnail_new_screen_n"
-
     launcher:cellWidth="@dimen/workspace_cell_width"
     launcher:cellHeight="@dimen/workspace_cell_height"
     launcher:widthGap="@dimen/workspace_width_gap"

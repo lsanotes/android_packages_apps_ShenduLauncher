@@ -39,11 +39,13 @@ import android.content.ClipDescription;
 import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -53,7 +55,10 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -82,6 +87,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -94,14 +100,18 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Advanceable;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.common.Search;
+
 import com.shendu.launcher.R;
 import com.shendu.launcher.DropTarget.DragObject;
 import com.shendu.launcher.Workspace.State;
@@ -144,6 +154,7 @@ public final class Launcher extends Activity
     private static final int REQUEST_PICK_SHORTCUT = 7;
     private static final int REQUEST_PICK_APPWIDGET = 9;
     private static final int REQUEST_PICK_WALLPAPER = 10;
+    public static final int REQUEST_UNINSTALL_APP = 11;
 
     static final String EXTRA_SHORTCUT_DUPLICATE = "duplicate";
 
@@ -530,7 +541,7 @@ public final class Launcher extends Activity
                 processShortcut(args.intent);
                 break;
             case REQUEST_CREATE_SHORTCUT:
-                completeAddShortcut(args.intent, args.container, args.screen, args.cellX,
+                completeAddShortcut(args.intent, args.container, args.screen-1, args.cellX,
                         args.cellY);
                 result = true;
                 break;
@@ -539,7 +550,7 @@ public final class Launcher extends Activity
                 break;
             case REQUEST_CREATE_APPWIDGET:
                 int appWidgetId = args.intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-                completeAddAppWidget(appWidgetId, args.container, args.screen);
+                completeAddAppWidget(appWidgetId, args.container, args.screen-1);
                 result = true;
                 break;
             case REQUEST_PICK_WALLPAPER:
@@ -590,6 +601,12 @@ public final class Launcher extends Activity
             	mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
               }
         }
+        //add by hhl,handle uninstall app success or not
+        /*if(resultCode==RESULT_OK && requestCode==REQUEST_UNINSTALL_APP){
+        	bindPackagesUpdated(); //update widget
+        }else if(resultCode==RESULT_CANCELED && requestCode==REQUEST_UNINSTALL_APP){
+        	
+         }*/
 
         // Exit spring loaded mode if necessary after cancelling the configuration of a widget
 		
@@ -1912,29 +1929,21 @@ public final class Launcher extends Activity
         }
     }
     
-     void backFromEditMode(){
-    	 
-   
-    	if(mWorkspace.isSmall()){
-    		CellLayout.mIsEditstate = false; //used to draw line condition
-    		setScreenNoLimit();
-    		
-    		  final Runnable exitSpringLoadedRunnable = new Runnable() {
-                  @Override
-                  public void run() {
-                      exitSpringLoadedDragModeDelayed(true, false);
-                      
-                   //   mWorkspace.removeTheHeaderOrFooterSpace(); 
-                      
-                      // update all when drag item in editMode
-                    //  mWorkspace.updateAllScreen();
-                  }
-              };
-              exitSpringLoadedRunnable.run();
-     
-    	}
-    	
-    }
+	void backFromEditMode(){
+		if(mWorkspace.isSmall()){
+			CellLayout.mIsEditstate = false; //used to draw line condition
+			setScreenNoLimit();
+			final Runnable exitSpringLoadedRunnable = new Runnable() {
+				public void run() {
+					exitSpringLoadedDragModeDelayed(true, false);
+					mWorkspace.removeTheHeaderOrFooterSpace(); 
+					// update all when drag item in editMode
+                      mWorkspace.updateScreensFromIndex(0);
+				}
+			};
+			exitSpringLoadedRunnable.run();
+		}
+	}
 
     /**
      * Re-listen when widgets are reset.
@@ -1973,7 +1982,6 @@ public final class Launcher extends Activity
     	if(mWorkspace.isSmall()){
     		return ;
     	}
-    	
     	
         if (v.getWindowToken() == null) {
             return;
@@ -2363,19 +2371,16 @@ public final class Launcher extends Activity
         return true;
     }
     
-    
-    private  void enterEditMode(){
-    	CellLayout.mIsEditstate = true; //used to draw line condition
-    	if (mAppsCustomizeTabHost != null) {
-            mAppsCustomizeTabHost.selectWidgetsTab();
-        }
-        hideHotseat(true);
-        showAllApps(true);
-    	setFullScreen();
-    
-    //	mWorkspace.addTheHeaderOrFooterSpace();
-      
-      mWorkspace.changeState(Workspace.State.SPRING_LOADED);
+	public void enterEditMode(){
+		CellLayout.mIsEditstate = true; //used to draw line condition
+		if (mAppsCustomizeTabHost != null) {
+			mAppsCustomizeTabHost.selectWidgetsTab();
+		}
+		hideHotseat(true);
+		showAllApps(true);
+		setFullScreen();
+		mWorkspace.addTheHeaderOrFooterSpace();
+		mWorkspace.changeState(Workspace.State.SPRING_LOADED);
        mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
       }
 
@@ -3434,7 +3439,6 @@ public final class Launcher extends Activity
 
         for (int i=0; i<count; i++) {
       	  final ShortcutInfo shorCutInfo = apps.get(i);
-      	  Log.i(Launcher.TAG,TAG+ ".addAppsToWorkspace.......................shorCutInfo:.."+shorCutInfo.toString());
 
       	   if(cellX>=cellCountX-1&&cellY>=cellCountY-1){
       		   screenNum++;
@@ -3469,7 +3473,6 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
-    	Log.i(Launcher.TAG,TAG+ ".bindAllApplications........................."+apps.size());
     	addAppsToWorkspace(apps);
 		/*View progressBar = mAppsCustomizeTabHost.
             findViewById(R.id.apps_customize_progress_bar);
@@ -3793,7 +3796,363 @@ public final class Launcher extends Activity
      
      	mWindow.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
      }
+     
+     
+     
+ 	@SuppressWarnings({ "unchecked" })
+ 	private void dismissPreview() {
+ 		final PopupWindow window = mScreenPopupWindow;
+ 		mWorkspace.isShowPreviews=false;
+ 		
+		mWorkspace.setVisibility(View.VISIBLE);
+		
+		mHotseat.setVisibility(View.VISIBLE);
+		mSearchDropTargetBar.setVisibility(View.VISIBLE);
+		mWorkspace.showScrollingIndicator(false);
+		
+		
+ 		if (window != null) {
+ 			window.setOnDismissListener(new PopupWindow.OnDismissListener() {
+ 				public void onDismiss() {
+ 				
+// 					ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) v
+// 							.getTag(R.id.icon);
+// 					for (Bitmap bitmap : bitmaps)
+// 						bitmap.recycle();
+//
+// 					v.setTag(R.id.workspace, null);
+// 					v.setTag(R.id.icon, null);
+					
+					mHotseat.setVisibility(View.VISIBLE);
+ 					window.setOnDismissListener(null);
+ 				}
+ 			});
+ 			window.dismiss();
+ 		}
+ 		//v.setTag(null);
+ 	}
+ 	
+ 	
+     
+ 	private PopupWindow mScreenPopupWindow;
+ 	
+ 	
+ 	 void showPreviews(final View anchor, int start, int end) {
+		
+		closeFolder();
+		mWorkspace.setVisibility(View.INVISIBLE);
+		mHotseat.setVisibility(View.INVISIBLE);
+		mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+		mWorkspace.hideScrollingIndicator(true);
+		final Resources resources = getResources();
+		final Workspace workspace = mWorkspace;
+
+		CellLayout cell = ((CellLayout) workspace.getChildAt(start));
+
+		//float max = workspace.getChildCount();
+	    float max=3;
+
+		final Rect r = new Rect();
+		resources.getDrawable(R.drawable.preview_background).getPadding(r);
+		int extraW = (int) ((r.left + r.right) * max);
+		int extraH = r.top + r.bottom;
+		//Log.i("hhl", "...Launcher.java...showPreviews()...."+ r.left+"==="+ r.top+"==="+
+				//r.right+"==="+r.bottom);
+		int aW = cell.getWidth() - extraW;
+		float w = aW / max;
+
+		int width = cell.getWidth();
+		int height = cell.getHeight();
+		int x = cell.getPaddingLeft();
+		int y = cell.getPaddingTop();
+		width -= (x + cell.getPaddingRight());
+		height -= (y + cell.getPaddingBottom());
+
+		float scale = w / width;
+
+		int count = end - start;
+
+		final float sWidth = width * scale;
+		float sHeight = height * scale;
+		//Log.i("hhl", "...Launcher.java...showPreviews()..2057.."+ w+"=="+sWidth+"==="+sHeight);
+		LinearLayout preview = new LinearLayout(this);
+		preview.setBackgroundColor(Color.argb(64, 0, 0, 0));
+
+
+		PreviewTouchHandler handler = new PreviewTouchHandler(anchor);
+
+		final ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>(count+1);  
+
+		for (int i = start; i < end; i++) {
+	
+			HashMap<String,Bitmap > imageMap = new HashMap<String, Bitmap>();  
+			 
+			cell = (CellLayout) workspace.getChildAt(i);
+			cell.setAlpha(1);
+			
+			final Bitmap bitmap = Bitmap.createBitmap((int) sWidth,
+					(int) sHeight, Bitmap.Config.ARGB_8888);
+
+			final Canvas c = new Canvas(bitmap);
+			c.scale(scale-0.02f, scale-0.02f);
+			c.translate(-cell.getPaddingLeft()+15, -cell.getPaddingTop());
+			cell.dispatchDraw(c);
+	
+			bitmaps.add(bitmap);
+	
+		}
+		
+		/****add by zlf***************/
+//		bitmaps.add(Bitmap.createBitmap((int) sWidth,
+//				(int) sHeight, Bitmap.Config.ARGB_8888));
+
+		PreviewAdapter previewAdapter = new PreviewAdapter(this, bitmaps,handler);
+		GridView preViewGrid=new GridView(this);
+		preViewGrid.setVerticalSpacing(10);
+		preViewGrid.setHorizontalSpacing(10);
+		preViewGrid.setPadding(10, 10, 10, 10);
+		//preViewGrid.setCacheColorHint(R.color.gridview_cache);
+		preViewGrid.setFadingEdgeLength(48);
+		preViewGrid.setFocusableInTouchMode(false);
+		preViewGrid.setFocusable(false);
+		preViewGrid.setNumColumns(3);
+		preViewGrid.setGravity(Gravity.CENTER);
+		preViewGrid.setAdapter(previewAdapter);
+		
+		preview.addView(preViewGrid,LinearLayout.LayoutParams.FILL_PARENT,
+				LinearLayout.LayoutParams.FILL_PARENT);
+		
+/***************************************/
+
+		mScreenPopupWindow = new PopupWindow(this);
+
+		mScreenPopupWindow.setContentView(preview);
+		CellLayout cell1 = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
+		
+		WindowManager wm = (WindowManager)getBaseContext().getSystemService(Context.WINDOW_SERVICE);
+
+ 
+		
+		mScreenPopupWindow.setWidth( cell1.getWidth());
+		mScreenPopupWindow.setHeight(  wm.getDefaultDisplay().getHeight());
+		
+		mScreenPopupWindow.setAnimationStyle(R.style.AnimationPreview);
+		mScreenPopupWindow.setOutsideTouchable(true);
+		mScreenPopupWindow.setFocusable(true);
+		mScreenPopupWindow.setBackgroundDrawable(new ColorDrawable(0));
+		mScreenPopupWindow.showAtLocation(cell1, 0, 0, 38);
+		mScreenPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+			public void onDismiss() {
+				dismissPreview();
+	
+			
+				new Thread(){
+					public void run(){
+						for (Bitmap bitmap : bitmaps){
+							bitmap.recycle();
+						}
+					}
+				}.start();
+			}
+		});
+	}
+ 	
+
+             
+ 	
+	class PreviewAdapter extends BaseAdapter{
+		private Context mContext;
+		private	ArrayList<Bitmap> imageMaps =null;  
+		private	PreviewTouchHandler handler;
+		
+		  private 	 SharedPreferences 	sharePreferences =
+	             getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_WORLD_READABLE);
+		
+		public PreviewAdapter(Context context,ArrayList<Bitmap> imageMap,PreviewTouchHandler mHandler){
+			this.mContext=context;
+			this.imageMaps=imageMap;
+			this.handler=mHandler;
+		}
+
+		public int getCount() {
+			return imageMaps.size();
+		}
+
+		public Object getItem(int arg0) {
+			return null;
+		}
+
+		public long getItemId(int arg0) {
+			return 0;
+		}
+
+		public View getView(final int arg0, View arg1, ViewGroup arg2) {
+			View view=null;
+			view=getLayoutInflater().inflate(R.layout.launcher_preview, null);
+			ImageView image=(ImageView) view.findViewById(R.id.launcher_preview_image);
+			/*if(arg0==imageMaps.size()-1){
+			   image.setBackgroundDrawable(mContext.getResources()
+					   .getDrawable(R.drawable.preview_background_add));
+				// image.setImageBitmap(null);
+			   image.setOnClickListener(new View.OnClickListener() {
+				   public void onClick(View v) {
+					   int count =mWorkspace.getChildCount();
+					   if(count<8){
+			               View workspaceScreen = mInflater.inflate(R.layout.workspace_screen, null);
+			               mWorkspace.addView(workspaceScreen,count);
+			               mWorkspace.setHapticFeedbackEnabled(false);
+			               mWorkspace.setOnClickListener((OnClickListener)mContext);
+			               mWorkspace.setOnLongClickListener((OnLongClickListener)mContext);
+			            //   mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
+			               
+			               Editor editorAdd = sharePreferences.edit();
+			               editorAdd.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
+			               editorAdd.commit();
+	
+			               imageMaps.add(imageMaps.get(imageMaps.size()-1));
+						
+				       }
+					   PreviewAdapter.this.notifyDataSetChanged();
+					}
+				});
+
+			}else{*/
+				int defaultPage=  sharePreferences.getInt("ui_homescreen_default_screen", -1);
+				if(mWorkspace.getChildCount()==arg0){
+					image.setBackgroundDrawable(mContext.getResources().getDrawable(
+							  R.drawable.preview_background_currentpage));
+				}else{
+					if(defaultPage==arg0){
+						image.setBackgroundDrawable(mContext.getResources()
+								 .getDrawable(R.drawable.preview_background_defaultpage));
+				    }else{
+				    	image.setBackgroundDrawable(mContext.getResources()
+				    			 .getDrawable(R.drawable.preview_background));
+				    }
+				}
+
+				image.setImageBitmap(imageMaps.get(arg0)); 
+				image.setTag(arg0);
+		        image.setOnClickListener(handler);
+		        image.setOnFocusChangeListener(handler);
+		        image.setFocusable(true);
+			//}
+		
+	        ImageView imageDelete=(ImageView) view.findViewById(R.id.launcher_preview_imagedelete);
+	        final ImageView setDefaultPage=(ImageView) view.findViewById(R.id.launcher_preview_defaultpage);
+	         
+	       // if(arg0!=imageMaps.size()-1){
+	        	 defaultPage=mWorkspace.mDefaultHomescreen;
+	        	imageDelete.setImageDrawable(getResources().getDrawable(R.drawable.preview_delete_bg)); 
+	        	
+	        	if(!(((CellLayout) mWorkspace.getChildAt(arg0)).existsLastOccupiedCell()[0]==-1)){
+	        		imageDelete.setVisibility(View.GONE);
+	        	}
+	        	
+		       if(defaultPage==arg0){
+		        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
+		        }else{
+		        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
+		        }
+
+		        imageDelete.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						if(mWorkspace.getChildCount()==1){
+							//Toast.makeText(mContext, R.string.delete_screens_atleast3,Toast.LENGTH_LONG).show();
+							return ;
+				        }
+				        /*if(mWorkspace.getChildCount()-1==mWorkspace.getCurrentScreen()){
+				        	mWorkspace.setCurrentScreen(mWorkspace.getChildCount()-2);
+				        }*/
+						if(arg0<=mWorkspace.getCurrentPage()){
+							mWorkspace.setCurrentPage(mWorkspace.getCurrentPage()-1<0 ?
+									0:mWorkspace.getCurrentPage()-1);
+						}
+				        if(mWorkspace.mDefaultHomescreen==arg0){
+				           	mWorkspace.setDefaultPage(0);
+					    }else if(mWorkspace.mDefaultHomescreen >arg0){
+			           		mWorkspace.setDefaultPage(mWorkspace.mDefaultHomescreen-1);
+			           	}
+				        ContentResolver deleteCR = getContentResolver();
+				        deleteCR.delete(LauncherSettings.Favorites.CONTENT_URI,LauncherSettings.Favorites.SCREEN+"="+arg0, null);
+				        deleteCR = null;
+				        if(arg0!=mWorkspace.getChildCount()-1){
+				        	ContentResolver updateCR = getContentResolver();
+				        	Cursor updateC = updateCR.query(LauncherSettings.Favorites.CONTENT_URI, null, 
+				        			LauncherSettings.Favorites.SCREEN+">"+arg0,null,"screen ASC");
+				        	
+				        	for(updateC.moveToFirst();!updateC.isAfterLast();updateC.moveToNext()){
+				        		ContentValues updateCV = new ContentValues();
+				        		int screen = updateC.getInt(updateC.getColumnIndex(LauncherSettings.Favorites.SCREEN));
+
+				        		updateCV.put(LauncherSettings.Favorites.SCREEN,screen-1);
+					           	updateCR.update(LauncherSettings.Favorites.CONTENT_URI, updateCV, 
+					           			LauncherSettings.Favorites.SCREEN+"="+screen, null);
+					           	updateCV =null;
+				        	}
+				        	updateC.close();
+				        }
+			        	
+		
+				        mWorkspace.removeViewAt(arg0);
+				       // mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
+				        Editor editorDelete= sharePreferences.edit();
+				        editorDelete.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
+				        editorDelete.commit();
+				             
+				        imageMaps.remove(arg0);
+				          	 
+				        PreviewAdapter.this.notifyDataSetChanged();
+					}
+					
+				});
+		        setDefaultPage.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
+						mWorkspace.setDefaultPage(arg0);
+						PreviewAdapter.this.notifyDataSetChanged();
+					}
+		        });
+	         //}
+	        return view;
+		}
+	}
+	
+	
+ 	
+class PreviewTouchHandler implements View.OnClickListener, Runnable,
+	View.OnFocusChangeListener {
+private final View mAnchor;
+
+public PreviewTouchHandler(View anchor) {
+	mAnchor = anchor;
 }
+
+public void onClick(View v) {
+	//mWorkspace.setVisibility(View.VISIBLE);
+	//mShortcutBar.setVisibility(View.VISIBLE);
+	mWorkspace.snapToPage((Integer) v.getTag());
+	if(mScreenPopupWindow!=null){
+		mScreenPopupWindow.dismiss();
+	}
+	//v.post(this);
+}
+
+public void run() {
+
+	dismissPreview();
+}
+
+public void onFocusChange(View v, boolean hasFocus) {
+	if (hasFocus) {
+		mWorkspace.snapToPage((Integer) v.getTag());
+	}
+}
+}
+ 	
+}
+
+
 
 interface LauncherTransitionable {
     // return true if the callee will take care of start the animation by itself
