@@ -520,6 +520,21 @@ public class DragController {
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
                     mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
+                }else if(!mLauncher.getWorkspace().isSmall()){
+                
+                	 if(!addNewScreen ){
+                		 addNewScreen= true;
+                     	 mScrollState = SCROLL_OUTSIDE_ZONE;
+                    	 mLauncher.getWorkspace().addScreen(null); 
+                    	 mLauncher.getWorkspace().savedThePageCount();
+                    	 if(mLauncher.getWorkspace().isSmall()){
+                    	   	 mLauncher.getWorkspace().changeState(Workspace.State.NORMAL);
+                        	 mLauncher.getWorkspace().changeState(Workspace.State.SPRING_LOADED); 
+                    	 }
+                 
+                	 }
+            
+                	
                 }
             }
         } else {
@@ -531,6 +546,26 @@ public class DragController {
             }
         }
     }
+
+//        } else if (x > mScrollView.getWidth() - mScrollZone) {
+//            if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
+//                mScrollState = SCROLL_WAITING_IN_ZONE;
+//                
+//         
+//                if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
+//                    mScrollRunnable.setDirection(SCROLL_RIGHT);
+//                    mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
+//                }
+//            }
+//        } else {
+//            if (mScrollState == SCROLL_WAITING_IN_ZONE) {
+//                mScrollState = SCROLL_OUTSIDE_ZONE;
+//                mScrollRunnable.setDirection(SCROLL_RIGHT);
+//                mHandler.removeCallbacks(mScrollRunnable);
+//                mDragScroller.onExitScrollArea();
+//            }
+//        }
+//    }
 
 
     /**

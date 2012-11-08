@@ -875,8 +875,8 @@ public class Workspace extends PagedView
             break;
         case MotionEvent.ACTION_POINTER_UP:
         case MotionEvent.ACTION_UP:
-        	
-        	if(!isSmall()){
+        
+        	if(!isSmall()&& ev.getPointerCount()==1){
         		if((!isShowPreviews)&&(ev.getY()-OpenStatusBarBeginY>130)){ //touch bottom
         			showNotifications();
         		}

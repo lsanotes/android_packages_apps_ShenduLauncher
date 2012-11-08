@@ -107,6 +107,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -226,6 +227,8 @@ public final class Launcher extends Activity
     private SearchDropTargetBar mSearchDropTargetBar;
     private AppsCustomizeTabHost mAppsCustomizeTabHost;
     private AppsCustomizePagedView mAppsCustomizeContent;
+    
+    private Folder mAppFolder;
     private boolean mAutoAdvanceRunning = false;
 
     private Bundle mSavedState;
@@ -863,6 +866,8 @@ public final class Launcher extends Activity
                 mAppsCustomizeTabHost.findViewById(R.id.apps_customize_pane_content);
         mAppsCustomizeContent.setup(this, dragController);
         
+     //   mAppFolder = (Folder)findViewById(R.id.user_folder);
+        
       //  dragController.addDragListener(mAppsCustomizeContent);
         
         
@@ -1430,6 +1435,10 @@ public final class Launcher extends Activity
     protected void onNewIntent(Intent intent) {
 
         super.onNewIntent(intent);
+        
+        if(mWorkspace.isShowPreviews){
+        	mScreenPopupWindow.dismiss();
+        }
 
         // Close the menu
         if (Intent.ACTION_MAIN.equals(intent.getAction())) {
@@ -2015,6 +2024,8 @@ public final class Launcher extends Activity
             if (v instanceof FolderIcon) {
                 FolderIcon fi = (FolderIcon) v;
                 handleFolderClick(fi);
+                
+          
             }
         	}
         } 
@@ -2284,8 +2295,8 @@ public final class Launcher extends Activity
     public void openFolder(FolderIcon folderIcon) {
         Folder folder = folderIcon.mFolder;
         FolderInfo info = folder.mInfo;
-
-        growAndFadeOutFolderIcon(folderIcon);
+        //
+       // growAndFadeOutFolderIcon(folderIcon);
         info.opened = true;
 
         // Just verify that the folder hasn't already been added to the DragLayer.
@@ -2297,7 +2308,8 @@ public final class Launcher extends Activity
             Log.w(TAG, "Opening folder (" + folder + ") which already has a parent (" +
                     folder.getParent() + ").");
         }
-        folder.animateOpen();
+      folder.animateOpen();
+   
     }
 
     public void closeFolder() {
@@ -2560,7 +2572,7 @@ public final class Launcher extends Activity
                 & WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER;
         if (wpflags != curflags) {
             getWindow().setFlags(wpflags, WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER);
-        }
+       }
     }
 
     /**
@@ -3809,27 +3821,7 @@ public final class Launcher extends Activity
 		mHotseat.setVisibility(View.VISIBLE);
 		mSearchDropTargetBar.setVisibility(View.VISIBLE);
 		mWorkspace.showScrollingIndicator(false);
-		
-		
- 		if (window != null) {
- 			window.setOnDismissListener(new PopupWindow.OnDismissListener() {
- 				public void onDismiss() {
- 				
-// 					ArrayList<Bitmap> bitmaps = (ArrayList<Bitmap>) v
-// 							.getTag(R.id.icon);
-// 					for (Bitmap bitmap : bitmaps)
-// 						bitmap.recycle();
-//
-// 					v.setTag(R.id.workspace, null);
-// 					v.setTag(R.id.icon, null);
-					
-					mHotseat.setVisibility(View.VISIBLE);
- 					window.setOnDismissListener(null);
- 				}
- 			});
- 			window.dismiss();
- 		}
- 		//v.setTag(null);
+	
  	}
  	
  	
@@ -3874,12 +3866,8 @@ public final class Launcher extends Activity
 
 		final float sWidth = width * scale;
 		float sHeight = height * scale;
-		//Log.i("hhl", "...Launcher.java...showPreviews()..2057.."+ w+"=="+sWidth+"==="+sHeight);
 		LinearLayout preview = new LinearLayout(this);
 		preview.setBackgroundColor(Color.argb(64, 0, 0, 0));
-
-
-		PreviewTouchHandler handler = new PreviewTouchHandler(anchor);
 
 		final ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>(count+1);  
 
@@ -3906,7 +3894,7 @@ public final class Launcher extends Activity
 //		bitmaps.add(Bitmap.createBitmap((int) sWidth,
 //				(int) sHeight, Bitmap.Config.ARGB_8888));
 
-		PreviewAdapter previewAdapter = new PreviewAdapter(this, bitmaps,handler);
+		PreviewAdapter previewAdapter = new PreviewAdapter(this, bitmaps);
 		GridView preViewGrid=new GridView(this);
 		preViewGrid.setVerticalSpacing(10);
 		preViewGrid.setHorizontalSpacing(10);
@@ -3921,8 +3909,7 @@ public final class Launcher extends Activity
 		
 		preview.addView(preViewGrid,LinearLayout.LayoutParams.FILL_PARENT,
 				LinearLayout.LayoutParams.FILL_PARENT);
-		
-/***************************************/
+
 
 		mScreenPopupWindow = new PopupWindow(this);
 
@@ -3963,15 +3950,14 @@ public final class Launcher extends Activity
 	class PreviewAdapter extends BaseAdapter{
 		private Context mContext;
 		private	ArrayList<Bitmap> imageMaps =null;  
-		private	PreviewTouchHandler handler;
 		
 		  private 	 SharedPreferences 	sharePreferences =
 	             getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_WORLD_READABLE);
 		
-		public PreviewAdapter(Context context,ArrayList<Bitmap> imageMap,PreviewTouchHandler mHandler){
+		public PreviewAdapter(Context context,ArrayList<Bitmap> imageMap){
 			this.mContext=context;
 			this.imageMaps=imageMap;
-			this.handler=mHandler;
+		
 		}
 
 		public int getCount() {
@@ -3990,35 +3976,9 @@ public final class Launcher extends Activity
 			View view=null;
 			view=getLayoutInflater().inflate(R.layout.launcher_preview, null);
 			ImageView image=(ImageView) view.findViewById(R.id.launcher_preview_image);
-			/*if(arg0==imageMaps.size()-1){
-			   image.setBackgroundDrawable(mContext.getResources()
-					   .getDrawable(R.drawable.preview_background_add));
-				// image.setImageBitmap(null);
-			   image.setOnClickListener(new View.OnClickListener() {
-				   public void onClick(View v) {
-					   int count =mWorkspace.getChildCount();
-					   if(count<8){
-			               View workspaceScreen = mInflater.inflate(R.layout.workspace_screen, null);
-			               mWorkspace.addView(workspaceScreen,count);
-			               mWorkspace.setHapticFeedbackEnabled(false);
-			               mWorkspace.setOnClickListener((OnClickListener)mContext);
-			               mWorkspace.setOnLongClickListener((OnLongClickListener)mContext);
-			            //   mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
-			               
-			               Editor editorAdd = sharePreferences.edit();
-			               editorAdd.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
-			               editorAdd.commit();
-	
-			               imageMaps.add(imageMaps.get(imageMaps.size()-1));
-						
-				       }
-					   PreviewAdapter.this.notifyDataSetChanged();
-					}
-				});
-
-			}else{*/
-				int defaultPage=  sharePreferences.getInt("ui_homescreen_default_screen", -1);
-				if(mWorkspace.getChildCount()==arg0){
+			
+				int defaultPage=  sharePreferences.getInt("ui_homescreen_default_screen", -1)-1;
+				if(mWorkspace.mCurrentPage==arg0){
 					image.setBackgroundDrawable(mContext.getResources().getDrawable(
 							  R.drawable.preview_background_currentpage));
 				}else{
@@ -4033,79 +3993,92 @@ public final class Launcher extends Activity
 
 				image.setImageBitmap(imageMaps.get(arg0)); 
 				image.setTag(arg0);
-		        image.setOnClickListener(handler);
-		        image.setOnFocusChangeListener(handler);
+		        image.setOnClickListener( new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+
+						mWorkspace.snapToPage((Integer) v.getTag());
+						if(mScreenPopupWindow!=null){
+							mScreenPopupWindow.dismiss();
+						}
+					}
+				});
 		        image.setFocusable(true);
 			//}
-		
-	        ImageView imageDelete=(ImageView) view.findViewById(R.id.launcher_preview_imagedelete);
-	        final ImageView setDefaultPage=(ImageView) view.findViewById(R.id.launcher_preview_defaultpage);
+		        final ImageView setDefaultPage=(ImageView) view.findViewById(R.id.launcher_preview_defaultpage);
+		     	 defaultPage=mWorkspace.mDefaultHomescreen;    
+		       	
+			       if(defaultPage==arg0){
+			        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
+			        }else{
+			        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
+			        }
+			       
+	    //    ImageView imageDelete=(ImageView) view.findViewById(R.id.launcher_preview_imagedelete);
+	
 	         
 	       // if(arg0!=imageMaps.size()-1){
-	        	 defaultPage=mWorkspace.mDefaultHomescreen;
-	        	imageDelete.setImageDrawable(getResources().getDrawable(R.drawable.preview_delete_bg)); 
+	   
+	        	//imageDelete.setImageDrawable(getResources().getDrawable(R.drawable.preview_delete_bg)); 
 	        	
-	        	if(!(((CellLayout) mWorkspace.getChildAt(arg0)).existsLastOccupiedCell()[0]==-1)){
-	        		imageDelete.setVisibility(View.GONE);
-	        	}
-	        	
-		       if(defaultPage==arg0){
-		        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
-		        }else{
-		        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
-		        }
+	        	//if(!(((CellLayout) mWorkspace.getChildAt(arg0)).existsLastOccupiedCell()[0]==-1)){
+	        	//	imageDelete.setVisibility(View.GONE);
+	        	//}
+	     
 
-		        imageDelete.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						if(mWorkspace.getChildCount()==1){
-							//Toast.makeText(mContext, R.string.delete_screens_atleast3,Toast.LENGTH_LONG).show();
-							return ;
-				        }
-				        /*if(mWorkspace.getChildCount()-1==mWorkspace.getCurrentScreen()){
-				        	mWorkspace.setCurrentScreen(mWorkspace.getChildCount()-2);
-				        }*/
-						if(arg0<=mWorkspace.getCurrentPage()){
-							mWorkspace.setCurrentPage(mWorkspace.getCurrentPage()-1<0 ?
-									0:mWorkspace.getCurrentPage()-1);
-						}
-				        if(mWorkspace.mDefaultHomescreen==arg0){
-				           	mWorkspace.setDefaultPage(0);
-					    }else if(mWorkspace.mDefaultHomescreen >arg0){
-			           		mWorkspace.setDefaultPage(mWorkspace.mDefaultHomescreen-1);
-			           	}
-				        ContentResolver deleteCR = getContentResolver();
-				        deleteCR.delete(LauncherSettings.Favorites.CONTENT_URI,LauncherSettings.Favorites.SCREEN+"="+arg0, null);
-				        deleteCR = null;
-				        if(arg0!=mWorkspace.getChildCount()-1){
-				        	ContentResolver updateCR = getContentResolver();
-				        	Cursor updateC = updateCR.query(LauncherSettings.Favorites.CONTENT_URI, null, 
-				        			LauncherSettings.Favorites.SCREEN+">"+arg0,null,"screen ASC");
-				        	
-				        	for(updateC.moveToFirst();!updateC.isAfterLast();updateC.moveToNext()){
-				        		ContentValues updateCV = new ContentValues();
-				        		int screen = updateC.getInt(updateC.getColumnIndex(LauncherSettings.Favorites.SCREEN));
-
-				        		updateCV.put(LauncherSettings.Favorites.SCREEN,screen-1);
-					           	updateCR.update(LauncherSettings.Favorites.CONTENT_URI, updateCV, 
-					           			LauncherSettings.Favorites.SCREEN+"="+screen, null);
-					           	updateCV =null;
-				        	}
-				        	updateC.close();
-				        }
-			        	
-		
-				        mWorkspace.removeViewAt(arg0);
-				       // mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
-				        Editor editorDelete= sharePreferences.edit();
-				        editorDelete.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
-				        editorDelete.commit();
-				             
-				        imageMaps.remove(arg0);
-				          	 
-				        PreviewAdapter.this.notifyDataSetChanged();
-					}
-					
-				});
+//		        imageDelete.setOnClickListener(new View.OnClickListener() {
+//					public void onClick(View v) {
+//						if(mWorkspace.getChildCount()==1){
+//							//Toast.makeText(mContext, R.string.delete_screens_atleast3,Toast.LENGTH_LONG).show();
+//							return ;
+//				        }
+//				        /*if(mWorkspace.getChildCount()-1==mWorkspace.getCurrentScreen()){
+//				        	mWorkspace.setCurrentScreen(mWorkspace.getChildCount()-2);
+//				        }*/
+////						if(arg0<=mWorkspace.getCurrentPage()){
+////							mWorkspace.setCurrentPage(mWorkspace.getCurrentPage()-1<0 ?
+////									0:mWorkspace.getCurrentPage()-1);
+////						}
+//				        if(mWorkspace.mDefaultHomescreen==arg0){
+//				           	mWorkspace.setDefaultPage(0);
+//					    }else if(mWorkspace.mDefaultHomescreen >arg0){
+//			           		mWorkspace.setDefaultPage(mWorkspace.mDefaultHomescreen-1);
+//			           	}
+//				        ContentResolver deleteCR = getContentResolver();
+//				        deleteCR.delete(LauncherSettings.Favorites.CONTENT_URI,LauncherSettings.Favorites.SCREEN+"="+arg0, null);
+//				        deleteCR = null;
+//				        if(arg0!=mWorkspace.getChildCount()-1){
+//				        	ContentResolver updateCR = getContentResolver();
+//				        	Cursor updateC = updateCR.query(LauncherSettings.Favorites.CONTENT_URI, null, 
+//				        			LauncherSettings.Favorites.SCREEN+">"+arg0,null,"screen ASC");
+//				        	
+//				        	for(updateC.moveToFirst();!updateC.isAfterLast();updateC.moveToNext()){
+//				        		ContentValues updateCV = new ContentValues();
+//				        		int screen = updateC.getInt(updateC.getColumnIndex(LauncherSettings.Favorites.SCREEN));
+//
+//				        		updateCV.put(LauncherSettings.Favorites.SCREEN,screen-1);
+//					           	updateCR.update(LauncherSettings.Favorites.CONTENT_URI, updateCV, 
+//					           			LauncherSettings.Favorites.SCREEN+"="+screen, null);
+//					           	updateCV =null;
+//				        	}
+//				        	updateC.close();
+//				        }
+//			        	
+//		
+//				        mWorkspace.removeViewAt(arg0);
+//				       // mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
+//				        Editor editorDelete= sharePreferences.edit();
+//				        editorDelete.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
+//				        editorDelete.commit();
+//				             
+//				        imageMaps.remove(arg0);
+//				          	 
+//				        PreviewAdapter.this.notifyDataSetChanged();
+//					}
+//					
+//				});
 		        setDefaultPage.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
@@ -4117,38 +4090,12 @@ public final class Launcher extends Activity
 	        return view;
 		}
 	}
-	
-	
- 	
-class PreviewTouchHandler implements View.OnClickListener, Runnable,
-	View.OnFocusChangeListener {
-private final View mAnchor;
 
-public PreviewTouchHandler(View anchor) {
-	mAnchor = anchor;
-}
-
-public void onClick(View v) {
-	//mWorkspace.setVisibility(View.VISIBLE);
-	//mShortcutBar.setVisibility(View.VISIBLE);
-	mWorkspace.snapToPage((Integer) v.getTag());
-	if(mScreenPopupWindow!=null){
-		mScreenPopupWindow.dismiss();
+	public void bringChildToFront(RelativeLayout mDragLayer2) {
+		// TODO Auto-generated method stub
+		
 	}
-	//v.post(this);
-}
 
-public void run() {
-
-	dismissPreview();
-}
-
-public void onFocusChange(View v, boolean hasFocus) {
-	if (hasFocus) {
-		mWorkspace.snapToPage((Integer) v.getTag());
-	}
-}
-}
  	
 }
 
