@@ -106,10 +106,6 @@ public class Hotseat extends FrameLayout {
    
      	 count =cellLayoutChildren.getChildCount();
      	
-          Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,isAdd:,  "
-           +isAdd
-           +"   mCellCountX :" +mCellCountX
-		 +"  count:"+count);  	
         
      	if(isAdd&&mCellCountX<cellCount){
      		
@@ -128,9 +124,7 @@ public class Hotseat extends FrameLayout {
 
     		view =cellLayoutChildren.getChildAt(j,0);
     		
-    		 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view+"  "+i);
     		if(view!=null){
-        	 Log.i(Launcher.TAG, "hotseat"+"   .,.,,setGridSize,111111,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +j+view.getTag()+"  "+i); 
        		 mContent.animateChildToPosition(view,i,0,230,30);
     	
     		}else{
@@ -156,74 +150,13 @@ public class Hotseat extends FrameLayout {
     	CellLayoutChildren clc=	(CellLayoutChildren)mContent.getChildrenLayout();
     	
        int  count =clc.getChildCount();
-//
-//    	 Log.i(Launcher.TAG, "hotseat"+"   .,.viewMatchingCellInfo,,,,##,,,,,,,,,,,,,,,,,,,,,count:,  " +clc.getChildCount()); 
-//    	
-//
-//    	View view = null;
-//    	ItemInfo info =null;
-//    	
-//    	HashMap< Integer,View> views =new HashMap<Integer, View>();
-//    	
-//    	
-//    	for(int i = 0 ;i < count ; i++){
-//    		view =clc.getChildAt(i);
-//    		info=(ItemInfo) view.getTag();
-//    		views.put(info.screen, view);
-//    	}
-// 
     	mContent.setGridSize(count, mCellCountY);
-//    	
-//     	for(int i = 0 ;i < 5 ; i++){
-//
-//    		view =views.get(i);
-//    		if(view!=null){
-//    		    Log.i(Launcher.TAG, "hotseat"+"   .,.,,viewMatchingCellInfo,,,,,,,,,,,,,,,,,,,,,,,,,view:,  " +view); 
-//        		getLayout().animateChildToPosition(view,i,0,230,30);	
-//    		}
-//    
-//    	}
-   	
     }
     
 
     void resetLayout() {
         mContent.removeAllViewsInLayout();
 
-        // Add the Apps button
-//        Context context = getContext();
-//        LayoutInflater inflater = LayoutInflater.from(context);
-//        BubbleTextView allAppsButton = (BubbleTextView)
-//                inflater.inflate(R.layout.application, mContent, false);
-//        allAppsButton.setCompoundDrawablesWithIntrinsicBounds(null,
-//                context.getResources().getDrawable(R.drawable.all_apps_button_icon), null, null);
-//        allAppsButton.setContentDescription(context.getString(R.string.all_apps_button_label));
-//        allAppsButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (mLauncher != null &&
-//                    (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
-//                    mLauncher.onTouchDownAllAppsButton(v);
-//                }
-//                return false;
-//            }
-//        });
-//
-//        allAppsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(android.view.View v) {
-//                if (mLauncher != null) {
-//                    mLauncher.onClickAllAppsButton(v);
-//                }
-//            }
-//        });
-//
-//        // Note: We do this to ensure that the hotseat is always laid out in the orientation of
-//        // the hotseat in order regardless of which orientation they were added
-//        int x = getCellXFromOrder(sAllAppsButtonRank);
-//        int y = getCellYFromOrder(sAllAppsButtonRank);
-//        mContent.addViewToCellLayout(allAppsButton, -1, 0, new CellLayout.LayoutParams(x,y,1,1),
-//                true);
     }
 
 

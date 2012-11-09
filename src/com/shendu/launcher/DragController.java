@@ -502,7 +502,7 @@ public class DragController {
         mLastTouch[0] = x;
         mLastTouch[1] = y;
         
-      //left
+       // to left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
@@ -511,7 +511,7 @@ public class DragController {
                     mHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
                 }
             }
-            //right
+            //to right
         } else if (x > mScrollView.getWidth() - mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
@@ -546,7 +546,9 @@ public class DragController {
             }
         }
     }
-
+    
+    
+//
 //        } else if (x > mScrollView.getWidth() - mScrollZone) {
 //            if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
 //                mScrollState = SCROLL_WAITING_IN_ZONE;

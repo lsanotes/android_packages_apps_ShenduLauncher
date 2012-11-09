@@ -172,13 +172,10 @@ public class CellLayout extends ViewGroup {
         Log.i(Launcher.TAG, TAG+"..CellLayout()...  "+mCountX+mCountY);
         a.recycle();
 
-        //Log.i("hhl", "===CellLayout.java==333==CellLayout==="+mCellWidth+"*"+mCellHeight+"=="+getClass().getName());
         setAlwaysDrawnWithCacheEnabled(false);
 
         final Resources res = getResources();
 
-        //mNormalBackground = res.getDrawable(R.drawable.homescreen_blue_normal_holo);
-        //mActiveGlowBackground = res.getDrawable(R.drawable.homescreen_blue_strong_holo);
         mNormalBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
         mActiveGlowBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
         mHeaderFooterDrawable = res.getDrawable(R.drawable.thumbnail_new_screen_n);
@@ -421,14 +418,10 @@ public class CellLayout extends ViewGroup {
             bg.draw(canvas);
         }
         if(mIsEditstate && mIsCurrentPage && (existsLastOccupiedCell()[0]!=-1)){ //draw celllayout crosshairs
-        	//if (mCrosshairsVisibility > 0.0f) {
             final int countX = mCountX;
             final int countY = mCountY;
             final int drawCellWidth = (getMeasuredWidth()-6)/4;
             final int drawCellHeight = (getMeasuredHeight()-6)/4;
-            //final float MAX_ALPHA = 0.4f;
-            //final int MAX_VISIBLE_DISTANCE = 600;
-            //final float DISTANCE_MULTIPLIER = 0.002f;
 
             final Drawable dCrosshairs = mCrosshairsDrawable;
             final int crosshairsWidth = dCrosshairs.getIntrinsicWidth();
@@ -437,10 +430,8 @@ public class CellLayout extends ViewGroup {
             paintLine.setStrokeWidth(1);
             paintLine.setAntiAlias(true);
             paintLine.setColor(Color.argb(51,255,255,255));
-            //int x = getPaddingLeft() - (mWidthGap / 2) - (width / 2);
             int x = -(mWidthGap/2)-(crosshairsWidth/2)+3;
             for (int col = 0; col <= countX; col++) {
-            	//if(mIsDragOverlapping){
     		    canvas.drawLine(
     		    	col*drawCellWidth-(mWidthGap/2)+3,
     		    	-(mWidthGap/2)+3,
@@ -453,27 +444,14 @@ public class CellLayout extends ViewGroup {
     		        drawCellWidth*countX-(mHeightGap/2)+3,
     		        col*drawCellHeight-(mHeightGap/2)+3,
     		        paintLine);//draw land line
-            	//}
-                //int y = getPaddingTop() - (mHeightGap / 2) - (height / 2);
                 int y = -(mHeightGap/2)-(crosshairsHeight/2)+3;
                 for (int row = 0; row <= countY; row++) {
-                    //mTmpPointF.set(x - mDragCenter.x, y - mDragCenter.y);
-                    //float dist = mTmpPointF.length();
-                    // Crosshairs further from the drag point are more faint
-                    //float alpha = Math.min(MAX_ALPHA,
-                            //DISTANCE_MULTIPLIER * (MAX_VISIBLE_DISTANCE - dist));
-                    //if (alpha > 0.0f) {
                         dCrosshairs.setBounds(x, y, x + crosshairsWidth, y + crosshairsHeight);
-                        //d.setAlpha((int) (alpha * 255 * mCrosshairsVisibility));
                         dCrosshairs.draw(canvas);
-                    //}
-                    //y += drawCellHeight + mHeightGap;
                     y += drawCellHeight;
                 }
-                //x += drawCellWidth + mWidthGap;
                 x += drawCellWidth;
             }
-        //}
         }
         
         final Paint paint = mDragOutlinePaint;
@@ -487,19 +465,6 @@ public class CellLayout extends ViewGroup {
             }
         }
 
-        // We draw the pressed or focused BubbleTextView's background in CellLayout because it
-        // requires an expanded clip rect (due to the glow's blur radius)
-        //Log.i("hhl", "***********CellLayout.java==="+(mPressedOrFocusedIcon != null)+"==="+
-        		//(mPressedOrFocusedIcon2 != null));
-        /*if (mPressedOrFocusedIcon != null) {
-            final int padding = mPressedOrFocusedIcon.getPressedOrFocusedBackgroundPadding();
-            if (b != null) {
-                canvas.drawBitmap(b,
-                        mPressedOrFocusedIcon.getLeft() + getPaddingLeft() - padding,
-                        mPressedOrFocusedIcon.getTop() + getPaddingTop() - padding,
-                        null);
-            }
-        }*/
         if (mPressedOrFocusedIcon2 != null) { //draw item when mark click item state 
             final int padding = mPressedOrFocusedIcon2.getPressedOrFocusedBackgroundPadding();
             Bitmap b = mPressedOrFocusedIcon2.getPressedOrFocusedBackground();
@@ -531,19 +496,6 @@ public class CellLayout extends ViewGroup {
             d.draw(canvas);
             canvas.restore();
 
-            // Draw inner ring
-         //   d = FolderRingAnimator.sSharedInnerRingDrawable;
-//            width = (int) fra.getInnerRingSize();
-//            height = width;
-//            cellToPoint(fra.mCellX, fra.mCellY, mTempLocation);
-//
-//            centerX = mTempLocation[0] + mCellWidth / 2;
-//            centerY = mTempLocation[1] + FolderRingAnimator.sPreviewSize / 2;
-//            canvas.save();
-//            canvas.translate(centerX - width / 2, centerY - width / 2);
-//            d.setBounds(0, 0, width, height);
-//            d.draw(canvas);
-//            canvas.restore();
         }
 
         if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) { //draw item when open hotseat folder
@@ -911,7 +863,6 @@ public class CellLayout extends ViewGroup {
 
         int numWidthGaps = mCountX - 1;
         int numHeightGaps = mCountY - 1;
-        //Log.i("hhl", "===CellLayout.java===onMeasure==="+widthSpecSize+"*"+heightSpecSize);
         if (!LauncherApplication.isScreenLarge()){
         	if(mCountX==0){
         		mCellWidth = mOriginalCellWidth = (widthSpecSize - mPaddingLeft - mPaddingRight) / 1;	
@@ -1073,7 +1024,6 @@ public class CellLayout extends ViewGroup {
         	
         	
          wrap = empty[0] >= getCountX() - 1;  //X is >=4
-//            wrap = empty[0] >= cellLayout.getCountX() - 1;  //X is >=4
             startY = wrap ? empty[1] + 1 : empty[1];    // Y is +1
             for (int y = startY; y <= target[1]; y++) {  // Y from Target  to empty  
                 startX = y == empty[1] ? empty[0] + 1 : 0;   //
@@ -1097,7 +1047,6 @@ public class CellLayout extends ViewGroup {
                     	    }
                     	
                     }
-                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder...............empty:."+empty[0]+empty[1]+"  :"+v);  
                     if (animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay)) {
                     	
@@ -1135,7 +1084,6 @@ public class CellLayout extends ViewGroup {
                          	
                          }
                     
-                    Log.i(Launcher.TAG,TAG+ "..realTimeReorder.....11..........empty:."+empty[0]+empty[1]+"  :");       
                     if (animateChildToPosition(v, empty[0], empty[1],
                             REORDER_ANIMATION_DURATION, delay)) {
                         empty[0] = x;
@@ -1156,10 +1104,6 @@ public class CellLayout extends ViewGroup {
     	
         CellLayoutChildren clc = getChildrenLayout();
   
-//        if(cellX>mCountX || cellY>mCountY ){
-//        	 Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........######################################:");
-//        	return false ;
-//        }
         if(cellX>=mCountX||cellX>=mCountX){
         	
         	return false;
@@ -1187,16 +1131,12 @@ public class CellLayout extends ViewGroup {
             lp.isLockedToGrid = false;
             int newX = lp.x;
             int newY = lp.y;
-          //  Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........newX xy:"+newX +"  :"+ newY);
             lp.x = oldX;
             lp.y = oldY;
             child.requestLayout();
-      
-         //   Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........old xy:"+newX +"  :"+ newY);
             
             PropertyValuesHolder x = PropertyValuesHolder.ofInt("x", oldX, newX);
             PropertyValuesHolder y = PropertyValuesHolder.ofInt("y", oldY, newY);
-         //   Log.i(Launcher.TAG, TAG+"animateChildToPosition  ...........PropertyValuesHolder xy:"+x +"  :"+ y);
             
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(lp, x, y);
             oa.setDuration(duration);
@@ -1207,16 +1147,11 @@ public class CellLayout extends ViewGroup {
           
                     child.requestLayout();
                     
-                  //  Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationUpdate: "+animation.toString());
-                  //  Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ...@@@@@@@@...   .....       child.getX(): "+child.getX() );
-                    
-                  //  Log.i(Launcher.TAG, TAG+"..ObjectAnimator  ------------------------------------------------------------------------------"+animation.getAnimatedValue());
                 }
             });
             oa.addListener(new AnimatorListenerAdapter() {
             	 public void onAnimationStart(Animator animation){
         
-            		// Log.i(Launcher.TAG, TAG+"..onAnimationStart  ...........      onAnimationStart: "+animation.toString());
             		 
             	 }
             	
@@ -1233,12 +1168,9 @@ public class CellLayout extends ViewGroup {
                     if (mReorderAnimators.containsKey(lp)) {
                         mReorderAnimators.remove(lp);
                     }
-                    
-                //	Log.i(Launcher.TAG, TAG+"..onAnimationEnd  ...........      onAnimationEnd: "+animation.toString());
                 }
                 
                 public void onAnimationCancel(Animator animation) {
-               // 	Log.i(Launcher.TAG, TAG+"..onAnimationCancel  ...........      onAnimationCancel: "+animation.toString());
                 	
                     cancelled = true;
                  
@@ -1446,7 +1378,6 @@ public class CellLayout extends ViewGroup {
            	
                     bestDistance = distance;
                     
-                  //  Log.i(Launcher.TAG,TAG+ ".findNearestArea.........................bestDistance:"+bestDistance+"   x:"+x+y);
                     bestXY[0] = x;
                     bestXY[1] = y;
                
@@ -1562,7 +1493,6 @@ public class CellLayout extends ViewGroup {
     boolean findCellForSpanThatIntersectsIgnoring(int[] cellXY, int spanX, int spanY,
             int intersectX, int intersectY, View ignoreView) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-    	 Log.i(Launcher.TAG, TAG+"findCellForSpanThatIntersectsIgnoring  markCellsAsUnoccupiedForView  ......!!!!!......        ");
     	markCellsAsUnoccupiedForView(ignoreView);
 
         boolean foundCell = false;
@@ -1655,7 +1585,6 @@ public class CellLayout extends ViewGroup {
     int[] findCellLastOccupiedCellIgnoring(int[] cellXY, int spanX, int spanY,
             int intersectX, int intersectY, View ignoreView) {
         // mark space take by ignoreView as available (method checks if ignoreView is null)
-    	 Log.i(Launcher.TAG, TAG+"findCellLastOccupiedCellIgnoring11  markCellsAsUnoccupiedForView  .......!!!!!.....        ");
     	markCellsAsUnoccupiedForView(ignoreView);
     
         int[] lastCell =new int[2];
@@ -2047,7 +1976,6 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         //remove by zlf
       // markCellsAsUnoccupiedForView(view);
-    //    Log.i(Launcher.TAG, TAG+"..onMove(  markCellsForView  ...........        ");
         markCellsForView(newCellX, newCellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
@@ -2056,7 +1984,6 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         if (view == null || view.getParent() != mChildren) return;
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         
- //  	 Log.i(Launcher.TAG, TAG+"..markCellsAsOccupiedForView  ..###..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
         markCellsForView(lp.cellX, lp.cellY, lp.cellHSpan, lp.cellVSpan, true);
     }
 
@@ -2064,7 +1991,6 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
         if (view == null || view.getParent() != mChildren) return;
         LayoutParams lp = (LayoutParams) view.getLayoutParams();
         
-        Log.i(Launcher.TAG, TAG+"..markCellsAsUnoccupiedForView  ..###11..........         "+lp.cellX+ "  " +lp.cellY  +"   " +lp.cellHSpan +"  " + lp.cellVSpan);
         markCellsForView(lp.cellX, lp.cellY, lp.cellHSpan, lp.cellVSpan, false);
     }
 
@@ -2074,7 +2000,6 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
             	
             
                 mOccupied[x][y] = value;
-            //	 Log.i(Launcher.TAG, TAG+"..markCellsForView  ............         1842   xy:"+x+y+ mOccupied[x][y]);
          
             }
         }

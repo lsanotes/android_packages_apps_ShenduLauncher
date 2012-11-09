@@ -676,7 +676,6 @@ public class LauncherModel extends BroadcastReceiver {
               
                 forceReload();
                  
-                // android.os.Process.killProcess(android.os.Process.myPid());
                  
              } 
           
@@ -1019,8 +1018,6 @@ public class LauncherModel extends BroadcastReceiver {
                             
                             for(int i = 0 ;i<16;i++){
                             	
-                            	
-                            
                              if(coorX>=mCellCountX-1&&coorY>=mCellCountY-1){
                                  	
                        			  coorX=0; 
@@ -1469,68 +1466,11 @@ public class LauncherModel extends BroadcastReceiver {
                     final long t = SystemClock.uptimeMillis();
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
-                    	
-                    	
-//                    	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
-//      	
-//                    	AppsInDB.clear();
-//                    	
-//                        final Cursor c = mContext.getContentResolver().query(
-//                                LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
-//                        
-//                        try {
-//                        	final int intentIndex = c.getColumnIndexOrThrow
-//                                    (LauncherSettings.Favorites.INTENT);
-//                         	 final int itemTypeIndex = c.getColumnIndexOrThrow(
-//                                 LauncherSettings.Favorites.ITEM_TYPE);
-//                            while (!mStopped && c.moveToNext()) {
-//                              
-//                                int itemType = c.getInt(itemTypeIndex);
-//                                if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT|| itemType ==  LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
-//                                	String  intentDescription = c.getString(intentIndex);
-//                                    
-//                                    Intent   intent = Intent.parseUri(intentDescription, 0);
-//                                    AppsInDB.add(intent);
-//                                }
-//                        
-//                            
-//                   			}
-//                           	
-//                        } catch (URISyntaxException e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//                        
-//                        finally {
-//                            c.close();
-//                        }
-//                        
-//                 
-//                    	
-//                    	for(ShortcutInfo info:list){
-//                    		
-//                    		boolean ins=true;
-//                    		for(Intent intent:AppsInDB){
-//                    			
-//                    			if(info.intent.getComponent().equals(intent.getComponent())){	
-//                    				
-//                    				ins =false;
-//                    				break;
-//                    				
-//                    			}
-//                    
-//                        	}
-//                    		if(ins){
-//                    		
-//                				listOutOfDB.add(info);
-//                			}
-//                  
-//                    	}
+
                       if(list!=null){
                      	 callbacks.bindAllApplications(addAppsWithoutInvalidate(list));
                    }
                     	
-                   
                     }
                     if (DEBUG_LOADERS) {
                         Log.d(TAG, "bound all " + list.size() + " apps from cache in "
@@ -1617,62 +1557,6 @@ public class LauncherModel extends BroadcastReceiver {
                         if (callbacks != null) {
                             if (first) {
 
-//                               	ArrayList<ShortcutInfo> listOutOfDB =new 	ArrayList<ShortcutInfo>();
-//                            //	Log.i(Launcher.TAG,TAG+ "..........................first()"+added.size());
-//                            	AppsInDB.clear();
-//                            	
-//                                final Cursor c = mContext.getContentResolver().query(
-//                                        LauncherSettings.Favorites.CONTENT_URI, null, null, null, null);
-//                                
-//                                try {
-//                                	final int intentIndex = c.getColumnIndexOrThrow
-//                                            (LauncherSettings.Favorites.INTENT);
-//                                 	 final int itemTypeIndex = c.getColumnIndexOrThrow(
-//                                         LauncherSettings.Favorites.ITEM_TYPE);
-//                                    while (!mStopped && c.moveToNext()) {
-//                                      
-//                                        int itemType = c.getInt(itemTypeIndex);
-//                                        if(itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION||itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT||itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT ){
-//                                        	String  intentDescription = c.getString(intentIndex);
-//                                            
-//                                            Intent   intent = Intent.parseUri(intentDescription, 0);
-//                                            
-//                                            
-//                                            AppsInDB.add(intent);
-//                                        }
-//                                
-//                                    
-//                           			}
-//                                   	
-//                                } catch (URISyntaxException e) {
-//        							// TODO Auto-generated catch block
-//        							e.printStackTrace();
-//        						}
-//                                
-//                                finally {
-//                                    c.close();
-//                                }
-//                         
-//                            	
-//                            	for(ShortcutInfo info:added){
-//                            		
-//                            		boolean ins=true;
-//                            		for(Intent intent:AppsInDB){
-//                            			
-//                            			if(info.intent.getComponent().equals(intent.getComponent())){	
-//                            				ins =false;
-//                            				break;
-//                            				
-//                            			}
-//                            
-//                                	}
-//                            		if(ins){
-//                        				listOutOfDB.add(info);
-//                        			}
-//                          
-//                            	}
-
-
                                 callbacks.bindAllApplications(addAppsWithoutInvalidate(added));
                                 
                             } else {
@@ -1717,11 +1601,7 @@ public class LauncherModel extends BroadcastReceiver {
      	final ArrayList<ShortcutInfo> mPenddingWorkspaceItems =new ArrayList<ShortcutInfo>(list);
        int i =0;
        int listCount =list.size();
-       
-     //	int count1 =sWorkspaceItems.size();
      	final Collection<ItemInfo> mTmpWorkspaceItems =sItemsIdMap.values();
-//     	
-//       	mTmpWorkspaceItems.add(sItemsIdMap);
      	for(ItemInfo info:mTmpWorkspaceItems){
      		
      	if(info instanceof ShortcutInfo){
@@ -1739,7 +1619,6 @@ public class LauncherModel extends BroadcastReceiver {
         }
      	}
      		
-
      	return mPenddingWorkspaceItems;}
 
     void enqueuePackageUpdated(PackageUpdatedTask task) {
@@ -1857,7 +1736,6 @@ public class LauncherModel extends BroadcastReceiver {
                     }
                 });
             }
-        	//Log.i(Launcher.TAG,TAG + " ..only update ....."+(added==null)+"==="+(modified==null)+"==="+(removed==null));
            if(added==null && modified==null && removed==null){
             	mHandler.post(new Runnable() {
                     @Override
@@ -1949,7 +1827,7 @@ public class LauncherModel extends BroadcastReceiver {
         // the db
         if (icon == null) {
             if (c != null) {
-          //      icon = getIconFromCursor(c, iconIndex, context);
+               icon = getIconFromCursor(c, iconIndex, context);
             }
         }
         // the fallback icon
@@ -2023,7 +1901,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
             // the db
             if (icon == null) {
-             //   icon = getIconFromCursor(c, iconIndex, context);
+                icon = getIconFromCursor(c, iconIndex, context);
             }
             // the fallback icon
             if (icon == null) {
@@ -2032,7 +1910,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
             break;
         case LauncherSettings.Favorites.ICON_TYPE_BITMAP:
-          //  icon = getIconFromCursor(c, iconIndex, context);
+            icon = getIconFromCursor(c, iconIndex, context);
             if (icon == null) {
                 icon = getFallbackIcon();
                 info.customIcon = false;

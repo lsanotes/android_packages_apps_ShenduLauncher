@@ -544,7 +544,7 @@ public final class Launcher extends Activity
                 processShortcut(args.intent);
                 break;
             case REQUEST_CREATE_SHORTCUT:
-                completeAddShortcut(args.intent, args.container, args.screen-1, args.cellX,
+                completeAddShortcut(args.intent, args.container, args.screen, args.cellX,
                         args.cellY);
                 result = true;
                 break;
@@ -553,7 +553,7 @@ public final class Launcher extends Activity
                 break;
             case REQUEST_CREATE_APPWIDGET:
                 int appWidgetId = args.intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
-                completeAddAppWidget(appWidgetId, args.container, args.screen-1);
+                completeAddAppWidget(appWidgetId, args.container, args.screen);
                 result = true;
                 break;
             case REQUEST_PICK_WALLPAPER:
@@ -604,17 +604,6 @@ public final class Launcher extends Activity
             	mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
               }
         }
-        //add by hhl,handle uninstall app success or not
-        /*if(resultCode==RESULT_OK && requestCode==REQUEST_UNINSTALL_APP){
-        	bindPackagesUpdated(); //update widget
-        }else if(resultCode==RESULT_CANCELED && requestCode==REQUEST_UNINSTALL_APP){
-        	
-         }*/
-
-        // Exit spring loaded mode if necessary after cancelling the configuration of a widget
-		
-		//remove by hhl
-        //exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), delayExitSpringLoadedMode);
     }
 
     @Override
@@ -627,24 +616,11 @@ public final class Launcher extends Activity
         if (preferencesChanged()) {
             android.os.Process.killProcess(android.os.Process.myPid());
         }
-      //  remove by zlf
-//        if (mRestoring || mOnResumeNeedsLoad) {
-//            mWorkspaceLoading = true;
-//            
-//        	Log.i(Launcher.TAG, TAG+"...onResume.......................item:"+mRestoring+mOnResumeNeedsLoad);
-//            mModel.startLoader(this, true);
-//            mRestoring = false;
-//            mOnResumeNeedsLoad = false;
-//        }
-        /*if (mWaitingForResume != null) {
-            mWaitingForResume.setStayPressed(false);
-        }*/
         if (mWaitingForResume2 != null) {
             mWaitingForResume2.setStayPressed(false);
         }
         // When we resume Launcher, a different Activity might be responsible for the app
         // market intent, so refresh the icon
-//        updateAppMarketIcon();
         mAppsCustomizeTabHost.onResume();
         if (!mWorkspaceLoading) {
             final ViewTreeObserver observer = mWorkspace.getViewTreeObserver();
@@ -681,8 +657,6 @@ public final class Launcher extends Activity
     protected void onPause() {
         super.onPause();
 
-       //  add by zlf
-        backFromEditMode();
         
         mPaused = true;
         mDragController.cancelDrag();
@@ -826,8 +800,6 @@ public final class Launcher extends Activity
 
         mDragLayer = (DragLayer) findViewById(R.id.drag_layer);
         mWorkspace = (Workspace) mDragLayer.findViewById(R.id.workspace);
-        //mQsbDivider = (ImageView) findViewById(R.id.qsb_divider);
-        //mDockDivider = (ImageView) findViewById(R.id.dock_divider);
 
         // Setup the drag layer
         mDragLayer.setup(this, dragController);
@@ -847,16 +819,6 @@ public final class Launcher extends Activity
         // Get the search/delete bar
         mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
 
-        //final View qsbDivider = findViewById(R.id.qsb_divider);
-        //final View dockDivider = findViewById(R.id.dock_divider);//do not used,remove by hhl
-        // Hide the search divider if we are hiding search bar
-        /*if (!mShowSearchBar && qsbDivider != null) {
-            qsbDivider.setVisibility(View.GONE);
-        }*/
-
-        //if (!mShowDockDivider && dockDivider != null) {
-            //dockDivider.setVisibility(View.GONE);
-        //}
 
 
         // Setup AppsCustomize
@@ -866,12 +828,6 @@ public final class Launcher extends Activity
                 mAppsCustomizeTabHost.findViewById(R.id.apps_customize_pane_content);
         mAppsCustomizeContent.setup(this, dragController);
         
-     //   mAppFolder = (Folder)findViewById(R.id.user_folder);
-        
-      //  dragController.addDragListener(mAppsCustomizeContent);
-        
-        
-        // Setup the drag controller (drop targets have to be added in reverse order in priority)
         dragController.setDragScoller(mWorkspace);
         dragController.setScrollView(mDragLayer);
         dragController.setMoveTarget(mWorkspace);
@@ -911,15 +867,11 @@ public final class Launcher extends Activity
     View createShortcut(int layoutResId, ViewGroup parent, ShortcutInfo info) {
     	LinearLayout app_shortcutinfo = (LinearLayout) mInflater.inflate(layoutResId, parent, false);
     	TextView app_icon = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
-    	//ImageView app_icon = (ImageView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_shortcutinfo.findViewById(R.id.app_shortcutinfo_mark_id);
-    	//Log.i("hhl", "====Launcher.java==createShortcut=1111="+info.title+"==="
-    			//+"==="+info.intent.getComponent()+"==="+info.itemType+"=="+(info.getIcon(mIconCache)==null));
     	if((info.intent.getComponent()!=null) && 
     		info.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
     		int unReadMMS_mark = shenduGetUnreadMMSCount();
-    		//Log.i("hhll", "====Launcher.java==createShortcut=222="+info.title+"==="+unReadMMS_mark);
     		if(unReadMMS_mark>0){
         		app_mark.setText(unReadMMS_mark+"");
         		app_mark.setVisibility(View.VISIBLE);
@@ -927,7 +879,6 @@ public final class Launcher extends Activity
     	}else if((info.intent.getComponent()!=null) &&
     		info.intent.getComponent().equals(LauncherApplication.sCallComponentName)){
     		int missCall_mark = shenduGetMissCallCount();
-    		//Log.i("hhll", "====Launcher.java==createShortcut=3333="+info.title+"==="+missCall_mark);
     		if(missCall_mark>0){
         		app_mark.setText(String.valueOf(missCall_mark));
         		app_mark.setVisibility(View.VISIBLE);
@@ -941,19 +892,7 @@ public final class Launcher extends Activity
         	app_name.setVisibility(View.INVISIBLE);
         }
         app_shortcutinfo.setOnClickListener(this);
-        //Log.i("hhl", "==Launcher.java==createShortcut==="+app_shortcutinfo.getMeasuredHeight()+"*"
-        		//+app_shortcutinfo.getMeasuredWidth());
         return app_shortcutinfo;
-        /*BubbleTextView favorite = (BubbleTextView) mInflater.inflate(layoutResId, parent, false);
-        favorite.applyFromShortcutInfo(info, mIconCache);
-        if (mHideIconLabels) {
-            favorite.setTextVisible(false);
-        }
-        favorite.setOnClickListener(this);
-        Log.i("hhl", "==Launcher.java==createShortcut==="+favorite.getMeasuredHeight()+"*"+favorite.getMeasuredWidth()
-        		+"==="+favorite.getHeight()+"*"+favorite.getWidth()+"===="+favorite.getPaddingTop()+"*"+
-        		favorite.getPaddingBottom()+"*"+favorite.getPaddingLeft()+"*"+favorite.getPaddingRight());
-        return favorite;*/
     }
     
     
@@ -980,7 +919,6 @@ public final class Launcher extends Activity
     	Cursor cursorUnreadSms = cr.query(Uri.parse("content://sms/inbox"),null,"read = 0",null,null);
     	Cursor cursorUnreadMms = cr.query(Uri.parse("content://mms/inbox"),null,"read = 0",null,null);
     	result = cursorUnreadSms.getCount()+cursorUnreadMms.getCount();
-		//Log.i("hhl", "====Launcher.java==getUnreadMMSCount=="+result);
     	cursorUnreadSms.close();
     	cursorUnreadMms.close();
     	return result;
@@ -997,7 +935,6 @@ public final class Launcher extends Activity
     	Cursor cursorMissed=phoneCR.query(Calls.CONTENT_URI,null,
     			Calls.TYPE+"="+Calls.MISSED_TYPE+" and "+Calls.NEW +" = 1",null,null);
     	result = cursorMissed.getCount();
-		//Log.i("hhll", "====Launcher.java==getMissCallCount=="+result);
     	return result;
     }
     
@@ -1011,8 +948,6 @@ public final class Launcher extends Activity
      * TODO: update the call or sms app view
      */
     public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y){
-		//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1111="+mark+"==="+
-				//container+"==="+screen+"==="+x+"=="+y);
 		CellLayoutChildren cellLayoutChildren = null;
 		if(container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
 			cellLayoutChildren = 
@@ -1027,8 +962,6 @@ public final class Launcher extends Activity
 				int folder_screen = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));
 				int folder_x = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
 				int folder_y = folder_cursor.getInt(folder_cursor.getColumnIndex(LauncherSettings.Favorites.CELLY));
-				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=0="+folder_cursor.getCount()+"==="+folder_container+"==="+
-						//folder_screen+"=="+folder_x+"==="+folder_y);
 				if(folder_container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
 					cellLayoutChildren = 
 							(CellLayoutChildren)((CellLayout)mWorkspace.getChildAt(folder_screen)).getChildrenLayout();
@@ -1036,11 +969,8 @@ public final class Launcher extends Activity
 					cellLayoutChildren = mHotseat.getLayout().getChildrenLayout();
 				}
 				View view = cellLayoutChildren.getChildAt(folder_x, folder_y);
-				//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=1="+view+"===="+(view.getTag() instanceof FolderInfo)+
-					//"==="+view.getTag()+"=="+(view instanceof Folder)+"==="+(view instanceof FolderIcon));
 				if(view instanceof FolderIcon){
 					FolderIcon folderIcon = (FolderIcon)view;
-					//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=2="+(folderIcon==null));
 					cellLayoutChildren = folderIcon.mFolder.mContent.getChildrenLayout();
 				}else{
 					cellLayoutChildren = null;
@@ -1063,7 +993,6 @@ public final class Launcher extends Activity
 			}else{
 				app_mark.setVisibility(View.INVISIBLE);
 			}
-			//Log.i("hhl", "===Launcher.java==shenduUpdateAppMark=222222="+markSize);
 			view.requestLayout();
 		}
 	}
@@ -1614,21 +1543,10 @@ public final class Launcher extends Activity
         help.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
-//        menu.add(MENU_GROUP_WALLPAPER, MENU_WALLPAPER_SETTINGS, 0, R.string.menu_wallpaper)
-//            .setIcon(android.R.drawable.ic_menu_gallery)
-//            .setAlphabeticShortcut('W');
         menu.add(0, MENU_MANAGE_APPS, 0, R.string.menu_manage_apps)
             .setIcon(android.R.drawable.ic_menu_manage)
             .setIntent(manageApps)
             .setAlphabeticShortcut('M');
-//        menu.add(MENU_GROUP_MARKET, MENU_MARKET, 0, R.string.menu_market)
-//            .setAlphabeticShortcut('A')
-//            .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                    public boolean onMenuItemClick(MenuItem item) {
-//                        onClickAppMarketButton(null);
-//                        return true;
-//                    }
-//            });
         
         
         menu.add(0, MENU_EDITMODE, 0, R.string.menu_editmode)
@@ -1643,12 +1561,10 @@ public final class Launcher extends Activity
             });
       
         
-      //  if (!getResources().getBoolean(R.bool.config_cyanogenmod)) {
             menu.add(0, MENU_PREFERENCES, 0, R.string.menu_preferences)
                 .setIcon(android.R.drawable.ic_menu_preferences)
                 .setIntent(preferences)
                 .setAlphabeticShortcut('O');
-     //   }
         menu.add(0, MENU_SYSTEM_SETTINGS, 0, R.string.menu_settings)
             .setIcon(android.R.drawable.ic_menu_preferences)
             .setIntent(settings)
@@ -1666,14 +1582,6 @@ public final class Launcher extends Activity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-//        if (mAppsCustomizeTabHost.isTransitioning()) {
-//            return false;
-//        }
-//        boolean allAppsVisible = (mAppsCustomizeTabHost.getVisibility() == View.VISIBLE);
-//        menu.setGroupVisible(MENU_GROUP_WALLPAPER, !allAppsVisible);
-//        menu.setGroupVisible(MENU_GROUP_MARKET, allAppsVisible &&
-//                !ViewConfiguration.get(this).hasPermanentMenuKey() &&
-//                mAppMarketIntent != null);
         if(mWorkspace.isSmall()){ //editstate do not used menu key
         	return false;
         }else{
@@ -2029,13 +1937,6 @@ public final class Launcher extends Activity
             }
         	}
         } 
-        /*else if (v == mAllAppsButton) {
-            if (mState == State.APPS_CUSTOMIZE) {
-                showWorkspace(true);
-            } else {
-                onClickAllAppsButton(v);
-            }
-        }*/
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -2099,37 +2000,6 @@ public final class Launcher extends Activity
         popupMenu.show();
     }
 
-//    public void onLongClickAppsTab(View v) {
-//        final PopupMenu popupMenu = new PopupMenu(this, v);
-//        final Menu menu = popupMenu.getMenu();
-//        dismissAllAppsSortCling(null);
-//        popupMenu.inflate(R.menu.apps_tab);
-//     //   AppsCustomizeView.SortMode sortMode = mAppsCustomizeContent.getSortMode();
-////        switch (sortMode) {
-////            case Title:
-////                menu.findItem(R.id.apps_sort_title).setChecked(true);
-////                break;
-////            case InstallDate:
-////                menu.findItem(R.id.apps_sort_install_date).setChecked(true);
-////                break;
-////        }
-//
-////        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-////                public boolean onMenuItemClick(MenuItem item) {
-////                    switch (item.getItemId()) {
-////                        case R.id.apps_sort_title:
-////                            mAppsCustomizeContent.setSortMode(AppsCustomizeView.SortMode.Title);
-////                            break;
-////                        case R.id.apps_sort_install_date:
-////                            mAppsCustomizeContent.setSortMode(AppsCustomizeView.SortMode.InstallDate);
-////                            break;
-////                    }
-////                    return true;
-////                }
-////        });
-////
-////        popupMenu.show();
-//    }
 
     void startApplicationDetailsActivity(ComponentName componentName) {
         String packageName = componentName.getPackageName();
@@ -2712,15 +2582,7 @@ public final class Launcher extends Activity
             // Show the search bar and hotseat
             mSearchDropTargetBar.showSearchBar(animated);
             // We only need to animate in the dock divider if we're going from spring loaded mode
-            showDockDivider(animated && mState == State.APPS_CUSTOMIZE_SPRING_LOADED);
-
-            // Set focus to the AppsCustomize button
-            /*if (mAllAppsButton != null) {
-                mAllAppsButton.requestFocus();
-            }*/
         }
-
-        //mWorkspace.flashScrollingIndicator(animated);
 
         // Change the state *after* we've called all the transition code
         mState = State.WORKSPACE;
@@ -2796,56 +2658,6 @@ public final class Launcher extends Activity
         // Otherwise, we are not in spring loaded mode, so don't do anything.
     }
 
-    void hideDockDivider() {
-    	/*if (mShowDockDivider) {
-            mDockDivider.setVisibility(View.INVISIBLE);
-        }*/
-        //if (mQsbDivider != null && mDockDivider != null) {
-        //if (mDockDivider != null) {
-           /* if (mShowSearchBar) {
-                mQsbDivider.setVisibility(View.INVISIBLE);
-            }*/
-            /*if (mShowDockDivider) {//do not used,remove by hhl
-                mDockDivider.setVisibility(View.INVISIBLE);
-            }*/
-        //}
-    }
-
-    void showDockDivider(boolean animated) {//do not used,remove by hhl
-    	/*if (mShowDockDivider) {
-            mDockDivider.setVisibility(View.VISIBLE);
-        }*/
-        //if (mQsbDivider != null && mDockDivider != null) {
-        //if (mDockDivider != null) {
-            /*if (mShowSearchBar) {
-                mQsbDivider.setVisibility(View.VISIBLE);
-            }*/
-           // if (mShowDockDivider) {
-                //mDockDivider.setVisibility(View.VISIBLE);
-            //}
-           // if (mDividerAnimator != null) {
-               // mDividerAnimator.cancel();
-                /*if (mShowSearchBar) {
-                    mQsbDivider.setAlpha(1f);
-                }*/
-                //mDockDivider.setAlpha(1f);
-                //mDividerAnimator = null;
-          //  }
-            //if (animated) {
-               // mDividerAnimator = new AnimatorSet();
-                /*if (mShowSearchBar && mShowDockDivider) {
-                    mDividerAnimator.playTogether(ObjectAnimator.ofFloat(mQsbDivider, "alpha", 1f),
-                            ObjectAnimator.ofFloat(mDockDivider, "alpha", 1f));
-                } else if (mShowSearchBar) {
-                    mDividerAnimator.play(ObjectAnimator.ofFloat(mQsbDivider, "alpha", 1f));
-                } else if (mShowDockDivider) {
-                    mDividerAnimator.play(ObjectAnimator.ofFloat(mDockDivider, "alpha", 1f));
-                }*/
-               // mDividerAnimator.setDuration(mSearchDropTargetBar.getTransitionInDuration());
-               // mDividerAnimator.start();
-           // }
-       // }
-    }
 
     void lockAllApps() {
         // TODO
@@ -3486,21 +3298,6 @@ public final class Launcher extends Activity
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
     	addAppsToWorkspace(apps);
-		/*View progressBar = mAppsCustomizeTabHost.
-            findViewById(R.id.apps_customize_progress_bar);
-        if (progressBar != null) {
-            ((ViewGroup)progressBar.getParent()).removeView(progressBar);
-        }*/
-        // We just post the call to setApps so the user sees the progress bar
-        // disappear-- otherwise, it just looks like the progress bar froze
-        // which doesn't look great
-        /*mAppsCustomizeTabHost.post(new Runnable() {
-            public void run() {
-                if (mAppsCustomizeContent != null) {
-                    mAppsCustomizeContent.setApps(apps);
-                }
-            }
-        });*/
 
     }
 
@@ -3848,8 +3645,7 @@ public final class Launcher extends Activity
 		resources.getDrawable(R.drawable.preview_background).getPadding(r);
 		int extraW = (int) ((r.left + r.right) * max);
 		int extraH = r.top + r.bottom;
-		//Log.i("hhl", "...Launcher.java...showPreviews()...."+ r.left+"==="+ r.top+"==="+
-				//r.right+"==="+r.bottom);
+
 		int aW = cell.getWidth() - extraW;
 		float w = aW / max;
 
@@ -4006,7 +3802,6 @@ public final class Launcher extends Activity
 					}
 				});
 		        image.setFocusable(true);
-			//}
 		        final ImageView setDefaultPage=(ImageView) view.findViewById(R.id.launcher_preview_defaultpage);
 		     	 defaultPage=mWorkspace.mDefaultHomescreen;    
 		       	
@@ -4016,69 +3811,6 @@ public final class Launcher extends Activity
 			        	setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
 			        }
 			       
-	    //    ImageView imageDelete=(ImageView) view.findViewById(R.id.launcher_preview_imagedelete);
-	
-	         
-	       // if(arg0!=imageMaps.size()-1){
-	   
-	        	//imageDelete.setImageDrawable(getResources().getDrawable(R.drawable.preview_delete_bg)); 
-	        	
-	        	//if(!(((CellLayout) mWorkspace.getChildAt(arg0)).existsLastOccupiedCell()[0]==-1)){
-	        	//	imageDelete.setVisibility(View.GONE);
-	        	//}
-	     
-
-//		        imageDelete.setOnClickListener(new View.OnClickListener() {
-//					public void onClick(View v) {
-//						if(mWorkspace.getChildCount()==1){
-//							//Toast.makeText(mContext, R.string.delete_screens_atleast3,Toast.LENGTH_LONG).show();
-//							return ;
-//				        }
-//				        /*if(mWorkspace.getChildCount()-1==mWorkspace.getCurrentScreen()){
-//				        	mWorkspace.setCurrentScreen(mWorkspace.getChildCount()-2);
-//				        }*/
-////						if(arg0<=mWorkspace.getCurrentPage()){
-////							mWorkspace.setCurrentPage(mWorkspace.getCurrentPage()-1<0 ?
-////									0:mWorkspace.getCurrentPage()-1);
-////						}
-//				        if(mWorkspace.mDefaultHomescreen==arg0){
-//				           	mWorkspace.setDefaultPage(0);
-//					    }else if(mWorkspace.mDefaultHomescreen >arg0){
-//			           		mWorkspace.setDefaultPage(mWorkspace.mDefaultHomescreen-1);
-//			           	}
-//				        ContentResolver deleteCR = getContentResolver();
-//				        deleteCR.delete(LauncherSettings.Favorites.CONTENT_URI,LauncherSettings.Favorites.SCREEN+"="+arg0, null);
-//				        deleteCR = null;
-//				        if(arg0!=mWorkspace.getChildCount()-1){
-//				        	ContentResolver updateCR = getContentResolver();
-//				        	Cursor updateC = updateCR.query(LauncherSettings.Favorites.CONTENT_URI, null, 
-//				        			LauncherSettings.Favorites.SCREEN+">"+arg0,null,"screen ASC");
-//				        	
-//				        	for(updateC.moveToFirst();!updateC.isAfterLast();updateC.moveToNext()){
-//				        		ContentValues updateCV = new ContentValues();
-//				        		int screen = updateC.getInt(updateC.getColumnIndex(LauncherSettings.Favorites.SCREEN));
-//
-//				        		updateCV.put(LauncherSettings.Favorites.SCREEN,screen-1);
-//					           	updateCR.update(LauncherSettings.Favorites.CONTENT_URI, updateCV, 
-//					           			LauncherSettings.Favorites.SCREEN+"="+screen, null);
-//					           	updateCV =null;
-//				        	}
-//				        	updateC.close();
-//				        }
-//			        	
-//		
-//				        mWorkspace.removeViewAt(arg0);
-//				       // mWorkspace.setSlidingIndicator(slidingIndicatorWorkSpace,-1);
-//				        Editor editorDelete= sharePreferences.edit();
-//				        editorDelete.putInt("ui_homescreen_screens", mWorkspace.getChildCount());
-//				        editorDelete.commit();
-//				             
-//				        imageMaps.remove(arg0);
-//				          	 
-//				        PreviewAdapter.this.notifyDataSetChanged();
-//					}
-//					
-//				});
 		        setDefaultPage.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
@@ -4086,14 +3818,8 @@ public final class Launcher extends Activity
 						PreviewAdapter.this.notifyDataSetChanged();
 					}
 		        });
-	         //}
 	        return view;
 		}
-	}
-
-	public void bringChildToFront(RelativeLayout mDragLayer2) {
-		// TODO Auto-generated method stub
-		
 	}
 
  	

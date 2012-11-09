@@ -2278,13 +2278,7 @@ public class Workspace extends PagedView
             finalScaleFactor = mSpringLoadedShrinkFactor - (stateIsSmall ? 0.1f : 0);
             //finalScaleFactor = finalScaleFactor>(455.0f/getMeasuredHeight())?(455.0f/getMeasuredHeight()):finalScaleFactor;
             finalScaleFactor = finalScaleFactor>0.75f?0.75f:finalScaleFactor;
-            /*Log.i("hhl", "===Workspace.jva===changedstate==="+oldStateIsNormal+"*"+stateIsSmall
-            		+"*"+animated+"*"+stateIsSpringLoaded+"==="+mTransitionEffect+"=="+mState+"===="+
-            		getMeasuredHeight()+"*"+getMeasuredWidth()+"==="+getPaddingTop()+"*"+getPaddingBottom()+"*"+
-            		getPaddingLeft()+"*"+getPaddingRight()+"==="+
-            		finalScaleFactor+"==="+
-            		getChildAt(0).getMeasuredHeight()+"===="+getChildAt(0).getMeasuredWidth()+"===="+
-            		getChildAt(0));*/
+       
             if (oldStateIsNormal && stateIsSmall) {
                 zoomIn = false;
                 
@@ -2409,7 +2403,7 @@ public class Workspace extends PagedView
                 cl.setRotationY(rotationY);
                 mChangeStateAnimationListener.onAnimationEnd(null);
             }
-        } //end for
+        } 
 
         if (animated) {
             ValueAnimator animWithInterpolator =
@@ -2445,38 +2439,15 @@ public class Workspace extends PagedView
                     for (int i = 0; i < getChildCount(); i++) {
                         final CellLayout cl = (CellLayout) getPageAt(i);
                         cl.invalidate();
-                        //cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]); //moditify
                         cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
                         
-                        //if(mState ==State.NORMAL ){
-                        	  //cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
-                        	 
-                        //}else{
-                        	//cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-60);
-                      //cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra); //moditify
                       cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
-                      //  cl.setFastTranslationY(-92.25f);
-                        //}
-                        
-                        //set width and height
-                        //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
-                        
-                        //if(mState ==State.NORMAL ){
-                        	  //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]); //moditify
                         	  cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-                        	 //cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]); //moditify
                         	 cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
-                        //}else{
-                        	  //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]-0.07f);
-                        	 //cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]-0.1f);
-                        //}
-                       
                         cl.setFastBackgroundAlpha(
                                 a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
                         cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
                                 b * mNewBackgroundAlphaMultipliers[i]);
-                      //  cl.setFastAlpha(a * mOldAlphas[i] + b * mNewAlphas[i]);
-                        //cl.setFastAlpha(1f); //moditify
                         cl.setAlpha(1f);
                         cl.invalidate();
                     }
@@ -2498,7 +2469,6 @@ public class Workspace extends PagedView
                         if (mOldRotations[i] != mNewRotations[i]) {
                             cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
                         }
-                        //cl.setFastRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]); //moditify
                         cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
                     }
                 }
@@ -2687,7 +2657,7 @@ public class Workspace extends PagedView
                  cl.setRotationY(rotationY);
                  mChangeStateAnimationListener.onAnimationEnd(null);
              }
-         } //end for
+         } 
 
          if (animated) {
              ValueAnimator animWithInterpolator =
@@ -2709,7 +2679,6 @@ public class Workspace extends PagedView
                              final CellLayout cl = (CellLayout) getPageAt(i);
                              cl.setAlpha(1f);
                              cl.setBackgroundAlpha(1f);
-                             //Log.i(Launcher.TAG,TAG+"..............initialAlpha222::"+i+"   :");
                          }
                      }
                  }
@@ -2725,18 +2694,11 @@ public class Workspace extends PagedView
                      for (int i = 0; i < getChildCount(); i++) {
                          final CellLayout cl = (CellLayout) getPageAt(i);
 
-                         //cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]); //moditify
                          cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
 
-                    //    cl.setFastTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
                        
-                       //cl.setFastTranslationY(-75f); //moditify
                        cl.setTranslationY(-75f);
                          
-                         
-
-                          //cl.setFastScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]); //moditify
-                          //cl.setFastScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]); //moditify
                           cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
                           cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
 
@@ -2969,31 +2931,19 @@ public class Workspace extends PagedView
 					screenHeader.getPaddingTop() + mScreenPaddingVertical,
 					screenHeader.getPaddingRight() + mScreenPaddingHorizontal,
 					screenHeader.getPaddingBottom() + mScreenPaddingVertical);
-          addView(screenHeader,0,true);
+          addView(screenHeader,0);
           View screenFooter = inflater.inflate(R.layout.workspace_screen_add, null);
           //screenFooter.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail_new_screen_n));
           screenFooter.setPadding(screenFooter.getPaddingLeft() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingTop() + mScreenPaddingVertical,
         		  screenFooter.getPaddingRight() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingBottom() + mScreenPaddingVertical);
-          addView(screenFooter,getChildCount(),true);
+          addView(screenFooter,getChildCount());
           setCurrentPage(mCurrentPage+1);
           isAddHeaderAndFooter=true;
 		}
     }
-    
-    public void addView(View view ,int pageCount,boolean isSave){
-    	super.addView(view,pageCount);
-//    	
-////    	int count =getChildCount();
-////	    if(pageCount>=count&&pageCount<0){
-////       		
-////       		return;
-////       	}
-//         
-    //    updataDBWhenRemoveScreen(pageCount,1);
-    	
-    }
+
 
     /**
      * remove the HeaderView  and footView  when end  Drag Item
@@ -3122,17 +3072,6 @@ public class Workspace extends PagedView
         b.recycle();
     }
 
-    /*void addApplicationShortcut(ShortcutInfo info, CellLayout target, long container, int screen,
-            int cellX, int cellY, boolean insertAtFirst, int intersectX, int intersectY) {
-        View view = mLauncher.createShortcut(R.layout.application, target, (ShortcutInfo) info);
-
-        final int[] cellXY = new int[2];
-        target.findCellForSpanThatIntersects(cellXY, 1, 1, intersectX, intersectY);
-        addInScreen(view, container, screen, cellXY[0], cellXY[1], 1, 1, insertAtFirst);
-        LauncherModel.addOrMoveItemInDatabase(mLauncher, info, container, screen, cellXY[0],
-                cellXY[1]);
-    }*/
-
     public boolean transitionStateShouldAllowDrop() {
         return (!isSwitchingState() || mTransitionProgress > 0.5f);
     }
@@ -3245,7 +3184,6 @@ public class Workspace extends PagedView
         }else{
         	dropOverView = target.getChildAt(targetCell[0], targetCell[1]);
         }
-  // 	Log.i(Launcher.TAG, TAG+"..................willCreateUserFolder11 "  +(mDragInfo != null) +  hasntMoved  +  +targetCell[0]+targetCell[1]+dropOverView+(considerTimeout && !mCreateUserFolderOnDrop)+mDragInfo.cellX +mDragInfo.cellY);
         if (dropOverView == null || hasntMoved || (considerTimeout && !mCreateUserFolderOnDrop)) {
             return false;
         }
@@ -3317,15 +3255,11 @@ public class Workspace extends PagedView
             sourceInfo.cellX = -1;
             sourceInfo.cellY = -1;
             
-            
-            
            	if(target==mHotseat.getLayout()){
          
               mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false);
              
         	}
-           	
-           	
 
             // If the dragView is null, we can't animate
             boolean animate = dragView != null;
@@ -4116,26 +4050,6 @@ public class Workspace extends PagedView
           
             }
         }
-       
-//        View TestView=null;
-//        ItemInfo testInfo=null;
-//        for(int i = 0 ; i<4 ; i++){
-//        	
-//        	 for(int j = 0 ; j<4 ; j++){
-//        		 
-//        		 TestView = mDragTargetLayout.getChildAt(j, i);
-//        		 if(TestView!=null){
-//        			 testInfo =(ItemInfo) TestView.getTag();
-//        			 	System.out.print(+j+""+i+mDragTargetLayout.isOccupied(j, i)+""+testInfo+"     ");
-//        		 }else{ 
-//        			 testInfo=null;
-//        			 	System.out.print(+j+""+i+mDragTargetLayout.isOccupied(j, i)+""+testInfo+"                     "); 
-//        		 }
-//            
-//             }
-//        	 System.out.println();
-//        	 System.out.println(i+""+i+""+i+i+i+"   .............................  ");
-//        }
  
             // Handle the drag over
             if (mDragTargetLayout != null) {
@@ -4323,7 +4237,6 @@ public class Workspace extends PagedView
 	       	
 	        dragFromTargetcellToEmptycell();
 	          	
-	       	//huifu zhuangtai 
 	           
 	        dragHeaderIndex=-2;
 	        postDelayed(new Runnable() {
@@ -5156,41 +5069,6 @@ public class Workspace extends PagedView
       	},1500);
 
     }
-    
-    
-//    public void updateAllScreen(){
-//    	int  screenNum = getChildCount();
-//    	CellLayoutChildren cellLayoutChildren=null;
-//    	for(int i = 0 ; i < screenNum ; i++){
-//    		cellLayoutChildren =((CellLayout)getChildAt(i)).getChildrenLayout();
-//    		
-//    		//add by zlf 
-//    		((CellLayout) getChildAt(i)).changedCellInfoStatus();
-//    		
-//            int itemNum =	cellLayoutChildren.getChildCount();	 
-//
-//            ItemInfo item =null;
-//            for(int j = 0 ; j < itemNum ; j++){
-//          	
-//          	
-//          	  item= (ItemInfo) cellLayoutChildren.getChildAt(j).getTag();
-//          	  item.screen =i;
-//          	  LauncherModel.addOrMoveItemInDatabase(mLauncher, item, item.container, item.screen, item.cellX, item.cellY);
-//          	}
-//       
-//    	}
-// 	  cellLayoutChildren =((CellLayout)mLauncher.getHotseat().getLayout()).getChildrenLayout();
-//        int countHotseat =	cellLayoutChildren.getChildCount();	 
-//
-//          ItemInfo item =null;
-//          for(int i = 0 ; i < countHotseat ; i++){
-//        	
-//        	
-//        	  item= (ItemInfo) cellLayoutChildren.getChildAt(i).getTag();
-//        	  
-//        	  LauncherModel.addOrMoveItemInDatabase(mLauncher, item, item.container, item.cellX, item.cellX, item.cellY);
-//        	}
-//    }
     
     
     
