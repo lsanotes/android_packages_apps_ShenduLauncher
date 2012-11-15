@@ -153,7 +153,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mTabLabel.setText(label);
         mTabViewLayout.setContentDescription(label);
         addTab(newTabSpec(WIDGETS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
-        onTabChanged(WIDGETS_TAB_TAG);
+     
         
         //choice wallpaper
         label = mContext.getString(R.string.editstate_choice_wallpaper);
@@ -162,7 +162,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mTabLabel.setText(label);
         mTabViewLayout.setContentDescription(label);
         addTab(newTabSpec(WALLPAPERS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
-        
+        setCurrentTabByTag(WALLPAPERS_TAB_TAG);
+        onTabChanged(WALLPAPERS_TAB_TAG);
 //        //choice theme
 //        label = mContext.getString(R.string.editstate_choice_theme);
 //        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);

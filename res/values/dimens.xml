@@ -28,8 +28,7 @@
     <!-- <dimen name="qsb_bar_height_inset">34dp</dimen> -->
     <dimen name="qsb_bar_hidden_inset">14dp</dimen>
     <!-- <dimen name="qsb_bar_height">40dp</dimen> -->
-    <dimen name="qsb_padding_left">0dp</dimen>
-    <dimen name="qsb_padding_right">0dp</dimen>
+
     <dimen name="search_bar_height">40dp</dimen>
     <dimen name="workspace_cell_width">80dp</dimen>
     <dimen name="workspace_cell_height">100dp</dimen>
@@ -72,7 +71,6 @@
     <dimen name="apps_customize_cell_width">100px</dimen>
     <dimen name="apps_customize_cell_height">200px</dimen>
     <dimen name="apps_customize_max_gap">18dp</dimen>
-    <dimen name="apps_customize_widget_cell_width_gap">10dp</dimen>
     <dimen name="apps_customize_widget_cell_height_gap">132dp</dimen>
     <dimen name="title_texture_width">120px</dimen>
 
@@ -131,4 +129,36 @@
     <dimen name="folder_name_padding">10dp</dimen>
     <dimen name="folder_width_gap">0dp</dimen>
     <dimen name="folder_height_gap">0dp</dimen>
+    
+    
+    
+    <!-- QSB -->
+    <dimen name="qsb_bar_height_inset">42dp</dimen>
+    <dimen name="qsb_bar_height">42dp</dimen>
+    <dimen name="qsb_padding_left">3dp</dimen>
+    <dimen name="qsb_padding_right">3dp</dimen>
+
+<!-- Workspace -->
+    <dimen name="workspace_left_padding">0dp</dimen>
+    <dimen name="workspace_right_padding">0dp</dimen>
+    <!-- Block spacing on each side of the screen.  And also padding
+         for the portals to look right. -->
+    <dimen name="workspace_top_padding">0dp</dimen>
+    <dimen name="workspace_bottom_padding">0dp</dimen>
+      <dimen name="workspace_page_spacing">10dp</dimen>
+
+<!-- AppsCustomize -->
+    <dimen name="apps_customize_pageLayoutWidthGap">-1dp</dimen>
+    <dimen name="apps_customize_pageLayoutHeightGap">-1dp</dimen>
+    <dimen name="apps_customize_pageLayoutPaddingTop">10dp</dimen>
+    <dimen name="apps_customize_pageLayoutPaddingBottom">10dp</dimen>
+    <dimen name="apps_customize_pageLayoutPaddingLeft">5dp</dimen>
+    <dimen name="apps_customize_pageLayoutPaddingRight">5dp</dimen>
+    <integer name="apps_customize_cling_focused_x">1</integer>
+    <integer name="apps_customize_cling_focused_y">1</integer>
+
+    <dimen name="apps_customize_widget_cell_width_gap">10dp</dimen>
+    <integer name="apps_customize_widget_cell_count_x">3</integer>
+    <integer name="apps_customize_widget_cell_count_y">1</integer>
+    
 </resources>

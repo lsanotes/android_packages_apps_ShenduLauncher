@@ -294,7 +294,9 @@ public abstract class PagedView extends ViewGroup {
      * the previous tab page.
      */
     protected void updateCurrentPageScroll() {
+
         int newX = getChildOffset(mCurrentPage) - getRelativeChildOffset(mCurrentPage);
+        
         scrollTo(newX, 0);
         mScroller.setFinalX(newX);
     }
@@ -303,6 +305,7 @@ public abstract class PagedView extends ViewGroup {
      * Sets the current page.
      */
     void setCurrentPage(int currentPage) {
+
         if (!mScroller.isFinished()) {
             mScroller.abortAnimation();
         }
@@ -311,8 +314,8 @@ public abstract class PagedView extends ViewGroup {
         if (getChildCount() == 0) {
             return;
         }
-
         mCurrentPage = Math.max(0, Math.min(currentPage, getPageCount() - 1));
+        
         updateScrollingIndicator();
         updateCurrentPageScroll();
         /*if (mScrollIndicator != null) {
@@ -568,7 +571,6 @@ public abstract class PagedView extends ViewGroup {
         if (!mIsDataReady) {
             return;
         }
-        //Log.i("hhl", "===PagedView.java==onLayout=="+changed+"*"+left+"*"+top+"*"+right+"*"+bottom+"*"+mPageSpacing);
         if (DEBUG) Log.d(TAG, "PagedView.onLayout()");
         final int verticalPadding = mPaddingTop + mPaddingBottom;
         final int childCount = getChildCount();
@@ -745,13 +747,12 @@ public abstract class PagedView extends ViewGroup {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+       	
         if (mOverScrollX != mLastScreenScroll || mForceScreenScrolled) {
             screenScrolled(mOverScrollX);
             mLastScreenScroll = mOverScrollX;
             mForceScreenScrolled = false;
         }
-        //Log.i("hhl", "===PagedView.java==dispatchDraw=="+mCurrentPage+"*"+mNextPage+"==="+
-        		//getChildAt(mCurrentPage));
         // Find out which screens are visible; as an optimization we only call draw on them
         final int pageCount = getChildCount();
         if (pageCount > 0) {
@@ -1006,7 +1007,7 @@ public abstract class PagedView extends ViewGroup {
 
             case MotionEvent.ACTION_POINTER_UP:
             	
-                if((pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
+                if((!CellLayout.mIsEditstate)&&(pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
                	 showPreviews();
                }
 
@@ -1029,15 +1030,7 @@ public abstract class PagedView extends ViewGroup {
   }
     protected void animateClickFeedback(View v, final Runnable r) {
         // animate the view slightly to show click feedback running some logic after it is "pressed"
-        //ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.
-                //loadAnimator(mContext, R.anim.paged_view_click_feedback);
-        //anim.setTarget(v);
-        //anim.addListener(new AnimatorListenerAdapter() {
-            //public void onAnimationRepeat(Animator animation) {
                 r.run();
-            //}
-        //});
-        //anim.start();
     }
 
     protected void determineScrollingStart(MotionEvent ev) {
@@ -1318,7 +1311,7 @@ public abstract class PagedView extends ViewGroup {
         case MotionEvent.ACTION_POINTER_UP:
         	
             
-            if((pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
+          if((!CellLayout.mIsEditstate)&&(pointerCount>1)&&(ev.getX(1) -ev.getX(0))*(ev.getX(1) -ev.getX(0))+(ev.getY(1) -ev.getY(0))*(ev.getY(1) -ev.getY(0)) <muiltiDistance){
            	 showPreviews();
            }
            muiltiDistance =0;
@@ -1533,7 +1526,6 @@ public abstract class PagedView extends ViewGroup {
         	
         	mScrollIndicator.setCurrentPage(whichPage);
         }
-        //Log.i("hhl", "===PagedView.java===snapToPage==="+mCurrentPage+"=="+whichPage+"==="+getChildCount());
         View focusedChild = getFocusedChild();
         if (focusedChild != null && whichPage != mCurrentPage &&
                 focusedChild == getPageAt(mCurrentPage)) {
@@ -1771,7 +1763,6 @@ public abstract class PagedView extends ViewGroup {
             mScroller.forceFinished(true);
             mNextPage = INVALID_PAGE;
 
-        	//Log.i("hhl", "==PageView.java==invalidatePageData 1111111=="+currentPage+"=="+mIsDataReady);
             // Update all the pages
             syncPages();
 

@@ -260,6 +260,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     private HolographicOutlineHelper mHolographicOutlineHelper;
     private static final int sPageSleepDelay = 200;
 
+
     // Preferences
     //private boolean mJoinWidgetsApps;
     //private boolean mShowScrollingIndicator;
@@ -269,7 +270,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         super(context, attrs);
         mLayoutInflater = LayoutInflater.from(context);
         mPackageManager = context.getPackageManager();
-        mContentType = ContentType.Widgets;
+        mContentType = ContentType.Wallpapers;
         //mApps = new ArrayList<ShortcutInfo>();
         mWallpapersList = new ArrayList<ShenduPrograme>();
         mEffectsList = new ArrayList<ShenduPrograme>();
@@ -604,17 +605,14 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // Get the list of widgets and shortcuts
         boolean wasEmpty = mWidgets.isEmpty();
         mWidgets.clear();
-        //Log.i(Launcher.TAG, LOG_TAG+"              mWidgets.clear();.......      " );
         
         List<AppWidgetProviderInfo> widgets =
             AppWidgetManager.getInstance(mLauncher).getInstalledProviders();
 
-        //Log.i(Launcher.TAG, LOG_TAG+"22222222mWidgets.clear();.......      "+widgets.size());
         Intent shortcutsIntent = new Intent(Intent.ACTION_CREATE_SHORTCUT);
         List<ResolveInfo> shortcuts = mPackageManager.queryIntentActivities(shortcutsIntent, 0);
         for (AppWidgetProviderInfo widget : widgets) {
         	
-            //Log.i(Launcher.TAG, LOG_TAG+"              mWidgets.clear();.......      " +widget.icon);
           
             if (widget.minWidth > 0 && widget.minHeight > 0) {
                 mWidgets.add(widget);
@@ -668,7 +666,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         		shendParograme.setEffectCurrent(false);
     		}
     		mEffectsList.add(shendParograme);
-        	//Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindEffects=="+extra);
     	}
     	if (wasEmpty) {
             // The next layout pass will trigger data-ready if both widgets and apps are set, so request
@@ -687,7 +684,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     private void shenduFindWallpapers() {
     	boolean wasEmpty = mWallpapersList.isEmpty();
     	mWallpapersList.clear();
-    	//Log.i("hhl", "^^^^^^^^^^AppsCustomizePagedView.java==shenduFindWallpapers=="+wasEmpty);
     	Resources resources = getResources();
     	String packageName = resources.getResourcePackageName(R.array.wallpapers);
     	String[] extras = resources.getStringArray(R.array.wallpapers);
@@ -711,8 +707,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     		widgetPrograme.setLiveWallpaper(false);
     		widgetPrograme.setResDrawable(wallpaperManager.getDrawable());
     	}else{
-    		//Log.i("hhl", "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@AppsCustomizePagedView.java==shenduFindWallpapers=="+
-    			//wallpaperInfo.getComponent()+"==="+wallpaperInfo.getPackageName());
     		widgetPrograme.setLiveWallpaper(true);
     		widgetPrograme.setResDrawable(wallpaperInfo.loadThumbnail(mPackageManager));
     		/*Intent liveWallpaperIntent = new Intent(WallpaperService.SERVICE_INTERFACE);
@@ -754,7 +748,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         if (view instanceof PagedViewWallpaper) {
             // Animate some feedback to the click
             //final ApplicationInfo appInfo = (ApplicationInfo) v.getTag();
-            //Log.i("hhl", "===AppsCustonizepagedView.java===onClick==="+view.getTag());
             final ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
             animateClickFeedback(view, new Runnable() {
                 public void run() {
@@ -765,18 +758,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         					wallpaperManager.setResource(shenduPrograme.getResId());
                     		break;
                     	case ShenduPrograme.CHOICE_WALLPAPER_CURRENT:
-                    		/*if(shenduPrograme.isLiveWallpaper()){
-                                //Log.i("hhl", "===AppsCustonizepagedView.java===onClick==live wallpaper=="+
-                                		//shenduPrograme.getComponentname());
-                                wallpaperManager.getIWallpaperManager().setWallpaperComponent(
-                                		shenduPrograme.getComponentname());
-                    			//wallpaperManager.getIWallpaperManager().setWallpaperComponent(
-            							//shenduPrograme.getIntent().getComponent());
-            					//wallpaperManager.setWallpaperOffsetSteps(0.5f, 0.0f);
-            					//wallpaperManager.setWallpaperOffsets(view.getRootView().getWindowToken(), 0.5f, 0.0f);
-                    		}else{
-                    			wallpaperManager.setBitmap(((BitmapDrawable)shenduPrograme.getResDrawable()).getBitmap());
-                    		}*/
                     		break;
                     	case ShenduPrograme.CHOICE_WALLPAPER_MORE:
                     		mLauncher.startActivity(shenduPrograme.getIntent());
@@ -787,23 +768,16 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-                    //mLauncher.startActivitySafely(appInfo.intent, appInfo);
                 }
             });
         } else if (view instanceof PagedViewEffect){
         	ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
         	mLauncher.getWorkspace().recoveryState(State.NORMAL,State.SMALL,true);
-        	
         	mLauncher.getWorkspace().setTransitionEffect(Workspace.TransitionEffect.valueOf(shenduPrograme.getName()));
-        	
-        	
         	mLauncher.getWorkspace().transitionEffectDemonstration();
-            //SharedPreferences prefs =
-                //mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = mSharedPreferences.edit();
             editor.putString(PreferencesProvider.PREFERENCES_EFFECT, shenduPrograme.getName());
             editor.commit();
-        	//Log.i("hhl", "===AppsCustonizepagedView.java===onClick==PagedViewEffect=="+view.getTag());
         }else if (view instanceof PagedViewWidget) {
             // Let the user know that they have to long press to add a widget
             Toast.makeText(getContext(), R.string.long_press_widget_to_add,
@@ -1095,7 +1069,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             final Resources res = getResources();
             final int duration = res.getInteger(R.integer.config_tabTransitionDuration);
             shenduUpdateTheArrowImageView(0);
-            Log.i(Launcher.TAG, "===AppsCustomizePagedView.java...881===onTabChanged==="+type+"==="+mContentType);
             if(type.equals(AppsCustomizeView.ContentType.Wallpapers) || 
             		type.equals(AppsCustomizeView.ContentType.Widgets) ||
             		type.equals(AppsCustomizeView.ContentType.Effects)){

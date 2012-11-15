@@ -75,6 +75,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -534,26 +535,29 @@ public class Workspace extends PagedView
     }
 
 
-    public void addScreen(LayoutInflater inflater){
+    public void addScreen(LayoutInflater inflater,boolean isEditeState){
                if(inflater ==null){
             	   inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
                }
-
             View screen = inflater.inflate(R.layout.workspace_screen, null);
             screen.setPadding(screen.getPaddingLeft() + mScreenPaddingHorizontal,
                     screen.getPaddingTop() + mScreenPaddingVertical,
                     screen.getPaddingRight() + mScreenPaddingHorizontal,
                     screen.getPaddingBottom() + mScreenPaddingVertical);
-            
-            addView(screen); 
+       
+                addView(screen); 
 
+               if(isEditeState){ 
+                  recoveryState(State.NORMAL,State.SMALL,true);
+                  setTransitionEffect(mTransitionEffect);
+               }
     }
+
     
     void savedThePageCount(){
     	
         setHapticFeedbackEnabled(false);
         setOnLongClickListener(mLauncher);
-        
         SharedPreferences preferences = mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, 0);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("ui_homescreen_screens", getChildCount());
@@ -580,7 +584,7 @@ public class Workspace extends PagedView
         for (int i = 0; i < mNumberHomescreens; i++) {
             LayoutInflater inflater =
                     (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            addScreen(inflater);
+            addScreen(inflater,false);
             
         }
         savedThePageCount();
@@ -880,10 +884,15 @@ public class Workspace extends PagedView
         		if((!isShowPreviews)&&(ev.getY()-OpenStatusBarBeginY>130)){ //touch bottom
         			showNotifications();
         		}
+        		
         		if((!isShowPreviews)&&(OpenStatusBarBeginY-ev.getY()>130)){ //touch top
         			mLauncher.enterEditMode();
         		}
-        	}
+        	}else if(isSmall() &&(ev.getY()-OpenStatusBarBeginY>130)  ){
+    			mLauncher.backFromEditMode();
+    		}
+        	
+        	
             
             if (mTouchState == TOUCH_STATE_REST) {
                 final CellLayout currentPage = (CellLayout) getPageAt(mCurrentPage);
@@ -1984,7 +1993,6 @@ public class Workspace extends PagedView
             final CellLayout leftPage = (CellLayout) getPageAt(mCurrentPage - 1);
             final CellLayout rightPage = (CellLayout) getPageAt(mCurrentPage + 1);
 
-            //Log.i("hhl", "===workspace.java==dispatchDraw=="+mCurrentPage+"*"+mOverScrollX);
             if (leftPage != null && leftPage.getIsDragOverlapping()) {
                 final Drawable d = getResources().getDrawable(R.drawable.page_hover_left_holo);
                 d.setBounds(mScrollX, paddingTop, mScrollX + d.getIntrinsicWidth(),
@@ -2216,7 +2224,6 @@ public class Workspace extends PagedView
         mOldBackgroundAlphas = new float[childCount];
         mOldBackgroundAlphaMultipliers = new float[childCount];
         mOldAlphas = new float[childCount];
-    	//Log.i(Launcher.TAG,TAG+ ".. initAnimationArrays().......................mOldAlphas.."+mOldAlphas.length);
         
         mOldRotations = new float[childCount];
         mOldRotationYs = new float[childCount];
@@ -2258,7 +2265,7 @@ public class Workspace extends PagedView
         mAnimator = new AnimatorSet();
 
         // Stop any scrolling, move to the current page right away
-        setCurrentPage((mNextPage != INVALID_PAGE) ? mNextPage : mCurrentPage);
+       // setCurrentPage((mNextPage != INVALID_PAGE) ? mNextPage : mCurrentPage);
 
         final State oldState = mState;
         final boolean oldStateIsNormal = (oldState == State.NORMAL);
@@ -2275,7 +2282,7 @@ public class Workspace extends PagedView
         float translationYExtra = 0;
 
         if (state != State.NORMAL) {
-            finalScaleFactor = mSpringLoadedShrinkFactor - (stateIsSmall ? 0.1f : 0);
+            finalScaleFactor = mSpringLoadedShrinkFactor - (stateIsSpringLoaded ? 0.1f : 0);
             //finalScaleFactor = finalScaleFactor>(455.0f/getMeasuredHeight())?(455.0f/getMeasuredHeight()):finalScaleFactor;
             finalScaleFactor = finalScaleFactor>0.75f?0.75f:finalScaleFactor;
        
@@ -2288,17 +2295,20 @@ public class Workspace extends PagedView
                 setLayoutScale(finalScaleFactor);
                 updateChildrenLayersEnabled();
             } else {
+            	
                 finalBackgroundAlpha = 1.0f;
+                
                 setLayoutScale(finalScaleFactor);
             }
         } else {
              showScrollingIndicator(true, sScrollIndicatorFadeInDuration);
-            setLayoutScale(1.0f);
+             setLayoutScale(1.0f);
         }
 
         final int duration = zoomIn ? 
                 getResources().getInteger(R.integer.config_workspaceUnshrinkTime) :
                 getResources().getInteger(R.integer.config_appsCustomizeWorkspaceShrinkTime);
+  //      final int duration = 3000;
         for (int i = 0; i < getChildCount(); i++) {
             final CellLayout cl = (CellLayout) getPageAt(i);
             if(i==mCurrentPage){
@@ -2312,13 +2322,15 @@ public class Workspace extends PagedView
             float finalAlphaMultiplierValue = 1f;
             float finalAlpha = (!mFadeInAdjacentScreens || stateIsSpringLoaded ||
                     (i == mCurrentPage)) ? 1f : 0f;
-            translationYExtra = (float)(cl.getMeasuredHeight()*(1-finalScaleFactor)/2.0);
+            
+
+        	  translationYExtra = (float)(cl.getMeasuredHeight()*(1-finalScaleFactor)/2.0);
             // Determine the pages alpha during the state transition
             if ((oldStateIsSmall && stateIsNormal) ||
                 (oldStateIsNormal && stateIsSmall)) {
                 // To/from workspace - only show the current page unless the transition is not
                 //                     animated and the animation end callback below doesn't run
-                if (i == mCurrentPage || !animated) {
+                if (cl.mIsCurrentPage || !animated) {
                     finalAlpha = 1f;
                     finalAlphaMultiplierValue = 0f;
                 } else {
@@ -2339,26 +2351,33 @@ public class Workspace extends PagedView
 
             // Make sure the pages are visible with the stack effect
             if (mTransitionEffect == TransitionEffect.Stack) {
+            	
                 if (stateIsSmall || stateIsSpringLoaded) {
-                    cl.setVisibility(VISIBLE);
-                } else if (stateIsNormal) {
-                    if (i <= mCurrentPage) {
-                        cl.setVisibility(VISIBLE);
-                    } else {
-                        cl.setVisibility(GONE);
-                    }
-                }
+//                	 if (cl.mIsCurrentPage) {
+//                         cl.setVisibility(VISIBLE);
+//                     } else {
+//                         cl.setVisibility(GONE);
+//                     }
+                   cl.setVisibility(VISIBLE);
+                } 
             }
 
             if ((mTransitionEffect == TransitionEffect.Tablet && stateIsNormal) ||
                     (LauncherApplication.isScreenLarge() && (stateIsSmall || stateIsSpringLoaded))) {
                 translationX = getOffsetXForRotation(rotationY, cl.getWidth(), cl.getHeight());
             }
-
-            if (stateIsNormal && (mTransitionEffect == TransitionEffect.RotateUp ||
+    
+            if (stateIsSpringLoaded && (mTransitionEffect == TransitionEffect.RotateUp ||
                     mTransitionEffect == TransitionEffect.RotateDown)) {
                 rotation = (mTransitionEffect == TransitionEffect.RotateUp ? WORKSPACE_ROTATION_ANGLE : -WORKSPACE_ROTATION_ANGLE) *
                         Math.abs(mCurrentPage - i);
+                rotation=0;
+                    if(cl.mIsCurrentPage){
+                    	  cl.setAlpha(1f);
+                    }else{
+                    	 cl.setAlpha(0f);
+                    }
+              
             }
 
             if (stateIsSmall || stateIsSpringLoaded) {
@@ -2410,12 +2429,13 @@ public class Workspace extends PagedView
                 ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
 
             if (zoomIn) {
-                animWithInterpolator.setInterpolator(mZoomInInterpolator);
+                animWithInterpolator.setInterpolator(new LinearInterpolator());
             }
 
             animWithInterpolator.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(android.animation.Animator animation) {
+       
                     // The above code to determine initialAlpha and finalAlpha will ensure that only
                     // the current page is visible during (and subsequently, after) the transition
                     // animation.  If fade adjacent pages is disabled, then re-enable the page
@@ -2428,6 +2448,7 @@ public class Workspace extends PagedView
                     }
                 }
             });
+            
             animWithInterpolator.addUpdateListener(new LauncherAnimatorUpdateListener() {
                 public void onAnimationUpdate(float a, float b) {
                     mTransitionProgress = b;
@@ -2440,16 +2461,23 @@ public class Workspace extends PagedView
                         final CellLayout cl = (CellLayout) getPageAt(i);
                         cl.invalidate();
                         cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
-                        
-                      cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
-                        	  cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-                        	 cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
+                 
+                        cl.setTranslationY(a * (mOldTranslationYs[i] )+ b * (mNewTranslationYs[i]-mTranslationYExtra));
+                      
+                        cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
+                        cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
                         cl.setFastBackgroundAlpha(
                                 a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
                         cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
                                 b * mNewBackgroundAlphaMultipliers[i]);
-                        cl.setAlpha(1f);
+                      
                         cl.invalidate();
+                        if(cl.mIsCurrentPage){
+                        	  cl.setAlpha(1f);
+                        }else{
+                        	 cl.setAlpha(b);
+                        }
+                        
                     }
                     syncChildrenLayersEnabledOnVisiblePages();
                 }
@@ -2457,7 +2485,7 @@ public class Workspace extends PagedView
 
             ValueAnimator rotationAnim =
                 ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
-            rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
+            rotationAnim.setInterpolator(new  LinearInterpolator());
             rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
                 public void onAnimationUpdate(float a, float b) {
                     if (b == 0f) {
@@ -2467,32 +2495,58 @@ public class Workspace extends PagedView
                     for (int i = 0; i < getChildCount(); i++) {
                         final CellLayout cl = (CellLayout) getPageAt(i);
                         if (mOldRotations[i] != mNewRotations[i]) {
-                            cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
+                            cl.setRotation(0 * mOldRotations[i] + 1 * mNewRotations[i]);
                         }
-                        cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
+                        cl.setRotationY(0* mOldRotationYs[i] + 1 * mNewRotationYs[i]);
+                    }
+                }
+                
+                public void onAnimationStart(Animator animation){
+               		
+                    for (int i = 0; i < getChildCount(); i++) {
+                        final CellLayout cl = (CellLayout) getPageAt(i);
+                        if (mOldRotations[i] != mNewRotations[i]) {
+                            cl.setRotation(0 * mOldRotations[i] + 1 * mNewRotations[i]);
+                        }
+                        cl.setRotationY(0 * mOldRotationYs[i] + 1 * mNewRotationYs[i]);
                     }
                 }
             });
-
-            mAnimator.playTogether(animWithInterpolator, rotationAnim);
+            
+            ObjectAnimator mStateAnimation = ObjectAnimator
+                    .ofFloat(mLauncher.mAppsCustomizeTabHost, "translationY",oldStateIsNormal?249f:0, oldStateIsNormal?0f:249f)
+                    .setDuration(duration);
+            mStateAnimation.setInterpolator(new LinearInterpolator());
+            
+            
+            
+            mAnimator.playTogether(animWithInterpolator, rotationAnim,mStateAnimation);
             mAnimator.setStartDelay(delay);
             // If we call this when we're not animated, onAnimationEnd is never called on
             // the listener; make sure we only use the listener when we're actually animating
             mAnimator.addListener(mChangeStateAnimationListener);
             mAnimator.start();
+            
+
+            mStateAnimation.addListener(new AnimatorListenerAdapter() {
+                public void onAnimationStart(Animator animation) {
+                    if (oldStateIsNormal ) {
+                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(249f);
+                    	mLauncher.mAppsCustomizeTabHost.setVisibility(View.VISIBLE);
+                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
+                    	mLauncher.mAppsCustomizeTabHost.bringToFront();	
+                    }else{
+                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(0f);
+                    
+                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
         }
 
-        if (stateIsSpringLoaded) {
-            // Right now we're covered by Apps Customize
-            // Show the background gradient immediately, so the gradient will
-            // be showing once AppsCustomize disappears
-            animateBackgroundGradient(getResources().getInteger(
-                    R.integer.config_appsCustomizeSpringLoadedBgAlpha) / 100f, false);
-        } else {
-            // Fade the background gradient away
-            animateBackgroundGradient(0f, true);
-        }
+
        syncChildrenLayersEnabledOnVisiblePages();
+       
     }
     
     
@@ -2511,11 +2565,10 @@ public class Workspace extends PagedView
          if (mAnimator != null) mAnimator.cancel();
          mAnimator = new AnimatorSet();
          // Stop any scrolling, move to the current page right away
-         setCurrentPage((mNextPage != INVALID_PAGE) ? mNextPage : mCurrentPage);
+      //   setCurrentPage((mNextPage != INVALID_PAGE) ? mNextPage : mCurrentPage);
          final State oldState = state1;
          final boolean oldStateIsNormal = (oldState == State.NORMAL);
          final boolean oldStateIsSmall = (oldState == State.SMALL);
-       //  mState = state;
          final boolean stateIsNormal = (state == State.NORMAL);
          final boolean stateIsSpringLoaded = (state == State.SPRING_LOADED);
          final boolean stateIsSmall = (state == State.SMALL);
@@ -2545,10 +2598,6 @@ public class Workspace extends PagedView
               showScrollingIndicator(true, sScrollIndicatorFadeInDuration);
              setLayoutScale(1.0f);
          }
-
-//         final int duration = zoomIn ? 
-//                 getResources().getInteger(R.integer.config_workspaceUnshrinkTime) :
-//                 getResources().getInteger(R.integer.config_appsCustomizeWorkspaceShrinkTime);
          final int duration = 0;
                     
          for (int i = 0; i < getChildCount(); i++) {
@@ -2562,7 +2611,6 @@ public class Workspace extends PagedView
              float rotationY = 0f;
              float initialAlpha = 1;
              
-             //Log.i(Launcher.TAG,TAG+"..............initialAlpha::"+i+"   :"+initialAlpha);
              float finalAlphaMultiplierValue = 1f;
              float finalAlpha = (!mFadeInAdjacentScreens || stateIsSpringLoaded ||
                      (i == mCurrentPage)) ? 1f : 0f;
@@ -2580,16 +2628,6 @@ public class Workspace extends PagedView
                      finalAlpha = 0f;
                  }
              }
-
-             // Update the rotation of the screen
-             // do not used rotate Y on small screen
-             /*if (mTransitionEffect == TransitionEffect.Tablet || stateIsSmall || stateIsSpringLoaded) {
-                 if (i < mCurrentPage) {
-                     rotationY = WORKSPACE_ROTATION;
-                 } else if (i > mCurrentPage) {
-                     rotationY = -WORKSPACE_ROTATION;
-                 }
-             }*/
 
              // Make sure the pages are visible with the stack effect
              if (mTransitionEffect == TransitionEffect.Stack) {
@@ -2736,8 +2774,7 @@ public class Workspace extends PagedView
              mAnimator.start();
          }
     }
-    
-    
+
 /**
  * transitionEffect Demonstration :snap to  next page ,then Flip back.
  * 
@@ -2764,7 +2801,7 @@ public class Workspace extends PagedView
             }
            	
         },800);
-  
+ 
     }
     
     
@@ -2924,6 +2961,7 @@ public class Workspace extends PagedView
      */
 	void addTheHeaderOrFooterSpace(){
 		if(!isAddHeaderAndFooter){
+	 
 			LayoutInflater inflater=(LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View screenHeader = inflater.inflate(R.layout.workspace_screen_add, null);
 			//screenHeader.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail_new_screen_n));
@@ -2931,15 +2969,18 @@ public class Workspace extends PagedView
 					screenHeader.getPaddingTop() + mScreenPaddingVertical,
 					screenHeader.getPaddingRight() + mScreenPaddingHorizontal,
 					screenHeader.getPaddingBottom() + mScreenPaddingVertical);
-          addView(screenHeader,0);
-          View screenFooter = inflater.inflate(R.layout.workspace_screen_add, null);
+            addView(screenHeader,0);
+            View screenFooter = inflater.inflate(R.layout.workspace_screen_add, null);
           //screenFooter.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail_new_screen_n));
-          screenFooter.setPadding(screenFooter.getPaddingLeft() + mScreenPaddingHorizontal,
+            screenFooter.setPadding(screenFooter.getPaddingLeft() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingTop() + mScreenPaddingVertical,
         		  screenFooter.getPaddingRight() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingBottom() + mScreenPaddingVertical);
-          addView(screenFooter,getChildCount());
-          setCurrentPage(mCurrentPage+1);
+            addView(screenFooter,getChildCount());
+          
+      	 //   setCurrentPage(mCurrentPage+1);
+      
+          mCurrentPage =mCurrentPage+1;
           isAddHeaderAndFooter=true;
 		}
     }
@@ -3304,7 +3345,7 @@ public class Workspace extends PagedView
     }
 
     public void onDrop(DragObject d) {
-    	
+    	 Log.i(Launcher.TAG , " workspace     onDrop()........... 11  mInfo.cellX:."); 
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, d.dragView,
                 mDragViewVisualCenter);
 
@@ -3318,16 +3359,15 @@ public class Workspace extends PagedView
         }
 
         CellLayout dropTargetLayout = mDragTargetLayout;
-
         int snapScreen = -1;
         if (d.dragSource != this) {
-        	
+        
             final int[] touchXY = new int[] { (int) mDragViewVisualCenter[0],
                     (int) mDragViewVisualCenter[1] };
             onDropExternal(touchXY, d.dragInfo, dropTargetLayout, false, d);
+   
             
         } else if (mDragInfo != null) {
-        	
             final View cell = mDragInfo.cell;
 
             if (dropTargetLayout != null) {
@@ -3345,7 +3385,6 @@ public class Workspace extends PagedView
                 // dropped, without any consideration to whether there is an item there.
                 mTargetCell = findNearestArea((int) mDragViewVisualCenter[0], (int)
                         mDragViewVisualCenter[1], spanX, spanY, dropTargetLayout, mTargetCell);
-                
             	
                 // If the item being dropped is a shortcut and the nearest drop
                 // cell also contains a shortcut, then create a folder with the two shortcuts.
@@ -3361,7 +3400,6 @@ public class Workspace extends PagedView
                 mTargetCell = findNearestVacantArea((int) mDragViewVisualCenter[0],
                         (int) mDragViewVisualCenter[1], mDragInfo.spanX, mDragInfo.spanY, null,
                         dropTargetLayout, mTargetCell);
-
                 if (mCurrentPage != screen && !hasMovedIntoHotseat) {
                     snapScreen = screen;
                     snapToPage(screen);
@@ -3375,7 +3413,6 @@ public class Workspace extends PagedView
                     	if(cellLayout!=null){
                     		cellLayout.removeView(cell);
                     	}
-                    	
                         addInScreen(cell, container, screen, mTargetCell[0], mTargetCell[1],
                                 mDragInfo.spanX, mDragInfo.spanY);
                     }
@@ -3450,14 +3487,19 @@ public class Workspace extends PagedView
             }
             parent.onDropChild(cell);
         }
+        
+        
+        
+        if(isSmall()&&mCurrentPage == getChildCount()-1){
+        	addScreen(null,true);
+        }
+        
         post(new Runnable() {
      
             public void run() {
             	
             	 updateCurrentPageItemCoordinate();
-                 
             }
-           	
         });
     }
     /**
@@ -4344,12 +4386,12 @@ public class Workspace extends PagedView
      */
     private void onDropExternal(final int[] touchXY, final Object dragInfo,
             final CellLayout cellLayout, boolean insertAtFirst, DragObject d) {
-        final Runnable exitSpringLoadedRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //mLauncher.exitSpringLoadedDragModeDelayed(true, false);
-            }
-        };
+//        final Runnable exitSpringLoadedRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                //mLauncher.exitSpringLoadedDragModeDelayed(true, false);
+//            }
+//        };
 
         ItemInfo info = (ItemInfo) dragInfo;
         
@@ -4478,6 +4520,7 @@ public class Workspace extends PagedView
                 // when dragging and dropping, just find the closest free spot
                 mTargetCell = findNearestVacantArea(touchXY[0], touchXY[1], 1, 1, null,
                         cellLayout, mTargetCell);
+                
             } else {
                 cellLayout.findCellForSpan(mTargetCell, 1, 1);
             }
@@ -4615,21 +4658,12 @@ public class Workspace extends PagedView
                         mDragController.removeDropTarget((DropTarget) mDragInfo.cell);
                     }
                 }
-                
-//                if(target instanceof DeleteDropTarget){
-//                	//remove by zlf for:delete the last Item , delete this celllayout
-//                	//cell =null;
-//                }
             }
-            
             if(startMovedPage !=-1){
-    	  //  if(cell!=null){
-  
     	   	removeEmptyScreen(startMovedPage);
-    	    // }
              startMovedPage=-1;	
             }
-      
+
             post(new Runnable() {
                 
                 public void run() {     	

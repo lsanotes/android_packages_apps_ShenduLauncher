@@ -103,9 +103,7 @@ public class Hotseat extends FrameLayout {
     }
     int count =0; 
     public void setGridSize(int cellCount,boolean isAdd,boolean initState){
-   
      	 count =cellLayoutChildren.getChildCount();
-     	
         
      	if(isAdd&&mCellCountX<cellCount){
      		

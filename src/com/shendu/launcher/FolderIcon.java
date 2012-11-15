@@ -481,8 +481,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void onDrop(DragObject d) {
         ShortcutInfo item = null;
-    	//Log.i("hhl", "FolderIcon.java...onDrop 1====="+getClass().getName()+"==="+d.dragInfo);
-    	
     	
         if (d.dragInfo instanceof ApplicationInfo) {
             // Came from all apps -- make a copy
@@ -497,9 +495,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             LauncherModel.deleteItemFromDatabase(mLauncher, folder);
             return;
         } else {
-        
-        		   item = (ShortcutInfo) d.dragInfo;
-        
+        	 item = (ShortcutInfo) d.dragInfo;
         }
         mFolder.notifyDrop();
         onDrop(item, d.dragView, null, 1.0f, mInfo.contents.size(), d.postAnimationRunnable);
@@ -510,7 +506,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     private void computePreviewDrawingParams(int drawableSize, int totalSize) {
-    	//Log.i("hhl", "^^^^^^^FolderIcon.java...computePreviewDrawingParams two===");
     	Workspace.FolderStyle folderStyle = mLauncher.getWorkspace().getFolderStyle();
         if(folderStyle == Workspace.FolderStyle.Ring){
         	if (mIntrinsicIconSize != drawableSize || mTotalWidth != totalSize) {
@@ -537,7 +532,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     }
 
     private void computePreviewDrawingParams(Drawable d) {
-    	//Log.i("hhl", "^^^^^^^FolderIcon.java...computePreviewDrawingParams one===");
         computePreviewDrawingParams(d.getIntrinsicWidth(), getMeasuredWidth());
     }
 

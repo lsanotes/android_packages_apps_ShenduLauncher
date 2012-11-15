@@ -976,7 +976,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
   
         CellLayout cellLayout = mLauncher.getCellLayout(mInfo.container, mInfo.screen);
         
-        
         cellLayout.removeView(mFolderIcon);
         if (mFolderIcon instanceof DropTarget) {
             mDragController.removeDropTarget((DropTarget) mFolderIcon);
@@ -1000,6 +999,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
             mLauncher.getWorkspace().addInScreen(child, mInfo.container, mInfo.screen, mInfo.cellX,
                     mInfo.cellY, mInfo.spanX, mInfo.spanY);
+           // Log.i(Launcher.TAG , "Folder..............replaceFolderWithFinalItem()22   mInfo.cellX:."+mInfo.cellX+finalItem); 
         }
     }
 

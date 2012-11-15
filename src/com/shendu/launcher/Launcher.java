@@ -225,7 +225,7 @@ public final class Launcher extends Activity
     private View mAllAppsButton;
 
     private SearchDropTargetBar mSearchDropTargetBar;
-    private AppsCustomizeTabHost mAppsCustomizeTabHost;
+    public AppsCustomizeTabHost mAppsCustomizeTabHost;
     private AppsCustomizePagedView mAppsCustomizeContent;
     
     private Folder mAppFolder;
@@ -1209,12 +1209,16 @@ public final class Launcher extends Activity
                 mUserPresent = false;
                 mDragLayer.clearAllResizeFrames();
                 updateRunning();
-
                 // Reset AllApps to its initial state only if we are not in the middle of
                 // processing a multi-step drop
                 if (mAppsCustomizeTabHost != null && mPendingAddInfo.container == ItemInfo.NO_ID) {
                     mAppsCustomizeTabHost.reset();
-                    showWorkspace(false);
+                    if(mWorkspace.isSmall()){
+                        backFromEditMode();	
+                    }
+                    if(mWorkspace.isShowPreviews){
+                    	mScreenPopupWindow.dismiss();
+                    }
                 }
             } else if (Intent.ACTION_USER_PRESENT.equals(action)) {
                 mUserPresent = true;
@@ -1362,7 +1366,6 @@ public final class Launcher extends Activity
 
     @Override
     protected void onNewIntent(Intent intent) {
-
         super.onNewIntent(intent);
         
         if(mWorkspace.isShowPreviews){
@@ -1386,10 +1389,12 @@ public final class Launcher extends Activity
             }
 
             closeFolder();
-    
-        //    exitSpringLoadedDragMode();
-            
-            showWorkspace(alreadyOnHome);
+            if(mWorkspace.isSmall() ){
+            	backFromEditMode();
+            }else{
+                showWorkspace(alreadyOnHome);
+            }
+ 
 
             final View v = getWindow().peekDecorView();
             if (v != null && v.getWindowToken() != null) {
@@ -1826,8 +1831,10 @@ public final class Launcher extends Activity
 
     @Override
     public void onBackPressed() {
-        if (mState == State.APPS_CUSTOMIZE) {
-            showWorkspace(true);
+        if (mState == State.APPS_CUSTOMIZE_SPRING_LOADED) {
+        	  mWorkspace.exitWidgetResizeMode();
+
+              backFromEditMode(); 
         } else if (mWorkspace.getOpenFolder() != null) {
             Folder openFolder = mWorkspace.getOpenFolder();
             if (openFolder.isEditingName()) {
@@ -1835,30 +1842,26 @@ public final class Launcher extends Activity
             } else {
                 closeFolder();
             }
-        } else {
-            mWorkspace.exitWidgetResizeMode();
-
-            // Back button is a no-op here, but give at least some feedback for the button press
-          //  mWorkspace.showOutlinesTemporarily();
-   
-            backFromEditMode(); 
-            
-        }
+        } 
     }
     
 	void backFromEditMode(){
 		if(mWorkspace.isSmall()){
 			CellLayout.mIsEditstate = false; //used to draw line condition
-			setScreenNoLimit();
+	
+			mWorkspace.showScrollingIndicator(true);
 			final Runnable exitSpringLoadedRunnable = new Runnable() {
 				public void run() {
-					exitSpringLoadedDragModeDelayed(true, false);
 					mWorkspace.removeTheHeaderOrFooterSpace(); 
+					exitSpringLoadedDragModeDelayed(true, false);
+				
 					// update all when drag item in editMode
                       mWorkspace.updateScreensFromIndex(0);
 				}
 			};
 			exitSpringLoadedRunnable.run();
+			
+			setScreenNoLimit();
 		}
 	}
 
@@ -2252,18 +2255,27 @@ public final class Launcher extends Activity
   
         return true;
     }
-    
+
 	public void enterEditMode(){
 		CellLayout.mIsEditstate = true; //used to draw line condition
-		if (mAppsCustomizeTabHost != null) {
-			mAppsCustomizeTabHost.selectWidgetsTab();
-		}
-		hideHotseat(true);
-		showAllApps(true);
-		setFullScreen();
+		mWorkspace.hideScrollingIndicator(true);
 		mWorkspace.addTheHeaderOrFooterSpace();
-		mWorkspace.changeState(Workspace.State.SPRING_LOADED);
-       mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+		final Runnable enterSpringLoadedRunnable = new Runnable() {
+			public void run() {
+	
+				mWorkspace.changeState(Workspace.State.SPRING_LOADED);
+			   	showAllApps(true);
+			    mState = State.APPS_CUSTOMIZE_SPRING_LOADED;
+			}
+		};
+		enterSpringLoadedRunnable.run();
+		setFullScreen();
+		hideHotseat(true);
+
+
+//		if (mAppsCustomizeTabHost != null) {
+//			mAppsCustomizeTabHost.selectWidgetsTab();
+//		}
       }
 
     boolean isHotseatLayout(View layout) {
@@ -2493,7 +2505,7 @@ public final class Launcher extends Activity
     private void showAppsCustomizeHelper(boolean animated, final boolean springLoaded) {
 		final Launcher instance = this;
 		final View toView = mAppsCustomizeTabHost;
-		mWorkspace.changeState(Workspace.State.SMALL, animated);
+	//	mWorkspace.changeState(Workspace.State.SMALL, animated);
 		toView.setVisibility(View.VISIBLE);
 		toView.bringToFront();
 		if (toView instanceof LauncherTransitionable) {
@@ -2540,7 +2552,7 @@ public final class Launcher extends Activity
                         true);
             }
             updateWallpaperVisibility(true);
-            fromView.setVisibility(View.GONE);
+          //  fromView.setVisibility(View.GONE);
             if (fromView instanceof LauncherTransitionable) {
                 ((LauncherTransitionable) fromView).onLauncherTransitionEnd(instance,
                         null, true);
@@ -2563,8 +2575,7 @@ public final class Launcher extends Activity
         }
     }
 
-    void showWorkspace(boolean animated) {
-        Resources res = getResources();
+    void showWorkspace(boolean animated) { Resources res = getResources();
         int stagger = res.getInteger(R.integer.config_appsCustomizeWorkspaceAnimationStagger);
 
         Workspace.TransitionEffect transitionEffect = mWorkspace.getTransitionEffect();
@@ -2635,29 +2646,16 @@ public final class Launcher extends Activity
                     // Before we show workspace, hide all apps again because
                     // exitSpringLoadedDragMode made it visible. This is a bit hacky; we should
                     // clean up our state transition functions
-                    mAppsCustomizeTabHost.setVisibility(View.GONE);
+                  //  mAppsCustomizeTabHost.setVisibility(View.GONE);
                     mSearchDropTargetBar.showSearchBar(true);
                     
                     showWorkspace(true);
-                } else {
-                    exitSpringLoadedDragMode();
-                }
+                } 
             }
         }, (extendedDelay ?
                 EXIT_SPRINGLOADED_MODE_LONG_TIMEOUT :
                 EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT));
     }
-
-    void exitSpringLoadedDragMode() {
-        if (mState == State.APPS_CUSTOMIZE_SPRING_LOADED) {
-            final boolean animated = true;
-            final boolean springLoaded = true;
-            showAppsCustomizeHelper(animated, springLoaded);
-            mState = State.APPS_CUSTOMIZE;
-        }
-        // Otherwise, we are not in spring loaded mode, so don't do anything.
-    }
-
 
     void lockAllApps() {
         // TODO
@@ -3098,15 +3096,12 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
-     //   Log.i(Launcher.TAG, TAG+" onCreate(......  bindItems "+shortcuts.size());
         setLoadOnResume();
 
         final Workspace workspace = mWorkspace;
         for (int i=start; i<end; i++) {
       
             final ItemInfo item = shortcuts.get(i);
-        	//Log.i(Launcher.TAG, TAG+"..........................item:"+(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT)
-        			//+item.toString()+"  :"+item.screen+item.cellX+item.cellY);
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
@@ -3268,7 +3263,7 @@ public final class Launcher extends Activity
       		   screenNum++;
       			  if(screenNum>=workspace.getChildCount()){
       	    		  
-      	    		workspace.addScreen(inflater);
+      	    		workspace.addScreen(inflater,false);
       	    	
       	    	  }
       	    	  cellX=0; 
@@ -3307,7 +3302,6 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAppsAdded(ArrayList<ShortcutInfo> apps) {
-    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsAdded()"+apps.size());
        // setLoadOnResume();
         removeDialog(DIALOG_CREATE_SHORTCUT);
 
@@ -3325,7 +3319,6 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAppsUpdated(ArrayList<ShortcutInfo> apps) {
-    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsUpdated()");
         setLoadOnResume();
         removeDialog(DIALOG_CREATE_SHORTCUT);
         if (mWorkspace != null) {
@@ -3340,7 +3333,6 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAppsRemoved(ArrayList<ShortcutInfo> apps, boolean permanent) {
-    	Log.i(Launcher.TAG,TAG+ "..........................bindAppsRemoved()"+permanent);
         removeDialog(DIALOG_CREATE_SHORTCUT);
         if (permanent) {
             mWorkspace.removeItems(apps);
@@ -3349,7 +3341,6 @@ public final class Launcher extends Activity
        // mDragController.onAppsRemoved(apps, this);
             
         if (mAppsCustomizeContent != null) {
-           Log.i(Launcher.TAG, TAG+"...bindAppsRemoved...........emoveApps(apps)............item:");    
            mAppsCustomizeContent.removeApps(apps);
         }
         
@@ -3710,20 +3701,18 @@ public final class Launcher extends Activity
 		mScreenPopupWindow = new PopupWindow(this);
 
 		mScreenPopupWindow.setContentView(preview);
-		CellLayout cell1 = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
+		CellLayout cellLayout = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
 		
 		WindowManager wm = (WindowManager)getBaseContext().getSystemService(Context.WINDOW_SERVICE);
 
- 
-		
-		mScreenPopupWindow.setWidth( cell1.getWidth());
-		mScreenPopupWindow.setHeight(  wm.getDefaultDisplay().getHeight());
+		mScreenPopupWindow.setWidth( cellLayout.getWidth());
+		mScreenPopupWindow.setHeight(  wm.getDefaultDisplay().getHeight()-48);
 		
 		mScreenPopupWindow.setAnimationStyle(R.style.AnimationPreview);
 		mScreenPopupWindow.setOutsideTouchable(true);
 		mScreenPopupWindow.setFocusable(true);
 		mScreenPopupWindow.setBackgroundDrawable(new ColorDrawable(0));
-		mScreenPopupWindow.showAtLocation(cell1, 0, 0, 38);
+		mScreenPopupWindow.showAtLocation(cellLayout, 0, 0, 38);
 		mScreenPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
 			public void onDismiss() {
 				dismissPreview();
@@ -3739,9 +3728,6 @@ public final class Launcher extends Activity
 			}
 		});
 	}
- 	
-
-             
  	
 	class PreviewAdapter extends BaseAdapter{
 		private Context mContext;

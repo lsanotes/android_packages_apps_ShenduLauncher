@@ -515,7 +515,6 @@ public class DragController {
         } else if (x > mScrollView.getWidth() - mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE && mDistanceSinceScroll > slop) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
-                
          
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
@@ -525,7 +524,7 @@ public class DragController {
                 	 if(!addNewScreen ){
                 		 addNewScreen= true;
                      	 mScrollState = SCROLL_OUTSIDE_ZONE;
-                    	 mLauncher.getWorkspace().addScreen(null); 
+                    	 mLauncher.getWorkspace().addScreen(null,false); 
                     	 mLauncher.getWorkspace().savedThePageCount();
                     	 if(mLauncher.getWorkspace().isSmall()){
                     	   	 mLauncher.getWorkspace().changeState(Workspace.State.NORMAL);
@@ -533,8 +532,6 @@ public class DragController {
                     	 }
                  
                 	 }
-            
-                	
                 }
             }
         } else {
@@ -653,11 +650,11 @@ public class DragController {
         	
         	
             DropTarget target = dropTargets.get(i);
-            if (!target.isDropEnabled())
-                continue;
-
+            if (!target.isDropEnabled()){
+            	   continue;
+            }
             target.getHitRect(r);
-
+        
             // Convert the hit rect to DragLayer coordinates
             target.getLocationInDragLayer(dropCoordinates);
             r.offset(dropCoordinates[0] - target.getLeft(), dropCoordinates[1] - target.getTop());
