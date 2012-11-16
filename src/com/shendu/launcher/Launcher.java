@@ -622,6 +622,8 @@ public final class Launcher extends Activity
         // When we resume Launcher, a different Activity might be responsible for the app
         // market intent, so refresh the icon
         mAppsCustomizeTabHost.onResume();
+
+           
         if (!mWorkspaceLoading) {
             final ViewTreeObserver observer = mWorkspace.getViewTreeObserver();
             final Workspace workspace = mWorkspace;
@@ -1212,7 +1214,7 @@ public final class Launcher extends Activity
                 // Reset AllApps to its initial state only if we are not in the middle of
                 // processing a multi-step drop
                 if (mAppsCustomizeTabHost != null && mPendingAddInfo.container == ItemInfo.NO_ID) {
-                    mAppsCustomizeTabHost.reset();
+                   // mAppsCustomizeTabHost.reset();
                     if(mWorkspace.isSmall()){
                         backFromEditMode();	
                     }

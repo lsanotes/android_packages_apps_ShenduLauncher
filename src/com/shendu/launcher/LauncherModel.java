@@ -1008,53 +1008,12 @@ public class LauncherModel extends BroadcastReceiver {
             for (int x = item.cellX; x < (item.cellX+item.spanX); x++) {
                 for (int y = item.cellY; y < (item.cellY+item.spanY); y++) {
                     if (occupied[containerIndex][x][y] != null) {
-                  
-                        if(item instanceof ShortcutInfo ){
-                        	
-                        //	 new ItemInfo[Launcher.MAX_SCREEN_COUNT + 1][mCellCountX + 1][mCellCountY + 1];
-                            int screen =item.screen;
-                            int coorX = item.cellX;
-                            int coorY = item.cellY;
-                            
-                            for(int i = 0 ;i<16;i++){
-                            	
-                             if(coorX>=mCellCountX-1&&coorY>=mCellCountY-1){
-                                 	
-                       			  coorX=0; 
-                       			  coorY=0;
-                       	      }else if(coorX>=mCellCountX-1&&coorY<mCellCountY-1){
-                       	    	  coorX=0;
-                       	    	  coorY++; 
-                       	      }else{
-                       	    	  coorX++;  
-                       	      }
-                           
-                          if(occupied[screen][coorX][coorY] == null){
-                                		
-                        	    item.screen = screen;
-                                item.cellX  = coorX;
-                                item.cellY  =coorY;
-                                
-                                occupied[screen][coorX][coorY] = item;
-                                return true;
-                          }
-                       
-                           if(i ==15){
-                        	  
-                        	   return false; 
-                           }
-                       }
-                           
-                      
-                        }else{
-                        	
-                            Log.e(TAG, "Error loading shortcut " + item
-                                    + " into cell (" + containerIndex + "-" + item.screen + ":"
-                                    + x + "," + y
-                                    + ") occupied by "
-                                    + occupied[containerIndex][x][y]);
-                            return false;
-                        }
+                        Log.e(TAG, "Error loading shortcut " + item
+                            + " into cell (" + containerIndex + "-" + item.screen + ":"
+                            + x + "," + y
+                            + ") occupied by "
+                            + occupied[containerIndex][x][y]);
+                        return false;
                     }
                 }
             }
@@ -1066,6 +1025,68 @@ public class LauncherModel extends BroadcastReceiver {
 
             return true;
         }
+        // Check if any workspace icons overlap with each other
+//            for (int x = item.cellX; x < (item.cellX+item.spanX); x++) {
+//                for (int y = item.cellY; y < (item.cellY+item.spanY); y++) {
+//                    if (occupied[containerIndex][x][y] != null) {
+//                  
+//                        if(item instanceof ShortcutInfo ){
+//                        	
+//                        //	 new ItemInfo[Launcher.MAX_SCREEN_COUNT + 1][mCellCountX + 1][mCellCountY + 1];
+//                            int screen =item.screen;
+//                            int coorX = item.cellX;
+//                            int coorY = item.cellY;
+//                            
+//                            for(int i = 0 ;i<16;i++){
+//                            	
+//                             if(coorX>=mCellCountX-1&&coorY>=mCellCountY-1){
+//                                 	
+//                       			  coorX=0; 
+//                       			  coorY=0;
+//                       	      }else if(coorX>=mCellCountX-1&&coorY<mCellCountY-1){
+//                       	    	  coorX=0;
+//                       	    	  coorY++; 
+//                       	      }else{
+//                       	    	  coorX++;  
+//                       	      }
+//                           
+//                          if(occupied[screen][coorX][coorY] == null){
+//                                		
+//                        	    item.screen = screen;
+//                                item.cellX  = coorX;
+//                                item.cellY  =coorY;
+//                                
+//                                occupied[screen][coorX][coorY] = item;
+//                                return true;
+//                          }
+//                       
+//                           if(i ==15){
+//                        	  
+//                        	   return false; 
+//                           }
+//                       }
+//                           
+//                      
+//                        }else{
+//                        	
+//                            Log.e(TAG, "Error loading shortcut " + item
+//                                    + " into cell (" + containerIndex + "-" + item.screen + ":"
+//                                    + x + "," + y
+//                                    + ") occupied by "
+//                                    + occupied[containerIndex][x][y]);
+//                            return false;
+//                        }
+//                    }
+//                }
+//            }
+//            for (int x = item.cellX; x < (item.cellX+item.spanX); x++) {
+//                for (int y = item.cellY; y < (item.cellY+item.spanY); y++) {
+//                    occupied[containerIndex][x][y] = item;
+//                }
+//            }
+//
+//            return true;
+//        }
 
         private void loadWorkspace() {
             final long t = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;

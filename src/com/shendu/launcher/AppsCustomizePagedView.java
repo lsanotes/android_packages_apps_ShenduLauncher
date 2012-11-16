@@ -2301,6 +2301,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         invalidatePageData();
     }
 
+    AppsCustomizeTabHost tabHost ;
     @Override
     public void reset() {
         //remove by hhl :do not used this style
@@ -2315,10 +2316,13 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         } else {*/
             //if (mContentType != ContentType.Apps) {
                 // Reset to the first page of the Apps pane
-                AppsCustomizeTabHost tabs = (AppsCustomizeTabHost)
-                        mLauncher.findViewById(R.id.apps_customize_pane);
+    	if(tabHost==null){
+    		tabHost= (AppsCustomizeTabHost)
+                    mLauncher.findViewById(R.id.apps_customize_pane);
+    	}
+         
                 //tabs.selectAppsTab();
-                tabs.selectWidgetsTab();
+    	 tabHost.selectWidgetsTab();
                 //return;
             //}
         //}
@@ -2329,7 +2333,13 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
 
     private AppsCustomizeTabHost getTabHost() {
-        return (AppsCustomizeTabHost) mLauncher.findViewById(R.id.apps_customize_pane);
+    	
+    	if(tabHost==null){
+    		tabHost= (AppsCustomizeTabHost)
+                    mLauncher.findViewById(R.id.apps_customize_pane);
+    	}
+    	
+        return tabHost;
     }
 
     @Override

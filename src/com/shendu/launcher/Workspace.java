@@ -4711,8 +4711,8 @@ public class Workspace extends PagedView
     public void removeEmptyScreen(int index){
     	// except first and last screen in editMode
  	   if(!(isSmall() && (index ==0|| ( index ==getChildCount()-1)) )){
- 		   
- 	
+ 		if(getChildCount()>1){
+ 			   
         CellLayout   cell = (CellLayout) getChildAt(index);
         
         if(cell !=null){
@@ -4721,6 +4721,7 @@ public class Workspace extends PagedView
              if(lastOccupiedCell[0]==-1){
             
             	removeView(cell,index); 
+             }
            }
           }
         }

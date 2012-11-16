@@ -30,9 +30,14 @@
 
     <color name="appwidget_error_color">#FCCC</color>
     
-      <color name="customize_pane_bg">#A1000000</color>
+     <color name="customize_pane_bg">#A1000000</color>
+      
+     <color name="tab_text_press">#FF0C8DEA</color>
+     <color name="tab_text_unpress">#FF000000</color>
   
     <!-- do not used,remobe by hhl 20120926
+    
+        <color name="tab_text_press">#FF0C8DEA</color>
     <color name="workspace_all_apps_and_delete_zone_text_color">#CCFFFFFF</color>
     <color name="workspace_all_apps_and_delete_zone_text_shadow_color">#A0000000</color>
     -->

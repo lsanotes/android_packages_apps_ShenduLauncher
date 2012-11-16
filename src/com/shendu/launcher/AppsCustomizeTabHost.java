@@ -38,6 +38,7 @@ import android.widget.TextView;
 
 import com.shendu.launcher.AppsCustomizeView.ContentType;
 import com.shendu.launcher.preference.PreferencesProvider;
+import com.shendu.launcher.R;
 
 import java.util.ArrayList;
 
@@ -98,10 +99,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         setCurrentTabByTag(APPS_TAB_TAG);
     }*/
     void selectWidgetsTab() {
-        setContentTypeImmediate(AppsCustomizeView.ContentType.Widgets);
+        setContentTypeImmediate(AppsCustomizeView.ContentType.Wallpapers);
         //mAppsCustomizePane.setCurrentToWidgets();
 
-        setCurrentTabByTag(WIDGETS_TAB_TAG);
+        setCurrentTabByTag(WALLPAPERS_TAB_TAG);
     }
 
     /**
@@ -236,8 +237,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             mSuppressContentCallback = false;
             return;
         }
-        //Log.i("hhl", "===AppsCustomizeTabHost.java..onTabChanged====="+type+"===="+getCurrentTab()+"=="+
-        		//getCurrentTabTag()+"==="+getCurrentTabView()+"==="+getCurrentView());
+
         /**
          * add by hhl
          * userd to update tab widget display style
@@ -248,10 +248,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
             mTabLabelIndicator = (ImageView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_indicator_id);
         	if(getCurrentTab()==i){
-        		mTabLabel.setTextColor(Color.rgb(12, 141, 234));
+        		mTabLabel.setTextColor(getResources().getColor(R.color.tab_text_press));
         		mTabLabelIndicator.setVisibility(View.VISIBLE);
         	}else{
-        		mTabLabel.setTextColor(Color.BLACK);
+        		mTabLabel.setTextColor(getResources().getColor(R.color.tab_text_unpress));
         		mTabLabelIndicator.setVisibility(View.GONE);
         	}
         }
@@ -297,7 +297,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         }else if(type == AppsCustomizeView.ContentType.Effects){
         	return EFFECTS_TAB_TAG;
         }
-        return WIDGETS_TAB_TAG;
+        return WALLPAPERS_TAB_TAG;
     }
 
     /**
