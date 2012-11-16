@@ -637,8 +637,12 @@ public class DragController {
         }
 
         mDragObject.dragSource.onDropCompleted((View) dropTarget, mDragObject, accepted);
-   
-    	addNewScreen = false; 
+        
+        if(addNewScreen){
+        	mLauncher.getWorkspace().removeEmptyScreen(mLauncher.getWorkspace().getChildCount()-1); 
+          	addNewScreen = false; 
+        }
+  
     }
 
     private DropTarget findDropTarget(int x, int y, int[] dropCoordinates) {
@@ -734,7 +738,6 @@ public class DragController {
 
         public void run() {
         	
-        	Log.i(Launcher.TAG, TAG+"    .ScrollRunnable()....................:.."+mDragScroller+"  :"+ mDirection);
             if (mDragScroller != null) {
                 if (mDirection == SCROLL_LEFT) {
                     mDragScroller.scrollLeft();

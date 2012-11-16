@@ -219,8 +219,8 @@
 
     
     <favorite
-        launcher:packageName="com.android.browser"
-        launcher:className="com.android.browser.BrowserActivity"
+        launcher:packageName="com.shendu.fastweb"
+        launcher:className="com.shendu.fastweb.TabHostActivity"
         launcher:container="-101"
         launcher:screen="3"
         launcher:x="3"

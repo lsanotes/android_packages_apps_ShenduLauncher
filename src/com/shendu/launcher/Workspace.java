@@ -706,6 +706,7 @@ public class Workspace extends PagedView
                 return;
             }
         }
+        
         final CellLayout layout;
         if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
         	
@@ -729,8 +730,10 @@ public class Workspace extends PagedView
             } else {
                 // Note: We do this to ensure that the hotseat is always laid out in the orientation
                 // of the hotseat in order regardless of which orientation they were added
+            
                 y = mLauncher.getHotseat().getCellYFromOrder(screen);
                 x = mLauncher.getHotseat().getCellXFromOrder(screen);
+                
             }
             
         } else {
@@ -3345,7 +3348,6 @@ public class Workspace extends PagedView
     }
 
     public void onDrop(DragObject d) {
-    	 Log.i(Launcher.TAG , " workspace     onDrop()........... 11  mInfo.cellX:."); 
         mDragViewVisualCenter = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, d.dragView,
                 mDragViewVisualCenter);
 
@@ -3357,7 +3359,6 @@ public class Workspace extends PagedView
                 mapPointFromSelfToChild(mDragTargetLayout, mDragViewVisualCenter, null);
             }
         }
-
         CellLayout dropTargetLayout = mDragTargetLayout;
         int snapScreen = -1;
         if (d.dragSource != this) {
@@ -3461,8 +3462,6 @@ public class Workspace extends PagedView
                             lp.cellY);
                 }
             }
-            
-
 
             final CellLayout parent = (CellLayout) cell.getParent().getParent();
 
@@ -3488,12 +3487,9 @@ public class Workspace extends PagedView
             parent.onDropChild(cell);
         }
         
-        
-        
         if(isSmall()&&mCurrentPage == getChildCount()-1){
         	addScreen(null,true);
         }
-        
         post(new Runnable() {
      
             public void run() {
@@ -3502,6 +3498,8 @@ public class Workspace extends PagedView
             }
         });
     }
+    
+
     /**
      * update Current Page Items' Coordinate after the Item Drags
      *  
@@ -4711,7 +4709,7 @@ public class Workspace extends PagedView
     }
     
     public void removeEmptyScreen(int index){
-    	
+    	// except first and last screen in editMode
  	   if(!(isSmall() && (index ==0|| ( index ==getChildCount()-1)) )){
  		   
  	
@@ -4723,8 +4721,8 @@ public class Workspace extends PagedView
              if(lastOccupiedCell[0]==-1){
             
             	removeView(cell,index); 
-        }
-        }
+           }
+          }
         }
     }
 
