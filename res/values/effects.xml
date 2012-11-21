@@ -21,8 +21,9 @@
         <item>Tablet</item>
         <item>ZoomIn</item>
         <item>ZoomOut</item>
-        <item>RotateUp</item>
+       <!--  <item>RotateUp</item>
         <item>RotateDown</item>
+         -->
         <item>CubeIn</item>
         <item>CubeOut</item>
         <item>Stack</item>

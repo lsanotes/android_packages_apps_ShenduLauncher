@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.shendu.launcher.R;
 
 /**
  * 2012-8-31 hhl
@@ -45,7 +46,7 @@ public class PagedViewWallpaper extends FrameLayout {
         super(context, attrs, defStyle);
     }
 
-    public void applyFromShenduPrograme(ShenduPrograme info,HolographicOutlineHelper holoOutlineHelper) {
+    public void applyFromShenduPrograme(ShenduPrograme info) {
         int bgResId = 0;
         ImageView wallpaperIcon = (ImageView)findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_id);
         TextView wallpaperMark = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_wallpaper_mark_id);

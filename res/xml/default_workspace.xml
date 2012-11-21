@@ -16,182 +16,73 @@
 
 <favorites xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher">
     
-    
-    
-         <!-- default screen [0] -->
- <appwidget
-        launcher:packageName="com.android.settings"
-        launcher:className="com.android.settings.widget.SettingsAppWidgetProvider"
-        launcher:screen="0"
-        launcher:x="0"
-        launcher:y="0"
-        launcher:spanX="4"
-        launcher:spanY="1" />
-            
-
-                  
-                  
-  <favorite
-        launcher:packageName="com.android.calculator2"
-        launcher:className="com.android.calculator2.Calculator"
-        launcher:screen="0"
-        launcher:x="1"
-        launcher:y="2" />
-    	
-  
-    <favorite
+  <!-- first/default screen  -->
+	<appwidget
         launcher:packageName="com.android.deskclock"
-        launcher:className="com.android.deskclock.DeskClock"
+        launcher:className="com.android.alarmclock.Shendu_Digital_Clock_Widget"
         launcher:screen="0"
-        launcher:x="2"
-        launcher:y="2" />
-    
-  
-       
-       
-    <!-- default screen [1] -->
-     <appwidget
-        launcher:packageName="com.android.deskclock"
-        launcher:className="com.android.alarmclock.Shendu_Flip_Clock_Widget"
-        launcher:screen="1"
         launcher:x="0"
         launcher:y="0"
         launcher:spanX="4"
         launcher:spanY="2" />
-
-    
      
-     	<favorite 
-        launcher:packageName="com.android.gallery3d"
-        launcher:className="com.android.camera.CameraLauncher"
-        launcher:screen="1"
+	<favorite 
+        launcher:packageName="com.shendu.theme"
+        launcher:className="com.shendu.theme.ShenDu_MainActivity"
+        launcher:screen="0"
         launcher:x="0"
         launcher:y="2" />
-   
-    	
     	
 	<favorite 
-        launcher:packageName="com.android.gallery3d"
-        launcher:className="com.android.gallery3d.app.Gallery"
-        launcher:screen="1"
+        launcher:packageName="net.micode.fileexplorer"
+        launcher:className="net.micode.fileexplorer.FileExplorerTabActivity"
+        launcher:screen="0"
         launcher:x="1"
         launcher:y="2" />
 	
-	
-	
-	
 	 <favorite
-        launcher:packageName="com.android.email"
-        launcher:className="com.android.email.activity.Welcome"
-        launcher:screen="1"
+        launcher:packageName="com.shendu.flashlight"
+        launcher:className="com.shendu.flashlight.MainActivity"
+        launcher:screen="0"
         launcher:x="2"
         launcher:y="2" />
 	
 	 <favorite
-        launcher:packageName="net.micode.fileexplorer"
-        launcher:className="net.micode.fileexplorer.FileExplorerTabActivity"
-        launcher:screen="1"
+        launcher:packageName="com.android.settings" 
+        launcher:className="com.android.settings.MainSetting" 
+        launcher:screen="0"
         launcher:x="3"
         launcher:y="2" />
 	     
-	     
- <favorite
-        launcher:packageName="com.andrew.apollo"
-        launcher:className="com.andrew.apollo.activities.MusicLibrary"
-        launcher:screen="1"
+	<favorite
+        launcher:packageName="com.android.gallery3d"
+        launcher:className="com.android.camera.CameraLauncher"
+        launcher:screen="0"
         launcher:x="0"
         launcher:y="3" />
 	     
-	     
-	     
     <favorite
-        launcher:packageName="com.android.calendar"
-        launcher:className="com.android.calendar.AllInOneActivity"
-        launcher:screen="1"
+        launcher:packageName="com.android.calendar" 
+        launcher:className="com.android.calendar.AllInOneActivity" 
+        launcher:screen="0"
         launcher:x="1"
         launcher:y="3" />
     
-      <favorite
-        launcher:packageName="com.shendu.recovery"
-        launcher:className="com.shendu.recovery.UpdateActivity"
-        launcher:screen="1"
+	<favorite
+        launcher:packageName="com.shendu.userbook"
+        launcher:className="com.shendu.userbook.UserBookActivity"
+        launcher:screen="0"
         launcher:x="2"
         launcher:y="3" /> 
     
-       <favorite
-        launcher:packageName="com.android.settings"
-        launcher:className="com.android.settings.MainSetting"
-        launcher:screen="1"
+	<favorite
+        launcher:packageName="com.shendu.recovery"
+        launcher:className="com.shendu.recovery.UpdateActivity"
+        launcher:screen="0"
         launcher:x="3"
         launcher:y="3" />
-       
-     <!-- default screen [2] -->
-     
-     
-
     
- 
-    
-    
-    <!-- default screen [1] 
-    <appwidget
-        launcher:packageName="com.android.music"
-        launcher:className="com.android.music.MediaAppWidgetProvider"
-        launcher:screen="1"
-        launcher:x="0"
-        launcher:y="0"
-        launcher:spanX="4"
-        launcher:spanY="1" />
-        -->
-        
-        
- <!--  
-    
-    <favorite
-        launcher:packageName="com.shendu.weather"
-        launcher:className=" com.shendu.weather.WeatherActivity"
-        launcher:screen="1"
-        launcher:x="0"
-        launcher:y="1" />
-
-
-
-
-
-    <favorite
-        launcher:packageName="com.android.videoeditor"
-        launcher:className="com.android.videoeditor.ProjectsActivity"
-        launcher:screen="1"
-        launcher:x="0"
-        launcher:y="2" />
-
-
-
-    <favorite
-        launcher:packageName="com.android.providers.downloads.ui"
-        launcher:className="com.android.providers.downloads.ui.DownloadList"
-        launcher:screen="1"
-        launcher:x="2"
-        launcher:y="2" />
-
--->  
-    <!-- 
-    <favorite
-        launcher:packageName="com.android.quicksearchbox"
-        launcher:className="com.android.quicksearchbox.SearchActivity"
-        launcher:screen="1"
-        launcher:x="0"
-        launcher:y="3" />
-
-    <favorite
-        launcher:packageName="net.cactii.flash2"
-        launcher:className="net.cactii.flash2.MainActivity"
-        launcher:screen="1"
-        launcher:x="1"
-        launcher:y="3" />
- -->
-    
-    <!-- Hotseat (We use the screen as the position of the item in the hotseat) -->
+  <!-- Hotseat (We use the screen as the position of the item in the hotseat) -->
     <favorite
         launcher:packageName="com.android.contacts"
         launcher:className="com.android.contacts.activities.DialtactsActivity"
@@ -216,8 +107,6 @@
         launcher:x="2"
         launcher:y="0" />
     
-
-    
     <favorite
         launcher:packageName="com.shendu.fastweb"
         launcher:className="com.shendu.fastweb.TabHostActivity"
@@ -225,4 +114,5 @@
         launcher:screen="3"
         launcher:x="3"
         launcher:y="0" />
+    
 </favorites>

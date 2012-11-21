@@ -23,8 +23,9 @@
         <item>Tablet</item>
         <item>Zoom In</item>
         <item>Zoom Out</item>
-        <item>Rotate Up</item>
+        <!--<item>Rotate Up</item>
         <item>Rotate Down</item>
+        -->
         <item>Cube In</item>
         <item>Cube Out</item>
         <item>Stack</item>
@@ -34,8 +35,9 @@
         <item>Tablet</item>
         <item>ZoomIn</item>
         <item>ZoomOut</item>
-        <item>RotateUp</item>
+       <!-- <item>RotateUp</item>
         <item>RotateDown</item>
+        -->
         <item>CubeIn</item>
         <item>CubeOut</item>
         <item>Stack</item>
@@ -45,8 +47,9 @@
         <item>Tablet</item>
         <item>Zoom In</item>
         <item>Zoom Out</item>
-        <item>Rotate Up</item>
+        <!--<item>Rotate Up</item>
         <item>Rotate Down</item>
+        -->
         <item>Cube In</item>
         <item>Cube Out</item>
         <item>Stack</item>
@@ -56,8 +59,9 @@
         <item>Tablet</item>
         <item>ZoomIn</item>
         <item>ZoomOut</item>
-        <item>RotateUp</item>
+        <!--<item>RotateUp</item>
         <item>RotateDown</item>
+        -->
         <item>CubeIn</item>
         <item>CubeOut</item>
         <item>Stack</item>

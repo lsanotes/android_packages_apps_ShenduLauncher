@@ -25,6 +25,8 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.shendu.launcher.R;
+
 public class HolographicLinearLayout extends LinearLayout {
 
     private final HolographicViewHelper mHolographicHelper;
@@ -66,6 +68,7 @@ public class HolographicLinearLayout extends LinearLayout {
 
     void invalidatePressedFocusedStates() {
         mHolographicHelper.invalidatePressedFocusedStates(mImageView);
+        invalidate();
     }
 
     @Override

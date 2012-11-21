@@ -14,18 +14,6 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!--
-<com.shendu.launcher.PagedViewWallpaper 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/editstate_tabhost_tabcontent_wallpaper_id"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
-        android:padding="1px"
-        android:scaleType="fitXY"
-        >
-
-</com.shendu.launcher.PagedViewWallpaper>
--->
 <com.shendu.launcher.PagedViewWallpaper 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"

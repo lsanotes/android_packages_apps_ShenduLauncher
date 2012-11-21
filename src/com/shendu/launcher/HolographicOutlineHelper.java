@@ -62,7 +62,6 @@ public class HolographicOutlineHelper {
     }
 
     private static final MaskFilter sCoarseClipTable = TableMaskFilter.CreateClipTable(0, 200);
-
     private int[] mTempOffset = new int[2];
 
     HolographicOutlineHelper() {
@@ -74,6 +73,7 @@ public class HolographicOutlineHelper {
         mErasePaint.setFilterBitmap(true);
         mErasePaint.setAntiAlias(true);
         MaskFilter alphaClipTable = TableMaskFilter.CreateClipTable(0, 30);
+        //MaskFilter alphaClipTable = TableMaskFilter.CreateClipTable(180, 255); //moditify
         mAlphaClipPaint.setMaskFilter(alphaClipTable);
     }
 
@@ -99,9 +99,11 @@ public class HolographicOutlineHelper {
     }
 
     /**
-     * Apply an outer blur to the given bitmap.
+     * 2012-10-24 hhl
+     * TODO: Apply an outer blur to the given bitmap.
      * You should use OUTER_BLUR_RADIUS to ensure that the bitmap is big enough to draw
      * the blur without clipping.
+     * used for click/longclick item outer effect
      */
     void applyOuterBlur(Bitmap bitmap, Canvas canvas, int color) {
         mBlurPaint.setMaskFilter(sThickOuterBlurMaskFilter);

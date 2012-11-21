@@ -16,12 +16,15 @@
 
 package com.shendu.launcher;
 
+import com.shendu.launcher.R;
+
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.os.Bundle;
 
 public class WallpaperChooser extends Activity {
+    @SuppressWarnings("unused")
     private static final String TAG = "Launcher.WallpaperChooser";
 
     @Override

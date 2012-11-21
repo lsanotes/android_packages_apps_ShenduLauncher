@@ -18,12 +18,13 @@ package com.shendu.launcher;
 
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CellLayoutChildren extends ViewGroup {
+public class ShortcutAndWidgetContainer extends ViewGroup {
     static final String TAG = "CellLayoutChildren";
 
     // These are temporary variables to prevent having to allocate a new object just to
@@ -38,7 +39,7 @@ public class CellLayoutChildren extends ViewGroup {
     private int mWidthGap;
     private int mHeightGap;
 
-    public CellLayoutChildren(Context context) {
+    public ShortcutAndWidgetContainer(Context context) {
         super(context);
         mWallpaperManager = WallpaperManager.getInstance(context);
     }
@@ -58,44 +59,33 @@ public class CellLayoutChildren extends ViewGroup {
         final int count = getChildCount();
         for (int i = 0; i < count; i++) {
             View child = getChildAt(i);
-            
-            
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
 
             if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
                     (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
-            	
-            //	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
-           
                 return child;
             }
         }
         return null;
     }
-    
-    
-    public View  getChildAtNotDrag(int x, int y,View v) {
-        final int count = getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = getChildAt(i);
-          
-            CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
 
-            if ((lp.cellX <= x) && (x < lp.cellX + lp.cellHSpan) &&
-                    (lp.cellY <= y) && (y < lp.cellY + lp.cellVSpan)) {
-            	
-            //	Log.i(Launcher.TAG	, TAG+"   getChildAt  lp.cellX...."+lp.cellX +lp.cellY);
-               if(child.equals(v)){
-            	   continue;
-               }else{
-            	   return child;   
-               }
-          
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        @SuppressWarnings("all") // suppress dead code warning
+        final boolean debug = false;
+        if (debug) {
+            // Debug drawing for hit space
+            Paint p = new Paint();
+            p.setColor(0x6600FF00);
+            for (int i = getChildCount() - 1; i >= 0; i--) {
+                final View child = getChildAt(i);
+                final CellLayout.LayoutParams lp = (CellLayout.LayoutParams) child.getLayoutParams();
+
+                canvas.drawRect(lp.x, lp.y, lp.x + lp.width, lp.y + lp.height, p);
             }
         }
-        return null;
+        super.dispatchDraw(canvas);
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -195,5 +185,4 @@ public class CellLayoutChildren extends ViewGroup {
     protected void setChildrenDrawnWithCacheEnabled(boolean enabled) {
         super.setChildrenDrawnWithCacheEnabled(enabled);
     }
-
 }

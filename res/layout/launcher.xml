@@ -23,14 +23,16 @@
     android:layout_height="match_parent">
 
     <!-- Keep these behind the workspace so that they are not visible when
-         we go into AllApps -->
+         we go into AllApps 
+       do not used,remove by hhl
     <include
         android:id="@+id/dock_divider"
         layout="@layout/workspace_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/button_bar_height"
+        android:layout_marginBottom="@dimen/button_bar_height_plus_padding"
         android:layout_gravity="bottom" />
+     -->
     <include
         android:id="@+id/paged_view_indicator"
         layout="@layout/scroll_indicator"
@@ -44,8 +46,12 @@
         android:id="@+id/workspace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/qsb_bar_height_inset"
-        android:paddingBottom="@dimen/button_bar_height"
+        android:paddingLeft="@dimen/workspace_left_padding_port"
+        android:paddingRight="@dimen/workspace_right_padding_port"
+        android:paddingTop="@dimen/workspace_top_padding_port"
+        android:paddingBottom="@dimen/workspace_bottom_padding_port"
+        launcher:cellCountX="@integer/cell_count_x"
+        launcher:cellCountY="@integer/cell_count_y"
         launcher:pageSpacing="@dimen/workspace_page_spacing"
         launcher:scrollIndicatorPaddingLeft="@dimen/workspace_divider_padding_left"
         launcher:scrollIndicatorPaddingRight="@dimen/workspace_divider_padding_right" />
@@ -60,13 +66,33 @@
         android:id="@+id/qsb_bar"
         layout="@layout/qsb_bar" />
 
+    <com.shendu.launcher.DrawableStateProxyView
+        android:id="@+id/voice_button_proxy"
+        android:layout_width="80dp"
+        android:layout_height="@dimen/qsb_bar_height"
+        android:layout_gravity="top|right"
+        android:clickable="true"
+        android:onClick="onClickVoiceButton"
+        android:importantForAccessibility="no"
+        launcher:sourceViewId="@+id/voice_button" />
+
     <include layout="@layout/apps_customize_pane"
         android:id="@+id/apps_customize_pane"
         android:layout_width="match_parent"
         android:layout_height="166dp"
         android:layout_gravity="bottom"
         android:visibility="invisible" />
-
+<!-- for folder-->
+      <RelativeLayout 
+        android:id="@+id/relativeLayoutFolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:visibility="gone"
+         />
+    
+    
+    
+    
     <include layout="@layout/workspace_cling"
         android:id="@+id/workspace_cling"
         android:layout_width="match_parent"

@@ -23,22 +23,24 @@
     <color name="delete_target_hover_tint">#DAFF0000</color>
     <color name="info_target_hover_tint">#DA0099CC</color>
 
-    <!-- The alpha/color to apply to the drag image -->
+    <!-- The alpha/color to apply to the drag image add by hhl 20121024 -->
     <color name="drag_view_multiply_color">#CCFFFFFF</color>
 
     <color name="bubble_dark_background">#20000000</color>
 
     <color name="appwidget_error_color">#FCCC</color>
-    
-     <color name="customize_pane_bg">#A1000000</color>
-      
-     <color name="tab_text_press">#FF0C8DEA</color>
-     <color name="tab_text_unpress">#FF000000</color>
-  
-    <!-- do not used,remobe by hhl 20120926
-    
-        <color name="tab_text_press">#FF0C8DEA</color>
+
     <color name="workspace_all_apps_and_delete_zone_text_color">#CCFFFFFF</color>
     <color name="workspace_all_apps_and_delete_zone_text_shadow_color">#A0000000</color>
-    -->
+    <color name="workspace_icon_text_color">#FFF</color>
+    
+    <!-- TabWidget content bg and tab text color -->
+	<color name="customize_pane_bg">#A1000000</color> 
+	<color name="tab_text_press">#FF0C8DEA</color>
+	<color name="tab_text_unpress">#FF000000</color>
+	<color name="delete_color_filter">#A5FF0000</color>
+     
+      <color name="sreen_shot_white">#66000000</color>
+         
+     <color name="sreen_shot_balck">#00000000</color>
 </resources>

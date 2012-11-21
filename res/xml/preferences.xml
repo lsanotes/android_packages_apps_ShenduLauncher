@@ -15,10 +15,9 @@
 -->
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
-      >
-
-           <PreferenceCategory android:title="@string/preferences_interface_homescreen_general_category">
+        xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher">
+	
+    <PreferenceCategory android:title="@string/preferences_interface_homescreen_general_category">
                 <com.shendu.launcher.preference.NumberPickerPreference android:key="ui_homescreen_default_screen"
                     android:title="@string/preferences_interface_homescreen_general_default_screen_title"
                     android:summary="@string/preferences_interface_homescreen_general_default_screen_summary"
@@ -86,7 +85,7 @@
                 <CheckBoxPreference android:key="ui_homescreen_scrolling_fade_adjacent_screens"
                     android:title="@string/preferences_interface_homescreen_scrolling_fade_adjacent_screens_title"
                     android:summary="@string/preferences_interface_homescreen_scrolling_fade_adjacent_screens_summary"
-                    android:defaultValue="@bool/config_workspaceDefualtFadeInAdjacentScreens" />
+                    android:defaultValue="@bool/config_workspaceFadeAdjacentScreens" />
                 <CheckBoxPreference android:key="ui_homescreen_scrolling_scroll_wallpaper"
                     android:title="@string/preferences_interface_homescreen_scrolling_scroll_wallpaper_title"
                     android:summary="@string/preferences_interface_homescreen_scrolling_scroll_wallpaper_summary"

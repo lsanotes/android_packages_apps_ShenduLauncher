@@ -24,6 +24,8 @@ import android.view.ViewParent;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 
+import com.shendu.launcher.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,7 +54,7 @@ class FolderKeyEventListener implements View.OnKeyListener {
 class HotseatIconKeyEventListener implements View.OnKeyListener {
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         final Configuration configuration = v.getResources().getConfiguration();
-        return FocusHelper.handleHotseatButtonKeyEvent(v, keyCode, event);
+        return FocusHelper.handleHotseatButtonKeyEvent(v, keyCode, event, configuration.orientation);
     }
 }
 
@@ -79,15 +81,12 @@ public class FocusHelper {
     }
 
     /**
-     * Handles key events in a AppsCustomize tab between the last tab view and the shop/menu button.
+     * Handles key events in a AppsCustomize tab between the last tab view and the shop button.
      */
     static boolean handleAppsCustomizeTabKeyEvent(View v, int keyCode, KeyEvent e) {
         final TabHost tabHost = findTabHostParent(v);
-        final ViewGroup contents = (ViewGroup)
-                tabHost.findViewById(com.android.internal.R.id.tabcontent);
-        //remove by hhl: do not used the overflow menu
+        final ViewGroup contents = tabHost.getTabContentView();
         //final View shop = tabHost.findViewById(R.id.market_button);
-        //final View overflowMenu = tabHost.findViewById(R.id.overflow_menu_button);
 
         final int action = e.getAction();
         final boolean handleKeyEvent = (action != KeyEvent.ACTION_UP);
@@ -96,12 +95,8 @@ public class FocusHelper {
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 if (handleKeyEvent) {
                     // Select the shop button if we aren't on it
-                    /*if (v != shop || v != overflowMenu) {
-                        if (shop.getVisibility() == View.VISIBLE){
-                            shop.requestFocus();
-                        } else if (overflowMenu.getVisibility() == View.VISIBLE) {
-                            overflowMenu.requestFocus();
-                        }
+                    /*if (v != shop) {
+                        shop.requestFocus();
                     }*/
                 }
                 wasHandled = true;
@@ -109,7 +104,7 @@ public class FocusHelper {
             case KeyEvent.KEYCODE_DPAD_DOWN:
                 if (handleKeyEvent) {
                     // Select the content view (down is handled by the tab key handler otherwise)
-                    /*if (v == shop || v== overflowMenu) {
+                    /*if (v == shop) {
                         contents.requestFocus();
                         wasHandled = true;
                     }*/
@@ -141,10 +136,10 @@ public class FocusHelper {
         final PagedViewGridLayout parent = (PagedViewGridLayout) w.getParent();
         final PagedView container = (PagedView) parent.getParent();
         final TabHost tabHost = findTabHostParent(container);
-        final TabWidget tabs = (TabWidget) tabHost.findViewById(com.android.internal.R.id.tabs);
+        final TabWidget tabs = tabHost.getTabWidget();
         final int widgetIndex = parent.indexOfChild(w);
         final int widgetCount = parent.getChildCount();
-        final int pageIndex = container.indexToPage(container.indexOfChild(parent));
+        final int pageIndex = ((PagedView) container).indexToPage(container.indexOfChild(parent));
         final int pageCount = container.getChildCount();
         final int cellCountX = parent.getCellCountX();
         final int cellCountY = parent.getCellCountY();
@@ -153,7 +148,7 @@ public class FocusHelper {
 
         final int action = e.getAction();
         final boolean handleKeyEvent = (action != KeyEvent.ACTION_UP);
-        ViewGroup newParent;
+        ViewGroup newParent = null;
         // Now that we load items in the bg asynchronously, we can't just focus
         // child siblings willy-nilly
         View child = null;
@@ -301,10 +296,10 @@ public class FocusHelper {
         // PagedViewCellLayout/PagedViewCellLayoutChildren relationship
         final PagedView container = (PagedView) parentLayout.getParent();
         final TabHost tabHost = findTabHostParent(container);
-        final TabWidget tabs = (TabWidget) tabHost.findViewById(com.android.internal.R.id.tabs);
+        final TabWidget tabs = tabHost.getTabWidget();
         final int iconIndex = itemContainer.indexOfChild(v);
         final int itemCount = itemContainer.getChildCount();
-        final int pageIndex = container.indexToPage(container.indexOfChild(parentLayout));
+        final int pageIndex = ((PagedView) container).indexToPage(container.indexOfChild(parentLayout));
         final int pageCount = container.getChildCount();
 
         final int x = iconIndex % countX;
@@ -312,10 +307,10 @@ public class FocusHelper {
 
         final int action = e.getAction();
         final boolean handleKeyEvent = (action != KeyEvent.ACTION_UP);
-        ViewGroup newParent;
+        ViewGroup newParent = null;
         // Side pages do not always load synchronously, so check before focusing child siblings
         // willy-nilly
-        View child;
+        View child = null;
         boolean wasHandled = false;
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_LEFT:
@@ -446,8 +441,7 @@ public class FocusHelper {
 
         final FocusOnlyTabWidget parent = (FocusOnlyTabWidget) v.getParent();
         final TabHost tabHost = findTabHostParent(parent);
-        final ViewGroup contents = (ViewGroup)
-                tabHost.findViewById(com.android.internal.R.id.tabcontent);
+        final ViewGroup contents = tabHost.getTabContentView();
         final int tabCount = parent.getTabCount();
         final int tabIndex = parent.getChildTabIndex(v);
 
@@ -496,7 +490,7 @@ public class FocusHelper {
     /**
      * Handles key events in the workspace hotseat (bottom of the screen).
      */
-    static boolean handleHotseatButtonKeyEvent(View v, int keyCode, KeyEvent e) {
+    static boolean handleHotseatButtonKeyEvent(View v, int keyCode, KeyEvent e, int orientation) {
         final ViewGroup parent = (ViewGroup) v.getParent();
         final ViewGroup launcher = (ViewGroup) parent.getParent();
         final Workspace workspace = (Workspace) launcher.findViewById(R.id.workspace);
@@ -538,7 +532,7 @@ public class FocusHelper {
                 if (handleKeyEvent) {
                     // Select the first bubble text view in the current page of the workspace
                     final CellLayout layout = (CellLayout) workspace.getChildAt(pageIndex);
-                    final CellLayoutChildren children = layout.getChildrenLayout();
+                    final ShortcutAndWidgetContainer children = layout.getShortcutsAndWidgets();
                     final View newIcon = getIconInDirection(layout, children, -1, 1);
                     if (newIcon != null) {
                         newIcon.requestFocus();
@@ -560,9 +554,10 @@ public class FocusHelper {
     /**
      * Private helper method to get the CellLayoutChildren given a CellLayout index.
      */
-    private static CellLayoutChildren getCellLayoutChildrenForIndex(ViewGroup container, int i) {
+    private static ShortcutAndWidgetContainer getCellLayoutChildrenForIndex(
+            ViewGroup container, int i) {
         ViewGroup parent = (ViewGroup) container.getChildAt(i);
-        return (CellLayoutChildren) parent.getChildAt(0);
+        return (ShortcutAndWidgetContainer) parent.getChildAt(0);
     }
 
     /**
@@ -629,7 +624,6 @@ public class FocusHelper {
             int lineDelta) {
         final ArrayList<View> views = getCellLayoutChildrenSortedSpatially(layout, parent);
         final CellLayout.LayoutParams lp = (CellLayout.LayoutParams) v.getLayoutParams();
-        final int cellCountX = layout.getCountX();
         final int cellCountY = layout.getCountY();
         final int row = lp.cellY;
         final int newRow = row + lineDelta;
@@ -668,7 +662,7 @@ public class FocusHelper {
      * Handles key events in a Workspace containing.
      */
     static boolean handleIconKeyEvent(View v, int keyCode, KeyEvent e) {
-        CellLayoutChildren parent = (CellLayoutChildren) v.getParent();
+        ShortcutAndWidgetContainer parent = (ShortcutAndWidgetContainer) v.getParent();
         final CellLayout layout = (CellLayout) parent.getParent();
         final Workspace workspace = (Workspace) layout.getParent();
         final ViewGroup launcher = (ViewGroup) workspace.getParent();
@@ -823,7 +817,7 @@ public class FocusHelper {
      * Handles key events for items in a Folder.
      */
     static boolean handleFolderKeyEvent(View v, int keyCode, KeyEvent e) {
-        CellLayoutChildren parent = (CellLayoutChildren) v.getParent();
+        ShortcutAndWidgetContainer parent = (ShortcutAndWidgetContainer) v.getParent();
         final CellLayout layout = (CellLayout) parent.getParent();
         final Folder folder = (Folder) layout.getParent();
         View title = folder.mFolderName;

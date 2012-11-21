@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-     Copyright (C) 2008 The Android Open Source Project
+<!-- Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,12 +14,14 @@
      limitations under the License.
 -->
 
-<com.shendu.launcher.FolderIcon xmlns:android="http://schemas.android.com/apk/res/android"
+<com.shendu.launcher.FolderIcon
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:focusable="true"
     android:gravity="center_vertical|center_horizontal"
-    android:orientation="vertical" >
+    >
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,7 +32,7 @@
         android:orientation="vertical" >
 
         <ImageView
-            android:id="@+id/preview_background"
+          	android:id="@+id/preview_background"
         	android:layout_width="@dimen/app_icon_size"
         	android:layout_height="@dimen/app_icon_size"
         	android:background="@drawable/folder_bg"
@@ -45,5 +46,17 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@android:color/white" />
-
+<!--    
+	android:background="@drawable/focusable_view_bg"
+    <ImageView
+        android:id="@+id/preview_background"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="@dimen/folder_preview_size"
+        android:layout_height="@dimen/folder_preview_size"
+        android:src="@drawable/portal_ring_inner_holo"/>
+	
+    <com.shendu.launcher.BubbleTextView
+        android:id="@+id/folder_icon_name"
+        style="@style/WorkspaceIcon.Portrait.Folder"/>
+-->
 </com.shendu.launcher.FolderIcon>

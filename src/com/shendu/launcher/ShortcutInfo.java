@@ -16,6 +16,9 @@
 
 package com.shendu.launcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -24,9 +27,6 @@ import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Represents a launchable icon on the workspaces and in folders.
@@ -94,12 +94,13 @@ class ShortcutInfo extends ItemInfo {
     }
 
     /** TODO: Remove this.  It's only called by ApplicationInfo.makeShortcut. */
-    public ShortcutInfo(ApplicationInfo info) {
+    /* do not used now,remove by hhl
+     public ShortcutInfo(ApplicationInfo info) {
         super(info);
         title = info.title.toString();
         intent = new Intent(info.intent);
         customIcon = false;
-    }
+    }*/
 
     public void setIcon(Bitmap b) {
         mIcon = b;
@@ -107,10 +108,20 @@ class ShortcutInfo extends ItemInfo {
 
     public Bitmap getIcon(IconCache iconCache) {
         if (mIcon == null) {
-            mIcon = iconCache.getIcon(this.intent);
-            this.usingFallbackIcon = iconCache.isDefaultIcon(mIcon);
+            updateIcon(iconCache);
         }
         return mIcon;
+    }
+
+    /** Returns the package name that the shortcut's intent will resolve to, or an empty string if
+     *  none exists. */
+    String getPackageName() {
+        return super.getPackageName(intent);
+    }
+
+    public void updateIcon(IconCache iconCache) {
+        mIcon = iconCache.getIcon(intent);
+        usingFallbackIcon = iconCache.isDefaultIcon(mIcon);
     }
 
     /**
@@ -183,7 +194,10 @@ class ShortcutInfo extends ItemInfo {
 
     @Override
     public String toString() {
-        return "ShortcutInfo(title=" + title.toString() + ")";
+        return "ShortcutInfo(title=" + title.toString() + "intent=" + intent + "id=" + this.id
+                + " type=" + this.itemType + " container=" + this.container + " screen=" + screen
+                + " cellX=" + cellX + " cellY=" + cellY + " spanX=" + spanX + " spanY=" + spanY
+                + " isGesture=" + isGesture + " dropPos=" + dropPos + ")";
     }
 
     public static void dumpShortcutInfoList(String tag, String label,

@@ -16,15 +16,15 @@
 
 package com.shendu.launcher;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -122,11 +122,11 @@ class AllAppsList {
             // Find disabled/removed activities and remove them from data and add them
             // to the removed list.
             for (int i = data.size() - 1; i >= 0; i--) {
-                final ShortcutInfo applicationInfo = data.get(i);
-                final ComponentName component = applicationInfo.intent.getComponent();
+                final ShortcutInfo shortcutInfo = data.get(i);
+                final ComponentName component = shortcutInfo.intent.getComponent();
                 if (packageName.equals(component.getPackageName())) {
                     if (!findActivity(matches, component)) {
-                        removed.add(applicationInfo);
+                        removed.add(shortcutInfo);
                         mIconCache.remove(component);
                         data.remove(i);
                     }
@@ -135,25 +135,27 @@ class AllAppsList {
 
             // Find enabled activities and add them to the adapter
             // Also updates existing activities with new labels/icons
-            for (final ResolveInfo info : matches) {
-                ShortcutInfo applicationInfo = findApplicationInfoLocked(
+            int count = matches.size();
+            for (int i = 0; i < count; i++) {
+                final ResolveInfo info = matches.get(i);
+                ShortcutInfo shortcutInfo = findApplicationInfoLocked(
                         info.activityInfo.applicationInfo.packageName,
                         info.activityInfo.name);
-                if (applicationInfo == null) {
+                if (shortcutInfo == null) {
                     add(new ShortcutInfo(context.getPackageManager(), info, mIconCache, null));
                 } else {
-                    mIconCache.remove(applicationInfo.componentName);
-                    mIconCache.getTitleAndIcon(applicationInfo, info, null);
-                    modified.add(applicationInfo);
+                    mIconCache.remove(shortcutInfo.componentName);
+                    mIconCache.getTitleAndIcon(shortcutInfo, info, null);
+                    modified.add(shortcutInfo);
                 }
             }
         } else {
             // Remove all data for this package.
             for (int i = data.size() - 1; i >= 0; i--) {
-                final ShortcutInfo applicationInfo = data.get(i);
-                final ComponentName component = applicationInfo.intent.getComponent();
+                final ShortcutInfo shortcutInfo = data.get(i);
+                final ComponentName component = shortcutInfo.intent.getComponent();
                 if (packageName.equals(component.getPackageName())) {
-                    removed.add(applicationInfo);
+                    removed.add(shortcutInfo);
                     mIconCache.remove(component);
                     data.remove(i);
                 }
@@ -193,7 +195,9 @@ class AllAppsList {
      * Returns whether <em>apps</em> contains <em>component</em>.
      */
     private static boolean findActivity(ArrayList<ShortcutInfo> apps, ComponentName component) {
-        for (final ShortcutInfo info : apps) {
+        final int N = apps.size();
+        for (int i=0; i<N; i++) {
+            final ShortcutInfo info = apps.get(i);
             if (info.componentName.equals(component)) {
                 return true;
             }

@@ -26,7 +26,6 @@ import android.preference.PreferenceGroup;
 import android.util.Log;
 
 import com.shendu.launcher.LauncherApplication;
-
 import com.shendu.launcher.R;
 
 public class Preferences extends PreferenceActivity {

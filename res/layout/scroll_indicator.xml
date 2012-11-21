@@ -13,26 +13,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-    <com.shendu.launcher.SlidingIndicator
+<com.shendu.launcher.SlidingIndicator
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
-    android:layout_height="11px"
-    
-    
-    
-  
-     ></com.shendu.launcher.SlidingIndicator>
-<!-- android:visibility="gone" android:alpha="0"
-   xmlns:android="http://schemas.android.com/apk/res/android"
- xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
-  android:src="@drawable/hotseat_scrubber_holo" 
-       <com.android.launchersd.SlidingIndicator
-           android:id="@+id/slidingIndicator_workspace"
-           android:layout_width="match_parent"
-           android:layout_height="5dip"
-           android:tag="slidingIndicator_workspace" 
-           android:layout_alignParentTop="true"
-           android:layout_centerHorizontal="true">
-       </com.android.launchersd.SlidingIndicator>
-       
-        -->
+    android:layout_height="11px">
+</com.shendu.launcher.SlidingIndicator>
+<!--
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="gone"
+    android:alpha="0"
+    android:scaleType="fitXY"
+    android:src="@drawable/hotseat_scrubber_holo" />
+-->

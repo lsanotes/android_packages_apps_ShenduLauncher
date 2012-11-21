@@ -18,13 +18,15 @@ package com.shendu.launcher.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
 import android.preference.Preference;
+import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+
 import com.shendu.launcher.R;
 
 /*
@@ -77,23 +79,17 @@ public class NumberPickerPreference extends DialogPreference {
 
         mNumberPicker = (NumberPicker) view.findViewById(R.id.number_picker);
 
-        if (mNumberPicker == null) {
-            throw new RuntimeException("mNumberPicker is null!");
-        }
-
         // Initialize state
-        mNumberPicker.setWrapSelectorWheel(false);
         mNumberPicker.setMaxValue(max);
         mNumberPicker.setMinValue(min);
         mNumberPicker.setValue(getPersistedInt(mDefault));
+        mNumberPicker.setWrapSelectorWheel(false);
 
         // No keyboard popup
         EditText textInput = (EditText) mNumberPicker.findViewById(com.android.internal.R.id.numberpicker_input);
-        if (textInput != null) {
-            textInput.setCursorVisible(false);
-            textInput.setFocusable(false);
-            textInput.setFocusableInTouchMode(false);
-        }
+        textInput.setCursorVisible(false);
+        textInput.setFocusable(false);
+        textInput.setFocusableInTouchMode(false);
 
         return view;
     }

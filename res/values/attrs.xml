@@ -17,6 +17,23 @@
 -->
 
 <resources>
+    <!-- Orientation of a widget. -->
+    <attr name="direction">
+        <!-- Vertical widget. -->
+        <enum name="vertical" value="0" />
+        <!-- Horizontal widget. -->
+        <enum name="horizontal" value="1" />
+    </attr>
+
+    <skip />
+
+    <!-- DrawableStateProxyView specific attributes. These attributes are used to customize
+         a DrawableStateProxyView view in XML files. -->
+    <declare-styleable name="DrawableStateProxyView">
+        <!-- The source view to delegate touch presses events to. -->
+        <attr name="sourceViewId" format="integer" />
+    </declare-styleable>
+
     <!-- Cling specific attributes. These attributes are used to customize
          the cling in XML files. -->
     <declare-styleable name="Cling">
@@ -58,28 +75,20 @@
         <attr name="maxGap" format="dimension" />
     </declare-styleable>
 
+    <!-- StrokedTextView specific attributes. -->
+    <declare-styleable name="StrokedTextView">
+        <!-- The color of the stroke outline -->
+        <attr name="strokeColor" format="color" />
+        <!-- The color of the text -->
+        <attr name="strokeTextColor" format="color" />
+        <!-- The width of the stroke -->
+        <attr name="strokeWidth" format="float" />
+    </declare-styleable>
+
     <!-- HolographicLinearLayout specific attributes. -->
     <declare-styleable name="HolographicLinearLayout">
         <!-- The source view to generate and apply the drawable states to/from -->
         <attr name="sourceImageViewId" format="integer" />
-    </declare-styleable>
-
-    <!-- PagedViewIcon specific attributes. These attributes are used to customize
-         a PagedViewIcon view in XML files. -->
-    <declare-styleable name="PagedViewIcon">
-        <!-- The blur color of the holographic outline -->
-        <attr name="blurColor" format="color" />
-        <!-- The outline color of the holographic outline -->
-        <attr name="outlineColor" format="color" />
-    </declare-styleable>
-
-    <!-- PagedViewWidget specific attributes. These attributes are used to
-         customize a PagedViewWidget view in XML files. -->
-    <declare-styleable name="PagedViewWidget">
-        <!-- The blur color of the holographic outline -->
-        <attr name="blurColor" />
-        <!-- The outline color of the holographic outline -->
-        <attr name="outlineColor" />
     </declare-styleable>
 
     <!-- PagedView specific attributes. These attributes are used to customize
@@ -121,6 +130,13 @@
         <attr name="clingFocusedY" format="integer" />
     </declare-styleable>
 
+    <!-- HandleView specific attributes. These attributes are used to customize
+         a HandleView view in XML files. -->
+    <declare-styleable name="HandleView">
+        <!-- Orientation of the handle. -->
+        <attr name="direction" />
+    </declare-styleable>
+
     <!-- XML attributes used by default_workspace.xml -->
     <declare-styleable name="Favorite">
         <attr name="className" format="string" />
@@ -134,6 +150,16 @@
         <attr name="icon" format="reference" />  
         <attr name="title" format="reference" />
         <attr name="uri" format="string" />
+    </declare-styleable>
+    <declare-styleable name="Extra">
+        <attr name="key" format="string" />
+        <attr name="value" format="string" />
+    </declare-styleable>
+
+    <!-- Only used in the device overlays -->
+    <declare-styleable name="CustomClingTitleText">
+    </declare-styleable>
+    <declare-styleable name="CustomClingText">
     </declare-styleable>
 
     <declare-styleable name="NumberPickerPreference">

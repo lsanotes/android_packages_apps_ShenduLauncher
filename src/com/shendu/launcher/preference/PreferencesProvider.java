@@ -19,9 +19,9 @@ package com.shendu.launcher.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.shendu.launcher.AppsCustomizePagedView;
 import com.shendu.launcher.LauncherApplication;
 import com.shendu.launcher.Workspace;
-import com.shendu.launcher.AppsCustomizePagedView;
 
 public final class PreferencesProvider {
     public static final String PREFERENCES_KEY = "com.shendu.launcher_preferences";
@@ -67,12 +67,6 @@ public final class PreferencesProvider {
                 return (int)((float) preferences.getInt("ui_homescreen_screen_padding_horizontal", 0) * 3.0f *
                         LauncherApplication.getScreenDensity());
             }
-            //add by zlf
-            public static Workspace.FolderStyle getScreenFolderStyle(Context context, String def) {
-            	               final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
-            	                return Workspace.FolderStyle.valueOf(preferences.getString("ui_homescreen_screen_folder_style", def));
-            	            }
-            
             public static boolean getShowSearchBar(Context context) {
                 final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
                 return preferences.getBoolean("ui_homescreen_general_search", true);
@@ -124,11 +118,11 @@ public final class PreferencesProvider {
                 return preferences.getBoolean("ui_drawer_widgets_join_apps", false);
             }
             public static class Scrolling {
-                public static AppsCustomizePagedView.TransitionEffect getTransitionEffect(Context context, String def) {
+               /*public static AppsCustomizePagedView.TransitionEffect getTransitionEffect(Context context, String def) {
                     final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
                     return AppsCustomizePagedView.TransitionEffect.valueOf(
                             preferences.getString("ui_drawer_scrolling_transition_effect", def));
-                }
+                }*/
                 public static boolean getFadeInAdjacentScreens(Context context) {
                     final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
                     return preferences.getBoolean("ui_drawer_scrolling_fade_adjacent_screens", false);

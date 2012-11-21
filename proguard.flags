@@ -7,7 +7,6 @@
   public void onClickConfigureButton(android.view.View);
   public void onClickAllAppsButton(android.view.View);
   public void onClickAppMarketButton(android.view.View);
-  public void onClickOverflowMenuButton(android.view.View);
   public void dismissWorkspaceCling(android.view.View);
   public void dismissAllAppsCling(android.view.View);
   public void dismissAllAppsSortCling(android.view.View);
@@ -55,4 +54,12 @@
   public float getVerticalWallpaperOffset();
   public void setHorizontalWallpaperOffset(float);
   public float getHorizontalWallpaperOffset();
+}
+
+-keep class com.shendu.launcher.AllApps3D$Defines {
+  *;
+}
+
+-keep class com.shendu.launcher.ClippedImageView {
+  *;
 }

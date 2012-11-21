@@ -25,6 +25,7 @@ import android.graphics.Rect;
 import android.graphics.Region.Op;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -202,10 +203,10 @@ public class BubbleLinearLayout extends LinearLayout {
     }
 
     void setCellLayoutPressedOrFocusedIcon() {
-        //Log.i("hhl", "===BubbleLinearLayout.java===setCellLayoutPressedOrFocusedIcon======"+
+        //Log.i(Launcher.TAG,"===BubbleLinearLayout.java===setCellLayoutPressedOrFocusedIcon======"+
         		//(mPressedOrFocusedBackground==null));
-        if (getParent() instanceof CellLayoutChildren) {
-            CellLayoutChildren parent = (CellLayoutChildren) getParent();
+        if (getParent() instanceof ShortcutAndWidgetContainer) {
+        	ShortcutAndWidgetContainer parent = (ShortcutAndWidgetContainer) getParent();
             if (parent != null) {
                 CellLayout layout = (CellLayout) parent.getParent();
                 layout.setPressedOrFocusedIcon2((mPressedOrFocusedBackground != null) ? this : null);

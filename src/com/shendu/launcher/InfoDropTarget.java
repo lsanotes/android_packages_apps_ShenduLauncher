@@ -28,6 +28,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shendu.launcher.R;
+
 public class InfoDropTarget extends ButtonDropTarget {
 
     private ColorStateList mOriginalTextColor;
@@ -65,8 +67,8 @@ public class InfoDropTarget extends ButtonDropTarget {
         }
     }
 
-    private boolean isAllAppsApplication(DragSource source, Object info) {
-        return (source instanceof AppsCustomizeView) && (info instanceof ApplicationInfo);
+    private boolean isFromAllApps(DragSource source) {
+        return (source instanceof AppsCustomizePagedView);
     }
 
     @Override
@@ -75,14 +77,21 @@ public class InfoDropTarget extends ButtonDropTarget {
         // in onDrop, because it allows us to reject the drop (by returning false)
         // so that the object being dragged isn't removed from the drag source.
         ComponentName componentName = null;
-        if (d.dragInfo instanceof ApplicationInfo) {
+        /* do not used,remove by hhl
+         if (d.dragInfo instanceof ApplicationInfo) {
             componentName = ((ApplicationInfo) d.dragInfo).componentName;
-        } else if (d.dragInfo instanceof ShortcutInfo) {
+        } else */
+        if (d.dragInfo instanceof ShortcutInfo) {
             componentName = ((ShortcutInfo) d.dragInfo).intent.getComponent();
+        } else if (d.dragInfo instanceof PendingAddItemInfo) {
+            componentName = ((PendingAddItemInfo) d.dragInfo).componentName;
         }
         if (componentName != null) {
             mLauncher.startApplicationDetailsActivity(componentName);
         }
+
+        // There is no post-drop animation, so clean up the DragView now
+        d.deferDragViewCleanupPostAnimation = false;
         return false;
     }
 
@@ -90,8 +99,8 @@ public class InfoDropTarget extends ButtonDropTarget {
     public void onDragStart(DragSource source, Object info, int dragAction) {
         boolean isVisible = true;
 
-        // If we are dragging a widget or shortcut, hide the info target
-        if (!isAllAppsApplication(source, info)) {
+        // Hide this button unless we are dragging something from AllApps
+        if (!isFromAllApps(source)) {
             isVisible = false;
         }
 

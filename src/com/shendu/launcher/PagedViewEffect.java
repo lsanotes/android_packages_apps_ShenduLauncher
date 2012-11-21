@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.shendu.launcher.R;
 
 /**
  * 2012-9-12 hhl
@@ -45,7 +46,7 @@ public class PagedViewEffect extends RelativeLayout {
         super(context, attrs, defStyle);
     }
 
-    public void applyFromShenduPrograme(ShenduPrograme info,HolographicOutlineHelper holoOutlineHelper) {
+    public void applyFromShenduPrograme(ShenduPrograme info) {
     	
     	TextView effectName = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_name_id);
     	TextView effectIcon = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_icon_id);

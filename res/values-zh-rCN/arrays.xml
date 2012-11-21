@@ -23,8 +23,9 @@
         <item>平板</item>
         <item>放大</item>
         <item>缩小</item>
-        <item>向上旋转</item>
+       <!--   <item>向上旋转</item>
         <item>向下旋转</item>
+        -->
         <item>立方飞入</item>
         <item>立方飞出</item>
         <item>堆叠</item>
@@ -35,8 +36,9 @@
         <item>平板</item>
         <item>放大</item>
         <item>缩小</item>
-        <item>向上旋转</item>
+     <!--   <item>向上旋转</item>
         <item>向下旋转</item>
+        -->
         <item>立方飞入</item>
         <item>立方飞出</item>
         <item>堆叠</item>

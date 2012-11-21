@@ -12,28 +12,25 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+     
+    launcher:blurColor="#FF6B8CF0"
+    launcher:outlineColor="#FF8CD2FF"
+     
 -->
 <com.shendu.launcher.PagedViewWidget
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
     android:paddingTop="10dp"
     android:paddingBottom="20dp"
     android:orientation="vertical"
-
-    launcher:blurColor="#FF6B8CF0"
-    launcher:outlineColor="#FF8CD2FF"
-
     android:focusable="true">
-	
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
         <LinearLayout
             android:id="@+id/apps_customize_widget_name_parent_id"
             android:layout_width="match_parent"
@@ -41,9 +38,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="center_horizontal|center_vertical"
             android:orientation="horizontal" >
-
             <!-- The name of the widget. -->
-
             <TextView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/widget_name"
@@ -57,12 +52,10 @@
                 android:singleLine="true"
                 android:textColor="@android:color/white"
                 android:textSize="13sp" />
-
             <!--
              The original dimensions of the widget (can't be the same text as above due to different
              style.
             -->
-
             <TextView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/widget_dims"
@@ -76,14 +69,11 @@
                 android:textSize="13sp" />
         </LinearLayout>
         <!-- The icon of the widget.-->
-
         <com.shendu.launcher.PagedViewWidgetImageView
             android:id="@+id/widget_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/apps_customize_widget_name_parent_id"
             android:scaleType="centerInside" />
-             
     </RelativeLayout>
-
 </com.shendu.launcher.PagedViewWidget>

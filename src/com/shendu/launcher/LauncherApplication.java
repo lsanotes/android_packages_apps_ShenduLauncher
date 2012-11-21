@@ -28,7 +28,8 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.CallLog.Calls;
-import android.util.Log;
+
+import com.shendu.launcher.R;
 
 import java.lang.ref.WeakReference;
 
@@ -43,6 +44,8 @@ public class LauncherApplication extends Application {
     		new ComponentName("com.android.contacts","com.android.contacts.activities.DialtactsActivity");
     public static final int MMS_MARK = 1;
     public static final int CALL_MARK = 2;
+    private static int sLongPressTimeout = 300;
+    private static final String sSharedPreferencesKey = "com.shendu.launcher.prefs";
     WeakReference<LauncherProvider> mLauncherProvider;
 
     @Override
@@ -50,7 +53,7 @@ public class LauncherApplication extends Application {
         super.onCreate();
 
         // set sIsScreenXLarge and sScreenDensity *before* creating icon cache
-        sIsScreenLarge = getResources().getConfiguration().smallestScreenWidthDp >= 600;
+        sIsScreenLarge = getResources().getBoolean(R.bool.is_large_screen);
         sScreenDensity = getResources().getDisplayMetrics().density;
 
         mIconCache = new IconCache(this);
@@ -110,7 +113,10 @@ public class LauncherApplication extends Application {
     private final ContentObserver mFavoritesObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange) {
-            mModel.startLoader(LauncherApplication.this, false);
+            // If the database has ever changed, then we really need to force a reload of the
+            // workspace on the next load
+            mModel.resetLoadedState(false, true);
+            mModel.startLoaderFromBackground();
         }
     };
 
@@ -149,7 +155,7 @@ public class LauncherApplication extends Application {
     		mModel.shenduUpdateAppMarkFromRegister(MMS_MARK,intent);
         }
     };
-    
+
     LauncherModel setLauncher(Launcher launcher) {
         mModel.initialize(launcher);
         return mModel;
@@ -171,6 +177,10 @@ public class LauncherApplication extends Application {
         return mLauncherProvider.get();
     }
 
+    public static String getSharedPreferencesKey() {
+        return sSharedPreferencesKey;
+    }
+
     public static boolean isScreenLarge() {
         return sIsScreenLarge;
     }
@@ -182,5 +192,9 @@ public class LauncherApplication extends Application {
 
     public static float getScreenDensity() {
         return sScreenDensity;
+    }
+
+    public static int getLongPressTimeout() {
+        return sLongPressTimeout;
     }
 }

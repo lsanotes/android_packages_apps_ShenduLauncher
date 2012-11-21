@@ -16,9 +16,9 @@
 
 package com.shendu.launcher;
 
-import android.content.ContentValues;
-
 import java.util.ArrayList;
+
+import android.content.ContentValues;
 
 /**
  * Represents a folder containing shortcuts or apps.
@@ -53,8 +53,8 @@ class FolderInfo extends ItemInfo {
      */
     public void add(ShortcutInfo item) {
         contents.add(item);
-        for (FolderListener listener : listeners) {
-            listener.onAdd(item);
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onAdd(item);
         }
         itemsChanged();
     }
@@ -66,16 +66,16 @@ class FolderInfo extends ItemInfo {
      */
     public void remove(ShortcutInfo item) {
         contents.remove(item);
-        for (FolderListener listener : listeners) {
-            listener.onRemove(item);
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onRemove(item);
         }
         itemsChanged();
     }
 
     public void setTitle(CharSequence title) {
         this.title = title;
-        for (FolderListener listener : listeners) {
-            listener.onTitleChanged(title);
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onTitleChanged(title);
         }
     }
 
@@ -96,8 +96,8 @@ class FolderInfo extends ItemInfo {
     }
 
     void itemsChanged() {
-        for (FolderListener listener : listeners) {
-            listener.onItemsChanged();
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).onItemsChanged();
         }
     }
 
