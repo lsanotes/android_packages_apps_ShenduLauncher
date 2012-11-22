@@ -58,6 +58,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.res.CustomTheme;
@@ -1216,7 +1217,11 @@ public class LauncherModel extends BroadcastReceiver {
                                     folderInfo.add(info);
                                     break;
                                 }
+                                Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@111111111="+info+
+                                		"===="+sItemsIdMap.size());
                                 sItemsIdMap.put(info.id, info);
+                                Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@222222222="+
+                                sItemsIdMap.size()+"==="+sItemsIdMap.get(info.id));
 
                                 // now that we've loaded everthing re-save it with the
                                 // icon in case it disappears somehow.
@@ -1684,8 +1689,11 @@ public class LauncherModel extends BroadcastReceiver {
        int i =0;
        int listCount =list.size();
      	final Collection<ItemInfo> mTmpWorkspaceItems =sItemsIdMap.values();
-     	//Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..111.."+listCount+"==="+mPenddingWorkspaceItems.size());
+     	
+     	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..111.."+listCount+"==="+
+     	mPenddingWorkspaceItems.size()+"======="+sItemsIdMap.size()+"==="+mTmpWorkspaceItems.size());
      	for(ItemInfo info:mTmpWorkspaceItems){
+     		Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..222.."+info);
      		if(info instanceof ShortcutInfo){
      			for(ShortcutInfo sInfo:list){
      				if(sInfo.componentName.equals(((ShortcutInfo)info).componentName)){
@@ -1698,6 +1706,17 @@ public class LauncherModel extends BroadcastReceiver {
      		if(i==listCount){
      			break;
      		}
+     	}
+     	int size = sItemsIdMap.size();
+     	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..44444444.."+size);
+     	Iterator iterator = sItemsIdMap.keySet().iterator();
+ 		while(iterator.hasNext()) {
+ 	  	  Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..5555555.."+sItemsIdMap.get(iterator.next()));
+     	}
+       
+     	
+     	for(ShortcutInfo sInfo:list){
+         	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..3333.."+sInfo);
      	}
      	//Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..end.."+listCount+"==="+mPenddingWorkspaceItems.size());
      	return mPenddingWorkspaceItems;

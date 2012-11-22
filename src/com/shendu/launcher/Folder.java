@@ -570,14 +570,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		mCurrentFolderBitmap = FolderCoverView.view2Bitmap(v);
 
 		if (mInfo.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
-			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
-					mCurrentPageBitmap.getWidth(), v.getBottom() + 600 - 70,
-					null, 0, 0, 0, 1);
-			mFolderCovers.add(upCover);
-			FrameLayout.LayoutParams upFlp = new FrameLayout.LayoutParams(
-					FrameLayout.LayoutParams.FILL_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
-			LayoutForFolder.addView(upCover, upFlp);
+			
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
 					v.getBottom() - 70 + 600, mCurrentPageBitmap.getWidth(),
 					mCurrentPageBitmap.getHeight() - v.getBottom() - 600 + 70,
@@ -587,6 +580,18 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 					FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(downCover, downFlp);
+			
+			
+			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
+					mCurrentPageBitmap.getWidth(), v.getBottom() + 600 - 70,
+					null, 0, 0, 0, 1);
+			mFolderCovers.add(upCover);
+			FrameLayout.LayoutParams upFlp = new FrameLayout.LayoutParams(
+					FrameLayout.LayoutParams.FILL_PARENT,
+					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
+			LayoutForFolder.addView(upCover, upFlp);
+			
+			
 			slideDistance = (mFolderIcon.getBottom() - 70 + 600)- (int) folderTop;
 		} else {
 
@@ -952,7 +957,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     		success = false;
     		d.cancelled = true;
     	}
-    	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==success="+success+"===");
+    	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==success="+success+"==="+
+    			//mDeleteFolderOnDropCompleted+"===="+mItemAddedBackToSelfViaIcon);
         if (success) {
             if (mDeleteFolderOnDropCompleted && !mItemAddedBackToSelfViaIcon) {
                 replaceFolderWithFinalItem();
@@ -1002,6 +1008,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     private void updateItemLocationsInDatabase() {
         ArrayList<View> list = getItemsInReadingOrder();
+        if(list.size()<=1){//for drag item from two item folder in hotseat 
+        	return;
+        }
         for (int i = 0; i < list.size(); i++) {
             View v = list.get(i);
             ItemInfo info = (ItemInfo) v.getTag();
@@ -1195,6 +1204,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             setupContentForNumItems(getItemCount());
             mRearrangeOnClose = false;
         }
+        //Log.i(Launcher.TAG, TAG+"==onCloseComplete=="+getItemCount()+"===="+mDragInProgress+
+        		//"==="+mSuppressFolderDeletion);
         if (getItemCount() <= 1) {
             if (!mDragInProgress && !mSuppressFolderDeletion) {
                 replaceFolderWithFinalItem();
@@ -1210,7 +1221,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         if (getItemCount() == 1) {
             finalItem = mInfo.contents.get(0);
-        }
+         }
 
         // Remove the folder completely
         CellLayout cellLayout = mLauncher.getCellLayout(mInfo.container, mInfo.screen);
@@ -1219,7 +1230,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mDragController.removeDropTarget((DropTarget) mFolderIcon);
         }
         mLauncher.removeFolder(mInfo);
-
+        //Log.i(Launcher.TAG, TAG+"==replaceFolderWithFinalItem=="+finalItem+"==="+
+        		//mInfo.container+"==="+mInfo.contents.size());
         if (finalItem != null) {
             LauncherModel.addOrMoveItemInDatabase(mLauncher, finalItem, mInfo.container,
                     mInfo.screen, mInfo.cellX, mInfo.cellY);

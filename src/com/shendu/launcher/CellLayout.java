@@ -1148,7 +1148,7 @@ public class CellLayout extends ViewGroup {
             int delay, boolean permanent, boolean adjustOccupied) {
         ShortcutAndWidgetContainer clc = getShortcutsAndWidgets();
         boolean[][] occupied = mOccupied;
-        if(cellX>=mCountX||cellX>=mCountX){//
+        if(cellX>=mCountX){//
         	return false;
         }
         if (!permanent) {
@@ -3241,8 +3241,10 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
             if (isLockedToGrid) {
                 final int myCellHSpan = cellHSpan;
                 final int myCellVSpan = cellVSpan;
-                final int myCellX = useTmpCoords ? tmpCellX : cellX;
-                final int myCellY = useTmpCoords ? tmpCellY : cellY;
+ /*               final int myCellX = useTmpCoords ? tmpCellX : cellX;
+                final int myCellY = useTmpCoords ? tmpCellY : cellY;*/
+                final int myCellX = cellX;//for hotseat lose item
+                final int myCellY = cellY;
 
                 width = myCellHSpan * cellWidth + ((myCellHSpan - 1) * widthGap) -
                         leftMargin - rightMargin;

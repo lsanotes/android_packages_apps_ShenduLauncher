@@ -109,7 +109,7 @@ public class Hotseat extends FrameLayout {
 	public void setGridSize(int cellCount,boolean isAdd,boolean initState){ //used to update hotseat count
 		//Log.i(Launcher.TAG, TAG+"==setGridSize1111111=isAdd="+isAdd+"==mCount="+mCount+"==mCellCountX="+mCellCountX);
 		mCount =mShortcutAndWidgetContainer.getChildCount();
-		if(isAdd&&mCellCountX<cellCount){
+		if(isAdd&&mCellCountX<=mCount){
 			mCellCountX=cellCount;
 			mContent.setGridSize(mCellCountX, mCellCountY);	
 		}else if(!isAdd&&mCellCountX>mCount){	
