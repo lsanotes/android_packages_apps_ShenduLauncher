@@ -129,6 +129,8 @@ public class LauncherModel extends BroadcastReceiver {
     protected int mPreviousConfigMcc;
 
     private CustomTheme mCurrentTheme;//add, for theme
+    
+    private boolean mLoadWorkspaceOk = false; //for package change receiver
 	
     /**
      * 2012-9-10 hhl
@@ -623,9 +625,9 @@ public class LauncherModel extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
-
         final String action = intent.getAction();
-        //Log.i(Launcher.TAG, TAG+"==onReceive=="+action);
+        Log.i(Launcher.TAG, TAG+"==onReceive=="+action+"========="+intent+"===="+context+"===");
+        if(!mLoadWorkspaceOk){ return; } //for item replace loading
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
                 || Intent.ACTION_PACKAGE_REMOVED.equals(action)
                 || Intent.ACTION_PACKAGE_ADDED.equals(action)) {
@@ -715,7 +717,14 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     private void forceReload() {
-        resetLoadedState(true, true);
+	synchronized (mLock) {
+            // Stop any existing loaders first, so they don't set mAllAppsLoaded or
+            // mWorkspaceLoaded to true later
+            stopLoaderLocked();
+            mAllAppsLoaded = false;
+            mWorkspaceLoaded = false;
+        }
+        //resetLoadedState(true, true);
 
         // Do this here because if the launcher activity is running it will be restarted.
         // If it's not running startLoaderFromBackground will merely tell it that it needs
@@ -1084,6 +1093,7 @@ public class LauncherModel extends BroadcastReceiver {
         }
 
         private void loadWorkspace() {
+            Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@@@@@@@@@@@ start=");
             final long t = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
 
             final Context context = mContext;
@@ -1217,11 +1227,7 @@ public class LauncherModel extends BroadcastReceiver {
                                     folderInfo.add(info);
                                     break;
                                 }
-                                Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@111111111="+info+
-                                		"===="+sItemsIdMap.size());
                                 sItemsIdMap.put(info.id, info);
-                                Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@222222222="+
-                                sItemsIdMap.size()+"==="+sItemsIdMap.get(info.id));
 
                                 // now that we've loaded everthing re-save it with the
                                 // icon in case it disappears somehow.
@@ -1353,6 +1359,8 @@ public class LauncherModel extends BroadcastReceiver {
                     Log.d(TAG, "[ " + line + " ]");
                 }
             }
+            Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@@@@@@@@@@@ end=");
+            mLoadWorkspaceOk = true;
         }
 
         /**
@@ -1543,6 +1551,7 @@ public class LauncherModel extends BroadcastReceiver {
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
                       if(list!=null){
+                    	  Log.i(Launcher.TAG, TAG+"=====onlyBindAllApps===##########################==");
                         callbacks.bindAllApplications(addAppsWithoutInvalidate(list));
                       }
                     }
@@ -1690,10 +1699,7 @@ public class LauncherModel extends BroadcastReceiver {
        int listCount =list.size();
      	final Collection<ItemInfo> mTmpWorkspaceItems =sItemsIdMap.values();
      	
-     	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..111.."+listCount+"==="+
-     	mPenddingWorkspaceItems.size()+"======="+sItemsIdMap.size()+"==="+mTmpWorkspaceItems.size());
      	for(ItemInfo info:mTmpWorkspaceItems){
-     		Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..222.."+info);
      		if(info instanceof ShortcutInfo){
      			for(ShortcutInfo sInfo:list){
      				if(sInfo.componentName.equals(((ShortcutInfo)info).componentName)){
@@ -1703,20 +1709,9 @@ public class LauncherModel extends BroadcastReceiver {
      				}
      			}
      		}
-     		if(i==listCount){
+     		/*if(i==listCount){
      			break;
-     		}
-     	}
-     	int size = sItemsIdMap.size();
-     	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..44444444.."+size);
-     	Iterator iterator = sItemsIdMap.keySet().iterator();
- 		while(iterator.hasNext()) {
- 	  	  Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..5555555.."+sItemsIdMap.get(iterator.next()));
-     	}
-       
-     	
-     	for(ShortcutInfo sInfo:list){
-         	Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..3333.."+sInfo);
+     		}*/
      	}
      	//Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..end.."+listCount+"==="+mPenddingWorkspaceItems.size());
      	return mPenddingWorkspaceItems;
@@ -1801,6 +1796,7 @@ public class LauncherModel extends BroadcastReceiver {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
+                      	  Log.i(Launcher.TAG, TAG+"=====PackageUpdatedTask===%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%==");
                             callbacks.bindAppsAdded(addAppsWithoutInvalidate(addedFinal));
                             callbacks.bindPackagesUpdated();
                         }
@@ -2209,7 +2205,7 @@ public class LauncherModel extends BroadcastReceiver {
         // package manager can't find an icon (for example because
         // the app is on SD) then we can use that instead.
         if (!info.customIcon && !info.usingFallbackIcon) {
-            cache.put(info, c.getBlob(iconIndex));
+            //cache.put(info, c.getBlob(iconIndex));
             return true;
         }
         return false;
