@@ -18,6 +18,7 @@ package com.shendu.launcher;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.ComponentName;
@@ -47,6 +48,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
@@ -435,9 +437,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     public void animateOpen() {
-        positionAndSizeAsIcon();
+    	
+    	setVisibility(View.VISIBLE);
+        //positionAndSizeAsIcon();
+        centerAboutIcon();
 
-        if (!(getParent() instanceof DragLayer)) return;
+      /*  if (!(getParent() instanceof DragLayer)) return;
         centerAboutIcon();
         PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1);
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f);
@@ -456,16 +461,16 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             @Override
             public void onAnimationEnd(Animator animation) {
                 mState = STATE_OPEN;
-                /*setLayerType(LAYER_TYPE_NONE, null);
+                setLayerType(LAYER_TYPE_NONE, null);
                 Cling cling = mLauncher.showFirstRunFoldersCling();
                 if (cling != null) {
                     cling.bringToFront();
                 }
-                setFocusOnFirstChild();*/
+                setFocusOnFirstChild();
             }
         });
         oa.setDuration(mExpandDuration);
-        oa.start();
+        oa.start();*/
         /*setLayerType(LAYER_TYPE_HARDWARE, null);
         buildLayer();
         post(new Runnable() {
@@ -502,16 +507,16 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
       }
       
       final Object mScreenshotLock = new Object();
-      ServiceConnection mScreenshotConnection = null;
+
       
       TakeScreenshotService mService=null;
       
       final Runnable mScreenshotTimeout = new Runnable() {
           public void run() {
               synchronized (mScreenshotLock) {
-                  if (mScreenshotConnection != null) {
-                  	mLauncher.unbindService(mScreenshotConnection);
-                      mScreenshotConnection = null;
+                  if (mConnection != null) {
+                  	mLauncher.unbindService(mConnection);
+                  	//mConnection = null;
                   }
               }
           }
@@ -544,6 +549,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 	};  
       
 	public void OpenAfterScreenshot() {
+
+		/*new Thread(mScreenshotTimeout).start();*/
+		
+		  if (mConnection != null) {
+            	mLauncher.unbindService(mConnection);
+		  }
+		
 		/*		
  		DragLayer parent = (DragLayer) mLauncher.findViewById(R.id.drag_layer);
 		if (this.getParent() == null) {
@@ -555,7 +567,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		}
 		LayoutForFolder.bringToFront();
 		*/
-		setVisibility(View.VISIBLE);
+		
+		
 		animateOpen();
 
 		createFoldercoverView(mFolderIcon);
@@ -616,13 +629,41 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		}
 	}
   	
-  	/**
+	/**
   	 * SlideFolder
   	 */
   	public void SlideFolder() {
-  		upCover.slideBy(0, 0, 0, slideDistance, FolderCoverView.SCROLL_CLOSE_DURATION);
-  		downCover.slideBy(0, 0, 0, -(int)(folderHeight-slideDistance)+2, FolderCoverView.SCROLL_CLOSE_DURATION);
+      	ObjectAnimator upCoverAnimation = ObjectAnimator
+        .ofFloat(upCover, "translationY",
+        		0, -slideDistance);
+  
+      	upCoverAnimation.setInterpolator(new LinearInterpolator());
+      
+    	ObjectAnimator downCoverAnimation = ObjectAnimator
+    	        .ofFloat(downCover, "translationY",
+    	        		0, (int)(folderHeight-slideDistance));
+    	
+    	downCoverAnimation.setInterpolator(new LinearInterpolator());
+    	 AnimatorSet anim = new AnimatorSet();     
+    	      
+    	 anim.playTogether(upCoverAnimation,downCoverAnimation);
+    	 anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
+    	 anim.addListener(new AnimatorListenerAdapter() {
+        	    public void onAnimationStart(Animator animation) {
+        	    	Launcher.mFolderAnimation = true;
+        	      }
+        	    
+        	    public void onAnimationEnd(Animator animation){
+        	    	Launcher.mFolderAnimation = false;
+        	      }
+        	   });
+    	 	
+    	 anim.start();
+    	 
+  		//upCover.slideBy(0, 0, 0, slideDistance, FolderCoverView.SCROLL_CLOSE_DURATION);
+  		//downCover.slideBy(0, 0, 0, -(int)(folderHeight-slideDistance)+2, FolderCoverView.SCROLL_CLOSE_DURATION);
   	}
+
   	
   	/**
   	 * removeCoverView
@@ -640,23 +681,51 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			mCurrentPageBitmap = null;
 		}
 
-		new Thread(mScreenshotTimeout).start();
-
 	}
 
-  	/**
+	/**
   	 * closeFolderCoverView
   	 */
 	public void closeFolderCoverView() {
-		for (final FolderCoverView view : mFolderCovers) {
-			view.slideBy(0, view.getDeltay(), 0, -view.getDeltay(),
-					FolderCoverView.SCROLL_CLOSE_DURATION);
-		}
-		handler.sendEmptyMessageDelayed(MSG_CLOSE_FOLDER,
-				FolderCoverView.SCROLL_CLOSE_DURATION - 100);
+//		for (final FolderCoverView view : mFolderCovers) {
+//			view.slideBy(0, view.getDeltay(), 0, -view.getDeltay(),
+//					FolderCoverView.SCROLL_CLOSE_DURATION);
+//		}
+		
+      	ObjectAnimator upCoverAnimation = ObjectAnimator
+        .ofFloat(upCover, "translationY",
+        		-slideDistance, 0);
+  
+      	upCoverAnimation.setInterpolator(new LinearInterpolator());
+    	ObjectAnimator downCoverAnimation = ObjectAnimator
+    	        .ofFloat(downCover, "translationY",
+    	        		(int)(folderHeight-slideDistance), 0);
+    	
+    	downCoverAnimation.setInterpolator(new LinearInterpolator());
+    
+    	 AnimatorSet anim = new AnimatorSet();     
+    	      
+    	 anim.playTogether(upCoverAnimation,downCoverAnimation);
+    	 anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
+    	 anim.addListener(new AnimatorListenerAdapter() {
+        	    public void onAnimationStart(Animator animation) {
+        	    	Launcher.mFolderAnimation = true;
+        	      }
+        	    
+        	    public void onAnimationEnd(Animator animation){
+        	    	
+        	    	animateClosed();
+    				removeCoverView();
+    				Launcher.mFolderAnimation = false;
+        	    }
+        	   });
+    	 anim.start();
+//		handler.sendEmptyMessageDelayed(MSG_CLOSE_FOLDER,
+//				FolderCoverView.SCROLL_CLOSE_DURATION - 100);
 	}
+	
   	
-	Handler handler = new Handler() {
+	/*Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MSG_CLOSE_FOLDER:
@@ -666,7 +735,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
 			}
 		}
-	};
+	};*/
 
 	public void folderClosed() {
 		LayoutForFolder.bringToFront();
@@ -693,14 +762,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
 	public void animateClosed() {
 
-		ComponentName cn = new ComponentName("com.shendu.launcher",
-				"com.shendu.launcher.screenshot.TakeScreenshotService");
-		Intent intent = new Intent();
-		intent.setComponent(cn);
-
-		mLauncher.unbindService(mConnection);
-
-		if (!(getParent() instanceof DragLayer))
+		setVisibility(View.GONE);
+		/*if (!(getParent() instanceof DragLayer))
 			return;
 		PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0);
 		PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX",
@@ -727,7 +790,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			}
 		});
 		oa.setDuration(mExpandDuration);
-		oa.start();
+		oa.start();*/
 		/*setLayerType(LAYER_TYPE_HARDWARE, null);
 		buildLayer();
 		post(new Runnable() {
@@ -738,6 +801,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 				oa.start();
 			}
 		});*/
+		
+		onCloseComplete();
 	}
 
     void notifyDataSetChanged() {
@@ -957,8 +1022,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     		success = false;
     		d.cancelled = true;
     	}
-    	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==success="+success+"==="+
-    			//mDeleteFolderOnDropCompleted+"===="+mItemAddedBackToSelfViaIcon);
         if (success) {
             if (mDeleteFolderOnDropCompleted && !mItemAddedBackToSelfViaIcon) {
                 replaceFolderWithFinalItem();
@@ -966,6 +1029,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         } else {
             // The drag failed, we need to return the item to the folder
             mFolderIcon.onDrop(d);
+        	
 
             // We're going to trigger a "closeFolder" which may occur before this item has
             // been added back to the folder -- this could cause the folder to be deleted
@@ -979,6 +1043,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 mOnExitAlarm.cancelAlarm();
                 completeDragExit();
             }
+        }
+        if(!success && Launcher.mFolderAnimation){
+            mRearrangeOnClose=false;
         }
         mDeleteFolderOnDropCompleted = false;
         mDragInProgress = false;
@@ -1204,8 +1271,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             setupContentForNumItems(getItemCount());
             mRearrangeOnClose = false;
         }
-        //Log.i(Launcher.TAG, TAG+"==onCloseComplete=="+getItemCount()+"===="+mDragInProgress+
-        		//"==="+mSuppressFolderDeletion);
         if (getItemCount() <= 1) {
             if (!mDragInProgress && !mSuppressFolderDeletion) {
                 replaceFolderWithFinalItem();
@@ -1230,8 +1295,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mDragController.removeDropTarget((DropTarget) mFolderIcon);
         }
         mLauncher.removeFolder(mInfo);
-        //Log.i(Launcher.TAG, TAG+"==replaceFolderWithFinalItem=="+finalItem+"==="+
-        		//mInfo.container+"==="+mInfo.contents.size());
         if (finalItem != null) {
             LauncherModel.addOrMoveItemInDatabase(mLauncher, finalItem, mInfo.container,
                     mInfo.screen, mInfo.cellX, mInfo.cellY);

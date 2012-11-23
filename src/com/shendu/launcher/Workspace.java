@@ -3726,6 +3726,8 @@ public class Workspace extends SmoothPagedView
             sourceInfo.cellY = -1;
             if(target==mHotseat.getLayout()){
               mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
+              target.setUseTempCoords(false);//for hotseat lose item
+              
         	  }
             // If the dragView is null, we can't animate
             boolean animate = dragView != null; 
@@ -3763,6 +3765,7 @@ public class Workspace extends SmoothPagedView
                 		cellLayout.removeView(mDragInfo.cell);
                         if(target==mHotseat.getLayout()){
                             mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
+                            target.setUseTempCoords(false);//for hotseat lose item
                            }
                 	}
                     /*getParentCellLayoutForView(mDragInfo.cell).removeView(mDragInfo.cell);

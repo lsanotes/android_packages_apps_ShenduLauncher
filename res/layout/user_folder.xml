@@ -34,6 +34,7 @@
         android:paddingBottom="@dimen/folder_name_padding"
         android:hint="@string/folder_hint_text"
         android:textSize="14sp"
+        android:textCursorDrawable="@null"
         android:textColor="@android:color/white"
         android:textColorHighlight="#ff333333"
         android:gravity="center_horizontal"

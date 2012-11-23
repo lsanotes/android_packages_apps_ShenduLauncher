@@ -2398,6 +2398,8 @@ public final class Launcher extends Activity
         }
     }
 
+    public static boolean mFolderAnimation = false;
+    
     private void handleFolderClick(FolderIcon folderIcon) {
         final FolderInfo info = folderIcon.mInfo;
         Folder openFolder = mWorkspace.getFolderForTag(info);
@@ -2409,7 +2411,6 @@ public final class Launcher extends Activity
                     + info.screen + " (" + info.cellX + ", " + info.cellY + ")");
             info.opened = false;
         }
-
         if (!info.opened) {
             // Close any open folder
             closeFolder();
@@ -2497,7 +2498,7 @@ public final class Launcher extends Activity
 
         // Push an ImageView copy of the FolderIcon into the DragLayer and hide the original
         copyFolderIconToImage(fi);
-        fi.setVisibility(View.INVISIBLE);
+        //fi.setVisibility(View.INVISIBLE);
 
         ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mFolderIconImageView, alpha,
                 scaleX, scaleY);
@@ -2541,24 +2542,32 @@ public final class Launcher extends Activity
      * @param folderInfo The FolderInfo describing the folder to open.
      */
     public void openFolder(FolderIcon folderIcon) {
+    	
+        if(mFolderAnimation){
+        	return ;
+        }
         Folder folder = folderIcon.mFolder;
         FolderInfo info = folder.mInfo;
 
         growAndFadeOutFolderIcon(folderIcon);
         info.opened = true;
-
         // Just verify that the folder hasn't already been added to the DragLayer.
         // There was a one-off crash where the folder had a parent already.
         if (folder.getParent() == null) {
             mDragLayer.addView(folder);
             mDragController.addDropTarget((DropTarget) folder);
             folder.setVisibility(View.GONE);
+            	folder.folderOpen();
+            
+            
         } else {
             Log.w(TAG, "Opening folder (" + folder + ") which already has a parent (" +
                     folder.getParent() + ").");
         }
         //folder.animateOpen();
-		folder.folderOpen();
+        
+
+	
     }
 
     public void closeFolder() {
@@ -2572,9 +2581,15 @@ public final class Launcher extends Activity
             // Dismiss the folder cling
             dismissFolderCling(null);
         }
+        
+     
     }
 
     void closeFolder(Folder folder) {
+
+        if(mFolderAnimation){
+        	return ;
+        }
         folder.getInfo().opened = false;
 
         ViewGroup parent = (ViewGroup) folder.getParent().getParent();
@@ -2584,8 +2599,8 @@ public final class Launcher extends Activity
         }
         //folder.animateClosed();
         folder.folderClosed();
-    }
 
+    }  
     public boolean onLongClick(View v) {
     	//Log.i(TAG,TAG+"==LongClick=="+isDraggingEnabled()+"==="+isWorkspaceLocked()+"=="+(mState != State.WORKSPACE));
         //if (!isDraggingEnabled()) return false;
@@ -3155,20 +3170,16 @@ public final class Launcher extends Activity
     }
 
     void enterSpringLoadedDragMode() {
-    	Log.i(TAG,TAG+"=***********=enterSpringLoadedDragMode=start=mState="+mState);
         if (mState == State.APPS_CUSTOMIZE) {
-        	Log.i(TAG,TAG+"===enterSpringLoadedDragMode==one flag===");
         	hideAppsCustomizeHelper(State.WORKSPACE, true, true, null); //for state update
             //hideAppsCustomizeHelper(State.APPS_CUSTOMIZE_SPRING_LOADED, true, true, null); //for state update
             //hideDockDivider();
             //mState = State.APPS_CUSTOMIZE_SPRING_LOADED; //for state update
         }
-    	Log.i(TAG,TAG+"=***********=enterSpringLoadedDragMode=end=mState="+mState);
     }
 
     void exitSpringLoadedDragModeDelayed(final boolean successfulDrop, boolean extendedDelay,
             final Runnable onCompleteRunnable) {
-    	Log.i(TAG,TAG+"=***********=exitSpringLoadedDragModeDelayed=start=mState="+mState);
         //if (mState != State.APPS_CUSTOMIZE_SPRING_LOADED) return; //for state update
 
         mHandler.postDelayed(new Runnable() {
@@ -3188,18 +3199,15 @@ public final class Launcher extends Activity
         }, (extendedDelay ?
                 EXIT_SPRINGLOADED_MODE_LONG_TIMEOUT :
                 EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT));
-    	Log.i(TAG,TAG+"=***********=exitSpringLoadedDragModeDelayed=end=mState="+mState);
     }
 
     void exitSpringLoadedDragMode() {
-    	Log.i(TAG,TAG+"=***********=exitSpringLoadedDragMode=start=mState="+mState);
         //if (mState == State.APPS_CUSTOMIZE_SPRING_LOADED) { //for state update
             final boolean animated = true;
             final boolean springLoaded = true;
             showAppsCustomizeHelper(animated, springLoaded);
             mState = State.APPS_CUSTOMIZE;
         //}
-    	Log.i(TAG,TAG+"=***********=exitSpringLoadedDragMode=end=mState="+mState);
         // Otherwise, we are not in spring loaded mode, so don't do anything.
     }
 

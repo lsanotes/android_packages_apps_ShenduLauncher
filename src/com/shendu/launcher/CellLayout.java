@@ -3241,10 +3241,10 @@ out:            for (int i = x; i < x + spanX - 1 && x < xCount; i++) {
             if (isLockedToGrid) {
                 final int myCellHSpan = cellHSpan;
                 final int myCellVSpan = cellVSpan;
- /*               final int myCellX = useTmpCoords ? tmpCellX : cellX;
-                final int myCellY = useTmpCoords ? tmpCellY : cellY;*/
-                final int myCellX = cellX;//for hotseat lose item
-                final int myCellY = cellY;
+                final int myCellX = useTmpCoords ? tmpCellX : cellX;
+                final int myCellY = useTmpCoords ? tmpCellY : cellY;
+                //final int myCellX = cellX;//for hotseat lose item
+                //final int myCellY = cellY;
 
                 width = myCellHSpan * cellWidth + ((myCellHSpan - 1) * widthGap) -
                         leftMargin - rightMargin;
