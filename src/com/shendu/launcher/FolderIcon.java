@@ -325,17 +325,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             final ShortcutInfo srcInfo, final DragView srcView, Rect dstRect,
             float scaleRelativeToDragLayer, Runnable postAnimationRunnable) {
 
-        //Drawable animateDrawable = ((TextView) destView).getCompoundDrawables()[1];
         Drawable animateDrawable = ((TextView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
         //computePreviewDrawingParams(animateDrawable.getIntrinsicWidth(), destView.getMeasuredWidth());
-        //Log.i(Launcher.TAG,"=FolderIcon.java=performCreateAnimation==11111="+srcInfo);
         // This will animate the dragView (srcView) into the new folder
         onDrop(srcInfo, srcView, dstRect, scaleRelativeToDragLayer, 1, postAnimationRunnable, null);
 
         // This will animate the first item from it's position as an icon into its
         // position as the first item in the preview
         //animateFirstItem(animateDrawable, INITIAL_ITEM_ANIMATION_DURATION);
-        //Log.i(Launcher.TAG,"=FolderIcon.java=performCreateAnimation==22222="+destInfo);
         addItem(destInfo);
     }
 
@@ -355,9 +352,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
      * TODO: create folder thumBitmap with folder content
      */
     public Drawable shenduCreateFolderThumBitmap(FolderInfo folderInfo){
-    	//Log.i(Launcher.TAG, "+++++FolderIcon.java...shenduCreateFolderThumBitmap==="+folderInfo.contents.size());
-    	//final Resources resource = mLauncher.getResources();
-		//Bitmap oldBitmap = BitmapFactory.decodeResource(resource,R.drawable.folder_bg);
     	int folderSize = (int)mLauncher.getResources().getDimension(R.dimen.app_icon_size);
 		Bitmap oldBitmap = Bitmap.createBitmap(folderSize,folderSize,Config.ARGB_8888);
 		Bitmap mutableBitmap = Bitmap.createScaledBitmap(
@@ -371,15 +365,10 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 		for(int i=0; i<count; i++) {
 			ItemInfo info = folderInfo.contents.get(i); 
 			Bitmap orgbmp=null;
-	        //Log.i(Launcher.TAG,"=FolderIcon====shenduCreateFolderThumBitmap==="+info+"=="+i);
-			//if(info instanceof ShortcutInfo){
 				orgbmp = ((ShortcutInfo)info).iconBitmap; 
 				if(orgbmp==null){
 					orgbmp = ((ShortcutInfo)info).mIcon;
 				}
-			/*}else{ do not used now,remove by hhl
-				orgbmp=((ApplicationInfo)info).iconBitmap;
-			}*/
 			int oldWidth  = orgbmp.getWidth();
 			int oldHeight = orgbmp.getHeight();
 			int newWidth  = 50;
@@ -426,53 +415,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         item.cellX = -1;
         item.cellY = -1;
 
-        // Typically, the animateView corresponds to the DragView; however, if this is being done
-        // after a configuration activity (ie. for a Shortcut being dragged from AllApps) we
-        // will not have a view to animate
-        /*if (animateView != null) { //for ring folder,remove by hhl
-            DragLayer dragLayer = mLauncher.getDragLayer();
-            Rect from = new Rect();
-            dragLayer.getViewRectRelativeToSelf(animateView, from);
-            Rect to = finalRect;
-            if (to == null) {
-                to = new Rect();
-                Workspace workspace = mLauncher.getWorkspace();
-                // Set cellLayout and this to it's final state to compute final animation locations
-                workspace.setFinalTransitionTransform((CellLayout) getParent().getParent());
-                float scaleX = getScaleX();
-                float scaleY = getScaleY();
-                setScaleX(1.0f);
-                setScaleY(1.0f);
-                scaleRelativeToDragLayer = dragLayer.getDescendantRectRelativeToSelf(this, to);
-                // Finished computing final animation locations, restore current state
-                setScaleX(scaleX);
-                setScaleY(scaleY);
-                workspace.resetTransitionTransform((CellLayout) getParent().getParent());
-            }
-
-            int[] center = new int[2];
-            float scale = getLocalCenterForIndex(index, center);
-            center[0] = (int) Math.round(scaleRelativeToDragLayer * center[0]);
-            center[1] = (int) Math.round(scaleRelativeToDragLayer * center[1]);
-
-            to.offset(center[0] - animateView.getMeasuredWidth() / 2,
-                    center[1] - animateView.getMeasuredHeight() / 2);
-
-            float finalAlpha = index < NUM_ITEMS_IN_PREVIEW ? 0.5f : 0f;
-
-            float finalScale = scale * scaleRelativeToDragLayer;
-            dragLayer.animateView(animateView, from, to, finalAlpha,
-                    1, 1, finalScale, finalScale, DROP_IN_ANIMATION_DURATION,
-                    new DecelerateInterpolator(2), new AccelerateInterpolator(2),
-                    postAnimationRunnable, DragLayer.ANIMATION_END_DISAPPEAR, null);
-            postDelayed(new Runnable() {
-                public void run() {
-                    addItem(item);
-                }
-            }, DROP_IN_ANIMATION_DURATION);
-        } else {*/
-
-        //Log.i(Launcher.TAG,"=FolderIcon.java=onDrop==="+item);
         	mLauncher.getDragLayer().setmDropView(animateView);
         	mLauncher.getDragLayer().clearAnimatedView(); //used to set deleteDrop/dragView normal
         	addItem(item);
@@ -481,12 +423,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void onDrop(DragObject d) {
         ShortcutInfo item;
-        /* do not used now,remove by hhl
-         if (d.dragInfo instanceof ApplicationInfo) {
-            // Came from all apps -- make a copy
-            item = ((ApplicationInfo) d.dragInfo).makeShortcut();
-        } else */
-        //Log.i(Launcher.TAG, "==FolderIcon.java==onDrop=="+d.dragView+"==="+d.dragInfo+"==="+d.postAnimationRunnable);
         	if (d.dragInfo instanceof FolderInfo) {
             FolderInfo folder = (FolderInfo) d.dragInfo;
             mFolder.notifyDrop();
@@ -507,32 +443,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         return null;
     }
 
-    /*private void computePreviewDrawingParams(int drawableSize, int totalSize) { //for ring folder,remove by hhl
-        if (mIntrinsicIconSize != drawableSize || mTotalWidth != totalSize) { 
-            mIntrinsicIconSize = drawableSize;
-            mTotalWidth = totalSize;
-
-            final int previewSize = FolderRingAnimator.sPreviewSize;
-            final int previewPadding = FolderRingAnimator.sPreviewPadding;
-
-            mAvailableSpaceInPreview = (previewSize - 2 * previewPadding);
-            // cos(45) = 0.707  + ~= 0.1) = 0.8f
-            int adjustedAvailableSpace = (int) ((mAvailableSpaceInPreview / 2) * (1 + 0.8f));
-
-            int unscaledHeight = (int) (mIntrinsicIconSize * (1 + PERSPECTIVE_SHIFT_FACTOR));
-            mBaselineIconScale = (1.0f * adjustedAvailableSpace / unscaledHeight);
-
-            mBaselineIconSize = (int) (mIntrinsicIconSize * mBaselineIconScale);
-            mMaxPerspectiveShift = mBaselineIconSize * PERSPECTIVE_SHIFT_FACTOR;
-
-            mPreviewOffsetX = (mTotalWidth - mAvailableSpaceInPreview) / 2;
-            mPreviewOffsetY = previewPadding;
-        }
-    }*/
-
-    /*private void computePreviewDrawingParams(Drawable d) {//for ring folder,remove by hhl
-        computePreviewDrawingParams(d.getIntrinsicWidth(), getMeasuredWidth());
-    }*/
 
     class PreviewItemDrawingParams {
         PreviewItemDrawingParams(float transX, float transY, float scale, int overlayAlpha) {
@@ -618,18 +528,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         TextView app_icon;
         
         Drawable d;
-        //TextView v;
-
-        // Update our drawing parameters if necessary
-        /*if (mAnimating) {
-            computePreviewDrawingParams(mAnimParams.drawable);//do not uesd the ring style
-        } else {*/
             	app_icon = (TextView)items.get(0).findViewById(R.id.app_shortcutinfo_icon_id);
             	d = app_icon.getBackground();
-            //v = (TextView) items.get(0);
-            //d = v.getCompoundDrawables()[1];
-            //computePreviewDrawingParams(d);
-        //}
     	mFolder.mFolderIcon.mPreviewBackground.setImageDrawable(shenduCreateFolderThumBitmap(mFolder.mInfo));
 
         int nItemsInPreview = Math.min(items.size(), NUM_ITEMS_IN_PREVIEW);

@@ -124,6 +124,14 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private static String sDefaultFolderName;
     private static String sHintText;
     private ObjectAnimator mOpenCloseAnimator;
+    
+    
+  	private ArrayList<FolderCoverView> mFolderCovers;
+  	FolderCoverView upCover, downCover;
+  	Bitmap mCurrentPageBitmap, mCurrentFolderBitmap;
+  	RelativeLayout LayoutForFolder;
+  	int slideDistance;
+  	float folderTop,folderHeight;
 
     /**
      * Used to inflate the Workspace from XML.
@@ -193,6 +201,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mFolderName.setVisibility(View.GONE);
             mFolderNameHeight = getPaddingBottom();
         }
+        
+        quarterHeight = getResources().getDimensionPixelSize(R.dimen.test_height);
+               
     }
 
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
@@ -241,7 +252,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
             mLauncher.getWorkspace().onDragStartedWithItem(v);
             mLauncher.getWorkspace().beginDragShared(v, this);
-            //mIconDrawable = ((TextView) v).getCompoundDrawables()[1];
             mIconDrawable=((TextView)v.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
 
             mCurrentDragInfo = item;
@@ -439,67 +449,16 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     public void animateOpen() {
     	
     	setVisibility(View.VISIBLE);
-        //positionAndSizeAsIcon();
+       // positionAndSizeAsIcon();
         centerAboutIcon();
-
-      /*  if (!(getParent() instanceof DragLayer)) return;
-        centerAboutIcon();
-        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1);
-        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX", 1.0f);
-        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY", 1.0f);
-        final ObjectAnimator oa = mOpenCloseAnimator =
-            ObjectAnimator.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
-
-        oa.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                sendCustomAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
-                        String.format(getContext().getString(R.string.folder_opened),
-                        mContent.getCountX(), mContent.getCountY()));
-                mState = STATE_ANIMATING;
-            }
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mState = STATE_OPEN;
-                setLayerType(LAYER_TYPE_NONE, null);
-                Cling cling = mLauncher.showFirstRunFoldersCling();
-                if (cling != null) {
-                    cling.bringToFront();
-                }
-                setFocusOnFirstChild();
-            }
-        });
-        oa.setDuration(mExpandDuration);
-        oa.start();*/
-        /*setLayerType(LAYER_TYPE_HARDWARE, null);
-        buildLayer();
-        post(new Runnable() {
-            public void run() {
-                // Check if the animator changed in the meantime
-                if (oa != mOpenCloseAnimator)
-                    return;
-                oa.start();
-            }
-        });*/
     }
     
-  //add by zlf ----------------------------------------------------
-  	private final static int MSG_CLOSE_FOLDER = 100;
-  	private ArrayList<FolderCoverView> mFolderCovers;
-  	FolderCoverView upCover, downCover;
-  	Bitmap mCurrentPageBitmap, mCurrentFolderBitmap;
-  	int folderW = 0;
-  	int folderY = 0;
-  	RelativeLayout LayoutForFolder;
-  	int slideDistance;
-  	float folderTop,folderHeight;
   	
       public void folderOpen(){
           
          	if(LayoutForFolder ==null){
         		LayoutForFolder =mLauncher.getLayoutForFolder();
         	}
-
          	LayoutForFolder.setBackgroundResource(R.color.sreen_shot_white);
         	LayoutForFolder.setVisibility(View.VISIBLE);
         	LayoutForFolder.bringToFront();
@@ -516,7 +475,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
               synchronized (mScreenshotLock) {
                   if (mConnection != null) {
                   	mLauncher.unbindService(mConnection);
-                  	//mConnection = null;
                   }
               }
           }
@@ -550,25 +508,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
       
 	public void OpenAfterScreenshot() {
 
-		/*new Thread(mScreenshotTimeout).start();*/
-		
 		  if (mConnection != null) {
             	mLauncher.unbindService(mConnection);
 		  }
-		
-		/*		
- 		DragLayer parent = (DragLayer) mLauncher.findViewById(R.id.drag_layer);
-		if (this.getParent() == null) {
-			parent.addView(this);
-			mDragController.addDropTarget((DropTarget) this);
-		} else {
-			Log.w(TAG, "Opening folder (" + this
-					+ ") which already has a parent (" + this.getParent()+ ").");
-		}
-		LayoutForFolder.bringToFront();
-		*/
-		
-		
 		animateOpen();
 
 		createFoldercoverView(mFolderIcon);
@@ -585,8 +527,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		if (mInfo.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
 			
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
-					v.getBottom() - 70 + 600, mCurrentPageBitmap.getWidth(),
-					mCurrentPageBitmap.getHeight() - v.getBottom() - 600 + 70,
+					v.getBottom() - 70 + 610, mCurrentPageBitmap.getWidth(),
+					mCurrentPageBitmap.getHeight() - v.getBottom() - 610 + 70,
 					mCurrentFolderBitmap, v.getLeft(), v.getTop() + 668, 0, -1);
 			mFolderCovers.add(downCover);
 			FrameLayout.LayoutParams downFlp = new FrameLayout.LayoutParams(
@@ -596,7 +538,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			
 			
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
-					mCurrentPageBitmap.getWidth(), v.getBottom() + 600 - 70,
+					mCurrentPageBitmap.getWidth(), v.getBottom() + 610 - 70,
 					null, 0, 0, 0, 1);
 			mFolderCovers.add(upCover);
 			FrameLayout.LayoutParams upFlp = new FrameLayout.LayoutParams(
@@ -604,10 +546,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(upCover, upFlp);
 			
-			
-			slideDistance = (mFolderIcon.getBottom() - 70 + 600)- (int) folderTop;
+			slideDistance = (mFolderIcon.getBottom() - 70 + 610)- (int) folderTop;
 		} else {
-
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
 					mCurrentPageBitmap.getWidth(), v.getBottom() + 60,
 					mCurrentFolderBitmap, v.getLeft(), v.getTop() + 71, 0, 1);
@@ -660,11 +600,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     	 	
     	 anim.start();
     	 
-  		//upCover.slideBy(0, 0, 0, slideDistance, FolderCoverView.SCROLL_CLOSE_DURATION);
-  		//downCover.slideBy(0, 0, 0, -(int)(folderHeight-slideDistance)+2, FolderCoverView.SCROLL_CLOSE_DURATION);
   	}
-
-  	
   	/**
   	 * removeCoverView
   	 */
@@ -680,17 +616,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			mCurrentPageBitmap.recycle();
 			mCurrentPageBitmap = null;
 		}
-
 	}
 
 	/**
   	 * closeFolderCoverView
   	 */
 	public void closeFolderCoverView() {
-//		for (final FolderCoverView view : mFolderCovers) {
-//			view.slideBy(0, view.getDeltay(), 0, -view.getDeltay(),
-//					FolderCoverView.SCROLL_CLOSE_DURATION);
-//		}
 		
       	ObjectAnimator upCoverAnimation = ObjectAnimator
         .ofFloat(upCover, "translationY",
@@ -720,22 +651,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         	    }
         	   });
     	 anim.start();
-//		handler.sendEmptyMessageDelayed(MSG_CLOSE_FOLDER,
-//				FolderCoverView.SCROLL_CLOSE_DURATION - 100);
 	}
 	
-  	
-	/*Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MSG_CLOSE_FOLDER:
-				animateClosed();
-				removeCoverView();
-				break;
-
-			}
-		}
-	};*/
 
 	public void folderClosed() {
 		LayoutForFolder.bringToFront();
@@ -763,44 +680,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 	public void animateClosed() {
 
 		setVisibility(View.GONE);
-		/*if (!(getParent() instanceof DragLayer))
-			return;
-		PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0);
-		PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat("scaleX",
-				0.9f);
-		PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat("scaleY",
-				0.9f);
-		final ObjectAnimator oa = mOpenCloseAnimator = ObjectAnimator
-				.ofPropertyValuesHolder(this, alpha, scaleX, scaleY);
-
-		oa.addListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				onCloseComplete();
-				setLayerType(LAYER_TYPE_NONE, null);
-				mState = STATE_SMALL;
-			}
-
-			@Override
-			public void onAnimationStart(Animator animation) {
-				sendCustomAccessibilityEvent(
-						AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
-						getContext().getString(R.string.folder_closed));
-				mState = STATE_ANIMATING;
-			}
-		});
-		oa.setDuration(mExpandDuration);
-		oa.start();*/
-		/*setLayerType(LAYER_TYPE_HARDWARE, null);
-		buildLayer();
-		post(new Runnable() {
-			public void run() {
-				// Check if the animator changed in the meantime
-				if (oa != mOpenCloseAnimator)
-					return;
-				oa.start();
-			}
-		});*/
 		
 		onCloseComplete();
 	}
@@ -818,9 +697,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return ((itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT ||
                     itemType == LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT) &&
                     !isFull());
-        /*((itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) &&
-                !isFull());*/
     }
 
     protected boolean findAndSetEmptyCells(ShortcutInfo item) {
@@ -859,15 +735,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     	app_view.setTag(item);
     	app_view.setOnClickListener(this);
     	app_view.setOnLongClickListener(this);
-        /*final TextView textView =
-            (TextView) mInflater.inflate(R.layout.application, this, false);
-        textView.setCompoundDrawablesWithIntrinsicBounds(null,
-                new FastBitmapDrawable(item.getIcon(mIconCache)), null, null);
-        textView.setText(item.title);
-        textView.setTag(item);
-
-        textView.setOnClickListener(this);
-        textView.setOnLongClickListener(this);*/
 
         // We need to check here to verify that the given item's location isn't already occupied
         // by another item.
@@ -1103,13 +970,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private void setupContentDimensions(int count) {
         ArrayList<View> list = getItemsInReadingOrder();
 
-        //int countX = mContent.getCountX();
-        //int countY = mContent.getCountY();
         boolean done = false;
         int countX = mMaxCountX;
         int countY = mContent.getCountY();
 
-	//changed by zlf 
        while(!done){
     	
     	if(countX * countY < count){
@@ -1180,15 +1044,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         lp.height = height;
         lp.x = 0;
         lp.y = top;
-            if(top<200){
-            	lp.y =200;
+        Log.i(TAG, TAG+".......centerAboutIcon()...."+top+"  "+quarterHeight);
+            if(top<quarterHeight){
+            	lp.y =quarterHeight;
             }
 			
-			
         folderTop=lp.y;
-        folderHeight=height;
+        folderHeight=height-3;
     }
 
+    int quarterHeight;
+    
     float getPivotXForIconAnimation() {
         return mFolderIconPivotX;
     }
@@ -1303,8 +1169,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
         // Add the last remaining child to the workspace in place of the folder
         if (finalItem != null) {
-            /*View child = mLauncher.createShortcut(R.layout.application, cellLayout,
-                    (ShortcutInfo) finalItem);*/
             View child = mLauncher.createShortcut(R.layout.app_shortcutinfo, cellLayout,
                     (ShortcutInfo) finalItem);
 
@@ -1328,16 +1192,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     public void onDrop(DragObject d) {
         ShortcutInfo item;
-        //Log.i(Launcher.TAG,TAG+"=====onDrop==="+d.dragInfo);
-        /*do not used now,remove by hhl
-         if (d.dragInfo instanceof ApplicationInfo) {
-            // Came from all apps -- make a copy
-            item = ((ApplicationInfo) d.dragInfo).makeShortcut();
-            item.spanX = 1;
-            item.spanY = 1;
-        } else {*/
             item = (ShortcutInfo) d.dragInfo;
-        //}
         // Dragged from self onto self, currently this is the only path possible, however
         // we keep this as a distinct code path.
         if (item == mCurrentDragInfo) {

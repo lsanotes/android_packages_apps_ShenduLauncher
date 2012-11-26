@@ -581,15 +581,7 @@ public class Workspace extends SmoothPagedView
 
         final Resources res = getResources();
         mLayoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //LayoutInflater inflater =
-                //(LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < mNumberHomescreens; i++) {
-            /*View screen = inflater.inflate(R.layout.workspace_screen, null);
-            screen.setPadding(screen.getPaddingLeft() + mScreenPaddingHorizontal,
-                    screen.getPaddingTop() + mScreenPaddingVertical,
-                    screen.getPaddingRight() + mScreenPaddingHorizontal,
-                    screen.getPaddingBottom() + mScreenPaddingVertical);
-            addView(screen);*/    
             addScreen(false); //moditify
          }
         savedThePageCount();//add
@@ -830,7 +822,6 @@ public class Workspace extends SmoothPagedView
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-    	//Log.i(Launcher.TAG, TAG+"===######===onTouch======####======="+event.getAction());
     	//remove by zlf
     	//return (isSmall() || !isFinishedSwitchingState());
     	return (!isFinishedSwitchingState());
@@ -861,7 +852,6 @@ public class Workspace extends SmoothPagedView
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-    	//Log.i(Launcher.TAG, TAG+"===######===onInterceptTouchEvent======####======="+ev.getAction());
         switch (ev.getAction() & MotionEvent.ACTION_MASK) {
         case MotionEvent.ACTION_DOWN:
         	//mIsBack = false;
@@ -883,7 +873,6 @@ public class Workspace extends SmoothPagedView
             break;
         case MotionEvent.ACTION_POINTER_UP:
         case MotionEvent.ACTION_UP: 
-    		//Log.i(Launcher.TAG, TAG+"=#####=onInterceptTouchEvent==ACTION_UP="+mTouchState);
         	if(!isSmall() && (ev.getPointerCount()==1)){
         		if((!isShowPreviews)&&(ev.getY()-mOpenStatusBarBeginY>130)){ //touch bottom
         			showNotifications();
@@ -903,7 +892,6 @@ public class Workspace extends SmoothPagedView
                 }
             }
         }
-    	//Log.i(Launcher.TAG, "===Workspace.java=onInterceptTouchEvent==811==");
         return super.onInterceptTouchEvent(ev);
     }    
   
@@ -940,7 +928,6 @@ public class Workspace extends SmoothPagedView
 
     @Override
     protected void determineScrollingStart(MotionEvent ev) {
-    	//Log.i(Launcher.TAG, "**workspace.java=840=determineScrollingStart=="+isSmall()+isFinishedSwitchingState());
     	//remove by zlf
         //if (isSmall()) return;
         if (!isFinishedSwitchingState()) return;
@@ -948,7 +935,6 @@ public class Workspace extends SmoothPagedView
         float deltaX = Math.abs(ev.getX() - mXDown);
         float deltaY = Math.abs(ev.getY() - mYDown);
 
-    	//Log.i(Launcher.TAG, "**workspace.java=847=determineScrollingStart=="+deltaX);
         if (Float.compare(deltaX, 0f) == 0) return;
 
         float slope = deltaY / deltaX;
@@ -1006,14 +992,7 @@ public class Workspace extends SmoothPagedView
 
         // If we are not fading in adjacent screens, we still need to restore the alpha in case the
         // user scrolls while we are transitioning (should not affect dispatchDraw optimizations)
-        //Log.i(Launcher.TAG, TAG+"=onPageBeginMoving==mWorkspaceFadeInAdjacentScreens=="+mWorkspaceFadeInAdjacentScreens);
-        /*if (!mWorkspaceFadeInAdjacentScreens) { //remove by hhl,used to update cellLayout and item alpha
-            for (int i = 0; i < getChildCount(); ++i) {
-                ((CellLayout) getPageAt(i)).setShortcutAndWidgetAlpha(1f);
-            }
-        }*/
 
-        //Log.i(Launcher.TAG, TAG+"=before 1111111111==showScrollingIndicator==");
         // Show the scroll indicator as you pan the page
         if(!isSmall()){
             showScrollingIndicator(false); //update scroll indicator
@@ -1073,7 +1052,6 @@ public class Workspace extends SmoothPagedView
         if (mFadeScrollingIndicator) {
             super.flashScrollingIndicator(animated);
         } else {
-            //Log.i(Launcher.TAG, TAG+"=before 2222222==showScrollingIndicator==");
             showScrollingIndicator(true);
         }
     }
@@ -1401,19 +1379,14 @@ public class Workspace extends SmoothPagedView
     }
 
     public void setChildrenOutlineAlpha(float alpha) {
-    	//View view = null;
-        //Log.i(Launcher.TAG, TAG+"==setChildrenOutlineAlpha===start==="+alpha+"==="+getClass().getName());
-        //Log.i(Launcher.TAG, TAG+"==setChildrenOutlineAlpha===view==="+view.getAlpha());
         mChildrenOutlineAlpha = alpha;
         for (int i = 0; i < getChildCount(); i++) {
             CellLayout cl = (CellLayout) getChildAt(i);
-            //Log.i(Launcher.TAG, TAG+"==setChildrenOutlineAlpha=="+alpha+"==="+i);
             cl.setBackgroundAlpha(alpha);
         }
     }
 
     public float getChildrenOutlineAlpha() {
-        //Log.i(Launcher.TAG, TAG+"=@@@@@@@@@@@@@@@=getChildrenOutlineAlpha==");
         return mChildrenOutlineAlpha;
     }
 
@@ -1514,7 +1487,6 @@ public class Workspace extends SmoothPagedView
 
     private void updatePageAlphaValues(int screenCenter) {
         boolean isInOverscroll = mOverScrollX < 0 || mOverScrollX > mMaxScrollX;
-        //Log.i(Launcher.TAG, TAG+"==updatePageAlphaValues=start="+mWorkspaceFadeInAdjacentScreens);
         if (mWorkspaceFadeInAdjacentScreens &&
                 mState == State.NORMAL &&
                 !mIsSwitchingState &&
@@ -1524,7 +1496,6 @@ public class Workspace extends SmoothPagedView
                 if (child != null) {
                     float scrollProgress = getScrollProgress(screenCenter, child, i);
                     float alpha = 1 - Math.abs(scrollProgress);
-                    //Log.i(Launcher.TAG, TAG+"==updatePageAlphaValues=alpha="+alpha+"==="+mIsDragOccuring);
                     child.getShortcutsAndWidgets().setAlpha(alpha);
                     if (!mIsDragOccuring) {
                         child.setBackgroundAlphaMultiplier(
@@ -1553,7 +1524,6 @@ public class Workspace extends SmoothPagedView
 					float alpha = 1 - Math.abs(scrollProgress);
 					cl.setShortcutAndWidgetAlpha(alpha);
 					cl.invalidate();
-					//cl.fastInvalidate(); //moditify
 				}
 			}
 		}
@@ -1566,8 +1536,6 @@ public class Workspace extends SmoothPagedView
 				float scrollProgress = getScrollProgress(screenScroll, cl, i);
 				float rotation = WORKSPACE_ROTATION * scrollProgress;
 				float translationX = getOffsetXForRotation(rotation, cl.getWidth(), cl.getHeight());
-				//Log.i(Launcher.TAG, TAG+"==screenScrolledTablet=="+i+"=scrollProgress="+scrollProgress);
-				//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 				if(scrollProgress==1 || scrollProgress==-1){
 					mIsBack = true;
 				}else{
@@ -1578,15 +1546,12 @@ public class Workspace extends SmoothPagedView
 					translationX = 0;
 				}
 				cl.setTranslationX(translationX);
-				//cl.setFastTranslationX(translationX); //moditify
 				cl.setRotationY(rotation);
-				//cl.setFastRotationY(rotation); //moditify
 				if (mFadeInAdjacentScreens && !isSmall()) {
 					float alpha = 1 - Math.abs(scrollProgress);
 					cl.setShortcutAndWidgetAlpha(alpha);
                 }
 				cl.invalidate();
-				//cl.fastInvalidate(); //moditify
 			}
 		}
 		invalidate();
@@ -1600,8 +1565,6 @@ public class Workspace extends SmoothPagedView
 					float scrollProgress = getScrollProgress(screenScroll, cl, i);
 					float scale = (1.0f + (in ? -0.2f : 0.1f) * Math.abs(scrollProgress));
 					// Extra translation to account for the increase in size
-					//Log.i(Launcher.TAG, TAG+"==screenScrolledZoom=="+i+"=scrollProgress="+scrollProgress);
-					//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 					if(scrollProgress==1 || scrollProgress==-1){
 						mIsBack = true;
 					}else{
@@ -1609,16 +1572,11 @@ public class Workspace extends SmoothPagedView
 					}
 					if (!in) {
 						float translationX = cl.getMeasuredWidth() * 0.1f * -scrollProgress;
-						//cl.setFastTranslationX(translationX); //moditify
-						//Log.i(Launcher.TAG, TAG+"==screenScrolledZoom=aaaaaaaaaaaaaa="+i+
-								//"==translationX=="+cl.getTranslationX()+"*"+translationX);
 						if(mIsBack){
 							translationX = 0;
 						}
 						cl.setTranslationX(translationX);
 					}
-					//Log.i(Launcher.TAG, TAG+"==screenScrolledZoom=bbbbbbbbbb="+i+
-							//"=Scale="+cl.getScaleX()+"*"+cl.getScaleY());
 					if(mIsBack){
 						scale = 1.0f;
 					}
@@ -1686,16 +1644,11 @@ public class Workspace extends SmoothPagedView
 					float rotatePoint = (cl.getMeasuredWidth() * 0.5f) /
 							(float) Math.tan(Math.toRadians((double) (WORKSPACE_ROTATION_ANGLE * 0.5f)));
 					cl.setPivotX(cl.getMeasuredWidth() * 0.5f);
-					//Log.i(Launcher.TAG, TAG+"==screenScrolledRotate=="+i+"=scrollProgress="+scrollProgress);
-					//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 					if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 						mIsBack = true;
 					}else{
 						mIsBack = false;
 					}
-					//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...small=11111=i="+i+"==="+cl.getTranslationY()+
-							//"====="+mNewTranslationYs[i]+"==="+cl.getMeasuredHeight()+"*"+cl.getMeasuredWidth()
-							//+"===="+translationX+"==="+mNewTranslationXs[i]+"==="+cl.getTranslationX());
 					if(mIsBack){
 						if (up) {
 							//cl.setPivotY(-rotatePoint*0.30f);
@@ -1714,9 +1667,6 @@ public class Workspace extends SmoothPagedView
 						}
 					}else{
 						if (up) {
-							//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...rotatePoint   up..:....rotatePoint..."+rotatePoint
-									//+"===="+(-rotatePoint*0.30f));
-							//cl.setPivotY(-rotatePoint*0.30f);
 							cl.setPivotY(cl.getMeasuredWidth() * 0.5f);
 							//cl.setTranslationY(185);
 							cl.setTranslationY(mNewTranslationYs[i]);
@@ -1728,31 +1678,17 @@ public class Workspace extends SmoothPagedView
 							//cl.setPivotY((cl.getMeasuredHeight() + rotatePoint)*0.30f);
 							cl.setPivotY(cl.getMeasuredWidth() * 0.5f);
 							//Log.i(Launcher.TAG,
-							 //TAG+" ..screenScrolledRotate...rotatePoint  down.:.....rotatePoint.."+rotatePoint+"===="+
-							//((cl.getMeasuredHeight() + rotatePoint)*0.30f));
-							//cl.setTranslationY(-235);
 							cl.setTranslationY(mNewTranslationYs[i]);
 							cl.setRotation(rotation * 2);
-							//cl.setTranslationX(mNewTranslationXs[i]);
-							//cl.setTranslationX(translationX*0.75f);
 						}
 					}
 					
-					/*
-					 * if(Math.abs(scrollProgress)==1 && i!=0 &&
-					 * i!=getChildCount()-1){ cl.setFastAlpha(0);
-					 * cl.setFastBackgroundAlpha(0); }else{ cl.setFastAlpha(1);
-					 * cl.setFastBackgroundAlpha(1); }
-					 */
 					// cl.setRotation(rotation);
 					if (mFadeInAdjacentScreens && !isSmall()) {
 						float alpha = 1 - Math.abs(scrollProgress);
 						// cl.setFastAlpha(alpha); //moditify
 						cl.setAlpha(alpha);
 					}
-					//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...small=22222=i="+i+"==="+cl.getTranslationY()+
-							//"====="+mNewTranslationYs[i]);
-					// cl.fastInvalidate(); //moditify
 					cl.invalidate();
 				}
 			}
@@ -1772,22 +1708,9 @@ public class Workspace extends SmoothPagedView
 					} else {
 						cl.setPivotY(cl.getMeasuredHeight() + rotatePoint);
 					}
-					//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...normal=33333=i="+i+"==="+cl.getTranslationY()+"=="+
-					//cl.getTranslationX());
-					/*if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
-						mIsBack = true;
-					}else{
-						mIsBack = false;
-					}
-					if(mIsBack){
-						rotation = 0;
-					}*/
 					cl.setTranslationY(0);
 					cl.setRotation(rotation);
 					cl.setTranslationX(translationX);
-					//Log.i(Launcher.TAG, TAG+" ..screenScrolledRotate...normal=44444=i="+i+"==="+cl.getTranslationY()+
-							//cl.getTranslationX());
-					// cl.setFastTranslationX(translationX); //moditify
 					if (mFadeInAdjacentScreens && !isSmall()) {
 						float alpha = 1 - Math.abs(scrollProgress);
 						cl.setShortcutAndWidgetAlpha(alpha);
@@ -1801,7 +1724,6 @@ public class Workspace extends SmoothPagedView
     
     private void screenScrolledCube(int screenScroll, boolean in) {
 		if (isSmall()) {
-			//Log.i(Launcher.TAG,TAG+"====screenScrolledCube====mIsBack=="+mIsBack+"===="+screenScroll);
 			for (int i = 0; i < getChildCount(); i++) {
 				CellLayout cl = (CellLayout) getPageAt(i);
 				if (cl != null) {
@@ -1813,10 +1735,6 @@ public class Workspace extends SmoothPagedView
 					if (in) {
 						cl.setCameraDistance(mDensity * CAMERA_DISTANCE);
 					}
-					//Log.i(Launcher.TAG,TAG+"====screenScrolledCube===Pivot=="+cl.getPivotX()+"*"+cl.getPivotY()
-							//+"==RotationY=="+cl.getRotationY()+"*"+rotation+"==="+i);
-					//Log.i(Launcher.TAG,TAG+"====screenScrolledCube====mIsBack=="+scrollProgress+"===="+rotation+"=i="+i);
-					//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 					if(scrollProgress==1 || scrollProgress==-1){
 						mIsBack = true;
 					}else{
@@ -1825,7 +1743,6 @@ public class Workspace extends SmoothPagedView
 					if(mIsBack){
 						rotation=0;
 					}
-					// Log.i(Launcher.TAG,TAG+"      screenScrolledCube............"+
 					// scrollProgress+isSmall()+cl.getMeasuredWidth()+alpha);
 					// cl.setPivotX(scrollProgress < 0 ? 0 :
 					// cl.getMeasuredWidth());
@@ -1865,7 +1782,6 @@ public class Workspace extends SmoothPagedView
 					cl.setPivotX(scrollProgress < 0 ? 0 : cl.getMeasuredWidth());
 					cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
 					cl.setRotationY(rotation);
-					//Log.i(Launcher.TAG, TAG+"====screenScrolledCube==alpha=="+alpha+"==i=="+i);
 					cl.setShortcutAndWidgetAlpha(1f);
 					//cl.setAlpha(alpha);
 					cl.invalidate();
@@ -1876,8 +1792,6 @@ public class Workspace extends SmoothPagedView
     }
     
     private void screenScrolledStack(int screenScroll) {
-    	//Log.i(Launcher.TAG, TAG+"===screenScrolledStack==="+mCurrentPage+"==="+getNextPage()+"==mInScrollArea=="+
-    			//mInScrollArea);
 		if (isSmall()) {
 			for (int i = 0; i < getChildCount(); i++) {
 				CellLayout cl = (CellLayout) getPageAt(i);
@@ -1899,13 +1813,6 @@ public class Workspace extends SmoothPagedView
 						if (Math.abs(scrollProgress) == 1.0) {
 							alpha = 0.0f;
 						}
-						//Log.i(Launcher.TAG, TAG+"==screenScrolledStack==alpha=="+alpha+"*"+cl.getAlpha()+"==i=="+i);
-						// cl.setFastTranslationX(translationX); //moditify
-						// cl.setFastScaleX(scale*0.75f);
-						// cl.setFastScaleY(scale*0.75f);
-						// cl.setFastAlpha(alpha);
-						//Log.i(Launcher.TAG,TAG+"====screenScrolledStack====mIsBack=="+scrollProgress+"===="+translationX+"=i="+i);
-						//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 						if(scrollProgress==1 || scrollProgress==-1){
 							mIsBack = true;
 						}else{
@@ -1924,7 +1831,6 @@ public class Workspace extends SmoothPagedView
 						// If the view has 0 alpha, we set it to be invisible so as
 						// to prevent
 						// it from accepting touches
-						//Log.i(Launcher.TAG, TAG+"====screenScrolledStack==alpha=111="+alpha+"==i=="+i+"=="+cl.getVisibility());
 						if (alpha <= 0) {
 							// cl.setFastBackgroundAlpha(alpha); //moditify
 							cl.setBackgroundAlpha(alpha);
@@ -1937,7 +1843,6 @@ public class Workspace extends SmoothPagedView
 						// cl.fastInvalidate(); //moditify
 						cl.invalidate();
 					}
-				//}
 				
 			}
 		} else {
@@ -1958,7 +1863,6 @@ public class Workspace extends SmoothPagedView
 						// its leftmost position
 						alpha = mLeftScreenAlphaInterpolator.getInterpolation(1 - scrollProgress);
 					}
-					//Log.i(Launcher.TAG, TAG+"====screenScrolledStack==alpha=222="+alpha+"==i=="+i+"=="+cl.getVisibility());
 					//if(scrollProgress==0 || scrollProgress==1 || scrollProgress==-1){
 					if(scrollProgress==1 || scrollProgress==-1){
 						mIsBack = true;
@@ -1992,12 +1896,10 @@ public class Workspace extends SmoothPagedView
 				}
 			}
 		}
-     //   invalidate();
     }
 
     @Override
     protected void screenScrolled(int screenCenter) {
-    	//Log.i(Launcher.TAG, TAG+"=################=dispatchDraw=before screenScrolled=222222222222222222=");
         super.screenScrolled(screenCenter);
 
         updatePageAlphaValues(screenCenter);
@@ -2020,7 +1922,6 @@ public class Workspace extends SmoothPagedView
                 }
             }
         } else {
-        	//Log.i(Launcher.TAG, TAG+"==screenScrolled=@@@@@@@@@@@@@="+mTransitionEffect);
             if (mOverscrollFade != 0) {
                 setFadeForOverScroll(0);
             }
@@ -2062,7 +1963,6 @@ public class Workspace extends SmoothPagedView
 			}
 			//backToStand();
         }
-    	//Log.i(Launcher.TAG, TAG+"==screenScrolled=@@@@@@@@@@@@@="+mTransitionEffect);
     }
 
     @Override
@@ -2302,7 +2202,6 @@ public class Workspace extends SmoothPagedView
 
     public void initAnimationArrays() {
         final int childCount = getChildCount();
-        //Log.i(Launcher.TAG, TAG+"=@@@@@@@@@@@@@@=initAnimationArrays=="+childCount+"==="+(mOldTranslationXs!=null));
         //if (mOldTranslationXs != null) return; //remove the return,add header/footer screen exception
         mOldTranslationXs = new float[childCount];
         mOldTranslationYs = new float[childCount];
@@ -2371,12 +2270,8 @@ public class Workspace extends SmoothPagedView
                  //}
                 setLayoutScale(finalScaleFactor);
                 updateChildrenLayersEnabled();
-            //} else {
-               // setLayoutScale(finalScaleFactor);
-            //}
         } else {
         	//finalBackgroundAlpha = 1.0f;
-            //Log.i(Launcher.TAG, TAG+"===showScrollingIndicator=111111111111111111111111111111111111=");
             showScrollingIndicator(true, sScrollIndicatorFadeInDuration); //for scroll indicator
             setPageSpacing(PagedView.AUTOMATIC_PAGE_SPACING);
             setLayoutScale(1.0f);
@@ -2423,19 +2318,6 @@ public class Workspace extends SmoothPagedView
                 }
             }
 
-            // Make sure the pages are visible with the stack effect
-           /* if (mTransitionEffect == TransitionEffect.Stack) {
-                //if (stateIsSmall || stateIsSpringLoaded) { //for update state
-                if (stateIsSmall) { //for update state
-                    cl.setVisibility(VISIBLE);
-                } else if (stateIsNormal) {
-                    if (i == mCurrentPage) {
-                        cl.setVisibility(VISIBLE);
-                    } else {
-                        cl.setVisibility(GONE);
-                    }
-                }
-            }*/
 
 			 //for effect
             if ((mTransitionEffect == TransitionEffect.Tablet ) ||
@@ -2450,19 +2332,6 @@ public class Workspace extends SmoothPagedView
                         Math.abs(mCurrentPage - i);
             }
             
-            //if(oldStateIsNormal && stateIsSmall && (mTransitionEffect == TransitionEffect.RotateUp ||
-                    //mTransitionEffect == TransitionEffect.RotateDown)){
-            	//float rotatePoint = (cl.getMeasuredWidth() * 0.5f) /
-						//(float) Math.tan(Math.toRadians((double) (WORKSPACE_ROTATION_ANGLE * 0.5f)));
-            	//float pivoty = 0;
-                //pivoty = (mTransitionEffect == TransitionEffect.RotateUp) ? -rotatePoint*0.30f:
-                		//(cl.getMeasuredHeight() + rotatePoint)*0.30f;
-                //translationY = (mTransitionEffect == TransitionEffect.RotateUp) ? 185+translationYExtra : 235+translationYExtra;
-                //cl.setPivotY(pivoty);
-            //}else {
-            	//translationY = 0;
-            	//cl.setPivotY(cl.getMeasuredHeight() * 0.5f);
-            //}
 			
  			//for effect
             //if (stateIsSmall || stateIsSpringLoaded) { //for update state
@@ -2477,7 +2346,7 @@ public class Workspace extends SmoothPagedView
             }
             mOldAlphas[i] = initialAlpha;
             mNewAlphas[i] = finalAlpha;
-            //Log.i(Launcher.TAG, TAG+"===ififififififi=111111111111111111111111111111111111="+translationY);
+
             if (animated) {
                 mOldTranslationXs[i] = cl.getTranslationX();
                 mOldTranslationYs[i] = cl.getTranslationY();
@@ -2530,10 +2399,6 @@ public class Workspace extends SmoothPagedView
         			for (int i = 0; i < getChildCount(); i++) {
         				final CellLayout cl = (CellLayout) getPageAt(i);
         				//cl.invalidate();
-            			//Log.i(Launcher.TAG,TAG+"=@@@@@@@@@@@@=getChangeStateAnimation==animWithInterpolator=TranslationY="+
-        				//(a * mOldTranslationYs[i] + b * mNewTranslationYs[i])+"===="+mOldTranslationYs[i]+"==="+
-        				//mNewTranslationYs[i]+"====i==="+i	);
-            			//Log.i(Launcher.TAG, TAG+"====getchangstate===a=="+a+"*"+b+"==="+getChildCount()+"=="+mNewTranslationYs[i]);
         				cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
         				cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
         				cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
@@ -2548,208 +2413,11 @@ public class Workspace extends SmoothPagedView
         		}
         	});	
         	
-        	/*ValueAnimator rotationAnim = ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
-        	rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			//Log.i(Launcher.TAG, TAG+"====rotationAnim===a=="+a+"*"+b+"==="+getChildCount());
-        			if (b == 0f) {  return;  }
-      				for (int i = 0; i < getChildCount(); i++) {
-      					final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-      						cl.setRotation(0 * mOldRotations[i] + 1 * mNewRotations[i]);
-        				}
-        				if(mOldRotationYs[i] != mNewRotationYs[i]){
-          					cl.setRotationY(0 * mOldRotationYs[i] + 1 * mNewRotationYs[i]);
-       						
-       					}
-       				//cl.invalidate();
-       				}
-        		}
-        		public void onAnimationStart(Animator animation){//add
-        			for (int i = 0; i < getChildCount(); i++) {
-        				final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-        					cl.setRotation(0 * mOldRotations[i] + 1 * mNewRotations[i]);
-                        }
-        				if(mOldRotationYs[i] != mNewRotationYs[i]){
-            				cl.setRotationY(0 * mOldRotationYs[i] + 1 * mNewRotationYs[i]);
-        				}
-        				//cl.invalidate();
-                    }
-                }
-        	});*/
-        	
-        	/*anim.addListener(new AnimatorListenerAdapter() {
-				public void onAnimationStart(Animator animation) {
-        			//Log.i(Launcher.TAG, TAG+"==^^^^^^^^^^^^^^^^^^^^==rotationAnim==start==");
-        			//mIsBack = true;
-				}
-				public void onAnimationEnd(Animator animation) {
-        			//Log.i(Launcher.TAG, TAG+"==^^^^^^^^^^^^^^^^^^^^==rotationAnim===end==");
-        			//mIsBack = true;
-				}
-			});*/
-        	
-        	/*ObjectAnimator mStateAnimation = ObjectAnimator
-                    .ofFloat(mLauncher.mAppsCustomizeTabHost, "translationY",
-                    		oldStateIsNormal?249f:0, oldStateIsNormal?0f:249f)
-                    .setDuration(duration);
-            mStateAnimation.setInterpolator(new LinearInterpolator());
-            mStateAnimation.addListener(new AnimatorListenerAdapter() {
-                public void onAnimationStart(Animator animation) {
-                    if (oldStateIsNormal ) {
-                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(249f);
-                    	mLauncher.mAppsCustomizeTabHost.setVisibility(View.VISIBLE);
-                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
-                    	mLauncher.mAppsCustomizeTabHost.bringToFront();	
-                    }else{
-                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(0f);
-                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
-                    }
-                }
-            });*/
             
         	anim.playTogether(animWithInterpolator);
         	anim.start();
         	
         }
-
-        /*if (animated) {
-        	
-        	ValueAnimator animWithInterpolator=ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	if (zoomIn) {
-        		animWithInterpolator.setInterpolator(mZoomInInterpolator);
-        	}
-        	animWithInterpolator.addListener(new AnimatorListenerAdapter() {
-        		public void onAnimationEnd(android.animation.Animator animation) {
-        			// The above code to determine initialAlpha and finalAlpha will ensure that only
-        			// the current page is visible during (and subsequently, after) the transition
-        			// animation.  If fade adjacent pages is disabled, then re-enable the page
-        			// visibility after the transition animation.
-        			//Log.i(Launcher.TAG,TAG+"=@@@@@@@@@@@@=getChangeStateAnimation==animWithInterpolator=onAnimationEnd=");
-        			if (!mFadeInAdjacentScreens && stateIsNormal && oldStateIsSmall) {
-        				for (int i = 0; i < getChildCount(); i++) {
-        					final CellLayout cl = (CellLayout) getPageAt(i);
-        					cl.setAlpha(1f);
-        				}
-        			}
-        		}
-        	});
-        	animWithInterpolator.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			//Log.i(Launcher.TAG,TAG+"=@@@@@@@@@@@@=getChangeStateAnimation==animWithInterpolator=update=");
-        			mTransitionProgress = b;
-        			if (b == 0f) {
-        				// an optimization, but not required
-        				return;
-        			}
-        			//invalidate();
-        			for (int i = 0; i < getChildCount(); i++) {
-        				final CellLayout cl = (CellLayout) getPageAt(i);
-            			//Log.i(Launcher.TAG,TAG+"=@@@@@@@@@@@@=getChangeStateAnimation==animWithInterpolator=TranslationY="+
-        				(a * mOldTranslationYs[i] + b * mNewTranslationYs[i])+"===="+mOldTranslationYs[i]+"==="+
-        				mNewTranslationYs[i]+"====i==="+i	);
-        				//cl.invalidate();
-        				//cl.setFastTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]); //moditify
-        				cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
-        				cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
-        				cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-        				cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
-        				cl.setFastBackgroundAlpha(a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
-        				cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
-        						b * mNewBackgroundAlphaMultipliers[i]);
-        				//cl.setShortcutAndWidgetAlpha(a*mOldAlphas[i]+b*mNewAlphas[i]);
-        				cl.setAlpha(1f);
-        				cl.invalidate();
-        			}
-        			//syncChildrenLayersEnabledOnVisiblePages();
-        		}
-        	});
-        	
-        	ValueAnimator rotationAnim = ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
-        	rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			if (b == 0f) {
-        				// an optimization, but not required
-        				return;
-       				}
-        			//Log.i(Launcher.TAG,TAG+"=@@@@@@@@@@@@=getChangeStateAnimation==rotationAnim=update=");
-      				for (int i = 0; i < getChildCount(); i++) {
-      					final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-      						cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
-       					}
-      					//cl.setFastRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]); //moditify
-      					cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
-       				}
-        		}
-        	});
-        	
-            for (int index = 0; index < getChildCount(); index++) {
-                final int i = index;
-                final CellLayout cl = (CellLayout) getChildAt(i);
-                float currentAlpha = cl.getShortcutsAndWidgets().getAlpha();
-                if (mOldAlphas[i] == 0 && mNewAlphas[i] == 0) {
-                    cl.setTranslationX(mNewTranslationXs[i]);
-                    //cl.setTranslationY(mNewTranslationYs[i]);
-                    cl.setTranslationY(mNewTranslationYs[i]-mTranslationYExtra);
-                    cl.setScaleX(mNewScaleXs[i]);
-                    cl.setScaleY(mNewScaleYs[i]);
-                    cl.setBackgroundAlpha(mNewBackgroundAlphas[i]);
-                    cl.setShortcutAndWidgetAlpha(mNewAlphas[i]);
-                    cl.setRotationY(mNewRotationYs[i]);
-                } else {
-                    LauncherViewPropertyAnimator a = new LauncherViewPropertyAnimator(cl);
-                    a.translationX(mNewTranslationXs[i])
-                        .translationY(mNewTranslationYs[i])
-                        .scaleX(mNewScaleXs[i])
-                        .scaleY(mNewScaleYs[i])
-                        .setDuration(duration)
-                        .setInterpolator(mZoomInInterpolator);
-                    anim.play(a);
-
-                    if (mOldAlphas[i] != mNewAlphas[i] || currentAlpha != mNewAlphas[i]) {
-                        LauncherViewPropertyAnimator alphaAnim =
-                            new LauncherViewPropertyAnimator(cl.getShortcutsAndWidgets());
-                        alphaAnim.alpha(mNewAlphas[i])
-                            .setDuration(duration)
-                            .setInterpolator(mZoomInInterpolator);
-                        anim.play(alphaAnim);
-                    }
-                    cl.setBackgroundAlpha(mNewBackgroundAlphas[i]);
-                    if (mOldBackgroundAlphas[i] != 0 ||
-                        mNewBackgroundAlphas[i] != 0) {
-                        ValueAnimator bgAnim = ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
-                        bgAnim.setInterpolator(mZoomInInterpolator);
-                        bgAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
-                                public void onAnimationUpdate(float a, float b) {
-                                    cl.setBackgroundAlpha(
-                                            a * mOldBackgroundAlphas[i] +
-                                            b * mNewBackgroundAlphas[i]);
-                                }
-                            });
-                        anim.play(bgAnim);
-                    }
-                }
-            }
-        	anim.playTogether(animWithInterpolator, rotationAnim);
-            buildPageHardwareLayers();
-            //anim.setStartDelay(delay);
-            anim.start();
-        }*/
-
-       /* if (stateIsSpringLoaded) { //for update state
-            // Right now we're covered by Apps Customize
-            // Show the background gradient immediately, so the gradient will
-            // be showing once AppsCustomize disappears
-            animateBackgroundGradient(getResources().getInteger(
-                    R.integer.config_appsCustomizeSpringLoadedBgAlpha) / 100f, false);
-        } else {*/
-            // Fade the background gradient away
-            //animateBackgroundGradient(0f, true);
-        //}
         return anim;
         }
     
@@ -2872,23 +2540,6 @@ public class Workspace extends SmoothPagedView
                 rotation = (mTransitionEffect == TransitionEffect.RotateUp ? WORKSPACE_ROTATION_ANGLE : -WORKSPACE_ROTATION_ANGLE) *
                         Math.abs(mCurrentPage - i);
             }
-            
-            //if(oldStateIsNormal && stateIsSmall && (mTransitionEffect == TransitionEffect.RotateUp ||
-                   // mTransitionEffect == TransitionEffect.RotateDown)){
-            	/*float rotatePoint = (cl.getMeasuredWidth() * 0.5f) /
-						(float) Math.tan(Math.toRadians((double) (WORKSPACE_ROTATION_ANGLE * 0.5f)));
-            	float pivoty = 0;
-                pivoty = (mTransitionEffect == TransitionEffect.RotateUp) ? -rotatePoint*0.30f:
-                		(cl.getMeasuredHeight() + rotatePoint)*0.30f;*/
-                //translationY = (mTransitionEffect == TransitionEffect.RotateUp) ? 185+translationYExtra : 235+translationYExtra;
-                //cl.setPivotY(pivoty);
-            //}else {
-            //	translationY = 0;
-            	//cl.setPivotY(0);
-            //}
-			
- 			//for effect
-            //if (stateIsSmall || stateIsSpringLoaded) { //for update state
             if (stateIsSmall) { //for update state
                 cl.setCameraDistance(1280 * mDensity);
                 if (mTransitionEffect == TransitionEffect.RotateUp ||
@@ -2930,48 +2581,17 @@ public class Workspace extends SmoothPagedView
                 //cl.setShortcutAndWidgetAlpha(finalAlpha);
             }
             
-            /*if(oldStateIsNormal && stateIsSmall){//enter editstate
-            	mOldTranslationXs[i] = 0;
-            	mNewTranslationXs[i] = 0;
-            	mOldScaleXs[i] = 1;
-            	mOldScaleYs[i] = 1;
-            	mNewScaleXs[i] = 0.75f;
-            	mNewScaleYs[i] = 0.75f;
-            	mOldTranslationYs[i] = 0;
-            	mNewTranslationYs[i] = translationY-translationYExtra;
-            }else if(oldStateIsSmall && stateIsNormal){//exit editstate
-            	mOldTranslationXs[i] = 0;
-            	mNewTranslationXs[i] = 0;
-            	mOldScaleXs[i] = 0.75f;
-            	mOldScaleYs[i] = 0.75f;
-            	mNewScaleXs[i] = 1;
-            	mNewScaleYs[i] = 1;
-            	mOldTranslationYs[i] = translationY-translationYExtra;
-            	mNewTranslationYs[i] = 0;
-            }*/
         }
         
         if(animated){
         	animated=false;
         	ValueAnimator animWithInterpolator=ValueAnimator.ofFloat(0f, 1f).setDuration(duration);
         	animWithInterpolator.setInterpolator(new LinearInterpolator());
-        	/*animWithInterpolator.addListener(new AnimatorListenerAdapter() {
-        		public void onAnimationEnd(android.animation.Animator animation) {
-            		if (stateIsNormal && oldStateIsSmall) {
-        				for (int i = 0; i < getChildCount(); i++) {
-        					final CellLayout cl = (CellLayout) getPageAt(i);
-        					cl.setAlpha(1f);
-        				}
-        			}
-        		}
-        	});*/
         	animWithInterpolator.addUpdateListener(new LauncherAnimatorUpdateListener() {
         		public void onAnimationUpdate(float a, float b) {//a:1->0;b:0->1
         			if (b == 0f) {  return;  }
         			//invalidate();
         			for (int i = 0; i < getChildCount(); i++) {
-            			//Log.i(Launcher.TAG, TAG+"====getchangstate=#######==a=="+a+"*"+b+"==="
-        			//+getChildCount()+"=="+mNewTranslationYs[i]);
         				final CellLayout cl = (CellLayout) getPageAt(i);
         				cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
         				cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]);
@@ -2987,150 +2607,13 @@ public class Workspace extends SmoothPagedView
         		}
         	});	
         	
-        	/*ValueAnimator rotationAnim = ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
-        	rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			//Log.i(Launcher.TAG, TAG+"====rotationAnim===a=="+a+"*"+b+"==="+getChildCount());
-        			if (b == 0f) {  return;  }
-      				for (int i = 0; i < getChildCount(); i++) {
-      					final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-      						cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
-       					}
-      					cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
-       				}
-        		}
-        		public void onAnimationStart(Animator animation){//add
-        			for (int i = 0; i < getChildCount(); i++) {
-        				final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-        					cl.setRotation(0 * mOldRotations[i] + 1 * mNewRotations[i]);
-                        }
-        				cl.setRotationY(0 * mOldRotationYs[i] + 1 * mNewRotationYs[i]);
-                    }
-                }
-        	});*/
-        	
-        	/*anim.addListener(new AnimatorListenerAdapter() {
-				public void onAnimationStart(Animator animation) {
-        			//Log.i(Launcher.TAG, TAG+"==^^^^^^^^^^^^^^^^^^^^==rotationAnim==start==");
-        			//mIsBack = true;
-				}
-				public void onAnimationEnd(Animator animation) {
-        			//Log.i(Launcher.TAG, TAG+"==^^^^^^^^^^^^^^^^^^^^==rotationAnim===end==");
-        			//mIsBack = true;
-				}
-			});*/
-        	
-        	/*ObjectAnimator mStateAnimation = ObjectAnimator
-                    .ofFloat(mLauncher.mAppsCustomizeTabHost, "translationY",
-                    		oldStateIsNormal?249f:0, oldStateIsNormal?0f:249f)
-                    .setDuration(duration);
-            mStateAnimation.setInterpolator(new LinearInterpolator());
-            mStateAnimation.addListener(new AnimatorListenerAdapter() {
-                public void onAnimationStart(Animator animation) {
-                    if (oldStateIsNormal ) {
-                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(249f);
-                    	mLauncher.mAppsCustomizeTabHost.setVisibility(View.VISIBLE);
-                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
-                    	mLauncher.mAppsCustomizeTabHost.bringToFront();	
-                    }else{
-                    	mLauncher.mAppsCustomizeTabHost.setTranslationY(0f);
-                    	//mLauncher.mAppsCustomizeTabHost.mContent.setVisibility(View.VISIBLE);
-                    }
-                }
-            });*/
             
         	anim.playTogether(animWithInterpolator);
         	anim.start();
         	
         }
 
-       /* if (animated) {
-        	
-        	ValueAnimator animWithInterpolator=ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	if (zoomIn) {
-        		animWithInterpolator.setInterpolator(mZoomInInterpolator);
-        	}
-        	animWithInterpolator.addListener(new AnimatorListenerAdapter() {
-        		public void onAnimationEnd(android.animation.Animator animation) {
-        			// The above code to determine initialAlpha and finalAlpha will ensure that only
-        			// the current page is visible during (and subsequently, after) the transition
-        			// animation.  If fade adjacent pages is disabled, then re-enable the page
-        			// visibility after the transition animation.
-        			if (!mFadeInAdjacentScreens) {
-        				for (int i = 0; i < getChildCount(); i++) {
-        					final CellLayout cl = (CellLayout) getPageAt(i);
-        					cl.setAlpha(1f);
-                         cl.setBackgroundAlpha(1f);
-        				}
-        			}
-        		}
-        	});
-        	animWithInterpolator.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			mTransitionProgress = b;
-        			if (b == 0f) {
-        				return;
-        			}
-        			//invalidate();
-        			for (int i = 0; i < getChildCount(); i++) {
-        				final CellLayout cl = (CellLayout) getPageAt(i);
-        				cl.invalidate();
-        				cl.setTranslationX(a * mOldTranslationXs[i] + b * mNewTranslationXs[i]);
-        				//cl.setTranslationY(a * mOldTranslationYs[i] + b * mNewTranslationYs[i]-mTranslationYExtra);
-        				cl.setTranslationY(-75f);
-        				cl.setScaleX(a * mOldScaleXs[i] + b * mNewScaleXs[i]);
-        				cl.setScaleY(a * mOldScaleYs[i] + b * mNewScaleYs[i]);
-        				//cl.setFastBackgroundAlpha(a * mOldBackgroundAlphas[i] + b * mNewBackgroundAlphas[i]);
-        				//cl.setBackgroundAlphaMultiplier(a * mOldBackgroundAlphaMultipliers[i] +
-        						//b * mNewBackgroundAlphaMultipliers[i]);
-        				//cl.setShortcutAndWidgetAlpha(a*mOldAlphas[i]+b*mNewAlphas[i]);
-        				//cl.setAlpha(1f);
-        				cl.invalidate();
-        			}
-        		}
-        	});
-        	
-        	ValueAnimator rotationAnim = ValueAnimator.ofFloat(0f, 1f).setDuration(duration); //for effect
-        	rotationAnim.setInterpolator(new DecelerateInterpolator(2.0f));
-        	rotationAnim.addUpdateListener(new LauncherAnimatorUpdateListener() {
-        		public void onAnimationUpdate(float a, float b) {
-        			if (b == 0f) {
-        				return;
-       				}
-      				for (int i = 0; i < getChildCount(); i++) {
-      					final CellLayout cl = (CellLayout) getPageAt(i);
-        				if (mOldRotations[i] != mNewRotations[i]) {
-      						cl.setRotation(a * mOldRotations[i] + b * mNewRotations[i]);
-       					}
-      					cl.setRotationY(a * mOldRotationYs[i] + b * mNewRotationYs[i]);
-       				}
-        		}
-        	});
-        	anim.playTogether(animWithInterpolator, rotationAnim);
-            buildPageHardwareLayers();
-            anim.setStartDelay(0);
-            anim.addListener(new AnimatorListenerAdapter() {
-            	public void onAnimationEnd(Animator animation) {
-        			//Log.i(Launcher.TAG,TAG+"===recoverState==animation==**************==end===");
-        			//mIsBack = true;
-            	}
-            	public void onAnimationStart(Animator animation) {
-        			//Log.i(Launcher.TAG,TAG+"===recoverState==animation==**************==start===");
-        			//mIsBack = false;
-            	}
-            });
-            anim.start();
-        }*/
-      /*  if (stateIsSpringLoaded) {
-            animateBackgroundGradient(getResources().getInteger(
-                    R.integer.config_appsCustomizeSpringLoadedBgAlpha) / 100f, false);
-        } else {
-            // Fade the background gradient away
-            animateBackgroundGradient(0f, true);
-        }*/}
+        }
     
     
 	/**
@@ -3315,27 +2798,24 @@ public class Workspace extends SmoothPagedView
      */
 	void addTheHeaderOrFooterSpace(){
 		if(!isAddHeaderAndFooter){
-			//Log.i(Launcher.TAG,TAG+"==addTheHeaderOrFooterSpace=1111===="+getChildCount()+"==="+mCurrentPage);
 			if(mLayoutInflater==null){
 				mLayoutInflater=(LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			}
-			//LayoutInflater inflater=(LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View screenHeader = mLayoutInflater.inflate(R.layout.workspace_screen, null);
-			//screenHeader.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail_new_screen_n));
+
 			screenHeader.setPadding(screenHeader.getPaddingLeft() + mScreenPaddingHorizontal,
 					screenHeader.getPaddingTop() + mScreenPaddingVertical,
 					screenHeader.getPaddingRight() + mScreenPaddingHorizontal,
 					screenHeader.getPaddingBottom() + mScreenPaddingVertical);
           addView(screenHeader,0);
-			//Log.i(Launcher.TAG,TAG+"==addTheHeaderOrFooterSpace=2222===="+getChildCount()+"==="+mCurrentPage);
+
           View screenFooter = mLayoutInflater.inflate(R.layout.workspace_screen, null);
-          //screenFooter.setBackgroundDrawable(getResources().getDrawable(R.drawable.thumbnail_new_screen_n));
+
           screenFooter.setPadding(screenFooter.getPaddingLeft() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingTop() + mScreenPaddingVertical,
         		  screenFooter.getPaddingRight() + mScreenPaddingHorizontal,
         		  screenFooter.getPaddingBottom() + mScreenPaddingVertical);
           addView(screenFooter,getChildCount());
-			//Log.i(Launcher.TAG,TAG+"==addTheHeaderOrFooterSpace=3333===="+getChildCount()+"==="+mCurrentPage);
           //setCurrentPage(mCurrentPage+1);
           mCurrentPage =mCurrentPage+1;
           isAddHeaderAndFooter=true;
@@ -3346,7 +2826,6 @@ public class Workspace extends SmoothPagedView
      * remove the HeaderView  and footView  when end  Drag Item
      */
 	void removeTheHeaderOrFooterSpace(){
-		//Log.i(Launcher.TAG, TAG+"==removeTheHeaderOrFooterSpace=="+isAddHeaderAndFooter);
 		if(isAddHeaderAndFooter){
 			CellLayout  cellLayout=null;
 			int [] lastOccupiedCell=null;
@@ -3358,20 +2837,16 @@ public class Workspace extends SmoothPagedView
 				if(mCurrentPage==count){
 					mCurrentPage = mCurrentPage-1;
 				}
-			}/*else{
-				cellLayout.setBackgroundDrawable(null);
-			}*/
+			}
 			cellLayout =(CellLayout) getChildAt(0);
 			lastOccupiedCell=  cellLayout.existsLastOccupiedCell();
 			if(lastOccupiedCell[0]==-1){
 				removeView(cellLayout); 
 				if(mCurrentPage>0){
-					mCurrentPage = mCurrentPage-1;
+					mCurrentPage =mCurrentPage-1>0?mCurrentPage-1:0;
 				}
 				//setCurrentPage(mCurrentPage-1>0?mCurrentPage-1:0);
-			}/*else{
-				cellLayout.setBackgroundDrawable(null);
-			}*/
+			}
 			startMovedPage=-1;
 			isAddHeaderAndFooter=false;
 		}
@@ -3380,15 +2855,7 @@ public class Workspace extends SmoothPagedView
 
     void startDrag(CellLayout.CellInfo cellInfo,boolean isFromHotseat) {//from workspace,include hotseat
         View child = cellInfo.cell;      
-        //Log.i(Launcher.TAG, TAG+"==startDrag=start="+child.getScaleX()+"==="+
-        //child.getWidth()+"*"+child.getHeight()+"==="+cellInfo.cell);  
-        /*if(child.getParent()!=null){
-           // Log.i(Launcher.TAG, TAG+"==startDrag=1111111111="+cellInfo.cell.getParent()+"==="+child.getParent());  
-            if(child.getParent().getParent()!=null){
-                //Log.i(Launcher.TAG, TAG+"==startDrag=22222222222="+cellInfo.cell.getParent().getParent()+
-                		"==="+child.getParent().getParent());  
-            }
-        }*/
+  
         startMovedPage =mCurrentPage;
 
         // Make sure the drag was started by a long press as opposed to a long click.
@@ -3427,8 +2894,6 @@ public class Workspace extends SmoothPagedView
     public void beginDragShared(View child, DragSource source) {
         Resources r = getResources();
 
-        //Log.i(Launcher.TAG, TAG+"==beginDragShared=111111="+child.getScaleX()+"==="+
-       // child.getWidth()+"*"+child.getHeight());
         // The drag bitmap follows the touch point around on the screen
         final Bitmap b = createDragBitmap(child, new Canvas(), DRAG_BITMAP_PADDING);
 
@@ -3470,7 +2935,6 @@ public class Workspace extends SmoothPagedView
             BubbleTextView icon = (BubbleTextView) child;
             icon.clearPressedOrFocusedBackground();
         }
-       // Log.i(Launcher.TAG, TAG+"==beginDragShared=2222222222="+child.getScaleX()+"==="+
         //child.getWidth()+"*"+child.getHeight());
         mDragController.startDrag(b, dragLayerX, dragLayerY, source, child.getTag(),
                 DragController.DRAG_ACTION_MOVE, dragVisualizeOffset, dragRect, child.getScaleX());
@@ -3480,17 +2944,6 @@ public class Workspace extends SmoothPagedView
         //showScrollingIndicator(false);
     }
 
-    /*void addApplicationShortcut(ShortcutInfo info, CellLayout target, long container, int screen,
-            int cellX, int cellY, boolean insertAtFirst, int intersectX, int intersectY) {
-        //View view = mLauncher.createShortcut(R.layout.application, target, (ShortcutInfo) info);
-        View view = mLauncher.createShortcut(R.layout.app_shortcutinfo, target, (ShortcutInfo) info);
-
-        final int[] cellXY = new int[2];
-        target.findCellForSpanThatIntersects(cellXY, 1, 1, intersectX, intersectY);
-        addInScreen(view, container, screen, cellXY[0], cellXY[1], 1, 1, insertAtFirst);
-        LauncherModel.addOrMoveItemInDatabase(mLauncher, info, container, screen, cellXY[0],
-                cellXY[1]);
-    }*/
 
     public boolean transitionStateShouldAllowDrop() {
         //return ((!isSwitchingState() || mTransitionProgress > 0.5f) && mState != State.SMALL); //for update state 
@@ -3501,9 +2954,6 @@ public class Workspace extends SmoothPagedView
      * {@inheritDoc}
      */
     public boolean acceptDrop(DragObject d) {
-    	//Log.i(Launcher.TAG,TAG+"==acceptDrop==d.dragSource=="+d.dragSource+
-    			//"====mDropToLayout==="+(mDropToLayout==null)+"==="+
-    			//transitionStateShouldAllowDrop());
         // If it's an external drop (e.g. from All Apps), check if it should be accepted
         CellLayout dropTargetLayout = mDropToLayout;
         if (d.dragSource != this) {
@@ -3541,7 +2991,7 @@ public class Workspace extends SmoothPagedView
                 minSpanX = ((PendingAddWidgetInfo) d.dragInfo).minSpanX;
                 minSpanY = ((PendingAddWidgetInfo) d.dragInfo).minSpanY;
             }
-            //Log.i(Launcher.TAG,TAG+"==acceptDrop==22222222=="+mTargetCell+"==="+dropTargetLayout);
+
             mTargetCell = findNearestArea((int) mDragViewVisualCenter[0],
                     (int) mDragViewVisualCenter[1], minSpanX, minSpanY, dropTargetLayout,
                     mTargetCell);
@@ -3567,14 +3017,6 @@ public class Workspace extends SmoothPagedView
                 // Don't show the message if we are dropping on the AllApps button and the hotseat
                 // is full
                 boolean isHotseat = mLauncher.isHotseatLayout(dropTargetLayout);
-               // if (mTargetCell != null && isHotseat) {
-                    //Hotseat hotseat = mLauncher.getHotseat();
-                    /* do not used,remove by hhl
-                      if (hotseat.isAllAppsButtonRank(
-                            hotseat.getOrderInHotseat(mTargetCell[0], mTargetCell[1]))) {
-                        return false;
-                    }*/
-               // }
 
                 mLauncher.showOutOfSpaceMessage(isHotseat);
                 return false;
@@ -3602,13 +3044,11 @@ public class Workspace extends SmoothPagedView
                 	spanY = dragInfo.spanY;
         		}
 
-              //Log.i(Launcher.TAG,TAG+"==acceptDrop==33333=="+mTargetCell+"==="+mDragViewVisualCenter[0]+"*"+
-            		  //mDragViewVisualCenter[1]+"===="+mTargetCell[0]+"*"+mTargetCell[1]+"===="+dropTargetLayout);
         		mTargetCell = findNearestArea((int) mDragViewVisualCenter[0],
                     (int) mDragViewVisualCenter[1], spanX, spanY, dropTargetLayout, mTargetCell);
         		float distance = dropTargetLayout.getDistanceFromCell(mDragViewVisualCenter[0],
                         mDragViewVisualCenter[1], mTargetCell);
-                //Log.i(Launcher.TAG,TAG+"==acceptDrop==44444444444=="+d.dragInfo);
+
         		if (willCreateUserFolder((ItemInfo) d.dragInfo, dropTargetLayout,mTargetCell,distance,true)) {
         			return true;
         		}
@@ -3627,15 +3067,15 @@ public class Workspace extends SmoothPagedView
 
     boolean willCreateUserFolder(ItemInfo info, CellLayout target, int[] targetCell, float
             distance, boolean considerTimeout) {
-    	//Log.i(Launcher.TAG, TAG+"==willCreateUserFolder=111="+distance+"====="+mMaxDistanceForFolderCreation);
-        if (distance > mMaxDistanceForFolderCreation) return false; //user to switch drag change position or create user folder 
+
+    	if (distance > mMaxDistanceForFolderCreation) return false; //user to switch drag change position or create user folder 
         View dropOverView = target.getChildAt(targetCell[0], targetCell[1]);
 
         if (dropOverView != null) {
             CellLayout.LayoutParams lp = (CellLayout.LayoutParams) dropOverView.getLayoutParams();
             if (lp.useTmpCoords && (lp.tmpCellX != lp.cellX || lp.tmpCellY != lp.tmpCellY)) {
-            	//Log.i(Launcher.TAG, TAG+"==willCreateUserFolder=222=");
-                return false;
+
+            	return false;
             }
         }
 
@@ -3645,7 +3085,6 @@ public class Workspace extends SmoothPagedView
         }
 
         if (dropOverView == null || hasntMoved || (considerTimeout && !mCreateUserFolderOnDrop)) {
-        	//Log.i(Launcher.TAG, TAG+"==willCreateUserFolder=333=");
             return false;
         }
 
@@ -3653,10 +3092,7 @@ public class Workspace extends SmoothPagedView
         boolean willBecomeShortcut = 
         		(info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT ||
         				info.itemType ==LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT);
-                /*(info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
-                info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT);*/
 
-    	//Log.i(Launcher.TAG, TAG+"==willCreateUserFolder=444="+aboveShortcut+"==="+willBecomeShortcut);
         return (aboveShortcut && willBecomeShortcut);
     }
 
@@ -3705,7 +3141,6 @@ public class Workspace extends SmoothPagedView
             ShortcutInfo sourceInfo = (ShortcutInfo) newView.getTag();
             ShortcutInfo destInfo = (ShortcutInfo) v.getTag();
             // if the drag started here, we need to remove it from the workspace
-            //Log.i(Launcher.TAG, "===Workspace.java==createUserFolderIfNecessary=2307="+external+"===="+v);
             if (!external) {//moditify by hhl,from hotseat drag item to workspace and create folder,null exception
             	CellLayout cellLayout = getParentCellLayoutForView(mDragInfo.cell);
             	if(cellLayout!=null){
@@ -3756,10 +3191,8 @@ public class Workspace extends SmoothPagedView
             if (fi.acceptDrop(d.dragInfo)) {
                 fi.onDrop(d);
 
-                //Log.i(Launcher.TAG, "===Workspace.java==addToExistingFolderIfNecessary=2352="+external+"===="+dropOverView);
                 // if the drag started here, we need to remove it from the workspace
                 if (!external) {
-                	//Log.i(Launcher.TAG, TAG+"==addToExistingFolderIfNecessary=="+(mDragInfo.cell==null));
                 	CellLayout cellLayout = getParentCellLayoutForView(mDragInfo.cell);
                 	if(cellLayout!=null){//moditify by hhl,from hotseat drag item to workspace and create folder,null exception
                 		cellLayout.removeView(mDragInfo.cell);
@@ -3768,10 +3201,6 @@ public class Workspace extends SmoothPagedView
                             target.setUseTempCoords(false);//for hotseat lose item
                            }
                 	}
-                    /*getParentCellLayoutForView(mDragInfo.cell).removeView(mDragInfo.cell);
-                    if(target==mHotseat.getLayout()){
-                        mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
-                       }*/
                 }
                 return true;
             }
@@ -3796,7 +3225,6 @@ public class Workspace extends SmoothPagedView
 
         int snapScreen = -1;
         boolean resizeOnDrop = false;
-       // Log.i(Launcher.TAG, TAG+"=======onDrop()==="+(d.dragSource != this)+"==="+d.dragSource);
         if (d.dragSource != this) {
             final int[] touchXY = new int[] { (int) mDragViewVisualCenter[0],
                     (int) mDragViewVisualCenter[1] };
@@ -3804,7 +3232,6 @@ public class Workspace extends SmoothPagedView
         } else if (mDragInfo != null) {
             final View cell = mDragInfo.cell;
 
-            //Log.i(Launcher.TAG, TAG+"=======onDrop()==else=2222==="+cell);
             Runnable resizeRunnable = null;
             if (dropTargetLayout != null) {
                 // Move internally
@@ -3924,28 +3351,15 @@ public class Workspace extends SmoothPagedView
                     //if(mTargetCell!=null){//add by hhl,from hotseat drag item to workspace and create folder,null exception
                         // If we can't find a drop location, we return the item to its original position
                         //CellLayout.LayoutParams lp = (CellLayout.LayoutParams) cell.getLayoutParams();
-                        //mTargetCell[0] = lp.cellX;
-                       // mTargetCell[1] = lp.cellY;
-                        //Log.i(Launcher.TAG, TAG+"=onDrop===not find cell==1111="+cell);
                         if(cell.getParent()!=null){
-                            //Log.i(Launcher.TAG, TAG+"=onDrop===not find cell==2222="+cell.getParent());
                             CellLayout layout = (CellLayout) cell.getParent().getParent();
                             if(layout!=null){
-                                //Log.i(Launcher.TAG, TAG+"=onDrop===not find cell==3333="+layout);
                                 layout.markCellsAsOccupiedForView(cell);
                             	}
                             }
-                    //}
                 }
             }
 
-           /* Log.i(Launcher.TAG, TAG+"=onDrop===1111==="+cell);
-            if(cell.getParent()!=null){
-                //Log.i(Launcher.TAG, TAG+"=onDrop===2222==="+cell.getParent());
-                if(cell.getParent().getParent()!=null){
-                    //Log.i(Launcher.TAG, TAG+"=onDrop===3333==="+cell.getParent().getParent());
-                }
-            }*/
             final CellLayout parent = (CellLayout) cell.getParent().getParent();
             final Runnable finalResizeRunnable = resizeRunnable;
             // Prepare it to be animated into its new position
@@ -3961,7 +3375,6 @@ public class Workspace extends SmoothPagedView
                 }
             };
             mAnimatingViewIntoPlace = true;
-            //Log.i(Launcher.TAG, TAG+"=======onDrop()==="+d.dragView.hasDrawn()+"==="+cell);
             if (d.dragView.hasDrawn()) {
                 final ItemInfo info = (ItemInfo) cell.getTag();
                 if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET) {
@@ -4419,7 +3832,6 @@ public class Workspace extends SmoothPagedView
     }
 
     public void onDragOver(DragObject d) {
-    	//Log.i(Launcher.TAG,TAG+"==onDragOver=="+mInScrollArea+"="+mIsSwitchingState+"="+(mState == State.SMALL));
         // Skip drag over events while we are dragging over side pages
         //if (mInScrollArea || mIsSwitchingState || mState == State.SMALL) return; //for update state
         if (mInScrollArea || mIsSwitchingState) return; //for update state
@@ -4450,14 +3862,6 @@ public class Workspace extends SmoothPagedView
                 setCurrentDropLayout(layout);
                 setCurrentDragOverlappingLayout(layout);
 
-               /* boolean isInSpringLoadedMode = (mState == State.SPRING_LOADED); //for update state
-                if (isInSpringLoadedMode) {
-                    if (mLauncher.isHotseatLayout(layout)) {
-                        mSpringLoadedDragController.cancel();
-                    } else {
-                        mSpringLoadedDragController.setAlarm(mDragTargetLayout);
-                    }
-                }*/
             }
         } else {
             // Test to see if we are over the hotseat otherwise just use the current page
@@ -4479,22 +3883,14 @@ public class Workspace extends SmoothPagedView
             			if(mDragInfo!=null){
             				mDragTargetLayout.removeView( mDragInfo.cell );
             			}
-                        //Log.i(Launcher.TAG, TAG+"==onDragOver=mHotseat****1111111111*****="+
-                        		//mHotseat.mCellCountX+"==="+mHotseat.mCount);
             			mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
-                        //Log.i(Launcher.TAG, TAG+"==onDragOver=mHotseat****2222222222*****="+
-                        		//mHotseat.mCellCountX+"==="+mHotseat.mCount);
             		}
             	}
             	mDragTargetLayout = layout;
             	mDragTargetLayout.setIsDragOverlapping(true);
             	mDragTargetLayout.onDragEnter();
             	if(mDragTargetLayout == mHotseat.getLayout() &&(mDragTargetLayout.getShortcutsAndWidgets().getChildCount()<5)){
-                    //Log.i(Launcher.TAG, TAG+"==onDragOver=mHotseat****3333333333*****="+
-                    		//mHotseat.mCellCountX+"==="+mHotseat.mCount);
             		mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false); //used to update hotseat 
-                    //Log.i(Launcher.TAG, TAG+"==onDragOver=mHotseat****4444444444*****="+
-                    		//mHotseat.mCellCountX+"==="+mHotseat.mCount);	
             	}
                 //setCurrentDropLayout(layout);
                 //setCurrentDragOverlappingLayout(layout);
@@ -4521,8 +3917,6 @@ public class Workspace extends SmoothPagedView
             float targetCellDistance = mDragTargetLayout.getDistanceFromCell(
                     mDragViewVisualCenter[0], mDragViewVisualCenter[1], mTargetCell);
 
-            //Log.i(Launcher.TAG,TAG+"==onDragOver=@@@@@@="+mTargetCell+"==="+mDragViewVisualCenter[0]+"*"+
-          		  //mDragViewVisualCenter[1]+"===="+mTargetCell[0]+"*"+mTargetCell[1]+"===="+mDragTargetLayout);
             final View dragOverView = mDragTargetLayout.getChildAt(mTargetCell[0],
                     mTargetCell[1]);
 
@@ -4802,12 +4196,6 @@ public class Workspace extends SmoothPagedView
             //case LauncherSettings.Favorites.ITEM_TYPE_APPLICATION:
             case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
             case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
-                /*if (info.container == NO_ID && info instanceof ApplicationInfo) {
-                    // Came from all apps -- make a copy
-                    info = new ShortcutInfo((ApplicationInfo) info);
-                }*/
-                //view = mLauncher.createShortcut(R.layout.application, cellLayout,
-                        //(ShortcutInfo) info);
                 view = mLauncher.createShortcut(R.layout.app_shortcutinfo, cellLayout,
                         (ShortcutInfo) info);
                 break;
@@ -5102,7 +4490,6 @@ public class Workspace extends SmoothPagedView
             } else {
                 cellLayout = (CellLayout) getChildAt(mDragInfo.screen);
             }
-        	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==11111="+mDragInfo.cell);
             cellLayout.onDropChild(mDragInfo.cell);
             if( mDragInfo.container== LauncherSettings.Favorites.CONTAINER_HOTSEAT){
             	mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false); //used update hotseat 
@@ -5113,12 +4500,10 @@ public class Workspace extends SmoothPagedView
         	mLauncher.getDragLayer().setmDropView(d.dragView);
         	mLauncher.getDragLayer().clearAnimatedView(); 
         }
-    	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==2222="+d.cancelled+"==="+(mDragInfo.cell!= null));
         if (d.cancelled &&  mDragInfo.cell != null) {
                 mDragInfo.cell.setVisibility(VISIBLE);
         }
         mDragOutline = null;
-        //Log.i(Launcher.TAG, TAG+"=@@@@@@@@=onDropCompleted=="+mDragInfo);
         mDragInfo = null;
 
         // Hide the scrolling indicator after you pick up an item
@@ -5184,7 +4569,6 @@ public class Workspace extends SmoothPagedView
 
     @Override
     public void scrollLeft() {
-        //if (!isSmall() && !mIsSwitchingState) { //moditify by hhl,for editstate drag item scroll left
         if (!mIsSwitchingState) {
             super.scrollLeft();
         }
@@ -5196,8 +4580,6 @@ public class Workspace extends SmoothPagedView
 
     @Override
     public void scrollRight() {
-    	//Log.i(Launcher.TAG,TAG+"==scrollRight=="+getClass().getName());
-        //if (!isSmall() && !mIsSwitchingState) { //moditify by hhl,for editstate drag item scroll right
         if (!mIsSwitchingState) {
             super.scrollRight();
         }
@@ -5497,7 +4879,6 @@ public class Workspace extends SmoothPagedView
     		setCurrentPage(mCurrentPage-1);
     	}
     	if(mDefaultHomescreen==pageCount){
-    		//mDefaultHomescreen=count/2;
     		setDefaultPage(count/2);
     	}
     	savedThePageCount();
@@ -5517,9 +4898,6 @@ public class Workspace extends SmoothPagedView
 		ShortcutAndWidgetContainer shortcutAndWidgetContainer=null;
     	for(int i = index ; i < screenNum ; i++){
     		shortcutAndWidgetContainer =((CellLayout)getChildAt(i)).getShortcutsAndWidgets();
-    		//add by zlf 
-    		//Log.i(Launcher.TAG, TAG+"==updateScreensFromIndex=i="+i+"===="+
-    		//shortcutAndWidgetContainer.getAlpha()+"==="+shortcutAndWidgetContainer.getVisibility());
     		((CellLayout) getChildAt(i)).changedCellInfoStatus();
     		int itemNum =	shortcutAndWidgetContainer.getChildCount();	 
     		ItemInfo item =null;
@@ -5582,7 +4960,6 @@ public class Workspace extends SmoothPagedView
             if (animate) {
                 snapToPage(mDefaultHomescreen);
             } else {
-            	Log.i(TAG, TAG+"==moveToDefaultScreen==setCurrentPage=="+mDefaultHomescreen);
                 setCurrentPage(mDefaultHomescreen);
             }
         }

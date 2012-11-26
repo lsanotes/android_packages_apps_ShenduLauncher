@@ -351,7 +351,6 @@ public class DragController {
     }
 
     private void endDrag() {
-    	//Log.i(Launcher.TAG, TAG+"==endDrag()***********************==");
         if (mDragging) {
             mDragging = false;
             clearScrollRunnable();
@@ -445,7 +444,6 @@ public class DragController {
                 mLastTouchUpTime = System.currentTimeMillis();
                 if (mDragging) {
                     PointF vec = isFlingingToDelete(mDragObject.dragSource);
-                    //Log.i(Launcher.TAG, TAG+"=###############=onInterceptTouchEvent=="+(vec != null));
                     if (vec != null) {
                         dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
                     } else {
@@ -520,8 +518,6 @@ public class DragController {
         mLastTouch[1] = y;
         final int delay = mDistanceSinceScroll < slop ? RESCROLL_DELAY : SCROLL_DELAY;
 
-    	//Log.i(Launcher.TAG,TAG+"====handleMoveEvent==="+mScrollState+mAddNewScreen+
-    			//"==x=="+x+"==mScrollZone=="+mScrollZone+"==="+mScrollView.getWidth());
 		// drag to left
         if (x < mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE) {
@@ -534,13 +530,9 @@ public class DragController {
             }
 		// drag to right
         } else if (x > mScrollView.getWidth() - mScrollZone) {
-        	//Log.i(Launcher.TAG,TAG+"====handleMoveEvent==right=mScrollState="+
-        	//mScrollState+"==="+mAddNewScreen+"=delay="+delay);
             if (mScrollState == SCROLL_OUTSIDE_ZONE) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
-                	//Log.i(Launcher.TAG,TAG+"====handleMoveEvent==right=mScrollState="+
-                        	//mScrollState+"==="+mAddNewScreen+"=delay="+delay);
                     mLauncher.getDragLayer().onEnterScrollArea(SCROLL_RIGHT);
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
                     mHandler.postDelayed(mScrollRunnable, delay);
@@ -552,7 +544,6 @@ public class DragController {
                   	 mLauncher.getWorkspace().savedThePageCount();
                   	 if(mLauncher.getWorkspace().isSmall()){
                  	   	 	mLauncher.getWorkspace().getChangeStateAnimation(Workspace.State.NORMAL);
-                     	//mLauncher.getWorkspace().getChangeStateAnimation(Workspace.State.SPRING_LOADED); //for update state
                  	   	 	mLauncher.getWorkspace().getChangeStateAnimation(Workspace.State.SMALL);
                   	 	}
                     }
@@ -608,7 +599,6 @@ public class DragController {
 
             if (mDragging) {
                 PointF vec = isFlingingToDelete(mDragObject.dragSource);
-                //Log.i(Launcher.TAG, TAG+"=##############=onTouchEvent=ACTION_UP="+(vec != null));
                 if (vec != null) {
                     dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
                 } else {
@@ -689,12 +679,10 @@ public class DragController {
         mDragObject.x = coordinates[0];
         mDragObject.y = coordinates[1];
         boolean accepted = false;
-        //Log.i(Launcher.TAG, TAG+"=##############=drop=="+(dropTarget != null));
         if (dropTarget != null) {
             mDragObject.dragComplete = true;
             dropTarget.onDragExit(mDragObject);
             if (dropTarget.acceptDrop(mDragObject)) {
-                //Log.i(Launcher.TAG, TAG+"=##############=scceptDrop==before onDrop====");
                 dropTarget.onDrop(mDragObject);
                 accepted = true;
             }else{ //used to set item visibile
@@ -816,12 +804,10 @@ public class DragController {
         }
 
         public void run() {
-        	//Log.i(Launcher.TAG,TAG+"==ScrollRunnable=run()="+(mDragScroller != null)+"==="+mDirection);
             if (mDragScroller != null) {
                 if (mDirection == SCROLL_LEFT) {
                     mDragScroller.scrollLeft();
                 } else {
-                	//Log.i(Launcher.TAG,TAG+"==scrollRight=="+getClass().getName());
                     mDragScroller.scrollRight();
                 }
                 mScrollState = SCROLL_OUTSIDE_ZONE;

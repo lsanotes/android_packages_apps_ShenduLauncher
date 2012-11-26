@@ -205,8 +205,6 @@ public class CellLayout extends ViewGroup {
 
         final Resources res = getResources();
 
-        //mNormalBackground = res.getDrawable(R.drawable.homescreen_blue_normal_holo);
-        //mActiveGlowBackground = res.getDrawable(R.drawable.homescreen_blue_strong_holo);
         mNormalBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
         mActiveGlowBackground = res.getDrawable(R.drawable.editstate_workspace_bg);
         mHeaderFooterDrawable = res.getDrawable(R.drawable.thumbnail_new_screen_n);
@@ -369,8 +367,6 @@ public class CellLayout extends ViewGroup {
     void setPressedOrFocusedIcon2(BubbleLinearLayout icon){
     	BubbleLinearLayout oldIcon = mPressedOrFocusedIcon2;
     	mPressedOrFocusedIcon2 = icon;
-    	//Log.i("hhl", "===CellLayout.java==setPressedOrFocusedIcon2=="+(oldIcon!=null)+"==="+
-        		//(mPressedOrFocusedIcon2 != null));
         if (oldIcon != null) {
             invalidateBubbleTextView2(oldIcon);
         }
@@ -482,24 +478,10 @@ public class CellLayout extends ViewGroup {
             }
         }
 
-        // We draw the pressed or focused BubbleTextView's background in CellLayout because it
-        // requires an expanded clip rect (due to the glow's blur radius)
-        /*if (mPressedOrFocusedIcon != null) {
-            final int padding = mPressedOrFocusedIcon.getPressedOrFocusedBackgroundPadding();
-            final Bitmap b = mPressedOrFocusedIcon.getPressedOrFocusedBackground();
-            if (b != null) {
-                canvas.drawBitmap(b,
-                        mPressedOrFocusedIcon.getLeft() + getPaddingLeft() - padding,
-                        mPressedOrFocusedIcon.getTop() + getPaddingTop() - padding,
-                        null);
-            }
-        }*/
         if (mPressedOrFocusedIcon2 != null) { //draw item when mark click item state 
             final int padding = mPressedOrFocusedIcon2.getPressedOrFocusedBackgroundPadding();
             Bitmap b = mPressedOrFocusedIcon2.getPressedOrFocusedBackground();
             if (b != null) {
-            	//Log.i("hhl", "====CellLayout.java==onDraw()==="+padding+"==="+
-            //mPressedOrFocusedIcon2.getWidth()+"*"+mPressedOrFocusedIcon2.getHeight());
                 canvas.drawBitmap(b,
                         mPressedOrFocusedIcon2.getLeft() + getPaddingLeft() - padding,
                         mPressedOrFocusedIcon2.getTop() + getPaddingTop() - padding,
@@ -524,7 +506,6 @@ public class CellLayout extends ViewGroup {
             }
         }
 
-        //int previewOffset = FolderRingAnimator.sPreviewSize;
 
         // The folder outer / inner ring image(s)
         for (int i = 0; i < mFolderOuterRings.size(); i++) { //draw item need mark folder background when item enter folder
@@ -547,19 +528,6 @@ public class CellLayout extends ViewGroup {
             d.draw(canvas);
             canvas.restore();
 
-            // Draw inner ring,do not used,remove by hhl
-            /*d = FolderRingAnimator.sSharedInnerRingDrawable;
-            width = (int) fra.getInnerRingSize();
-            height = width;
-            cellToPoint(fra.mCellX, fra.mCellY, mTempLocation);
-
-            centerX = mTempLocation[0] + mCellWidth / 2;
-            centerY = mTempLocation[1] + previewOffset / 2;
-            canvas.save();
-            canvas.translate(centerX - width / 2, centerY - width / 2);
-            d.setBounds(0, 0, width, height);
-            d.draw(canvas);
-            canvas.restore();*/
         }
 
         if (mFolderLeaveBehindCell[0] >= 0 && mFolderLeaveBehindCell[1] >= 0) { //draw item when open hotseat folder
@@ -751,18 +719,16 @@ public class CellLayout extends ViewGroup {
         final int x = touchX + getScrollX();
         final int y = touchY + getScrollY();
         final int count = mShortcutsAndWidgets.getChildCount();
-        //Log.i(Launcher.TAG, TAG+"==setTagToCellInfoForPoint==count=="+count);
+
         boolean found = false;
         for (int i = count - 1; i >= 0; i--) {
             final View child = mShortcutsAndWidgets.getChildAt(i);
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
-            //Log.i(Launcher.TAG, TAG+"==setTagToCellInfoForPoint=1111111111111=i=="+i+"==child=="+child);
             if ((child.getVisibility() == VISIBLE || child.getAnimation() != null) &&
                     lp.isLockedToGrid) {
                 child.getHitRect(frame);
 
-                //Log.i(Launcher.TAG, TAG+"==setTagToCellInfoForPoint=222222222222=i=="+i+"==child=="+child);
                 float scale = child.getScaleX();
                 frame = new Rect(child.getLeft(), child.getTop(), child.getRight(),
                         child.getBottom());
@@ -816,7 +782,6 @@ public class CellLayout extends ViewGroup {
         }
 
         if (action == MotionEvent.ACTION_DOWN) {
-            //Log.i(Launcher.TAG, TAG+"==onInterceptTouchEvent====");
             setTagToCellInfoForPoint((int) ev.getX(), (int) ev.getY());
         }
 

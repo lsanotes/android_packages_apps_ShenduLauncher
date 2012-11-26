@@ -86,10 +86,6 @@ public class Hotseat extends FrameLayout {
     int getCellYFromOrder(int rank) {
         return mIsLandscape ? (mContent.getCountY() - (rank + 1)) : 0;
     }
-    /* do not used,remove by hhl
-      public boolean isAllAppsButtonRank(int rank) {
-        return rank == mAllAppsButtonRank;
-    }*/
 
     @Override
     protected void onFinishInflate() {
@@ -107,7 +103,6 @@ public class Hotseat extends FrameLayout {
 	int mCount =0;
     
 	public void setGridSize(int cellCount,boolean isAdd,boolean initState){ //used to update hotseat count
-		//Log.i(Launcher.TAG, TAG+"==setGridSize1111111=isAdd="+isAdd+"==mCount="+mCount+"==mCellCountX="+mCellCountX);
 		mCount =mShortcutAndWidgetContainer.getChildCount();
 		if(isAdd&&mCellCountX<=mCount){
 			mCellCountX=cellCount;
@@ -116,12 +111,9 @@ public class Hotseat extends FrameLayout {
 			mCellCountX=cellCount;
 			mContent.setGridSize(mCellCountX, mCellCountY);	
 		}
-		//mCount =mShortcutAndWidgetContainer.getChildCount();
-		//Log.i(Launcher.TAG, TAG+"==setGridSize222222=isAdd="+isAdd+"==mCount="+mCount+"==mCellCountX="+mCellCountX);
 		View view = null;
 		for(int i = 0 ,j=0;i < mCount; i++,j++){
 			view =mShortcutAndWidgetContainer.getChildAt(j,0);
-			//Log.i(Launcher.TAG, TAG+"==setGridSize====for=i="+i+"==j="+j+"==="+(view!=null));
 			if(view!=null){
 				mContent.animateChildToPosition(view,i,0,150,0,true,true);
 			}else{
@@ -139,39 +131,5 @@ public class Hotseat extends FrameLayout {
     void resetLayout() {
         mContent.removeAllViewsInLayout();
 
-        /* Add the Apps button,do not used,remove by hhl
-        Context context = getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        BubbleTextView allAppsButton = (BubbleTextView)
-                inflater.inflate(R.layout.application, mContent, false);
-        allAppsButton.setCompoundDrawablesWithIntrinsicBounds(null,
-                context.getResources().getDrawable(R.drawable.all_apps_button_icon), null, null);
-        allAppsButton.setContentDescription(context.getString(R.string.all_apps_button_label));
-        allAppsButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mLauncher != null &&
-                    (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
-                    mLauncher.onTouchDownAllAppsButton(v);
-                }
-                return false;
-            }
-        });
-        allAppsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View v) {
-                if (mLauncher != null) {
-                    mLauncher.onClickAllAppsButton(v);
-                }
-            }
-        });
-        // Note: We do this to ensure that the hotseat is always laid out in the orientation of
-        // the hotseat in order regardless of which orientation they were added
-        int x = getCellXFromOrder(mAllAppsButtonRank);
-        int y = getCellYFromOrder(mAllAppsButtonRank);
-        CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x,y,1,1);
-        lp.canReorder = false;
-        mContent.addViewToCellLayout(allAppsButton, -1, 0, lp, true);
-         */
     }
 }

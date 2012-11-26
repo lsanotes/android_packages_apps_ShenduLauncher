@@ -186,7 +186,6 @@ public class FolderCoverView extends View {
         v.setWillNotCacheDrawing(willNotCache);
         v.setDrawingCacheBackgroundColor(color);
         
-        //Bitmap bitmap1 = setAlpha(bitmap, 100);
 
         return bitmap;
     }

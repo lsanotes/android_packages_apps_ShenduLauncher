@@ -185,4 +185,6 @@
 <!-- for folder -->    
     <dimen name="saf_folder_cover_arrow_width">13dip</dimen>
     <dimen name="saf_folder_cover_arrow_height">13dip</dimen>
+     <dimen name="test_height">133dip</dimen>
+    
 </resources>

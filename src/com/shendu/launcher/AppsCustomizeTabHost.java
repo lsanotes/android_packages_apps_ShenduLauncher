@@ -85,11 +85,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                 }
             };
 
-        //mLauncher = (Launcher) context;
-
-        // Preferences
-        //mJoinWidgetsApps = PreferencesProvider.Interface.Drawer.getJoinWidgetsApps(context);
-        //mFadeScrollingIndicator = PreferencesProvider.Interface.Drawer.Indicator.getFadeScrollingIndicator(context);
     }
 
     public void setup(Launcher launcher) {
@@ -108,10 +103,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
         
     }
-    /*void selectAppsTab() {
-        setContentTypeImmediate(AppsCustomizeView.ContentType.Apps);
-        setCurrentTabByTag(APPS_TAB_TAG);
-    }*/
     void selectWidgetsTab() {
         setContentTypeImmediate(AppsCustomizePagedView.ContentType.Widgets);
         //mAppsCustomizePane.setCurrentPageToWidgets();
@@ -151,20 +142,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             }
         };
 
-        // Create the tabs
-        //TextView tabView;
         String label;
-        /*label = mContext.getString(R.string.all_apps_button_label);
-        tabView = (TextView) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
-        tabView.setText(label);
-        tabView.setContentDescription(label);
-        tabView.setOnLongClickListener(new View.OnLongClickListener() {
-                public boolean onLongClick(View v) {
-                    mLauncher.onLongClickAppsTab(v);
-                    return true;
-                }
-        });
-        addTab(newTabSpec(APPS_TAB_TAG).setIndicator(tabView).setContent(contentFactory));*/
         
         //choice widget
         label = mContext.getString(R.string.editstate_choice_widget);
@@ -184,15 +162,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         addTab(newTabSpec(WALLPAPERS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
         setCurrentTabByTag(WALLPAPERS_TAB_TAG);
         onTabChanged(WALLPAPERS_TAB_TAG);
-        
-//        //choice theme
-//        label = mContext.getString(R.string.editstate_choice_theme);
-//        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
-//        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
-//        mTabLabel.setText(label);
-//        mTabViewLayout.setContentDescription(label);
-//        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
-        
         //choice specially effect
         label = mContext.getString(R.string.editstate_choice_specially_effect);
         mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
@@ -203,15 +172,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         
         setOnTabChangedListener(this);
 
-        // Setup the key listener to jump between the last tab view and the market icon
-        /*AppsCustomizeTabKeyEventListener keyListener = new AppsCustomizeTabKeyEventListener();
-        View lastTab = tabs.getChildTabViewAt(tabs.getTabCount() - 1);
-        lastTab.setOnKeyListener(keyListener);
-        View shopButton = findViewById(R.id.market_button);
-        shopButton.setOnKeyListener(keyListener);*/
-        // Soft menu button
-       /* View overflowMenuButton = findViewById(R.id.overflow_menu_button);
-        overflowMenuButton.setOnKeyListener(keyListener);*/
 
         // Hide the tab bar until we measure
         mTabsContainer.setAlpha(0f);
@@ -263,17 +223,11 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
     }
 
     private void reloadCurrentPage() {
-        /*if (!LauncherApplication.isScreenLarge()) {
-            mAppsCustomizePane.flashScrollingIndicator(true);
-        }*/
-		//Log.i(Launcher.TAG, "==AppsCustomizeTabHost.java=reloadCurrentPage==start==");
         mAppsCustomizePane.loadAssociatedPages(mAppsCustomizePane.getCurrentPage());
         mAppsCustomizePane.requestFocus();
     }
 
     private void onTabChangedEnd(AppsCustomizePagedView.ContentType type) {
-		//Log.i(Launcher.TAG, "==AppsCustomizeTabHost.java=onTabChangedEnd====");
-        //mAppsCustomizePane.setContentType(type);
     }
 
     @Override
@@ -283,10 +237,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             mSuppressContentCallback = false;
             return;
         }
-        /**
-         * add by hhl
-         * userd to update tab widget display style
-         */
+
         int size = getTabWidget().getChildCount();
         for(int i=0;i<size;i++){ 
         	mTabViewLayout = (FrameLayout)getTabWidget().getChildAt(i);
@@ -302,7 +253,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         		mTabLabelIndicator.setVisibility(View.GONE);
         	}
         }
-        //mAppsCustomizePane.onTabChanged(type);
         
         if (!mAppsCustomizePane.isContentType(type)) {
            	// Animate the changing of the tab content by fading pages in and out
@@ -317,7 +267,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                 post(new Runnable() {
                 	@Override
                   public void run() {
-                		//Log.i(Launcher.TAG, "==AppsCustomizeTabHost.java=onTabChanged==111=="+getMeasuredWidth()+"*"+
                   //getMeasuredHeight());
                 		if (getMeasuredWidth() <= 0 || getMeasuredHeight() <= 0) {
                 			reloadCurrentPage();
@@ -327,14 +276,11 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                 		// and then cross fade to the new pages
                 		int[] visiblePageRange = new int[2];
                 		mAppsCustomizePane.getVisiblePages(visiblePageRange);
-                		//Log.i(Launcher.TAG, "==AppsCustomizeTabHost.java=222=onTabChanged=="+visiblePageRange[0]+"*"+
-                				//visiblePageRange[1]);
                 		if (visiblePageRange[0] == -1 && visiblePageRange[1] == -1) {
                 			// If we can't get the visible page ranges, then just skip the animation
                          reloadCurrentPage();
                          return;
                         }
-                		//Log.i(Launcher.TAG, "==AppsCustomizeTabHost.java=onTabChanged==33333333333==");
                 		mAppsCustomizePane.setContentType(type);
                 		reloadCurrentPage();
                 	}
@@ -342,93 +288,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
               }
            }
 
-        /*if (!mAppsCustomizePane.isContentType(type) || mJoinWidgetsApps) {
-
-            // Animate the changing of the tab content by fading pages in and out
-            final Resources res = getResources();
-            final int duration = res.getInteger(R.integer.config_tabTransitionDuration);
-
-            // We post a runnable here because there is a delay while the first page is loading and
-            // the feedback from having changed the tab almost feels better than having it stick
-            post(new Runnable() {
-                @Override
-                public void run() {
-                if (mAppsCustomizePane.getMeasuredWidth() <= 0 ||
-                    mAppsCustomizePane.getMeasuredHeight() <= 0) {
-                    reloadCurrentPage();
-                    return;
-                }
-                // Take the visible pages and re-parent them temporarily to mAnimatorBuffer
-                // and then cross fade to the new pages
-                int[] visiblePageRange = new int[2];
-                mAppsCustomizePane.getVisiblePages(visiblePageRange);
-                if (visiblePageRange[0] == -1 && visiblePageRange[1] == -1) {
-                // If we can't get the visible page ranges, then just skip the animation
-                    reloadCurrentPage();
-                    return;
-                }
-                ArrayList<View> visiblePages = new ArrayList<View>();
-                for (int i = visiblePageRange[0]; i <= visiblePageRange[1]; i++) {
-                    visiblePages.add(mAppsCustomizePane.getPageAt(i));
-                }
-                // We want the pages to be rendered in exactly the same way as they were when
-                // their parent was mAppsCustomizePane -- so set the scroll on mAnimationBuffer
-                // to be exactly the same as mAppsCustomizePane, and below, set the left/top
-                // parameters to be correct for each of the pages
-                mAnimationBuffer.scrollTo(mAppsCustomizePane.getScrollX(), 0);
-
-                // mAppsCustomizePane renders its children in reverse order, so
-                // add the pages to mAnimationBuffer in reverse order to match that behavior
-                for (int i = visiblePages.size() - 1; i >= 0; i--) {
-                    View child = visiblePages.get(i);
-                    if (child instanceof PagedViewCellLayout) {
-                        ((PagedViewCellLayout) child).resetChildrenOnKeyListeners();
-                    } else if (child instanceof PagedViewGridLayout) {
-                        ((PagedViewGridLayout) child).resetChildrenOnKeyListeners();
-                    }
-                    PagedViewWidget.setDeletePreviewsWhenDetachedFromWindow(false);
-                    mAppsCustomizePane.removeView(child);
-                    PagedViewWidget.setDeletePreviewsWhenDetachedFromWindow(true);
-                    mAnimationBuffer.setAlpha(1f);
-                    mAnimationBuffer.setVisibility(View.VISIBLE);
-                    LayoutParams p = new FrameLayout.LayoutParams(child.getMeasuredWidth(),
-                            child.getMeasuredHeight());
-                    p.setMargins((int) child.getLeft(), (int) child.getTop(), 0, 0);
-                    mAnimationBuffer.addView(child, p);
-
-                    // Toggle the new content
-                    onTabChangedStart();
-                    onTabChangedEnd(type);
-
-                    // Animate the transition
-                    ObjectAnimator outAnim = ObjectAnimator.ofFloat(mAnimationBuffer, "alpha", 0f);
-                    outAnim.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                            mAnimationBuffer.setVisibility(View.GONE);
-                            mAnimationBuffer.removeAllViews();
-                            }
-                            @Override
-                            public void onAnimationCancel(Animator animation) {
-                            mAnimationBuffer.setVisibility(View.GONE);
-                            mAnimationBuffer.removeAllViews();
-                            }
-                            });
-                    ObjectAnimator inAnim = ObjectAnimator.ofFloat(mAppsCustomizePane, "alpha", 1f);
-                    inAnim.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                            reloadCurrentPage();
-                            }
-                            });
-                    AnimatorSet animSet = new AnimatorSet();
-                    animSet.playTogether(outAnim, inAnim);
-                    animSet.setDuration(duration);
-                    animSet.start();
-                }}
-            });
-
-        }*/
     }
 
     public void setCurrentTabFromContent(AppsCustomizePagedView.ContentType type) {
