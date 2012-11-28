@@ -1787,7 +1787,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
        // postDelayed(hideScrollingIndicatorRunnable, sScrollIndicatorFlashDuration);
     }
 
-    protected void showScrollingIndicator(boolean immediately) {
+    public void showScrollingIndicator(boolean immediately) {
         showScrollingIndicator(immediately, sScrollIndicatorFadeInDuration);
     }
 
@@ -1814,7 +1814,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
      * if true,then need to set scroll indicator gone and update scroll indicator page
      * if false,then only update scroll indicator page
      */
-    protected void hideScrollingIndicator(boolean immediately) {
+    public void hideScrollingIndicator(boolean immediately) {
         if(immediately){
             hideScrollingIndicator(immediately, sScrollIndicatorFadeOutDuration);
         }else{
@@ -1830,6 +1830,8 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         if (mScrollIndicator != null) {
             // Fade the indicator out
             updateScrollingIndicatorPosition();
+            mScrollIndicator.setVisibility(View.GONE);
+          
         }
     }
 

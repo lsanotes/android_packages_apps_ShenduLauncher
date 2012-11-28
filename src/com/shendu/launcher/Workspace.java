@@ -3854,6 +3854,7 @@ public class Workspace extends SmoothPagedView
                     layout = mLauncher.getHotseat().getLayout();
                 }
             }
+            
             if (layout == null) {
                 layout = findMatchingPageForDragOver(d.dragView, d.x, d.y, false);
             }
@@ -4510,14 +4511,16 @@ public class Workspace extends SmoothPagedView
         hideScrollingIndicator(false);
     }
     
-	public void removeEmptyScreen(int index){// used to remove empty celllayout
+	public boolean  removeEmptyScreen(int index){// used to remove empty celllayout
 		CellLayout cell = (CellLayout) getChildAt(index);
 		if(cell !=null){
 			int [] lastOccupiedCell=  cell.existsLastOccupiedCell();
 			if(lastOccupiedCell[0]==-1){
 				removeView(cell,index); 
+				return true;
 			}
 		}
+		return false;
 	}
 
     void updateItemLocationsInDatabase(CellLayout cl) {
@@ -4747,7 +4750,7 @@ public class Workspace extends SmoothPagedView
             packageNames.add(apps.get(i).componentName.getPackageName());
         }
 
-        ArrayList<CellLayout> cellLayouts = getWorkspaceAndHotseatCellLayouts();
+        final ArrayList<CellLayout> cellLayouts = getWorkspaceAndHotseatCellLayouts();
         for (final CellLayout layoutParent: cellLayouts) {
             final ViewGroup layout = layoutParent.getShortcutsAndWidgets();
 
@@ -4820,6 +4823,8 @@ public class Workspace extends SmoothPagedView
                             mDragController.removeDropTarget((DropTarget)child);
                         }
                     }
+               
+             
 
                     if (childCount > 0) {
                         layout.requestLayout();
@@ -4866,9 +4871,19 @@ public class Workspace extends SmoothPagedView
                         }
                     }
                 }
+                
+                int count = cellLayouts.size();
+                for(int j = 0 ; j <count;j++){
+                	Log.i(Launcher.TAG, Launcher.TAG+" ...........removeItems.  j "+j);
+                	 if(j<getChildCount()&& removeEmptyScreen(j)){
+                    	    j--;
+                        updateCurrentPageItemCoordinate();
+                    }
+                }
             }
         });
     }
+    
     
     public void removeView(View cellLayout,final int pageCount){ //used for remove empty screen
     	super.removeView(cellLayout);

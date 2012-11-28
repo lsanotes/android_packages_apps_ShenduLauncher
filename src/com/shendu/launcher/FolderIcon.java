@@ -371,21 +371,24 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 				}
 			int oldWidth  = orgbmp.getWidth();
 			int oldHeight = orgbmp.getHeight();
-			int newWidth  = 50;
-			int newHeight = 50;
+			int mgapInfolder=folderSize/10;
+			int newWidth  =folderSize*3/4-mgapInfolder;
+			int newHeight = folderSize*3/4-mgapInfolder;
 			float scaleW  = ((float)newWidth) / oldWidth;
 			float scaleH  = ((float)newHeight) / oldHeight;
 			Matrix matrix = new Matrix();
 			matrix.postScale(scaleW, scaleH); 
 			Bitmap thumbmp = Bitmap.createBitmap(orgbmp,0,0,oldWidth,oldHeight,matrix,true); 
+			Log.i(Launcher.TAG,"FolderIcon"+"....+ shenduCreateFolderThumBitmap() "+folderSize+ " scaleW: " +scaleW );
+			
 			if (i == 3)
-				canvas.drawBitmap(thumbmp, 57, 57, null);
+				canvas.drawBitmap(thumbmp, newWidth+mgapInfolder, newWidth+mgapInfolder, null);
 			if (i == 2)
-				canvas.drawBitmap(thumbmp, 7, 57, null);
+				canvas.drawBitmap(thumbmp, mgapInfolder, newWidth+mgapInfolder, null);
 			if (i == 1)
-				canvas.drawBitmap(thumbmp, 57, 7, null);
+				canvas.drawBitmap(thumbmp, newWidth+mgapInfolder, mgapInfolder, null);
 			if (i == 0)
-				canvas.drawBitmap(thumbmp, 7, 7, null);
+				canvas.drawBitmap(thumbmp, mgapInfolder, mgapInfolder, null);
 			canvas.save(Canvas.ALL_SAVE_FLAG);
 			canvas.restore();
 		}

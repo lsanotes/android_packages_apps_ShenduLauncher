@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.shendu.launcher.R;
 
@@ -49,10 +50,10 @@ public class PagedViewEffect extends RelativeLayout {
     public void applyFromShenduPrograme(ShenduPrograme info) {
     	
     	TextView effectName = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_name_id);
-    	TextView effectIcon = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_icon_id);
-    	TextView effectMark = (TextView)findViewById(R.id.editstate_tabhost_tabcontent_effect_mark_id);
+    	ImageView effectIcon = (ImageView)findViewById(R.id.editstate_tabhost_tabcontent_effect_icon_id);
+    	ImageView effectMark = (ImageView)findViewById(R.id.editstate_tabhost_tabcontent_effect_mark_id);
     	effectName.setText(info.getEffectStrId());
-    	effectIcon.setBackgroundResource(info.getEffectDrawableId());
+    	effectIcon.setImageResource(info.getEffectDrawableId());
     	if(info.isEffectCurrent()){
         	effectMark.setVisibility(View.VISIBLE);
     	}

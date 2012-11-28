@@ -463,7 +463,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mSaveInstanceStateItemIndex = index;
     }
 
-
     protected void onDataReady(int width, int height) {
         // Note that we transpose the counts in portrait so that we get a similar layout
         boolean isLandscape = getResources().getConfiguration().orientation ==
@@ -521,9 +520,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             }else if(mContentType == AppsCustomizePagedView.ContentType.Effects ){
             	isReady = !mEffectsList.isEmpty();
             }
-            /*else {
-                isReady = !mApps.isEmpty();
-            }*/
 
             if (isReady) {
                 setDataIsReady();
@@ -546,7 +542,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
            public void run() {
                updatePackages();
            }
-        }, 1500);
+        }, 2500);
     }
 
 	/** 
@@ -1893,9 +1889,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         mEditStateLeftArrow = (ImageView)mLauncher.findViewById(R.id.apps_customize_pane_content_left_arrow_id);
         mEditStateRightArrow = (ImageView)mLauncher.findViewById(R.id.apps_customize_pane_content_right_arrow_id);
         
-       Display display = mLauncher.getWindowManager().getDefaultDisplay();
-  	    mDisplayWidth = display.getWidth();
-       mDisplayHeight = display.getHeight();
     }
     
     /**
@@ -2121,15 +2114,13 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 	}
 	
 
-	int  mDisplayWidth = 480;
-   int   mDisplayHeight =800;
     public void getHitRect(Rect outRect){
     //	super.getHitRect(outRect);
     	outRect.left=0;
-    	outRect.right=mDisplayWidth;
+    	outRect.right=mLauncher.mscreenwidth;
     	
-    	outRect.top=mDisplayHeight-230;
-    	outRect.bottom=mDisplayHeight;
+    	outRect.top=mLauncher.mscreenHeight-250;
+    	outRect.bottom=mLauncher.mscreenHeight;
     	
 	 }
 

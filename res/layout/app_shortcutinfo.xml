@@ -50,6 +50,7 @@
             android:id="@+id/app_shortcutinfo_mark_id"
             style="@style/WorkspaceAppMark"
             />
+        
     </FrameLayout>
 </LinearLayout>
     <com.shendu.launcher.BubbleTextView

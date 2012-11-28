@@ -37,7 +37,7 @@
         android:id="@+id/paged_view_indicator"
         layout="@layout/scroll_indicator"
         android:layout_width="wrap_content"
-        android:layout_height="11px"
+        android:layout_height="@dimen/paged_view_indicator_height"
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/button_bar_height_plus_padding" />
 
@@ -56,11 +56,7 @@
         launcher:scrollIndicatorPaddingLeft="@dimen/workspace_divider_padding_left"
         launcher:scrollIndicatorPaddingRight="@dimen/workspace_divider_padding_right" />
 
-    <include layout="@layout/hotseat"
-        android:id="@+id/hotseat"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/button_bar_height_plus_padding"
-        android:layout_gravity="bottom" />
+
 
     <include
         android:id="@+id/qsb_bar"
@@ -79,19 +75,24 @@
     <include layout="@layout/apps_customize_pane"
         android:id="@+id/apps_customize_pane"
         android:layout_width="match_parent"
-        android:layout_height="166dp"
+        android:layout_height="@dimen/apps_customize_pane_height"
         android:layout_gravity="bottom"
         android:visibility="invisible" />
+    
+        <include layout="@layout/hotseat"
+        android:id="@+id/hotseat"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_bar_height_plus_padding"
+        android:layout_gravity="bottom" />
+        
+        
 <!-- for folder-->
       <RelativeLayout 
         android:id="@+id/relativeLayoutFolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent" 
-        android:background="#66000000"
         android:visibility="gone"
          />
-    
-    
     
     
     <include layout="@layout/workspace_cling"

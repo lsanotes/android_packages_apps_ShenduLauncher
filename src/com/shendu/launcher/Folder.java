@@ -132,6 +132,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
   	RelativeLayout LayoutForFolder;
   	int slideDistance;
   	float folderTop,folderHeight;
+  	
+	
+	int mFolderCoverLine ,mHotseatFolderCoverLine,mFolderCoverView,mHotseatFolderCoverView;
+
 
     /**
      * Used to inflate the Workspace from XML.
@@ -202,7 +206,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mFolderNameHeight = getPaddingBottom();
         }
         
-        quarterHeight = getResources().getDimensionPixelSize(R.dimen.test_height);
+        quarterHeight = getResources().getDimensionPixelSize(R.dimen.quarter_height);
+        
+    	 mFolderCoverLine = getResources().getDimensionPixelSize(R.dimen.folder_cover_line);
+    	 mHotseatFolderCoverLine = getResources().getDimensionPixelSize(R.dimen.folder_hotseat_cover_line);
+    	 mFolderCoverView = getResources().getDimensionPixelSize(R.dimen.folder_cover_view);
+    	 mHotseatFolderCoverView = getResources().getDimensionPixelSize(R.dimen.folder_hotseat_cover_view);
                
     }
 
@@ -459,15 +468,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
          	if(LayoutForFolder ==null){
         		LayoutForFolder =mLauncher.getLayoutForFolder();
         	}
-         	LayoutForFolder.setBackgroundResource(R.color.sreen_shot_white);
         	LayoutForFolder.setVisibility(View.VISIBLE);
         	LayoutForFolder.bringToFront();
-      	takeScreenshot();
+         	takeScreenshot();
       }
       
       final Object mScreenshotLock = new Object();
 
-      
       TakeScreenshotService mService=null;
       
       final Runnable mScreenshotTimeout = new Runnable() {
@@ -480,7 +487,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
           }
       };
      
-      
 	private void takeScreenshot() {
 		ComponentName cn = new ComponentName("com.shendu.launcher",
 				"com.shendu.launcher.screenshot.TakeScreenshotService");
@@ -498,7 +504,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			mLauncher.getWindow().getDecorView()
 					.getWindowVisibleDisplayFrame(frame);
 			mCurrentPageBitmap = mService.takeScreenshot(frame.top);
-			LayoutForFolder.setBackgroundResource(R.color.sreen_shot_balck);
 			OpenAfterScreenshot();
 		}
 
@@ -517,6 +522,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		SlideFolder();
 	}
       
+
     /**
   	 * @param folderInfo
   	 */
@@ -527,18 +533,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 		if (mInfo.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
 			
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
-					v.getBottom() - 70 + 610, mCurrentPageBitmap.getWidth(),
-					mCurrentPageBitmap.getHeight() - v.getBottom() - 610 + 70,
-					mCurrentFolderBitmap, v.getLeft(), v.getTop() + 668, 0, -1);
+					v.getBottom()  + mHotseatFolderCoverLine, mCurrentPageBitmap.getWidth(),
+					mCurrentPageBitmap.getHeight() - v.getBottom() -mHotseatFolderCoverLine,
+					mCurrentFolderBitmap, v.getLeft(), v.getTop() + mHotseatFolderCoverView, 0, -1);
 			mFolderCovers.add(downCover);
 			FrameLayout.LayoutParams downFlp = new FrameLayout.LayoutParams(
 					FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(downCover, downFlp);
 			
-			
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
-					mCurrentPageBitmap.getWidth(), v.getBottom() + 610 - 70,
+					mCurrentPageBitmap.getWidth(), v.getBottom() +mHotseatFolderCoverLine,
 					null, 0, 0, 0, 1);
 			mFolderCovers.add(upCover);
 			FrameLayout.LayoutParams upFlp = new FrameLayout.LayoutParams(
@@ -546,26 +551,27 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(upCover, upFlp);
 			
-			slideDistance = (mFolderIcon.getBottom() - 70 + 610)- (int) folderTop;
+			slideDistance = (mFolderIcon.getBottom() + mHotseatFolderCoverLine)- (int) folderTop;
+			
 		} else {
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
-					mCurrentPageBitmap.getWidth(), v.getBottom() + 60,
-					mCurrentFolderBitmap, v.getLeft(), v.getTop() + 71, 0, 1);
+					mCurrentPageBitmap.getWidth(), v.getBottom() + mFolderCoverLine,
+					mCurrentFolderBitmap, v.getLeft(), v.getTop() + mFolderCoverView, 0, 1);
 			mFolderCovers.add(upCover);
 			FrameLayout.LayoutParams upFlp = new FrameLayout.LayoutParams(
 					FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(upCover, upFlp);
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
-					v.getBottom() + 60, mCurrentPageBitmap.getWidth(),
-					mCurrentPageBitmap.getHeight() - v.getBottom() - 60, null,
+					v.getBottom() + mFolderCoverLine, mCurrentPageBitmap.getWidth(),
+					mCurrentPageBitmap.getHeight() - v.getBottom() - mFolderCoverLine, null,
 					0, 0, 0, -1);
 			mFolderCovers.add(downCover);
 			FrameLayout.LayoutParams downFlp = new FrameLayout.LayoutParams(
 					FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.TOP);
 			LayoutForFolder.addView(downCover, downFlp);
-			slideDistance = (mFolderIcon.getBottom() + 60) - (int) folderTop;
+			slideDistance = (mFolderIcon.getBottom() + mFolderCoverLine) - (int) folderTop;
 		}
 	}
   	
@@ -994,7 +1000,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     private void centerAboutIcon() {
         DragLayer.LayoutParams lp = (DragLayer.LayoutParams) getLayoutParams();
 
-        int width = getPaddingLeft() + getPaddingRight() + mContent.getDesiredWidth();
+       // int width = getPaddingLeft() + getPaddingRight() + mContent.getDesiredWidth();
+        int width =  mLauncher.mscreenwidth;
         int height = getPaddingTop() + getPaddingBottom() + mContent.getDesiredHeight()
                 + mFolderNameHeight;
         DragLayer parent = (DragLayer) mLauncher.findViewById(R.id.drag_layer);
@@ -1044,7 +1051,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         lp.height = height;
         lp.x = 0;
         lp.y = top;
-        Log.i(TAG, TAG+".......centerAboutIcon()...."+top+"  "+quarterHeight);
             if(top<quarterHeight){
             	lp.y =quarterHeight;
             }

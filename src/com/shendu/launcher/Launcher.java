@@ -316,6 +316,10 @@ public final class Launcher extends Activity
     private boolean mShowDockDivider;
     private boolean mHideIconLabels;
     private boolean mAutoRotate;
+    
+    
+    public int mscreenHeight;
+    public int mscreenwidth;
 
     private Runnable mBuildLayersRunnable = new Runnable() {
         public void run() {
@@ -421,6 +425,9 @@ public final class Launcher extends Activity
 
         // On large interfaces, we want the screen to auto-rotate based on the current orientation
         unlockScreenOrientation(true);
+        
+        mscreenHeight= getWindowManager().getDefaultDisplay().getHeight();
+        mscreenwidth=  getWindowManager().getDefaultDisplay().getWidth();
     }
 
     private void updateGlobalIcons() {
@@ -674,8 +681,6 @@ public final class Launcher extends Activity
                 public void run() {
                     completeAddAppWidget(appWidgetId, mPendingAddInfo.container,
                             mPendingAddInfo.screen, layout, null);
-                    //exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false,
-                            //null); //remove by hhl
                 }
             };
         } else if (resultCode == RESULT_CANCELED) {
@@ -1951,6 +1956,7 @@ public final class Launcher extends Activity
     	mStateAnimation.start();
     	mState = State.APPS_CUSTOMIZE;
     	setFullScreen();
+    	mWorkspace.hideScrollingIndicator(true);
 		hideHotseat(true);
 	}
     
@@ -1982,6 +1988,7 @@ public final class Launcher extends Activity
 					mWorkspace.getChangeStateAnimation(Workspace.State.NORMAL,true, 0);
 					mState = State.WORKSPACE;
 			setScreenNoLimit();
+			mWorkspace.showScrollingIndicator(true);
 		}
     }
 
@@ -2231,26 +2238,29 @@ public final class Launcher extends Activity
                     + info.screen + " (" + info.cellX + ", " + info.cellY + ")");
             info.opened = false;
         }
-        if (!info.opened) {
-            // Close any open folder
-            closeFolder();
-            // Open the requested folder
-            openFolder(folderIcon);
-        } else {
-            // Find the open folder...
-            int folderScreen;
-            if (openFolder != null) {
-                folderScreen = mWorkspace.getPageForView(openFolder);
-                // .. and close it
-                closeFolder(openFolder);
-                if (folderScreen != mWorkspace.getCurrentPage()) {
-                    // Close any folder open on the current screen
-                    closeFolder();
-                    // Pull the folder onto this screen
-                    openFolder(folderIcon);
-                }
-            }
-        }
+        
+        openFolder(folderIcon);
+        
+//        if (!info.opened) {
+//            // Close any open folder
+//          //  closeFolder();
+//            // Open the requested folder
+//            openFolder(folderIcon);
+//        } else {
+//            // Find the open folder...
+//            int folderScreen;
+//            if (openFolder != null) {
+//            //    folderScreen = mWorkspace.getPageForView(openFolder);
+//                // .. and close it
+//                closeFolder(openFolder);
+////                if (folderScreen != mWorkspace.getCurrentPage()) {
+////                    // Close any folder open on the current screen
+////                    closeFolder();
+////                    // Pull the folder onto this screen
+////                    openFolder(folderIcon);
+//             //   }
+//            }
+       // }
     }
 
     /**

@@ -626,7 +626,6 @@ public class LauncherModel extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
         final String action = intent.getAction();
-        Log.i(Launcher.TAG, TAG+"==onReceive=="+action+"========="+intent+"===="+context+"===");
         if(!mLoadWorkspaceOk){ return; } //for item replace loading
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
                 || Intent.ACTION_PACKAGE_REMOVED.equals(action)
@@ -708,7 +707,6 @@ public class LauncherModel extends BroadcastReceiver {
                 }
             }
         } else if(Intent.ACTION_WALLPAPER_CHANGED.equals(action)){
-        	//Log.i(Launcher.TAG, TAG+"...onreceive()==wallpaper changed=="+action+"==="+(mCallbacks==null));
         	Callbacks callbacks = mCallbacks==null?null:mCallbacks.get();
             if (callbacks != null) {
                 callbacks.bindWallpaperChanged();
@@ -1045,33 +1043,7 @@ public class LauncherModel extends BroadcastReceiver {
                 for (int y = item.cellY; y < (item.cellY+item.spanY); y++) {
                     if (occupied[containerIndex][x][y] != null) {
                   
-                    		/* unknown what to do 
-                    		 if(item instanceof ShortcutInfo ){
-                    			int screen =item.screen;
-                            int coorX = item.cellX;
-                            int coorY = item.cellY;
-                            for(int i = 0 ;i<16;i++){
-                            	if(coorX>=mCellCountX-1&&coorY>=mCellCountY-1){
-                            		coorX=0; 
-                            		coorY=0;
-                            	}else if(coorX>=mCellCountX-1&&coorY<mCellCountY-1){
-                            		coorX=0;
-                            		coorY++; 
-                            	}else{
-                            		coorX++;  
-                            		}
-                            	if(occupied[screen][coorX][coorY] == null){
-                            		item.screen = screen;
-                            		item.cellX  = coorX;
-                            		item.cellY  =coorY;
-                            		occupied[screen][coorX][coorY] = item;
-                            		return true;
-                            		}
-                            	if(i ==15){
-                            		return false; 
-                            		}
-                            	}
-                    		}else{*/
+             
                         	
                             Log.e(TAG, "Error loading shortcut " + item
                                     + " into cell (" + containerIndex + "-" + item.screen + ":"
@@ -1079,7 +1051,6 @@ public class LauncherModel extends BroadcastReceiver {
                                     + ") occupied by "
                                     + occupied[containerIndex][x][y]);
                             return false;
-                        //}
                     }
                 }
             }
@@ -1093,7 +1064,6 @@ public class LauncherModel extends BroadcastReceiver {
         }
 
         private void loadWorkspace() {
-            Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@@@@@@@@@@@ start=");
             final long t = DEBUG_LOADERS ? SystemClock.uptimeMillis() : 0;
 
             final Context context = mContext;
@@ -1162,7 +1132,6 @@ public class LauncherModel extends BroadcastReceiver {
                 long id;
                 Intent intent;
 
-               // Log.i(Launcher.TAG, TAG+"*********=loadWorkspace="+c.getCount());
                 while (!mStopped && c.moveToNext()) {
                     try {
                         int itemType = c.getInt(itemTypeIndex);
@@ -1359,7 +1328,6 @@ public class LauncherModel extends BroadcastReceiver {
                     Log.d(TAG, "[ " + line + " ]");
                 }
             }
-            Log.i(Launcher.TAG, TAG+"==loadWorkspace=@@@@@@@@@@@@@@@@@@ end=");
             mLoadWorkspaceOk = true;
         }
 
@@ -1369,7 +1337,6 @@ public class LauncherModel extends BroadcastReceiver {
         private void bindWorkspace() {
             final long t = SystemClock.uptimeMillis();
 
-            //Log.i(Launcher.TAG, TAG+"***=bindWorkspace="+sItemsIdMap.size()+"==="+sWorkspaceItems.size());
             // Don't use these two variables in any of the callback runnables.
             // Otherwise we hold a reference to them.
             final Callbacks oldCallbacks = mCallbacks.get();
@@ -1519,7 +1486,6 @@ public class LauncherModel extends BroadcastReceiver {
             if (DEBUG_LOADERS) {
                 Log.d(TAG, "loadAndBindAllApps mAllAppsLoaded=" + mAllAppsLoaded);
             }
-            Log.d(Launcher.TAG, TAG+"loadAndBindAllApps===mAllAppsLoaded=" + mAllAppsLoaded+"==="+mStopped);
             if (!mAllAppsLoaded) {
                 loadAllAppsByBatch();
                 synchronized (LoaderTask.this) {
@@ -1551,7 +1517,6 @@ public class LauncherModel extends BroadcastReceiver {
                     final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                     if (callbacks != null) {
                       if(list!=null){
-                    	  Log.i(Launcher.TAG, TAG+"=====onlyBindAllApps===##########################==");
                         callbacks.bindAllApplications(addAppsWithoutInvalidate(list));
                       }
                     }
@@ -1638,10 +1603,6 @@ public class LauncherModel extends BroadcastReceiver {
                 final ArrayList<ShortcutInfo> added = mAllAppsList.added;
                 mAllAppsList.added = new ArrayList<ShortcutInfo>();
 
-                Log.d(Launcher.TAG, TAG+"loadAllAppsByBatch===="+mAllAppsList.size()+
-                		"=added="+mAllAppsList.added.size()+"=data="+mAllAppsList.data.size()+
-                		"=modified="+mAllAppsList.modified.size()+"=removed="+mAllAppsList.removed.size()+
-                		"=first="+first);
                 mHandler.post(new Runnable() {
                     public void run() {
                         final long t = SystemClock.uptimeMillis();
@@ -1709,11 +1670,7 @@ public class LauncherModel extends BroadcastReceiver {
      				}
      			}
      		}
-     		/*if(i==listCount){
-     			break;
-     		}*/
      	}
-     	//Log.i(Launcher.TAG, TAG+"..addAppsWithoutInvalidate..end.."+listCount+"==="+mPenddingWorkspaceItems.size());
      	return mPenddingWorkspaceItems;
 	}
 
@@ -1796,7 +1753,6 @@ public class LauncherModel extends BroadcastReceiver {
                     public void run() {
                         Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
                         if (callbacks == cb && cb != null) {
-                      	  Log.i(Launcher.TAG, TAG+"=====PackageUpdatedTask===%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%==");
                             callbacks.bindAppsAdded(addAppsWithoutInvalidate(addedFinal));
                             callbacks.bindPackagesUpdated();
                         }
@@ -1876,7 +1832,6 @@ public class LauncherModel extends BroadcastReceiver {
     			ContentResolver resolver = mApp.getContentResolver();
     			Cursor cursor = resolver.query(LauncherSettings.Favorites.CONTENT_URI, 
     					null,LauncherSettings.Favorites.INTENT+" = \'"+intent.toUri(0)+"\'",null,null);
-    			//Log.i("hhl", "===LauncherModel.java==updateShortInfoFromRegister=="+cursor.getCount());
     			if(cursor.moveToFirst()){
         			ShortcutInfo shortcutInfo = new ShortcutInfo();
         			shortcutInfo.screen = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));

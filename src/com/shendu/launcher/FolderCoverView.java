@@ -26,7 +26,7 @@ public class FolderCoverView extends View {
 	private Scroller mScroller;
 	private ArrayList<Bitmap> mRecycleBitmaps;
 	private int mDeltay;
-	public static final int SCROLL_CLOSE_DURATION =500;
+	public static final int SCROLL_CLOSE_DURATION =300;
 	
 	int upOrDown;
 	private boolean isOpening = true;

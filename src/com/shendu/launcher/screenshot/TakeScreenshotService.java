@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import com.shendu.launcher.Launcher;
 import android.animation.AnimatorSet;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -27,10 +28,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,29 +53,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-
+import com.shendu.launcher.R;
 public class TakeScreenshotService extends Service {
 	
     private static final String TAG = "TakeScreenshotService";
-    private Context mContext;
     private WindowManager mWindowManager;
-    private WindowManager.LayoutParams mWindowLayoutParams;
-    private NotificationManager mNotificationManager;
     private Display mDisplay;
-    private DisplayMetrics mDisplayMetrics;
-    private Matrix mDisplayMatrix;
     private Bitmap mScreenBitmap;
-    private View mScreenshotLayout;
-    private ImageView mBackgroundView;
-    private ImageView mScreenshotView;
-    private ImageView mScreenshotFlash;
-    private AnimatorSet mScreenshotAnimation;
-    private int mNotificationIconSize;
-    private float mBgPadding;
-    private float mBgPaddingScale;
     private final IBinder mBinder = new LocalBinder();  
-
-   
+    private Context mContext;
+    private Drawable mMaskBitmap;
+    float[] mDims = new float[2];
     
     public class LocalBinder extends Binder {  
     	 public TakeScreenshotService getService() {  
@@ -77,165 +71,48 @@ public class TakeScreenshotService extends Service {
         }  
     }
     
-    
-    @Override  
     public IBinder onBind(Intent intent) {  
         return mBinder;  
     }  
     
 	public void onCreate() {
 		super.onCreate();
-		   initScreenshot(TakeScreenshotService.this);
-		   
-		   
+		initScreenshot(TakeScreenshotService.this);
 	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
-
-
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-		
-	}
-	
-	public boolean onUnbind(Intent intent) {
-		return super.onUnbind(intent);
-	
-	}
-
-
 
 	public void initScreenshot(Context context) {
-        Resources r = context.getResources();
         mContext = context;
-        LayoutInflater layoutInflater = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        // Inflate the screenshot layout
-        mDisplayMatrix = new Matrix();
-
-
-        // Setup the window that we are going to use
-        mWindowLayoutParams = new WindowManager.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0, 0,
-                WindowManager.LayoutParams.TYPE_SECURE_SYSTEM_OVERLAY,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-                    | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                    | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
-                PixelFormat.TRANSLUCENT);
-        mWindowLayoutParams.setTitle("ScreenshotAnimation");
+        mMaskBitmap = mContext.getResources().getDrawable(R.drawable.open_folder_top_botom_mask);
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        mNotificationManager =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mDisplay = mWindowManager.getDefaultDisplay();
-        mDisplayMetrics = new DisplayMetrics();
-        mDisplay.getRealMetrics(mDisplayMetrics);
-
-        // Get the various target sizes
-        mNotificationIconSize =
-            r.getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
-
-        // Scale has to account for both sides of the bg
-        mBgPadding = (float) (74);
-        mBgPaddingScale = mBgPadding /  mDisplayMetrics.widthPixels;
-
-        // Setup the Camera shutter sound
-
+        mDims[0] = mDisplay.getWidth();
+        mDims[1] = mDisplay.getHeight();
     }
     
-    /**
-     * @return the current display rotation in degrees
-     */
-    private float getDegreesForRotation(int value) {
-        switch (value) {
-        case Surface.ROTATION_90:
-            return 360f - 90f;
-        case Surface.ROTATION_180:
-            return 360f - 180f;
-        case Surface.ROTATION_270:
-            return 360f - 270f;
-        }
-        return 0f;
-    }
-
     /**
      * Takes a screenshot of the current display and shows an animation.
      */
-   public Bitmap takeScreenshot(int startBarHeight) {
-        // We need to orient the screenshot correctly (and the Surface api seems to take screenshots
-        // only in the natural orientation of the device :!)
- 
-        
-        float[] dims = {mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels};
-        int rot = mDisplay.getRotation();
-        // Allow for abnormal hardware orientation
-        rot = (rot + (android.os.SystemProperties.getInt("ro.sf.hwrotation",0) / 90 )) % 4;
-        float degrees = getDegreesForRotation(rot);
-        boolean requiresRotation = (degrees > 0);
-        if (requiresRotation) {
-            // Get the dimensions of the device in its native orientation
-            mDisplayMatrix.reset();
-            mDisplayMatrix.preRotate(-degrees);
-            mDisplayMatrix.mapPoints(dims);
-            dims[0] = Math.abs(dims[0]);
-            dims[1] = Math.abs(dims[1]);
-        }
-        
-        // Take the screenshot
-        mScreenBitmap = Surface.screenshot((int) dims[0], (int) dims[1]);
-        if (mScreenBitmap == null) {
-           // notifyScreenshotError(mContext, mNotificationManager);
-        }
-        mScreenBitmap= Bitmap.createBitmap(mScreenBitmap, 0, startBarHeight, (int) dims[0], (int) dims[1] - startBarHeight);
-        if (requiresRotation) {
-            // Rotate the screenshot to the current orientation
-            Bitmap ss = Bitmap.createBitmap(mDisplayMetrics.widthPixels,
-                    mDisplayMetrics.heightPixels, Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(ss);
-            c.translate(ss.getWidth() / 2, ss.getHeight() / 2);
-            c.rotate(degrees);
-            c.translate(-dims[0] / 2, -dims[1] / 2);
-            c.drawBitmap(mScreenBitmap, 0, 0, null);
-            c.setBitmap(null);
-            mScreenBitmap = ss;
-        }
+   public Bitmap takeScreenshot(final int startBarHeight) {
+        mScreenBitmap = Surface.screenshot((int)mDims[0],(int)mDims[1]);
+        mScreenBitmap= Bitmap.createBitmap(mScreenBitmap, 0, startBarHeight, 
+        		 (int)mDims[0], (int)mDims[1]-startBarHeight);
 
-        // Optimizations
-        mScreenBitmap.setHasAlpha(false);
-        mScreenBitmap.prepareToDraw();
-
-//        long time =SystemClock.currentThreadTimeMillis();
-//        Log.i("zlf", "......................savePic)"+time);
-//		savePic(mScreenBitmap,"sdcard/"+String.valueOf(time)+".png");
+        		Drawable[] array = new Drawable[2];
+        		array[0] = new BitmapDrawable(mScreenBitmap);
+        		array[1] = mMaskBitmap;
+        		LayerDrawable layoutDrawable = new LayerDrawable(array); 
+        		layoutDrawable.setLayerInset(1,0,0,0,0);
+        		Drawable drawable = layoutDrawable.mutate();
+        		mScreenBitmap = Bitmap.createBitmap(
+        				(int)mDims[0],(int)mDims[1]-startBarHeight,
+        				drawable.getOpacity() != PixelFormat.OPAQUE ?
+        						Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565
+        				);
+        		Canvas canvas = new Canvas(mScreenBitmap);
+        		drawable.setBounds(0, 0,(int)mDims[0],(int)mDims[1]-startBarHeight);  
+        		drawable.draw(canvas);
         return mScreenBitmap;
     }
 
-
-    private void savePic(Bitmap b,String strFileName){ 
-        FileOutputStream fos = null; 
-        try { 
-            fos = new FileOutputStream(strFileName); 
-            if (null != fos) 
-            { 
-            	b.compress(Bitmap.CompressFormat.PNG, 90, fos); 
-                fos.flush(); 
-                fos.close(); 
-            } 
-        } catch (FileNotFoundException e) { 
-            e.printStackTrace(); 
-        } catch (IOException e) { 
-            e.printStackTrace(); 
-        } 
-    }  
-    
-    
-    
-    
     
 }

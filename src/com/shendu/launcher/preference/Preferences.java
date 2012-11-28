@@ -41,27 +41,6 @@ public class Preferences extends PreferenceActivity {
         mSharedPreferences = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         
-        /*SharedPreferences prefs = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
-        prefs.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(PreferencesProvider.PREFERENCES_CHANGED, true);
-        editor.commit();*/
-                
-
-        // Remove some preferences on large screens
-        if (LauncherApplication.isScreenLarge()) {
-            PreferenceGroup homescreen = (PreferenceGroup) findPreference("ui_homescreen");
-            homescreen.removePreference(findPreference("ui_homescreen_grid"));
-            homescreen.removePreference(findPreference("ui_homescreen_screen_padding_vertical"));
-            homescreen.removePreference(findPreference("ui_homescreen_screen_padding_horizontal"));
-            homescreen.removePreference(findPreference("ui_homescreen_indicator"));
-
-            PreferenceGroup drawer = (PreferenceGroup) findPreference("ui_drawer");
-            drawer.removePreference(findPreference("ui_drawer_indicator"));
-        }
-
-        //Preference version = findPreference("application_version");
-        //version.setTitle(getString(R.string.application_name));
     }
     
     protected void onDestroy() {
