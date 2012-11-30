@@ -97,6 +97,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Advanceable;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -112,6 +115,7 @@ import com.android.common.Search;
 import com.shendu.launcher.R;
 import com.shendu.launcher.DropTarget.DragObject;
 import com.shendu.launcher.preference.*;
+import com.shendu.util.DragGrid;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -1970,7 +1974,7 @@ public final class Launcher extends Activity
 					mWorkspace.removeTheHeaderOrFooterSpace(); 
 			    	//mWorkspace.initAnimationArrays();
 					// update all when drag item in editMode
-					mWorkspace.updateScreensFromIndex(0);
+			
 					ObjectAnimator tranAnim2 = ObjectAnimator
 							.ofFloat(mAppsCustomizeTabHost, "translationY",0f,249f)
 							.setDuration(300);
@@ -1987,7 +1991,9 @@ public final class Launcher extends Activity
 					mSearchDropTargetBar.showSearchBar(true);
 					mWorkspace.getChangeStateAnimation(Workspace.State.NORMAL,true, 0);
 					mState = State.WORKSPACE;
-			setScreenNoLimit();
+			  setScreenNoLimit();
+			
+			mWorkspace.updateScreensFromIndex(0);
 			mWorkspace.showScrollingIndicator(true);
 		}
     }
@@ -3122,8 +3128,12 @@ public final class Launcher extends Activity
             // Short circuit if we are loading dock items for a configuration which has no dock
             if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                     mHotseat == null) {
-                continue;
-            }else if(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&mHotseat != null){
+                mHotseat = (Hotseat) findViewById(R.id.hotseat);
+                if (mHotseat != null) {
+                    mHotseat.setup(this);
+                }
+            }
+            if(item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&mHotseat != null){
             	  mHotseat.setGridSize(item.cellX+1, true,true); //used to update hotseat
              }
 
@@ -3165,7 +3175,6 @@ public final class Launcher extends Activity
                     break;
             }
         }
-
         workspace.requestLayout();
     }
 
@@ -3767,9 +3776,9 @@ public final class Launcher extends Activity
 		float oldAlpha; //for cellLayout and cellChildren alpha
 		int oldVisivile; //for cellLayout visibile
 		//PreviewTouchHandler handler = new PreviewTouchHandler(anchor);
-		final ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>(count+1);  
+		final ArrayList<PreViewDate> previewDates = new ArrayList<PreViewDate>(count+1);  
 		for (int i = start; i < end; i++) {
-			HashMap<String,Bitmap > imageMap = new HashMap<String, Bitmap>();  
+		//	HashMap<String,Bitmap > imageMap = new HashMap<String, Bitmap>();  
 			cell = (CellLayout) workspace.getChildAt(i);
 			oldAlpha = cell.getAlpha();
 			oldVisivile = cell.getVisibility();
@@ -3785,7 +3794,9 @@ public final class Launcher extends Activity
 			c.scale(scale-0.02f, scale-0.02f);
 			c.translate(-cell.getPaddingLeft()+15, -cell.getPaddingTop());
 			cell.dispatchDraw(c);
-			bitmaps.add(bitmap);
+			PreViewDate date =new PreViewDate(i, i==mWorkspace.mCurrentPage,i==mWorkspace.mDefaultHomescreen ,bitmap,cell);
+			
+			previewDates.add(date);
 			if(oldAlpha!=cell.getAlpha()){ //recovery cellLayout and cellChildren alpha to oldAlpha
 				cell.setShortcutAndWidgetAlpha(oldAlpha);
 			}
@@ -3795,19 +3806,34 @@ public final class Launcher extends Activity
 		}
 		
 		/****add by zlf***************/
-		PreviewAdapter previewAdapter = new PreviewAdapter(this, bitmaps);
-		GridView preViewGrid=new GridView(this);
+		PreViewDateAdapter previewAdapter = new PreViewDateAdapter(Launcher.this, previewDates);
+		DragGrid preViewGrid=new DragGrid(Launcher.this,mWorkspace);
 		preViewGrid.setVerticalSpacing(10);
 		preViewGrid.setHorizontalSpacing(10);
 		preViewGrid.setPadding(10, 10, 10, 10);
-		preViewGrid.setFocusableInTouchMode(false);
-		preViewGrid.setFocusable(false);
+
 		preViewGrid.setNumColumns(3);
 		preViewGrid.setGravity(Gravity.CENTER);
 		preViewGrid.setAdapter(previewAdapter);
+		
 		preview.addView(preViewGrid,LinearLayout.LayoutParams.MATCH_PARENT,
 				LinearLayout.LayoutParams.MATCH_PARENT);
-       /***************************************/
+		
+		preViewGrid.setOnItemClickListener(new OnItemClickListener(){
+
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				// TODO Auto-generated method stub
+				
+				 if(mScreenPopupWindow!=null){
+				 mScreenPopupWindow.dismiss();
+			 }
+			 mWorkspace.snapToPage(arg2);
+			}
+			
+		});
+		
+
 		mScreenPopupWindow = new PopupWindow(this);
 		mScreenPopupWindow.setContentView(preview);
 		CellLayout cell1 = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
@@ -3824,88 +3850,165 @@ public final class Launcher extends Activity
 				dismissPreview();
 				new Thread(){
 					public void run(){
-						for (Bitmap bitmap : bitmaps){
-							bitmap.recycle();
+						for (PreViewDate bitmapDate : previewDates){
+							
+							bitmapDate.mScreenBitmap.recycle();
+							bitmapDate=null;
 						}
+				
 					}
 				}.start();
 			}
 		});
 	}
 
-	 class PreviewAdapter extends BaseAdapter{
-		 private Context mContext;
-		 private ArrayList<Bitmap> imageMaps =null;  
-		 //private PreviewTouchHandler handler;
-		 private SharedPreferences sharePreferences =
-		             getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_WORLD_READABLE);
-		 //public PreviewAdapter(Context context,ArrayList<Bitmap> imageMap,PreviewTouchHandler mHandler){
-		 public PreviewAdapter(Context context,ArrayList<Bitmap> imageMap){
-			 this.mContext=context;
-			 this.imageMaps=imageMap;
-			 //this.handler=mHandler;
-		 }
-
-		 public int getCount() {
-			 return imageMaps.size();
-		 }
-
-		 public Object getItem(int arg0) {
-			 return null;
-		 }
-
-		 public long getItemId(int arg0) {
-			 return 0;
-		 }
-
-		 public View getView(final int arg0, View arg1, ViewGroup arg2) {
-			 View view=null;
-			 view=getLayoutInflater().inflate(R.layout.launcher_preview, null);
-			 ImageView image=(ImageView) view.findViewById(R.id.launcher_preview_image);
-
-			 
-			 int defaultPage = mWorkspace.mDefaultHomescreen;
-			 	if(mWorkspace.mCurrentPage==arg0){
-			 		image.setBackgroundDrawable(mContext.getResources()
-			 				.getDrawable(R.drawable.preview_background_currentpage));
-			 	}else{
-			 		if(defaultPage==arg0){
-			 			image.setBackgroundDrawable(mContext.getResources()
-			 					.getDrawable(R.drawable.preview_background_defaultpage));
-			 		}else{
-			 			image.setBackgroundDrawable(mContext.getResources()
-			 					.getDrawable(R.drawable.preview_background));
-			 		}
-			 	}
-			 	image.setImageBitmap(imageMaps.get(arg0)); 
-			 	image.setTag(arg0);
-			 	image.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View v) {
-						 if(mScreenPopupWindow!=null){
-							 mScreenPopupWindow.dismiss();
-						 }
-						 mWorkspace.snapToPage((Integer) v.getTag());
-					}
-				});
-			 	image.setFocusable(true);
-			 	
-			 final ImageView setDefaultPage=(ImageView) view.findViewById(R.id.launcher_preview_defaultpage);
-			 	if(defaultPage==arg0){
-			 		setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
-			 	}else{
-			 		setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
-			 	}
-
-			 	setDefaultPage.setOnClickListener(new View.OnClickListener() {
-			 		public void onClick(View v) {
-			 			mWorkspace.setDefaultPage(arg0);
-			 			PreviewAdapter.this.notifyDataSetChanged();
-			 		}
-			 	});
-			 return view;
-		 }
-	}
+      public class PreViewDate {
+    	  int mScreenIndex;
+    	  boolean  mCurrent;
+    	  boolean  mDefualtScreen;
+    	  Bitmap mScreenBitmap;
+    	  CellLayout mCelllayout;
+    	  public PreViewDate(int screenIndex,boolean current,boolean defualtScreen,Bitmap screenBitmap,CellLayout celllayout ){
+    		  mScreenIndex = screenIndex;
+    		  mCurrent =current;
+    		  mDefualtScreen=defualtScreen;
+    		  mScreenBitmap=screenBitmap;
+    		  mCelllayout =celllayout;
+    	  }
+      }
 	 
+	 public class PreViewDateAdapter extends BaseAdapter {
+
+			private Context context;
+			private ArrayList<PreViewDate> lstDate;
+
+			private int holdPosition;
+			private boolean isChanged = false;
+			private boolean ShowItem = false;
+
+			public PreViewDateAdapter(Context mContext, ArrayList<PreViewDate> list) {
+				this.context = mContext;
+				lstDate = list;
+			}
+
+			public int getCount() {
+				return lstDate.size();
+			}
+
+			public Object getItem(int position) {
+				return lstDate.get(position);
+			}
+
+			public long getItemId(int position) {
+				return position;
+			}
+
+			public void exchange(int startPosition, int endPosition) {
+				holdPosition = endPosition;
+				Object startObject = getItem(startPosition);
+				if(startPosition < endPosition){
+				    lstDate.add(endPosition + 1, (PreViewDate) startObject);
+				    lstDate.remove(startPosition);
+				}else{
+					lstDate.add(endPosition,(PreViewDate)startObject);
+					lstDate.remove(startPosition + 1);
+				}
+				isChanged = true;
+				notifyDataSetChanged();
+			}
+			
+			public void showDropItem(boolean showItem){
+				this.ShowItem = showItem;		
+			}
+			
+			public void notifyScreenSetChanged(){
+				
+				mWorkspace.removeAllViews();
+				int count = lstDate.size();
+				for (int i = 0 ; i < count ; i++){
+					mWorkspace.addView(lstDate.get(i).mCelllayout);
+					
+					if(lstDate.get(i).mCurrent){
+						mWorkspace.setCurrentPage(i);
+					}
+					
+					if(lstDate.get(i).mDefualtScreen){
+						mWorkspace.setDefaultPage(i);
+					}
+				}
+				mWorkspace.updateScreensFromIndex(0);
+				
+			}
+
+			public View getView(final int arg0, View convertView, ViewGroup parent) {
+				convertView = LayoutInflater.from(context).inflate(R.layout.launcher_preview, null);
+			    ImageView imageview =(ImageView)convertView.findViewById(R.id.launcher_preview_image);
+
+			
+				 	if(lstDate.get(arg0).mCurrent){
+				 		imageview.setBackgroundDrawable(context.getResources()
+				 				.getDrawable(R.drawable.preview_background_currentpage));
+				 	}else{
+				 		if(lstDate.get(arg0).mDefualtScreen){
+				 			imageview.setBackgroundDrawable(context.getResources()
+				 					.getDrawable(R.drawable.preview_background_defaultpage));
+				 		}else{
+				 			imageview.setBackgroundDrawable(context.getResources()
+				 					.getDrawable(R.drawable.preview_background));
+				 		}
+				 	}
+				 	imageview.setImageBitmap(lstDate.get(arg0).mScreenBitmap); 
+				 	imageview.setTag(arg0);
+
+					final ImageView imageDelete=(ImageView)convertView.findViewById(R.id.launcher_preview_imagedelete);
+				 	 
+					if((((CellLayout) mWorkspace.getChildAt(arg0)).existsLastOccupiedCell()[0]==-1)){
+					
+		        		imageDelete.setVisibility(View.VISIBLE);
+		        	}
+					imageDelete.setOnClickListener(new View.OnClickListener() {
+			
+				 		public void onClick(View v) {
+				 			lstDate.remove(arg0);
+				 			notifyDataSetChanged();
+				 			mWorkspace.removeEmptyScreen(arg0);
+				 	
+				 		}
+					});
+				 	
+				 final ImageView setDefaultPage=(ImageView) convertView.findViewById(R.id.launcher_preview_defaultpage);
+				 	if(lstDate.get(arg0).mDefualtScreen){
+				 		setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_on)); 
+				 	}else{
+				 		setDefaultPage.setImageDrawable(getResources().getDrawable(R.drawable.preview_home_none)); 
+				 	}
+				
+				 	setDefaultPage.setOnClickListener(new View.OnClickListener() {
+				 		public void onClick(View v) {
+				 			mWorkspace.setDefaultPage(arg0);
+				 			int count = lstDate.size();
+				 			for(int i = 0 ; i < count ; i++){
+				 				if(arg0 ==i ){
+				 					lstDate.get(i).mDefualtScreen = true;
+				 				}else{
+				 					lstDate.get(i).mDefualtScreen = false;
+				 				}
+				 				
+				 			}
+				 			PreViewDateAdapter.this.notifyDataSetChanged();
+				 		}
+				 	});
+				 	
+					if (isChanged){
+					    if (arg0 == holdPosition){
+					    	if(!ShowItem){
+						        convertView.setVisibility(View.INVISIBLE);
+					    	}
+					    }
+					}
+				 return convertView;
+			}
+		}
 }
 
 interface LauncherTransitionable {

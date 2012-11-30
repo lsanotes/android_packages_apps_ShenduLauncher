@@ -16,12 +16,13 @@
      android:layout_height="wrap_content"
      android:layout_width="wrap_content"
      android:visibility="gone"
+     android:src="@drawable/preview_delete_bg"
      android:layout_marginTop="1dip"/>
 
   <ImageView 
       android:id="@+id/launcher_preview_defaultpage"
       android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
+      android:layout_width="fill_parent"
       android:paddingBottom="5dip"
       android:layout_gravity="bottom|center"/>
 </FrameLayout>

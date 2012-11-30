@@ -542,7 +542,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
            public void run() {
                updatePackages();
            }
-        }, 2500);
+        },4000);
     }
 
 	/** 
@@ -2013,20 +2013,23 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      * We load an extra page on each side to prevent flashes from scrolling and loading of the
      * widget previews in the background with the AsyncTasks.
      */
-    final static int sLookBehindPageCount = 3;
-    final static int sLookAheadPageCount = 3;
+//    final static int sLookBehindPageCount = 3;
+//    final static int sLookAheadPageCount = 3;
     protected int getAssociatedLowerPageBound(int page) {
-        final int count = getChildCount();
-        int windowSize = Math.min(count, sLookBehindPageCount + sLookAheadPageCount + 1);
-        int windowMinIndex = Math.max(Math.min(page - sLookBehindPageCount, count - windowSize), 0);
-        return windowMinIndex;
+//        final int count = getChildCount();
+//        int windowSize = Math.min(count, sLookBehindPageCount + sLookAheadPageCount + 1);
+//        int windowMinIndex = Math.max(Math.min(page - sLookBehindPageCount, count - windowSize), 0);
+//        return windowMinIndex;
+        return Math.max(0, page-2);
+    	
     }
     protected int getAssociatedUpperPageBound(int page) {
-        final int count = getChildCount();
-        int windowSize = Math.min(count, sLookBehindPageCount + sLookAheadPageCount + 1);
-        int windowMaxIndex = Math.min(Math.max(page + sLookAheadPageCount, windowSize - 1),
-                count - 1);
-        return windowMaxIndex;
+//        final int count = getChildCount();
+//        int windowSize = Math.min(count, sLookBehindPageCount + sLookAheadPageCount + 1);
+//        int windowMaxIndex = Math.min(Math.max(page + sLookAheadPageCount, windowSize - 1),
+//                count - 1);
+//        return windowMaxIndex;
+    	return Math.min(page+2, getChildCount() - 1);
     }
 
     @Override

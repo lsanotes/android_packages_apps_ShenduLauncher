@@ -534,6 +534,7 @@ public class Workspace extends SmoothPagedView
     	if(!isSmall()){
         	isShowPreviews=true;
         	mLauncher.showPreviews(null,0, getChildCount());
+        	
     	}
     }
 	
@@ -4726,7 +4727,6 @@ public class Workspace extends SmoothPagedView
         }
         return null;
     }
-
     void clearDropTargets() {
         ArrayList<ShortcutAndWidgetContainer> childrenLayouts =
                 getAllShortcutAndWidgetContainers();
@@ -4823,8 +4823,6 @@ public class Workspace extends SmoothPagedView
                             mDragController.removeDropTarget((DropTarget)child);
                         }
                     }
-               
-             
 
                     if (childCount > 0) {
                         layout.requestLayout();
@@ -4874,10 +4872,8 @@ public class Workspace extends SmoothPagedView
                 
                 int count = cellLayouts.size();
                 for(int j = 0 ; j <count;j++){
-                	Log.i(Launcher.TAG, Launcher.TAG+" ...........removeItems.  j "+j);
                 	 if(j<getChildCount()&& removeEmptyScreen(j)){
                     	    j--;
-                        updateCurrentPageItemCoordinate();
                     }
                 }
             }
@@ -4900,12 +4896,9 @@ public class Workspace extends SmoothPagedView
     	if(pageCount>=count||pageCount<0){
     		return;
     	}
-    	postDelayed(new Runnable() {
-    		public void run() {
-    			updateScreensFromIndex(pageCount);
-    		}
-    	},1500);
-
+    	
+    	updateScreensFromIndex(pageCount);
+    
     }
     
 	public void updateScreensFromIndex(int index){ //used for remove empty screen,and upadte item screen in database

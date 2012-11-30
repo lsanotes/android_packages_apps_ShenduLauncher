@@ -128,15 +128,15 @@ public class PagedViewWidget extends LinearLayout {
         if (preview != null) {
             image.mAllowRequestLayout = false;
             image.setImageDrawable(preview);
-            if (mIsAppWidget) {
-                // center horizontally
-                int[] imageSize = getPreviewSize();
-                int centerAmount = (imageSize[0] - preview.getIntrinsicWidth()) / 2;
-                image.setPadding(image.getPaddingLeft() + centerAmount,
-                        image.getPaddingTop(),
-                        image.getPaddingRight(),
-                        image.getPaddingBottom());
-            }
+//            if (mIsAppWidget) {
+//                // center horizontally
+//                int[] imageSize = getPreviewSize();
+//                int centerAmount = (imageSize[0] - preview.getIntrinsicWidth()) / 2;
+//                image.setPadding(image.getPaddingLeft() + centerAmount,
+//                        image.getPaddingTop(),
+//                        image.getPaddingRight(),
+//                        image.getPaddingBottom());
+//            }
             image.setAlpha(1f);
             image.mAllowRequestLayout = true;
         }
