@@ -3162,7 +3162,7 @@ public class Workspace extends SmoothPagedView
             sourceInfo.cellY = -1;
             if(target==mHotseat.getLayout()){
               mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
-              target.setUseTempCoords(false);//for hotseat lose item
+           //   target.setUseTempCoords(false);//for hotseat lose item
               
         	  }
             // If the dragView is null, we can't animate
@@ -3199,7 +3199,7 @@ public class Workspace extends SmoothPagedView
                 		cellLayout.removeView(mDragInfo.cell);
                         if(target==mHotseat.getLayout()){
                             mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
-                            target.setUseTempCoords(false);//for hotseat lose item
+                          //  target.setUseTempCoords(false);//for hotseat lose item
                            }
                 	}
                 }
@@ -3886,6 +3886,7 @@ public class Workspace extends SmoothPagedView
             				mDragTargetLayout.removeView( mDragInfo.cell );
             			}
             			mHotseat.setGridSize(mHotseat.mCellCountX-1,false,false); //used to update hotseat
+            		//	layout.setUseTempCoords(false);
             		}
             	}
             	mDragTargetLayout = layout;
@@ -3893,6 +3894,7 @@ public class Workspace extends SmoothPagedView
             	mDragTargetLayout.onDragEnter();
             	if(mDragTargetLayout == mHotseat.getLayout() &&(mDragTargetLayout.getShortcutsAndWidgets().getChildCount()<5)){
             		mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false); //used to update hotseat 
+            		//layout.setUseTempCoords(false);
             	}
                 //setCurrentDropLayout(layout);
                 //setCurrentDragOverlappingLayout(layout);
@@ -4495,6 +4497,7 @@ public class Workspace extends SmoothPagedView
             cellLayout.onDropChild(mDragInfo.cell);
             if( mDragInfo.container== LauncherSettings.Favorites.CONTAINER_HOTSEAT){
             	mHotseat.setGridSize(mHotseat.mCellCountX+1,true,false); //used update hotseat 
+           
             	addInScreen(mDragInfo.cell, -101,  
             		 mHotseat.mCellCountX-1, mHotseat.mCellCountX-1, mDragInfo.cellY, mDragInfo.spanX, mDragInfo.spanY);
               }

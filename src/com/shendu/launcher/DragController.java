@@ -119,7 +119,9 @@ public class DragController {
     protected int mFlingToDeleteThresholdVelocity;
     private VelocityTracker mVelocityTracker;
     public boolean mAddNewScreen = false ;// used to drag last right screen,add an empty screen
-
+    
+    private int effectiveY;
+   
     /**
      * Interface to receive notifications when a drag starts or stops
      */
@@ -157,10 +159,20 @@ public class DragController {
         float density = r.getDisplayMetrics().density;
         mFlingToDeleteThresholdVelocity =
                 (int) (r.getInteger(R.integer.config_flingToDeleteMinVelocity) * density);
+        
+        
     }
 
     public boolean dragging() {
         return mDragging;
+    }
+    
+    /**
+     * set Effective y when  drag to right and add new screen;
+     * @param y
+     */
+    public void setEffectiveY(float  y){
+    	effectiveY =(int)y;
     }
 
     /**
@@ -482,6 +494,7 @@ public class DragController {
     }
 
     private void handleMoveEvent(int x, int y) {
+    	
         mDragObject.dragView.move(x, y);
 
         // Drop on someone?
@@ -537,8 +550,8 @@ public class DragController {
                     mScrollRunnable.setDirection(SCROLL_RIGHT);
                     mHandler.postDelayed(mScrollRunnable, delay);
                 }else{
-                	if(!mAddNewScreen && !mLauncher.getWorkspace().isSmall()){ // drag last right screen,add an empty screen
-                      mAddNewScreen= true;
+                	if(!mAddNewScreen && !mLauncher.getWorkspace().isSmall()&& y<effectiveY){ // drag last right screen,add an empty screen
+                     mAddNewScreen= true;
                   	 mScrollState = SCROLL_OUTSIDE_ZONE;
                   	 mLauncher.getWorkspace().addScreen(false); 
                   	 mLauncher.getWorkspace().savedThePageCount();

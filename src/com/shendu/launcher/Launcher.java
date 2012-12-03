@@ -416,7 +416,6 @@ public final class Launcher extends Activity
             mModel.startLoader(true);
         }
 
-
         // For handling default keys
         mDefaultKeySsb = new SpannableStringBuilder();
         Selection.setSelection(mDefaultKeySsb, 0);
@@ -432,6 +431,8 @@ public final class Launcher extends Activity
         
         mscreenHeight= getWindowManager().getDefaultDisplay().getHeight();
         mscreenwidth=  getWindowManager().getDefaultDisplay().getWidth();
+        
+        mDragController.setEffectiveY(mscreenHeight-1.5f*getResources().getDimension(R.dimen.button_bar_height_plus_padding));
     }
 
     private void updateGlobalIcons() {
@@ -617,10 +618,12 @@ public final class Launcher extends Activity
     @Override
     protected void onActivityResult(
             final int requestCode, final int resultCode, final Intent data) {
+        
         if (requestCode == REQUEST_BIND_APPWIDGET) {
             int appWidgetId = data != null ?
                     data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
             if (resultCode == RESULT_CANCELED) {
+            	  mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
                 completeTwoStageWidgetDrop(RESULT_CANCELED, appWidgetId);
             } else if (resultCode == RESULT_OK) {
                 addAppWidgetImpl(appWidgetId, mPendingAddInfo, null, mPendingAddWidgetInfo);
@@ -664,6 +667,9 @@ public final class Launcher extends Activity
             } else {
                 delayExitSpringLoadedMode = completeAdd(args);
             }
+        }else if (resultCode == RESULT_CANCELED) {
+         mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
+           
         }
         mDragLayer.clearAnimatedView();
     }
@@ -687,15 +693,9 @@ public final class Launcher extends Activity
                             mPendingAddInfo.screen, layout, null);
                 }
             };
-        } else if (resultCode == RESULT_CANCELED) {
-            animationType = Workspace.CANCEL_TWO_STAGE_WIDGET_DROP_ANIMATION;
-            onCompleteRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    //exitSpringLoadedDragModeDelayed((resultCode != RESULT_CANCELED), false,
-                            //null); //remove by hhl
-                }
-            };
+        } else if (resultCode == RESULT_CANCELED){
+       
+        	mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
         }
         if (mDragLayer.getAnimatedView() != null) {
             mWorkspace.animateWidgetDrop(mPendingAddInfo, cellLayout,
@@ -710,7 +710,6 @@ public final class Launcher extends Activity
     @Override
     protected void onResume() {
         super.onResume();
-
         // Process any items that were added while Launcher was away
         InstallShortcutReceiver.flushInstallQueue(this);
 
@@ -1467,7 +1466,6 @@ public final class Launcher extends Activity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         // Close the menu
         if (Intent.ACTION_MAIN.equals(intent.getAction())) {
             // also will cancel mWaitingForResult.
@@ -3407,7 +3405,6 @@ public final class Launcher extends Activity
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
         // Remove the progress bar entirely; we could also make it GONE
         // but better to remove it since we know it's not going to be used
-    	Log.i(TAG,TAG+"==bindAllApplications=="+apps.size());
 		addAppsToWorkspace(apps);
     }
 

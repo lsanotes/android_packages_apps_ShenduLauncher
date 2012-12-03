@@ -99,7 +99,6 @@ public class DragGrid extends GridView {
 				    	specialPosition = -1;			    
 				   // isCountXY = true;
 				}
-				Log.i("Launcher", "....setOnItemLongClickListener():..leftBottomPosition:"+specialPosition+leftBottomPosition);
 			    if(specialPosition>=0&&specialPosition != dragPosition && dragPosition != -1){
 			        specialItemY = getChildAt(specialPosition).getTop();
 			    }else{
@@ -131,7 +130,6 @@ public class DragGrid extends GridView {
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		
 		if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-			Log.i("Launcher", "....setOnItemLongClickListener():.ev.getX()."+ev.getX()+"  ev.getY()"+ ev.getY());
 			return setOnItemLongClickListener(ev ,ev.getX() ,ev.getY());
 		}
 		return super.onInterceptTouchEvent(ev);

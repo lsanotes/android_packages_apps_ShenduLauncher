@@ -379,7 +379,6 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 			Matrix matrix = new Matrix();
 			matrix.postScale(scaleW, scaleH); 
 			Bitmap thumbmp = Bitmap.createBitmap(orgbmp,0,0,oldWidth,oldHeight,matrix,true); 
-			Log.i(Launcher.TAG,"FolderIcon"+"....+ shenduCreateFolderThumBitmap() "+folderSize+ " scaleW: " +scaleW );
 			
 			if (i == 3)
 				canvas.drawBitmap(thumbmp, newWidth+mgapInfolder, newWidth+mgapInfolder, null);
