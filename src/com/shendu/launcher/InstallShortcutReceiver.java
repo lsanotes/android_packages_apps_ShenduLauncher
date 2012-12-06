@@ -17,17 +17,21 @@
 package com.shendu.launcher;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Debug;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.shendu.launcher.LauncherModel.Callbacks;
 import com.shendu.launcher.R;
 import com.shendu.launcher.preference.PreferencesProvider;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,7 +61,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     // Determines whether to defer installing shortcuts immediately until
     // processAllPendingInstalls() is called.
     private static boolean mUseInstallQueue = false;
-
+    
     private static class PendingInstallShortcutInfo {
         Intent data;
         Intent launchIntent;
@@ -80,6 +84,16 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         if (intent == null) {
             return;
         }
+        //used to filter some unwanted shortcuts
+        Set<String> set = intent.getCategories();
+        Log.i(Launcher.TAG," InstallShortcutReceiver.java  onReceive().....intent:"+intent+"  "+intent.getExtras());
+        if(set!=null){
+           if(set.contains(Intent.CATEGORY_LAUNCHER) && intent.getExtras()==null){
+                Log.i(Launcher.TAG,"  InstallShortcutReceiver.java  onReceive()    do not create shortcut  ");
+            	return;
+            }
+         }
+        
         // This name is only used for comparisons and notifications, so fall back to activity name
         // if not supplied
         String name = data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME);
@@ -130,38 +144,23 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
 
         // Lock on the app so that we don't try and get the items while apps are being added
         LauncherApplication app = (LauncherApplication) context.getApplicationContext();
-        final int[] result = {INSTALL_SHORTCUT_SUCCESSFUL};
-        boolean found = false;
-        synchronized (app) {
-            final ArrayList<ItemInfo> items = LauncherModel.getItemsInLocalCoordinates(context);
-            final boolean exists = LauncherModel.shortcutExists(context, name, intent);
-
-            // Try adding to the workspace screens incrementally, starting at the default or center
-            // screen and alternating between +1, -1, +2, -2, etc. (using ~ ceil(i/2f)*(-1)^(i-1))
-            final int screenCount = PreferencesProvider.Interface.Homescreen.getNumberHomescreens(context);
-            final int screenDefault = PreferencesProvider.Interface.Homescreen.getDefaultHomescreen(context, screenCount / 2);
-            final int screen = (screenDefault >= screenCount) ? screenCount / 2 : screenDefault;
-
-            for (int i = 0; i <= (2 * screenCount) + 1 && !found; ++i) {
-                int si = screen + (int) ((i / 2f) + 0.5f) * ((i % 2 == 1) ? 1 : -1);
-                if (0 <= si && si < screenCount) {
-                    found = installShortcut(context, data, items, name, intent, si, exists, sp,
-                            result);
+        //add,used to add the mark shortcut
+        boolean exists = LauncherModel.shortcutExists(context, name, intent);
+        if(!exists){
+        	LauncherModel launcherModel = app.getModel();
+            if(launcherModel!=null){
+            	Callbacks callbacks = launcherModel.mCallbacks.get();
+            	ShortcutInfo shortcutInfo = launcherModel.infoFromShortcutIntent(context, data,null);
+            	ArrayList<ShortcutInfo> list = new ArrayList<ShortcutInfo>();
+            	list.add(shortcutInfo);
+            	if(callbacks!=null){
+                	callbacks.bindAllApplications(list);
                 }
             }
+        }else{
+        	Toast.makeText(context,context.getString(R.string.shortcut_exist_toast_message),Toast.LENGTH_SHORT).show();
         }
-
-        // We only report error messages (duplicate shortcut or out of space) as the add-animation
-        // will provide feedback otherwise
-        if (!found) {
-            if (result[0] == INSTALL_SHORTCUT_NO_SPACE) {
-                Toast.makeText(context, context.getString(R.string.completely_out_of_space),
-                        Toast.LENGTH_SHORT).show();
-            } else if (result[0] == INSTALL_SHORTCUT_IS_DUPLICATE) {
-                Toast.makeText(context, context.getString(R.string.shortcut_duplicate, name),
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
+        
     }
 
     private static boolean installShortcut(Context context, Intent data, ArrayList<ItemInfo> items,

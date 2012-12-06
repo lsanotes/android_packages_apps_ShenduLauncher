@@ -94,7 +94,7 @@ public class LauncherModel extends BroadcastReceiver {
     private boolean mWorkspaceLoaded;
     private boolean mAllAppsLoaded;
 
-    private WeakReference<Callbacks> mCallbacks;
+    public WeakReference<Callbacks> mCallbacks;
 
     // < only access in worker thread >
     private AllAppsList mAllAppsList;

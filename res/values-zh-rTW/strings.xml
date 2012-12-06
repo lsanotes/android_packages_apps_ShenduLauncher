@@ -212,4 +212,7 @@
     <string name="editstate_wallpaper_current_mark">正在使用</string>
     <string name="delete_folder_toast_message">文件夾不支持删除！</string>
     
+    
+    <string name="shortcut_exist_toast_message">快捷方式已存在，不能重複創建</string>
+    
 </resources>

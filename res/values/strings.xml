@@ -388,5 +388,7 @@ s -->
     <string name="uninstall_action">OK</string>
     <string name="editstate_wallpaper_current_mark">Using</string>
     <string name="delete_folder_toast_message">Folder do not support delete !</string>
+    
+    <string name="shortcut_exist_toast_message">Shortcut already exists, can not be repeated to create！</string>
 
 </resources>
