@@ -903,7 +903,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             // The drag failed, we need to return the item to the folder
             mFolderIcon.onDrop(d);
         	
-
             // We're going to trigger a "closeFolder" which may occur before this item has
             // been added back to the folder -- this could cause the folder to be deleted
             if (mOnExitAlarm.alarmPending()) {
@@ -1278,6 +1277,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     public ArrayList<View> getItemsInReadingOrder(boolean includeCurrentDragItem) {
         if (mItemsInvalidated) {
             mItemsInReadingOrder.clear();
+            mInfo.contents.clear();
             for (int j = 0; j < mContent.getCountY(); j++) {
                 for (int i = 0; i < mContent.getCountX(); i++) {
                     View v = mContent.getChildAt(i, j);
@@ -1286,6 +1286,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                         if (info != mCurrentDragInfo || includeCurrentDragItem) {
                             mItemsInReadingOrder.add(v);
                         }
+                        // add by zlf
+                        mInfo.contents.add(info);
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.shendu.launcher;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public class ShenduPrograme {
@@ -86,5 +87,8 @@ public class ShenduPrograme {
 	private int effectStrId;
 	private int effectDrawableId;
 	private boolean effectCurrent;
+	
+	Bitmap mThemeBitmap;
+     String mThemePath;
 
 }

@@ -216,4 +216,9 @@
     
     <string name="shortcut_exist_toast_message">快捷方式已存在，不能重复创建！</string>
     
+     <string name="luancher_load_icon">正在加载桌面</string>
+     
+    <string name="luancher_changed_theme">正在更换主题</string>
+ 
+    
 </resources>

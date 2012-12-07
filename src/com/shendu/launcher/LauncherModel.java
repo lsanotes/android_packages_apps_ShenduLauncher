@@ -625,7 +625,10 @@ public class LauncherModel extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
+        
+        
         final String action = intent.getAction();
+        Log.i(Launcher.TAG, TAG+" ......onReceive()........   mLock" +action);   
         if(!mLoadWorkspaceOk){ return; } //for item replace loading
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
                 || Intent.ACTION_PACKAGE_REMOVED.equals(action)
@@ -686,7 +689,9 @@ public class LauncherModel extends BroadcastReceiver {
             	 if(mIconCache!=null){
             		 mIconCache.flush(); 
                  }
-            	 forceReload();
+             	Log.i(Launcher.TAG, TAG+" ......killProcess()........   mLock"+ mLock );
+            	  android.os.Process.killProcess(android.os.Process.myPid());
+            	// forceReload();
                  
               } 
              
@@ -715,6 +720,7 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     private void forceReload() {
+    	Log.i(Launcher.TAG, TAG+" ......forceReload()........   mLock"+ mLock );
 	synchronized (mLock) {
             // Stop any existing loaders first, so they don't set mAllAppsLoaded or
             // mWorkspaceLoaded to true later
@@ -747,6 +753,8 @@ public class LauncherModel extends BroadcastReceiver {
      * of doing it now.
      */
     public void startLoaderFromBackground() {
+    	
+    
         boolean runLoader = false;
         if (mCallbacks != null) {
             Callbacks callbacks = mCallbacks.get();
@@ -757,6 +765,7 @@ public class LauncherModel extends BroadcastReceiver {
                 }
             }
         }
+    	Log.i(Launcher.TAG, TAG+" ......startLoaderFromBackground()........   mCallbacks"+ mCallbacks +runLoader);
         if (runLoader) {
             startLoader(false);
         }
@@ -777,6 +786,8 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     public void startLoader(boolean isLaunching) {
+    	
+    	Log.i(Launcher.TAG, TAG+" ......startLoader()........   mLock:"+ mLock );
         synchronized (mLock) {
             if (DEBUG_LOADERS) {
                 Log.d(TAG, "startLoader isLaunching=" + isLaunching);

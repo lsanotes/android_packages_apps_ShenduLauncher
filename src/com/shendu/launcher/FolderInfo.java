@@ -19,6 +19,7 @@ package com.shendu.launcher;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 /**
  * Represents a folder containing shortcuts or apps.
@@ -53,6 +54,7 @@ class FolderInfo extends ItemInfo {
      */
     public void add(ShortcutInfo item) {
         contents.add(item);
+
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).onAdd(item);
         }

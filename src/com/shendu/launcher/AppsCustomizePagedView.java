@@ -19,23 +19,28 @@ package com.shendu.launcher;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.ProgressDialog;
 import android.app.WallpaperInfo;
 import android.app.WallpaperManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -52,6 +57,7 @@ import android.graphics.TableMaskFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Process;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -75,10 +81,12 @@ import com.shendu.launcher.Workspace.State;
 import com.shendu.launcher.Workspace.TransitionEffect;
 import com.shendu.launcher.preference.PreferencesProvider;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 /**
@@ -180,6 +188,7 @@ class AppsCustomizeAsyncTask extends AsyncTask<AsyncTaskPageData, Void, AsyncTas
     int page;
     AppsCustomizePagedView.ContentType pageContentType;
     int threadPriority;
+
 }
 
 abstract class WeakReferenceThreadLocal<T> {
@@ -287,6 +296,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     private ArrayList<Object> mWidgets;
     private ArrayList<ShenduPrograme> mWallpapersList;
     private ArrayList<ShenduPrograme> mEffectsList;
+    private ArrayList<ShenduPrograme> mThemesList;
     private ImageView mEditStateLeftArrow,mEditStateRightArrow;
 
 
@@ -339,6 +349,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         new ArrayList<AsyncTaskPageData>();
     private ArrayList<Runnable> mDeferredPrepareLoadWidgetPreviewsTasks =
         new ArrayList<Runnable>();
+    
+    
+    
+    public  ThemeBroadcastReceiver  mThemeBroadcastReceiver ;
 
     // Used for drawing shortcut previews
     BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
@@ -360,6 +374,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         //mApps = new ArrayList<ShortcutInfo>();
         mWallpapersList = new ArrayList<ShenduPrograme>();
         mEffectsList = new ArrayList<ShenduPrograme>();
+        mThemesList  = new ArrayList<ShenduPrograme>();
         mWidgets = new ArrayList<Object>();
         mIconCache = ((LauncherApplication) context.getApplicationContext()).getIconCache();
         mCanvas = new Canvas();
@@ -396,6 +411,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         if (getImportantForAccessibility() == View.IMPORTANT_FOR_ACCESSIBILITY_AUTO) {
             setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
         }
+
     }
 
     @Override
@@ -568,6 +584,24 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 			}
 	    }, 100);
 	}
+	
+	
+	/** 
+	 * 2012-9-19 hhl
+     * TODO: userd to init effectList data when listener effect is changed or first open launcher
+	 */
+	public void onThemeChanged() {
+		
+		if(mThemeBroadcastReceiver ==null){
+			mThemeBroadcastReceiver = new ThemeBroadcastReceiver();
+		}
+		
+		postDelayed(new Runnable() {
+			public void run() {
+				shenduFindTheme();
+			}
+	    }, 100);
+	}
 
     public void updatePackages() {
         mWidgets.clear();
@@ -696,8 +730,75 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             cancelAllTasks();
             invalidatePageData();
         }
+    }
+    
+    /**
+     * 2012-8-26 hhl
+     * TODO: userd to find the wallpapers data in current launcher and init mWallpapersList data
+     */
+    private void shenduFindTheme() {
+    	boolean wasEmpty = mThemesList.isEmpty();
+    	mThemesList.clear();
+		Log.i("zlf", "shenduFindTheme    ：:" + "   sendBroadcast" );
+		Intent intent = new Intent(AppsCustomizePagedView.LAUNCH_THEME_SEND);
+		mLauncher.sendBroadcast(intent);
     	
     }
+
+    public class ThemeBroadcastReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			boolean resuilt = intent.getBooleanExtra("ischanged",false);
+			Log.i("zlf", "...onReceive：:" + "   onReceive..........................." +resuilt);
+			if(resuilt || firstSendToTheme ){
+				try {
+					getThemeResources( intent.getStringExtra("path") );
+					if(!firstSendToTheme){
+						syncThemesPageItems(0,true);
+					}
+					firstSendToTheme =false;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public static String LAUNCH_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_parser_perview_Action";
+    public static String THEME_RECEIVER ="com.shendu.launcher_receive";  
+    public static String CHANGE_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_setting_theme_Action";
+	private static boolean firstSendToTheme= true;
+	
+	public void getThemeResources(String path ) throws Exception {
+
+		mThemesList.clear();
+		String suffix = ".jpg";
+		File stringPath = Environment.getDataDirectory();
+		File systemThemePaht = new File(stringPath.getPath() + path);
+
+		if (systemThemePaht.exists()) {
+			File[] files = systemThemePaht.listFiles();
+		
+			for (File file : files) {
+		
+				if (file.isFile() && file.getName().endsWith(suffix)) {
+					
+					ShenduPrograme shenduTheme =new ShenduPrograme();
+					String cruThemePath = file.getAbsolutePath();
+					Bitmap bm = BitmapFactory.decodeFile(cruThemePath);
+
+					shenduTheme.mThemeBitmap=bm;
+					shenduTheme.mThemePath=cruThemePath;
+					mThemesList.add(shenduTheme);
+				}
+			}
+			Log.i("zlf", "getThemeResources：:" + "   mThemesList.size():" + mThemesList.size());
+		}
+	}
+	
+	
 
     @Override
     public void onClick(final View view) {
@@ -756,6 +857,20 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             bounce.play(tyuAnim).before(tydAnim);
             bounce.setInterpolator(new AccelerateInterpolator());
             bounce.start();
+        }else if (view instanceof PagedViewTheme) {
+        	
+        	
+        	 mLauncher.backFromEditMode();
+        	
+        	 ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
+        	 
+        	    // add by zlf for Theme
+            	Intent intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
+				intent.putExtra("path", shenduPrograme.mThemePath);
+				mLauncher.sendBroadcast(intent);
+				ProgressDialog	mProgressDialog = new ProgressDialog(mLauncher);
+				mProgressDialog.setTitle(mLauncher.getResources().getString(R.string.luancher_changed_theme));
+				mProgressDialog.show();
         }
     }
 
@@ -892,7 +1007,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             if (mCreateWidgetInfo == null) {
                 return false;
             }
-
             PendingAddWidgetInfo createWidgetInfo = mCreateWidgetInfo;
             createItemInfo = createWidgetInfo;
             int spanX = createItemInfo.spanX;
@@ -944,9 +1058,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
 
         // Save the preview for the outline generation, then dim the preview
-        outline = Bitmap.createScaledBitmap(preview, preview.getWidth(), preview.getHeight(),
-                false);
-
+        outline = Bitmap.createScaledBitmap(preview, preview.getWidth(), preview.getHeight(), false);
         // Start the drag
         alphaClipPaint = null;
         mLauncher.lockScreenOrientation();
@@ -970,7 +1082,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 return false;
             }
         }
-
 
         return true;
     }
@@ -1136,7 +1247,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 }
             }
     }
-
 
     public boolean isContentType(ContentType type) {
         return (mContentType == type);
@@ -1469,6 +1579,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      * TODO: used sync the effect tabwidget content page view data
      */
     public void syncEffectsPages(){
+    	
     	Context context = getContext();
         int numPages = (int) Math.ceil((float)mEffectsList.size()/(mCellCountX * mCellCountY));
         for (int j = 0; j < numPages; ++j) {
@@ -1493,6 +1604,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
     
     public void syncWidgetPages() {
+    	
         // Ensure that we have the right number of pages
         Context context = getContext();
         int numPages = (int) Math.ceil(mWidgets.size() /
@@ -1505,6 +1617,22 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                     LayoutParams.MATCH_PARENT));
         }
     }
+    
+    
+    public void syncThemesPages() {
+    	removeAllViews();
+        // Ensure that we have the right number of pages
+      	Context context = getContext();
+        int numPages = (int) Math.ceil((float)mThemesList.size()/(mCellCountX * mCellCountY));
+       if(numPages==0){
+    	   numPages =1;
+       }
+        for (int j = 0; j < numPages; ++j) {
+        	PagedViewCellLayout layout = new PagedViewCellLayout(context);
+            setupPage(layout);
+            addView(layout);
+        }
+    }
 
     /**
      * 2012-8-29 hhl
@@ -1513,6 +1641,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      * TODO: used to sync the wallpaper tabwidget content of the page items data
      */
     public void syncWallpaperPageItems(final int page, final boolean immediate){
+    	
     	int numCells = mCellCountX * mCellCountY;
         int startIndex = page * numCells;
         int endIndex = Math.min(startIndex + numCells, mWallpapersList.size());
@@ -1541,6 +1670,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      * TODO: used to sync the effect tabwidget content of the page items data
      */
     public void syncEffectPageItems(final int page, final boolean immediate){
+    	
+    	
     	int numCells = mCellCountX * mCellCountY;
         int startIndex = page * numCells;
         int endIndex = Math.min(startIndex + numCells, mEffectsList.size());
@@ -1561,9 +1692,37 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         layout.createHardwareLayers();
     }
     
-    public void syncWidgetPageItems(final int page, final boolean immediate) {
-        int numItemsPerPage = mWidgetCountX * mWidgetCountY;
+    
+    public void  syncThemesPageItems(final int page, final boolean immediate){
+    	
+    	int numCells = mCellCountX * mCellCountY;
+        int startIndex = page * numCells;
+        int endIndex = Math.min(startIndex + numCells, mThemesList.size());
+        PagedViewCellLayout layout = (PagedViewCellLayout) getPageAt(page);
+        layout.removeAllViewsOnPage();
+        
+    	Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex );       
+        for (int i = startIndex; i < endIndex; ++i) {
+        	ShenduPrograme info = mThemesList.get(i);
+        	PagedViewTheme pagedViewTheme = (PagedViewTheme)mLayoutInflater.inflate(
+                    R.layout.apps_customize_theme, layout, false);
+        	pagedViewTheme.applyFromShenduPrograme(info);
+        	pagedViewTheme.setOnClickListener(this);
+            int index = i - startIndex;
+            int x = index % mCellCountX;
+            int y = index / mCellCountX;
+            layout.addViewToCellLayoutWallpapger(pagedViewTheme, -1, i, new PagedViewCellLayout.LayoutParams(x, y, 1, 1));
+        }
 
+
+        layout.createHardwareLayers();
+    }
+
+    
+    
+    public void syncWidgetPageItems(final int page, final boolean immediate) {
+    	
+        int numItemsPerPage = mWidgetCountX * mWidgetCountY;
         // Calculate the dimensions of each cell we are giving to each widget
         final ArrayList<Object> items = new ArrayList<Object>();
         int contentWidth = mWidgetSpacingLayout.getContentWidth();
@@ -1752,6 +1911,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 break;
             case Effects:
             	syncEffectsPages();
+            	break;
+            case Themes:
+            	syncThemesPages();
+            	break;
             default:
             	break;
             }
@@ -1768,6 +1931,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 break;
             case Effects:
             	syncEffectPageItems(page, immediate);
+            	break;
+            	
+            case Themes:
+            	syncThemesPageItems(page, immediate);
             	break;
             default:
             	break;
@@ -2046,6 +2213,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
                 break;
             case Effects:
                 stringId = R.string.apps_customize_effects_scroll_format;
+                break;
+                
+            case Themes:
+                stringId = R.string.apps_customize_themes_scroll_format;
                 break;
             }
             return String.format(mContext.getString(stringId), page + 1, getChildCount());

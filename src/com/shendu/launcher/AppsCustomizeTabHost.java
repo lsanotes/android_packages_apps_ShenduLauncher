@@ -84,7 +84,6 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                     mTabsContainer.setAlpha(1f);
                 }
             };
-
     }
 
     public void setup(Launcher launcher) {
@@ -169,6 +168,17 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         mTabLabel.setText(label);
         mTabViewLayout.setContentDescription(label);
         addTab(newTabSpec(EFFECTS_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        
+        
+        
+        //choice specially theme
+        label = mContext.getString(R.string.editstate_choice_theme);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+        
         
         setOnTabChangedListener(this);
 
@@ -261,7 +271,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
               mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
               if(type.equals(AppsCustomizePagedView.ContentType.Wallpapers) || 
             		  type.equals(AppsCustomizePagedView.ContentType.Widgets) ||
-            		  type.equals(AppsCustomizePagedView.ContentType.Effects)){
+            		  type.equals(AppsCustomizePagedView.ContentType.Effects) ||
+            		  type.equals(AppsCustomizePagedView.ContentType.Themes)){
                 // We post a runnable here because there is a delay while the first page is loading and
                 // the feedback from having changed the tab almost feels better than having it stick
                 post(new Runnable() {
@@ -329,6 +340,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         	return WALLPAPERS_TAB_TAG;
         }else if(type == AppsCustomizePagedView.ContentType.Effects){
         	return EFFECTS_TAB_TAG;
+        } else if(type == AppsCustomizePagedView.ContentType.Themes){
+        	return THEMES_TAB_TAG;
         }
         return WIDGETS_TAB_TAG;
     }

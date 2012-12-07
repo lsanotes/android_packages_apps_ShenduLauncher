@@ -244,7 +244,7 @@ s -->
     <string name="apps_customize_widgets_scroll_format">Widgets page %1$d of %2$d</string>
     <string name="apps_customize_wallpapers_scroll_format">Wallpaper page %1$d of %2$d</string>
     <string name="apps_customize_effects_scroll_format">Effect page %1$d of %2$d</string>
-
+   <string name="apps_customize_themes_scroll_format">Theme page %1$d of %2$d</string>
     <!-- Clings -->
     <!-- The title text for the workspace cling [CHAR_LIMIT=none] -->
     <string name="workspace_cling_title">Make yourself at home</string>
@@ -372,6 +372,7 @@ s -->
     <string name="editstate_choice_wallpaper">WallPaper</string>
     <string name="editstate_choice_theme">Theme</string>
     <string name="editstate_choice_specially_effect">Effect</string>
+
     
     <!-- Effects style -->
     <string name="editstate_effect_string_standard">Standard</string>
@@ -390,5 +391,9 @@ s -->
     <string name="delete_folder_toast_message">Folder do not support delete !</string>
     
     <string name="shortcut_exist_toast_message">Shortcut already exists, can not be repeated to create！</string>
+    
+     <string name="luancher_load_icon">loading...</string>
+     
+    <string name="luancher_changed_theme">change theme ...</string>
 
 </resources>

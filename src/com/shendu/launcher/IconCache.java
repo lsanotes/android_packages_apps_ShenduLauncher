@@ -213,8 +213,8 @@ public class IconCache {
             //entry.icon = Utilities.createIconBitmap(
                     //getFullResIcon(info), mContext);
             
-            //entry.icon = Utilities.createIconBitmap( //moditify,for theme
-            //        info.activityInfo.loadIcon(mPackageManager), mContext);
+//            entry.icon = Utilities.createIconBitmap( //moditify,for theme
+//                    info.activityInfo.loadIcon(mPackageManager), mContext);
             
             entry.icon = Utilities.createIconBitmap( //moditify,for theme
                     info.activityInfo.loadShenduIcon(mPackageManager), mContext);

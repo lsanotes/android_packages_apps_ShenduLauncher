@@ -303,6 +303,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 
     public void addItem(ShortcutInfo item) {
         mInfo.add(item);
+    
         //mFolder.mFolderIcon.mPreviewBackground.setImageDrawable(shenduCreateFolderThumBitmap(mInfo));
         LauncherModel.addOrMoveItemInDatabase(mLauncher, item, mInfo.id, 0, item.cellX, item.cellY);
     }
@@ -363,7 +364,10 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 		count = count>4 ? 4:count;
 		Canvas canvas = new Canvas(mutableBitmap); 
 		for(int i=0; i<count; i++) {
+			
 			ItemInfo info = folderInfo.contents.get(i); 
+			
+
 			Bitmap orgbmp=null;
 				orgbmp = ((ShortcutInfo)info).iconBitmap; 
 				if(orgbmp==null){
@@ -414,13 +418,13 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     private void onDrop(final ShortcutInfo item, DragView animateView, Rect finalRect,
             float scaleRelativeToDragLayer, int index, Runnable postAnimationRunnable,
             DragObject d) {
-        item.cellX = -1;
-        item.cellY = -1;
+            item.cellX = -1;
+            item.cellY = -1;
 
         	mLauncher.getDragLayer().setmDropView(animateView);
         	mLauncher.getDragLayer().clearAnimatedView(); //used to set deleteDrop/dragView normal
         	addItem(item);
-        //}
+       
     }
 
     public void onDrop(DragObject d) {
@@ -429,6 +433,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             FolderInfo folder = (FolderInfo) d.dragInfo;
             mFolder.notifyDrop();
             for (ShortcutInfo fItem : folder.contents) {
+            	
                 onDrop(fItem, d.dragView, null, 1.0f, mInfo.contents.size(), d.postAnimationRunnable, d);
             }
             mLauncher.removeFolder(folder);
@@ -437,6 +442,8 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         } else {
             item = (ShortcutInfo) d.dragInfo;
         }
+        	
+        	
         mFolder.notifyDrop();
         onDrop(item, d.dragView, null, 1.0f, mInfo.contents.size(), d.postAnimationRunnable, d);
     }

@@ -29,6 +29,7 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
@@ -112,6 +113,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.common.Search;
+import com.shendu.launcher.AppsCustomizePagedView.ThemeBroadcastReceiver;
 import com.shendu.launcher.R;
 import com.shendu.launcher.DropTarget.DragObject;
 import com.shendu.launcher.preference.*;
@@ -274,6 +276,8 @@ public final class Launcher extends Activity
     private boolean mAttached = false;
 
     private static LocaleConfiguration sLocaleConfiguration = null;
+    
+	private ProgressDialog mProgressDialog;
 
     private static HashMap<Long, FolderInfo> sFolders = new HashMap<Long, FolderInfo>();
 
@@ -403,6 +407,8 @@ public final class Launcher extends Activity
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
             mAppsCustomizeContent.onEffectChanged();
+            mAppsCustomizeContent.onThemeChanged();
+            
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
@@ -433,6 +439,17 @@ public final class Launcher extends Activity
         mscreenwidth=  getWindowManager().getDefaultDisplay().getWidth();
         
         mDragController.setEffectiveY(mscreenHeight-1.5f*getResources().getDimension(R.dimen.button_bar_height_plus_padding));
+       
+        // add by zlf for Theme
+		IntentFilter filterTheme = new IntentFilter();
+		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
+        registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
+        
+     	Log.i(Launcher.TAG, TAG+" ......create()..............:" );
+     	
+     	mProgressDialog =new ProgressDialog(this);
+    	mProgressDialog.setTitle(getResources().getString(R.string.luancher_load_icon));
+     	mProgressDialog.show();
     }
 
     private void updateGlobalIcons() {
@@ -1549,7 +1566,8 @@ public final class Launcher extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
+        
         // Remove all pending runnables
         mHandler.removeMessages(ADVANCE_MSG);
         mHandler.removeMessages(0);
@@ -3114,6 +3132,8 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
+    	
+    	Log.i(Launcher.TAG, TAG+"........bindItems()............"   );
         setLoadOnResume();
 
         Set<String> newApps = new HashSet<String>();
@@ -3403,9 +3423,16 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
+    	
+    	if(mProgressDialog!=null){
+			mProgressDialog.dismiss();
+		}
         // Remove the progress bar entirely; we could also make it GONE
         // but better to remove it since we know it's not going to be used
+    	
 		addAppsToWorkspace(apps);
+	
+		
     }
 
     /**
