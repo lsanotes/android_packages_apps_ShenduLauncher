@@ -501,8 +501,8 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 			mService = binder.getService();
 
 			Rect frame = new Rect();
-			mLauncher.getWindow().getDecorView()
-					.getWindowVisibleDisplayFrame(frame);
+			mLauncher.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+
 			mCurrentPageBitmap = mService.takeScreenshot(frame.top);
 			OpenAfterScreenshot();
 		}
@@ -517,7 +517,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             	mLauncher.unbindService(mConnection);
 		  }
 		animateOpen();
-
 		createFoldercoverView(mFolderIcon);
 		SlideFolder();
 	}

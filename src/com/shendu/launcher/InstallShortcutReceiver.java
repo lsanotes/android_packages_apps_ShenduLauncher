@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
 import android.widget.Toast;
@@ -85,14 +86,22 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
             return;
         }
         //used to filter some unwanted shortcuts
-        Set<String> set = intent.getCategories();
-        Log.i(Launcher.TAG," InstallShortcutReceiver.java  onReceive().....intent:"+intent+"  "+intent.getExtras());
-        if(set!=null){
-           if(set.contains(Intent.CATEGORY_LAUNCHER) && intent.getExtras()==null){
-                Log.i(Launcher.TAG,"  InstallShortcutReceiver.java  onReceive()    do not create shortcut  ");
-            	return;
-            }
-         }
+        
+
+        Bundle bundle = intent.getExtras();
+        Log.i(Launcher.TAG," InstallShortcutReceiver.java  onReceive().....intent:"+intent+"=="+bundle);
+        if(bundle==null){
+            Log.i(Launcher.TAG,"InstallShortcutReceiver.java onReceive() bundle is null, do not create shortcut  ");
+        	return;
+        }
+        
+ //       Set<String> set = intent.getCategories();
+//        if(set!=null){
+//           if(set.contains(Intent.CATEGORY_LAUNCHER) && intent.getExtras()==null){
+//                Log.i(Launcher.TAG,"  InstallShortcutReceiver.java  onReceive()    do not create shortcut  ");
+//            	return;
+//            }
+//         }
         
         // This name is only used for comparisons and notifications, so fall back to activity name
         // if not supplied

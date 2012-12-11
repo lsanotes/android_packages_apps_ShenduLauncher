@@ -739,9 +739,17 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     private void shenduFindTheme() {
     	boolean wasEmpty = mThemesList.isEmpty();
     	mThemesList.clear();
-		Log.i("zlf", "shenduFindTheme    ：:" + "   sendBroadcast" );
 		Intent intent = new Intent(AppsCustomizePagedView.LAUNCH_THEME_SEND);
 		mLauncher.sendBroadcast(intent);
+		
+	 	if (wasEmpty) {
+            // The next layout pass will trigger data-ready if both widgets and apps are set, so request
+            // a layout to do this test and invalidate the page data when ready.
+            //if (testDataReady()) requestLayout();
+        } else {
+            cancelAllTasks();
+            invalidatePageData();
+        }
     	
     }
 
@@ -794,10 +802,23 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 					mThemesList.add(shenduTheme);
 				}
 			}
-			Log.i("zlf", "getThemeResources：:" + "   mThemesList.size():" + mThemesList.size());
 		}
+  
+		ShenduPrograme	moreThemePrograme = new ShenduPrograme();
+		
+    	Intent thmemIntent =  new Intent(Intent.ACTION_MAIN);
+    	ComponentName componentName = new ComponentName("com.shendu.theme","com.shendu.theme.ShenDu_MainActivity");
+    	thmemIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+    	thmemIntent.setComponent(componentName);
+    	thmemIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+   
+        moreThemePrograme.setIntent(thmemIntent);
+        moreThemePrograme.mThemeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.editstate_tabhost_tabcontent_wallpaper_more_normal);;
+
+        moreThemePrograme.setChoice(ShenduPrograme.CHOICE_WALLPAPER_MORE);
+        mThemesList.add(moreThemePrograme);
+        
 	}
-	
 	
 
     @Override
@@ -859,18 +880,22 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             bounce.start();
         }else if (view instanceof PagedViewTheme) {
         	
-        	
         	 mLauncher.backFromEditMode();
         	
         	 ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
         	 
-        	    // add by zlf for Theme
-            	Intent intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
-				intent.putExtra("path", shenduPrograme.mThemePath);
-				mLauncher.sendBroadcast(intent);
-				ProgressDialog	mProgressDialog = new ProgressDialog(mLauncher);
-				mProgressDialog.setTitle(mLauncher.getResources().getString(R.string.luancher_changed_theme));
-				mProgressDialog.show();
+        	 Intent intent = shenduPrograme.getIntent();
+        	 if(intent ==null){
+        		  // add by zlf for Theme
+             	 intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
+ 				intent.putExtra("path", shenduPrograme.mThemePath);
+ 				mLauncher.sendBroadcast(intent);
+ 				ProgressDialog	mProgressDialog = new ProgressDialog(mLauncher);
+ 				mProgressDialog.setTitle(mLauncher.getResources().getString(R.string.luancher_changed_theme));
+ 				mProgressDialog.show();
+        	 }else{
+ 	    	    mLauncher.startActivity(intent);
+        	 }
         }
     }
 
@@ -1217,15 +1242,21 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      */
     public void shenduUpdateTheArrowImageView(int currentPage){
     	if((mEditStateLeftArrow!=null)&&(mEditStateRightArrow!=null)){
-    		if(currentPage==0){
+    		int pageCount = getChildCount();
+    		if(pageCount<=1){
     			mEditStateLeftArrow.setVisibility(View.GONE);
-    			mEditStateRightArrow.setVisibility(View.VISIBLE);
-    		}else if(currentPage==(getChildCount()-1)){
-    			mEditStateLeftArrow.setVisibility(View.VISIBLE);
-    			mEditStateRightArrow.setVisibility(View.GONE);
+            	mEditStateRightArrow.setVisibility(View.GONE);
     		}else{
-    			mEditStateRightArrow.setVisibility(View.VISIBLE);
-    			mEditStateLeftArrow.setVisibility(View.VISIBLE);
+	    		if(currentPage==0){
+	    			mEditStateLeftArrow.setVisibility(View.GONE);
+	    			mEditStateRightArrow.setVisibility(View.VISIBLE);
+	    		}else if(currentPage==(getChildCount()-1)){
+	    			mEditStateLeftArrow.setVisibility(View.VISIBLE);
+	    			mEditStateRightArrow.setVisibility(View.GONE);
+	    		}else{
+	    			mEditStateRightArrow.setVisibility(View.VISIBLE);
+	    			mEditStateLeftArrow.setVisibility(View.VISIBLE);
+	    		}
     		}
     	}
     }
@@ -1624,9 +1655,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         // Ensure that we have the right number of pages
       	Context context = getContext();
         int numPages = (int) Math.ceil((float)mThemesList.size()/(mCellCountX * mCellCountY));
-       if(numPages==0){
-    	   numPages =1;
-       }
         for (int j = 0; j < numPages; ++j) {
         	PagedViewCellLayout layout = new PagedViewCellLayout(context);
             setupPage(layout);
@@ -1701,7 +1729,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         PagedViewCellLayout layout = (PagedViewCellLayout) getPageAt(page);
         layout.removeAllViewsOnPage();
         
-    	Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex );       
+    	Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex+mThemesList.size() );       
         for (int i = startIndex; i < endIndex; ++i) {
         	ShenduPrograme info = mThemesList.get(i);
         	PagedViewTheme pagedViewTheme = (PagedViewTheme)mLayoutInflater.inflate(

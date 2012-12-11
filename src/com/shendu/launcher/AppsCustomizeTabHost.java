@@ -265,10 +265,7 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         }
         
         if (!mAppsCustomizePane.isContentType(type)) {
-           	// Animate the changing of the tab content by fading pages in and out
-        	   //final Resources res = getResources();
-              //final int duration = res.getInteger(R.integer.config_tabTransitionDuration);
-              mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
+        
               if(type.equals(AppsCustomizePagedView.ContentType.Wallpapers) || 
             		  type.equals(AppsCustomizePagedView.ContentType.Widgets) ||
             		  type.equals(AppsCustomizePagedView.ContentType.Effects) ||
@@ -294,7 +291,10 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
                         }
                 		mAppsCustomizePane.setContentType(type);
                 		reloadCurrentPage();
+                		
+                        mAppsCustomizePane.shenduUpdateTheArrowImageView(0);
                 	}
+               
                 });
               }
            }

@@ -111,6 +111,8 @@ public class TakeScreenshotService extends Service {
         		Canvas canvas = new Canvas(mScreenBitmap);
         		drawable.setBounds(0, 0,(int)mDims[0],(int)mDims[1]-startBarHeight);  
         		drawable.draw(canvas);
+        		
+        		
         return mScreenBitmap;
     }
 

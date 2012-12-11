@@ -182,16 +182,16 @@
     <dimen name="workspace_height_gap_land">0dp</dimen>
     <dimen name="workspace_height_gap_port">0dp</dimen>
     
-<!-- for folder   -->    
+<!-- for folder -->    
     <dimen name="saf_folder_cover_arrow_width">13dip</dimen>
     <dimen name="saf_folder_cover_arrow_height">13dip</dimen>
      <dimen name="quarter_height">133dip</dimen>
      
      
      <dimen name="folder_cover_line">40dp</dimen>
-     <dimen name="folder_hotseat_cover_line">360dp</dimen>
-     <dimen name="folder_cover_view">48dp</dimen> 
-     <dimen name="folder_hotseat_cover_view">446dp</dimen>
+     <dimen name="folder_hotseat_cover_line">385dp</dimen>
+     <dimen name="folder_cover_view">45dp</dimen> 
+     <dimen name="folder_hotseat_cover_view">475dp</dimen>
 
 
 	

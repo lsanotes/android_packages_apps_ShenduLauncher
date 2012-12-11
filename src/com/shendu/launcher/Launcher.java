@@ -449,6 +449,8 @@ public final class Launcher extends Activity
      	
      	mProgressDialog =new ProgressDialog(this);
     	mProgressDialog.setTitle(getResources().getString(R.string.luancher_load_icon));
+    	
+    	mProgressDialog.setCanceledOnTouchOutside(false);
      	mProgressDialog.show();
     }
 
@@ -2080,13 +2082,6 @@ public final class Launcher extends Activity
             }
             }
         } 
-        /*else if (v == mAllAppsButton) {
-            if (mState == State.APPS_CUSTOMIZE) {
-                showWorkspace(true);
-            } else {
-                onClickAllAppsButton(v);
-            }
-        }*/
     }
 
     public boolean onTouch(View v, MotionEvent event) {
@@ -2263,26 +2258,6 @@ public final class Launcher extends Activity
         
         openFolder(folderIcon);
         
-//        if (!info.opened) {
-//            // Close any open folder
-//          //  closeFolder();
-//            // Open the requested folder
-//            openFolder(folderIcon);
-//        } else {
-//            // Find the open folder...
-//            int folderScreen;
-//            if (openFolder != null) {
-//            //    folderScreen = mWorkspace.getPageForView(openFolder);
-//                // .. and close it
-//                closeFolder(openFolder);
-////                if (folderScreen != mWorkspace.getCurrentPage()) {
-////                    // Close any folder open on the current screen
-////                    closeFolder();
-////                    // Pull the folder onto this screen
-////                    openFolder(folderIcon);
-//             //   }
-//            }
-       // }
     }
 
     /**
@@ -2402,13 +2377,18 @@ public final class Launcher extends Activity
         FolderInfo info = folder.mInfo;
 
         growAndFadeOutFolderIcon(folderIcon);
+        
+    //    folderIcon.setVisibility(View.GONE);
+         
         info.opened = true;
         // Just verify that the folder hasn't already been added to the DragLayer.
         // There was a one-off crash where the folder had a parent already.
         if (folder.getParent() == null) {
             mDragLayer.addView(folder);
             mDragController.addDropTarget((DropTarget) folder);
+            
             folder.setVisibility(View.GONE);
+            
             folder.folderOpen();
         } else {
             Log.w(TAG, "Opening folder (" + folder + ") which already has a parent (" +
@@ -2437,11 +2417,12 @@ public final class Launcher extends Activity
         	return ;
         }
         folder.getInfo().opened = false;
-
+        
         ViewGroup parent = (ViewGroup) folder.getParent().getParent();
         if (parent != null) {
             FolderIcon fi = (FolderIcon) mWorkspace.getViewForTag(folder.mInfo);
             shrinkAndFadeInFolderIcon(fi);
+       
         }
         //folder.animateClosed();
         folder.folderClosed();
@@ -2904,9 +2885,7 @@ public final class Launcher extends Activity
                 button.setImageDrawable(toolbarIcon);
             }
         }
-
         return toolbarIcon != null ? toolbarIcon.getConstantState() : null;
-
     }
 
 
@@ -3132,8 +3111,6 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
-    	
-    	Log.i(Launcher.TAG, TAG+"........bindItems()............"   );
         setLoadOnResume();
 
         Set<String> newApps = new HashSet<String>();
@@ -3248,6 +3225,11 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void finishBindingItems() {
+     	if(mWorkspace.getChildCount()>1){
+        	if(mProgressDialog!=null&& mProgressDialog.isShowing()){
+    			mProgressDialog.dismiss();
+    		}
+     	}
         setLoadOnResume();
 
         if (mSavedState != null) {
@@ -3423,8 +3405,9 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
+     	Log.i(Launcher.TAG, TAG+" ......bindAllApplications()..............:" );
     	
-    	if(mProgressDialog!=null){
+    	if(mProgressDialog!=null&& mProgressDialog.isShowing()){
 			mProgressDialog.dismiss();
 		}
         // Remove the progress bar entirely; we could also make it GONE
@@ -3761,6 +3744,7 @@ public final class Launcher extends Activity
 	private PopupWindow mScreenPopupWindow; //used for screen manager
      
 	private void dismissPreview() {//dismiss screen manager
+	
   		mWorkspace.isShowPreviews=false;
  		mWorkspace.setVisibility(View.VISIBLE);
  		mHotseat.setVisibility(View.VISIBLE);
@@ -3857,18 +3841,19 @@ public final class Launcher extends Activity
 			
 		});
 		
-
-		mScreenPopupWindow = new PopupWindow(this);
+		if(mScreenPopupWindow ==null){
+			mScreenPopupWindow = new PopupWindow(this);
+		}
 		mScreenPopupWindow.setContentView(preview);
-		CellLayout cell1 = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
+		CellLayout cellLayout = ((CellLayout) workspace.getChildAt(getCurrentWorkspaceScreen()));
 		WindowManager wm = (WindowManager)getBaseContext().getSystemService(Context.WINDOW_SERVICE);
-		mScreenPopupWindow.setWidth(cell1.getWidth());
+		mScreenPopupWindow.setWidth(cellLayout.getWidth());
 		mScreenPopupWindow.setHeight(wm.getDefaultDisplay().getHeight()-38);
 		mScreenPopupWindow.setAnimationStyle(R.style.AnimationPreview);
 		mScreenPopupWindow.setOutsideTouchable(true);
 		mScreenPopupWindow.setFocusable(true);
 		mScreenPopupWindow.setBackgroundDrawable(new ColorDrawable(0));
-		mScreenPopupWindow.showAtLocation(cell1, 0, 0, 38);
+		mScreenPopupWindow.showAtLocation(cellLayout, 0, 0, 38);
 		mScreenPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
 			public void onDismiss() {
 				dismissPreview();
