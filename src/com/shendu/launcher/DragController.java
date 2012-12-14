@@ -119,7 +119,7 @@ public class DragController {
     protected int mFlingToDeleteThresholdVelocity;
     private VelocityTracker mVelocityTracker;
     public boolean mAddNewScreen = false ;// used to drag last right screen,add an empty screen
-    
+    private boolean mIsSupportMotion = false; //add,used to flag support motion or not
     private int effectiveY;
    
     /**
@@ -532,7 +532,7 @@ public class DragController {
         final int delay = mDistanceSinceScroll < slop ? RESCROLL_DELAY : SCROLL_DELAY;
 
 		// drag to left
-        if (x < mScrollZone) {
+        if (mIsSupportMotion &&x < mScrollZone ) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_LEFT)) {
@@ -542,7 +542,7 @@ public class DragController {
                 }
             }
 		// drag to right
-        } else if (x > mScrollView.getWidth() - mScrollZone) {
+        } else if (mIsSupportMotion && x > mScrollView.getWidth() - mScrollZone) {
             if (mScrollState == SCROLL_OUTSIDE_ZONE) {
                 mScrollState = SCROLL_WAITING_IN_ZONE;
                 if (mDragScroller.onEnterScrollArea(x, y, SCROLL_RIGHT)) {
@@ -565,6 +565,8 @@ public class DragController {
         } else {
             clearScrollRunnable();
         }
+        
+        mIsSupportMotion= false;
     }
 
     public void forceMoveEvent() {
@@ -604,9 +606,11 @@ public class DragController {
             break;
         case MotionEvent.ACTION_MOVE:
             handleMoveEvent(dragLayerX, dragLayerY);
+            mIsSupportMotion =true;
             break;
         case MotionEvent.ACTION_UP:
             // Ensure that we've processed a move event at the current pointer location.
+            mIsSupportMotion =false;
             handleMoveEvent(dragLayerX, dragLayerY);
             mHandler.removeCallbacks(mScrollRunnable);
 
@@ -623,6 +627,7 @@ public class DragController {
         case MotionEvent.ACTION_CANCEL:
             mHandler.removeCallbacks(mScrollRunnable);
             cancelDrag();
+            mIsSupportMotion =false;
             break;
         }
 

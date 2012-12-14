@@ -65,6 +65,7 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView {
        return false;
     }
 
+
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         // Consume any touch events for ourselves after longpress is triggered
         if (mLongPressHelper.hasPerformedLongPress()) {
@@ -83,6 +84,10 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mLongPressHelper.cancelLongPress();
+                
+         if(CellLayout.mIsEditstate){ //used to disable widget onclick event when in editstate
+                return true;
+             }
                 break;
         }
 

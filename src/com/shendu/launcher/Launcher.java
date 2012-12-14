@@ -2424,19 +2424,15 @@ public final class Launcher extends Activity
             shrinkAndFadeInFolderIcon(fi);
        
         }
-        //folder.animateClosed();
         folder.folderClosed();
 
     }  
     public boolean onLongClick(View v) {
-        //if (!isDraggingEnabled()) return false;
         if (isWorkspaceLocked()) return false;
-        //if (mState != State.WORKSPACE) return false;
 
         if (!(v instanceof CellLayout)) {
             v = (View) v.getParent().getParent();
         }
-
         resetAddInfo();
         CellLayout.CellInfo longClickCellInfo = (CellLayout.CellInfo) v.getTag();
         // This happens when long clicking an item with the dpad/trackball

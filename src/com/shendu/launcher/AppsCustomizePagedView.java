@@ -1200,6 +1200,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     }
 
     public void clearAllWidgetPages() {
+    	
+    	if(mContentType==ContentType.Widgets){
+    		return ;
+    	}
         cancelAllTasks();
         int count = getChildCount();
         for (int i = 0; i < count; i++) {

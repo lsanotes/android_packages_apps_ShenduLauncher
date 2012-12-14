@@ -3378,7 +3378,7 @@ public class Workspace extends SmoothPagedView
             mAnimatingViewIntoPlace = true;
             if (d.dragView.hasDrawn()) {
                 final ItemInfo info = (ItemInfo) cell.getTag();
-                if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET) {
+                if (CellLayout.mIsEditstate&&info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET) {
                     int animationType = resizeOnDrop ? ANIMATE_INTO_POSITION_AND_RESIZE :
                             ANIMATE_INTO_POSITION_AND_DISAPPEAR;
                     animateWidgetDrop(info, parent, d.dragView,
@@ -4460,7 +4460,6 @@ public class Workspace extends SmoothPagedView
     		success = false;
     		d.cancelled = true;
     	}
-    	//Log.i(Launcher.TAG, TAG+"==onDropCompleted==success="+success+"==="+(mDragInfo != null));
         if (success) {
             if (target != this) {
                 if (mDragInfo != null) {
@@ -4478,9 +4477,7 @@ public class Workspace extends SmoothPagedView
             		removeEmptyScreen(startMovedPage);
             		startMovedPage=-1;	
             	}
-            if(mDragController.mAddNewScreen){
-                removeEmptyScreen(getChildCount()-1);
-            	}
+    
             post(new Runnable() {
                 public void run() {     	
                 	 updateCurrentPageItemCoordinate();
@@ -4505,6 +4502,12 @@ public class Workspace extends SmoothPagedView
         	mLauncher.getDragLayer().setmDropView(d.dragView);
         	mLauncher.getDragLayer().clearAnimatedView(); 
         }
+        
+        if(mDragController.mAddNewScreen){
+            removeEmptyScreen(getChildCount()-1);
+        	}
+        
+        
         if (d.cancelled &&  mDragInfo.cell != null) {
                 mDragInfo.cell.setVisibility(VISIBLE);
         }
@@ -4514,7 +4517,13 @@ public class Workspace extends SmoothPagedView
         // Hide the scrolling indicator after you pick up an item
         hideScrollingIndicator(false);
     }
-    
+    /**
+     * add by zlf
+     * remove scan screen
+     * 
+     * @param index: the removing screen'index of 
+     * @return
+     */
 	public boolean  removeEmptyScreen(int index){// used to remove empty celllayout
 		CellLayout cell = (CellLayout) getChildAt(index);
 		if(cell !=null){

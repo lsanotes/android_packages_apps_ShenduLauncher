@@ -209,16 +209,14 @@ public class IconCache {
             if (entry.title == null) {
                 entry.title = info.activityInfo.name;
             }
-
             //entry.icon = Utilities.createIconBitmap(
-                    //getFullResIcon(info), mContext);
-//            
+                 //   getFullResIcon(info), mContext);
+
 //            entry.icon = Utilities.createIconBitmap( //moditify,for theme
 //                    info.activityInfo.loadIcon(mPackageManager), mContext);
             
             entry.icon = Utilities.createIconBitmap( //moditify,for theme
                     info.activityInfo.loadShenduIcon(mPackageManager), mContext);
-            
         }
         return entry;
     }
