@@ -326,7 +326,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
             final ShortcutInfo srcInfo, final DragView srcView, Rect dstRect,
             float scaleRelativeToDragLayer, Runnable postAnimationRunnable) {
 
-        Drawable animateDrawable = ((TextView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
+        //Drawable animateDrawable = ((TextView)destView.findViewById(R.id.app_shortcutinfo_icon_id)).getBackground();
         //computePreviewDrawingParams(animateDrawable.getIntrinsicWidth(), destView.getMeasuredWidth());
         // This will animate the dragView (srcView) into the new folder
         onDrop(srcInfo, srcView, dstRect, scaleRelativeToDragLayer, 1, postAnimationRunnable, null);

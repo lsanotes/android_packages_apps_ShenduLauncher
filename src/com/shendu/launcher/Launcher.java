@@ -448,8 +448,7 @@ public final class Launcher extends Activity
      	Log.i(Launcher.TAG, TAG+" ......create()..............:" );
      	
      	mProgressDialog =new ProgressDialog(this);
-    	mProgressDialog.setTitle(getResources().getString(R.string.luancher_load_icon));
-    	
+    	mProgressDialog.setMessage(getResources().getString(R.string.luancher_load_icon));
     	mProgressDialog.setCanceledOnTouchOutside(false);
      	mProgressDialog.show();
     }

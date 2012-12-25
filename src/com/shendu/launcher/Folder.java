@@ -136,6 +136,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 	
 	int mFolderCoverLine ,mHotseatFolderCoverLine,mFolderCoverView,mHotseatFolderCoverView;
 
+	private View mCurrentDragUpView;//add by hhl,used to mark the drag up item view
 
     /**
      * Used to inflate the Workspace from XML.
@@ -148,7 +149,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         setAlwaysDrawnWithCacheEnabled(false);
         mInflater = LayoutInflater.from(context);
         mIconCache = ((LauncherApplication)context.getApplicationContext()).getIconCache();
-
         Resources res = getResources();
         mMaxCountX = res.getInteger(R.integer.folder_max_count_x);
         mMaxCountY = res.getInteger(R.integer.folder_max_count_y);
@@ -627,40 +627,37 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
   	 * closeFolderCoverView
   	 */
 	public void closeFolderCoverView() {
-		
-      	ObjectAnimator upCoverAnimation = ObjectAnimator
-        .ofFloat(upCover, "translationY",
-        		-slideDistance, 0);
-  
-      	upCoverAnimation.setInterpolator(new LinearInterpolator());
+		ObjectAnimator upCoverAnimation = ObjectAnimator
+      			.ofFloat(upCover, "translationY",-slideDistance, 0);
+      	//upCoverAnimation.setInterpolator(new LinearInterpolator());
+      	
     	ObjectAnimator downCoverAnimation = ObjectAnimator
-    	        .ofFloat(downCover, "translationY",
-    	        		(int)(folderHeight-slideDistance), 0);
-    	
-    	downCoverAnimation.setInterpolator(new LinearInterpolator());
+    	        .ofFloat(downCover, "translationY",(int)(folderHeight-slideDistance), 0);
+    	//downCoverAnimation.setInterpolator(new LinearInterpolator());
     
-    	 AnimatorSet anim = new AnimatorSet();     
-    	      
-    	 anim.playTogether(upCoverAnimation,downCoverAnimation);
-    	 anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
-    	 anim.addListener(new AnimatorListenerAdapter() {
-        	    public void onAnimationStart(Animator animation) {
-        	    	Launcher.mFolderAnimation = true;
-        	      }
-        	    
-        	    public void onAnimationEnd(Animator animation){
-        	    	
-        	    	animateClosed();
-    				removeCoverView();
-    				Launcher.mFolderAnimation = false;
-        	    }
-        	   });
-    	 anim.start();
+    	AnimatorSet anim = new AnimatorSet();     
+    	anim.playTogether(upCoverAnimation,downCoverAnimation);
+    	anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
+    	anim.setInterpolator(new LinearInterpolator());
+    	anim.addListener(new AnimatorListenerAdapter() {
+    		public void onAnimationStart(Animator animation) {
+    			Launcher.mFolderAnimation = true;
+    		}
+    		public void onAnimationEnd(Animator animation){
+    			animateClosed();
+    			removeCoverView();
+    			Launcher.mFolderAnimation = false;
+    		}
+    	});
+    	anim.start();
 	}
 	
 
 	public void folderClosed() {
 		LayoutForFolder.bringToFront();
+		if(mCurrentDragUpView!=null){//solve the drag item view disappear when close folder 
+			mCurrentDragUpView.bringToFront();
+		}
       	closeFolderCoverView();
 	}
 
@@ -683,9 +680,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
 	public void animateClosed() {
-
 		setVisibility(View.GONE);
-		
 		onCloseComplete();
 	}
 
@@ -875,12 +870,14 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mCurrentDragView = null;
         mSuppressOnAdd = false;
         mRearrangeOnClose = true;
+        mCurrentDragUpView = null; //clear the drag up item view
     }
 
     public void onDragExit(DragObject d) {
         // We only close the folder if this is a true drag exit, ie. not because a drop
         // has occurred above the folder.
         if (!d.dragComplete) {
+        	mCurrentDragUpView = d.dragView; //set the drag up item view
             mOnExitAlarm.setOnAlarmListener(mOnExitAlarmListener);
             mOnExitAlarm.setAlarm(ON_EXIT_CLOSE_DELAY);
         }

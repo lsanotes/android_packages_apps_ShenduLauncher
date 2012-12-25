@@ -879,19 +879,16 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             bounce.setInterpolator(new AccelerateInterpolator());
             bounce.start();
         }else if (view instanceof PagedViewTheme) {
-        	
         	 mLauncher.backFromEditMode();
-        	
         	 ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
-        	 
         	 Intent intent = shenduPrograme.getIntent();
         	 if(intent ==null){
         		  // add by zlf for Theme
-             	 intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
+             	intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
  				intent.putExtra("path", shenduPrograme.mThemePath);
  				mLauncher.sendBroadcast(intent);
- 				ProgressDialog	mProgressDialog = new ProgressDialog(mLauncher);
- 				mProgressDialog.setTitle(mLauncher.getResources().getString(R.string.luancher_changed_theme));
+ 				ProgressDialog mProgressDialog = new ProgressDialog(mLauncher);
+ 				mProgressDialog.setMessage(mLauncher.getResources().getString(R.string.luancher_changed_theme));
  				mProgressDialog.show();
         	 }else{
  	    	    mLauncher.startActivity(intent);

@@ -212,11 +212,10 @@
     <string name="editstate_wallpaper_current_mark">正在使用</string>
     <string name="delete_folder_toast_message">文件夾不支持删除！</string>
     
-    
     <string name="shortcut_exist_toast_message">快捷方式已存在，不能重複創建</string>
     
-    
-     <string name="luancher_load_icon">正在加载桌面</string>
-       <string name="luancher_changed_theme">正在更换主题</string>
+    <!-- Theme style-->
+	<string name="luancher_load_icon">正在加載桌面...</string>
+	<string name="luancher_changed_theme">正在更換主題...</string>
     
 </resources>

@@ -3326,7 +3326,8 @@ public class Workspace extends SmoothPagedView
 
                         final LauncherAppWidgetHostView hostView = (LauncherAppWidgetHostView) cell;
                         AppWidgetProviderInfo pinfo = hostView.getAppWidgetInfo();
-                        if (pinfo != null &&
+                           //moditify,Editstate do not support resize widget 
+                        if (!CellLayout.mIsEditstate && pinfo != null &&
                                 pinfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE || mResizeAnyWidget) {
                             final Runnable addResizeFrame = new Runnable() {
                                 public void run() {
@@ -3378,7 +3379,7 @@ public class Workspace extends SmoothPagedView
             mAnimatingViewIntoPlace = true;
             if (d.dragView.hasDrawn()) {
                 final ItemInfo info = (ItemInfo) cell.getTag();
-                if (CellLayout.mIsEditstate&&info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET) {
+                if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET) {
                     int animationType = resizeOnDrop ? ANIMATE_INTO_POSITION_AND_RESIZE :
                             ANIMATE_INTO_POSITION_AND_DISAPPEAR;
                     animateWidgetDrop(info, parent, d.dragView,
@@ -4908,7 +4909,11 @@ public class Workspace extends SmoothPagedView
     	if(pageCount>=count||pageCount<0){
     		return;
     	}
-    	
+    	if(mState==State.SMALL){//add,used to update new current page when delete page is current page
+        	CellLayout currentCellLayout = (CellLayout)getChildAt(mCurrentPage);
+        	currentCellLayout.mIsCurrentPage = true;
+        	currentCellLayout.invalidate();
+    	}
     	updateScreensFromIndex(pageCount);
     
     }
