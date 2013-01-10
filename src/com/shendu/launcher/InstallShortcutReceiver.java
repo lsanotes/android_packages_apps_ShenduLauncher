@@ -144,35 +144,39 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
 
     private static void processInstallShortcut(Context context,
             PendingInstallShortcutInfo pendingInfo) {
-        String spKey = LauncherApplication.getSharedPreferencesKey();
-        SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
+        //String spKey = PreferencesProvider.PREFERENCES_KEY;//moditify
+        //SharedPreferences sp = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
 
         final Intent data = pendingInfo.data;
-        final Intent intent = pendingInfo.launchIntent;
-        final String name = pendingInfo.name;
+        //final Intent intent = pendingInfo.launchIntent;
+        //final String name = pendingInfo.name;
 
         // Lock on the app so that we don't try and get the items while apps are being added
         LauncherApplication app = (LauncherApplication) context.getApplicationContext();
         //add,used to add the mark shortcut
-        boolean exists = LauncherModel.shortcutExists(context, name, intent);
-        if(!exists){
+        //boolean exists = LauncherModel.shortcutExists(context, name, intent);
+        //if(!exists){
         	LauncherModel launcherModel = app.getModel();
             if(launcherModel!=null){
             	Callbacks callbacks = launcherModel.mCallbacks.get();
             	ShortcutInfo shortcutInfo = launcherModel.infoFromShortcutIntent(context, data,null);
-            	ArrayList<ShortcutInfo> list = new ArrayList<ShortcutInfo>();
-            	list.add(shortcutInfo);
-            	if(callbacks!=null){
-                	callbacks.bindAllApplications(list);
-                }
+            	if(shortcutInfo!=null){
+                	Log.i(Launcher.TAG,"==InstallShortcutReceiver.java==processInstallShortcut=="+
+                        	"==title=="+shortcutInfo.title+"==customIcon=="+shortcutInfo.customIcon);
+                	ArrayList<ShortcutInfo> list = new ArrayList<ShortcutInfo>();
+                	list.add(shortcutInfo);
+                	if(callbacks!=null){
+                		callbacks.bindAllApplications(list);
+                	}
+            	}
             }
-        }else{
-        	Toast.makeText(context,context.getString(R.string.shortcut_exist_toast_message),Toast.LENGTH_SHORT).show();
-        }
+        //}else{
+        	//Toast.makeText(context,context.getString(R.string.shortcut_exist_toast_message),Toast.LENGTH_SHORT).show();
+        //}
         
     }
 
-    private static boolean installShortcut(Context context, Intent data, ArrayList<ItemInfo> items,
+    /*private static boolean installShortcut(Context context, Intent data, ArrayList<ItemInfo> items,
             String name, Intent intent, final int screen, boolean shortcutExists,
             final SharedPreferences sharedPrefs, int[] result) {
         int[] tmpCoordinates = new int[2];
@@ -232,9 +236,9 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         }
 
         return false;
-    }
+    }*/
 
-    private static boolean findEmptyCell(Context context, ArrayList<ItemInfo> items, int[] xy,
+    /*private static boolean findEmptyCell(Context context, ArrayList<ItemInfo> items, int[] xy,
             int screen) {
         final int xCount = LauncherModel.getCellCountX();
         final int yCount = LauncherModel.getCellCountY();
@@ -260,5 +264,5 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         }
 
         return CellLayout.findVacantCell(xy, 1, 1, xCount, yCount, occupied);
-    }
+    }*/
 }

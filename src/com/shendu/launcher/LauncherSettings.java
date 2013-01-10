@@ -88,6 +88,14 @@ class LauncherSettings {
          * <P>Type: BLOB</P>
          */
         static final String ICON = "icon";
+
+        /**
+         * add by hhl
+         * The shortcut default icon.
+         * <P>Type: BLOB</P>
+         */
+        static final String DEFAULT_ICON = "defaultIcon";
+        
     }
 
     /**

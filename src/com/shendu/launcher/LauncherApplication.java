@@ -45,7 +45,7 @@ public class LauncherApplication extends Application {
     public static final int MMS_MARK = 1;
     public static final int CALL_MARK = 2;
     private static int sLongPressTimeout = 300;
-    private static final String sSharedPreferencesKey = "com.shendu.launcher.prefs";
+    //private static final String sSharedPreferencesKey = "com.shendu.launcher.prefs";
     WeakReference<LauncherProvider> mLauncherProvider;
 
     @Override
@@ -177,9 +177,9 @@ public class LauncherApplication extends Application {
         return mLauncherProvider.get();
     }
 
-    public static String getSharedPreferencesKey() {
-        return sSharedPreferencesKey;
-    }
+    //public static String getSharedPreferencesKey() {
+        //return sSharedPreferencesKey;
+   // }
 
     public static boolean isScreenLarge() {
       //  return sIsScreenLarge;

@@ -76,6 +76,11 @@ public class ShenduPrograme {
 	public static final int CHOICE_WALLPAPER_LAUNCHER = 1;
 	public static final int CHOICE_WALLPAPER_CURRENT = 2;
 	public static final int CHOICE_WALLPAPER_MORE = 3;
+	public static final int QUICK_ACTION_CHANGE_ICON = 4;
+	public static final int QUICK_ACTION_RENAME = 5;
+	public static final int QUICK_ACTION_DELETE = 6;
+	public static final int QUICK_ACTION_UNINSTALL = 7;
+	public static final int QUICK_ACTION_RESIZE = 8;
 	private int resId;
 	private int resSmallId;
 	private Intent intent;
@@ -87,8 +92,24 @@ public class ShenduPrograme {
 	private int effectStrId;
 	private int effectDrawableId;
 	private boolean effectCurrent;
+	private int iconResId;
+	private int actionOP;
 	
+	public int getActionOP() {
+		return actionOP;
+	}
+	public void setActionOP(int actionOP) {
+		this.actionOP = actionOP;
+	}
+
+	public int getIconResId() {
+		return iconResId;
+	}
+	public void setIconResId(int iconResId) {
+		this.iconResId = iconResId;
+	}
+
 	Bitmap mThemeBitmap;
-     String mThemePath;
+   	String mThemePath;
 
 }

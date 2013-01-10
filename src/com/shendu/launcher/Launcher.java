@@ -29,6 +29,8 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.appwidget.AppWidgetHostView;
@@ -41,10 +43,13 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -54,10 +59,14 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Interpolator.Result;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -66,14 +75,23 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.provider.CallLog.Calls;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.Display;
@@ -103,6 +121,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Advanceable;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -110,10 +129,12 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.android.common.Search;
 import com.shendu.launcher.AppsCustomizePagedView.ThemeBroadcastReceiver;
+import com.shendu.launcher.CellLayout.CellInfo;
 import com.shendu.launcher.R;
 import com.shendu.launcher.DropTarget.DragObject;
 import com.shendu.launcher.preference.*;
@@ -121,14 +142,18 @@ import com.shendu.util.DragGrid;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -164,6 +189,9 @@ public final class Launcher extends Activity
     private static final int REQUEST_PICK_WALLPAPER = 10;
 
     private static final int REQUEST_BIND_APPWIDGET = 11;
+    
+    private static final int REQUEST_ICON_FROM_CAMERA = 12;
+    private static final int REQUEST_ICON_FROM_GALLERY = 13;
 
     static final String EXTRA_SHORTCUT_DUPLICATE = "duplicate";
 
@@ -285,6 +313,7 @@ public final class Launcher extends Activity
 
     // Related to the auto-advancing of widgets
     private final int ADVANCE_MSG = 1;
+    private final int HANDLER_DELETE_DATABASE_ICON = 2;//add, for delete database icon
     private final int mAdvanceInterval = 20000;
     private final int mAdvanceStagger = 250;
     private long mAutoAdvanceSentTime;
@@ -299,7 +328,7 @@ public final class Launcher extends Activity
     // External icons saved in case of resource changes, orientation, etc.
     private static Drawable.ConstantState[] sGlobalSearchIcon = new Drawable.ConstantState[2];
     private static Drawable.ConstantState[] sVoiceSearchIcon = new Drawable.ConstantState[2];
-    private static Drawable.ConstantState[] sAppMarketIcon = new Drawable.ConstantState[2];
+    //private static Drawable.ConstantState[] sAppMarketIcon = new Drawable.ConstantState[2];//remove by hhl,do not used
 
     static final ArrayList<String> sDumpLogs = new ArrayList<String>();
 
@@ -329,6 +358,18 @@ public final class Launcher extends Activity
     public int mscreenHeight;
     public int mscreenwidth;
 
+    // add by hhl, for workspace quickaction
+	public CellInfo mCellInfo;
+	private CellLayout mDragItemCellLayout;
+	private View mQuickActionCell,mReNameEditView;
+	private WorkspaceItemQuickAction mQuickAction;
+	private ShenduPrograme mActionChangeIcon,mActionReName,mActionDelete,mActionUninstall,mActionResize;	
+	private Context mContext;//add
+	public boolean mEnableSearchBar;
+	private ItemInfo mItemInfo;
+	private AlertDialog mChangeIconDialog,mReNameDialog;
+	private EditText mReNameEditText;
+
     private Runnable mBuildLayersRunnable = new Runnable() {
         public void run() {
             if (mWorkspace != null) {
@@ -349,6 +390,23 @@ public final class Launcher extends Activity
         int cellY;
     }
 
+    public void shenduShowProgressDialog(String message){//add,show progress dialog
+    	if(mProgressDialog==null){
+    		mProgressDialog = new ProgressDialog(mContext);
+        	mProgressDialog.setCanceledOnTouchOutside(false);
+    	}
+    	if(!mProgressDialog.isShowing()){
+    		mProgressDialog.setMessage(message);
+    		mProgressDialog.show();
+    	}
+    }
+    
+	private void shenduDismissProgressDialog(){//add,dimiss progress dialog
+    	if(mProgressDialog!=null && mProgressDialog.isShowing()){
+			mProgressDialog.dismiss();
+		}
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (DEBUG_STRICT_MODE) {
@@ -368,7 +426,9 @@ public final class Launcher extends Activity
 
         super.onCreate(savedInstanceState);
         LauncherApplication app = ((LauncherApplication)getApplication());
-        mSharedPrefs = getSharedPreferences(LauncherApplication.getSharedPreferencesKey(),
+        mContext = this;
+    	 shenduShowProgressDialog(getResources().getString(R.string.luancher_load_icon));
+        mSharedPrefs = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
         mModel = app.setLauncher(this);
         mIconCache = app.getIconCache();
@@ -435,9 +495,13 @@ public final class Launcher extends Activity
         // On large interfaces, we want the screen to auto-rotate based on the current orientation
         unlockScreenOrientation(true);
         
-        mscreenHeight= getWindowManager().getDefaultDisplay().getHeight();
-        mscreenwidth=  getWindowManager().getDefaultDisplay().getWidth();
-        
+        Point screenPoint = new Point();
+        getWindowManager().getDefaultDisplay().getSize(screenPoint);
+        mscreenHeight = screenPoint.y;
+        mscreenwidth = screenPoint.x;
+        //mscreenHeight= getWindowManager().getDefaultDisplay().getHeight();
+        //mscreenwidth=  getWindowManager().getDefaultDisplay().getWidth();
+
         mDragController.setEffectiveY(mscreenHeight-1.5f*getResources().getDimension(R.dimen.button_bar_height_plus_padding));
        
         // add by zlf for Theme
@@ -445,21 +509,390 @@ public final class Launcher extends Activity
 		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
         registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
         
-     	Log.i(Launcher.TAG, TAG+" ......create()..............:" );
+     	Log.i(Launcher.TAG, TAG+" ....create()........." +
+     			"mscreenHeight:"+mscreenHeight+"*"+mscreenwidth);
      	
-     	mProgressDialog =new ProgressDialog(this);
-    	mProgressDialog.setMessage(getResources().getString(R.string.luancher_load_icon));
-    	mProgressDialog.setCanceledOnTouchOutside(false);
-     	mProgressDialog.show();
+     	//add by hhl,for popup window
+		mActionChangeIcon = new ShenduPrograme();
+		mActionChangeIcon.setName(getString(R.string.workspace_item_quickaction_changeicon));
+		mActionChangeIcon.setIconResId(R.drawable.quick_action_item_change_icon_bg);
+		mActionChangeIcon.setActionOP(ShenduPrograme.QUICK_ACTION_CHANGE_ICON);
+		mActionReName = new ShenduPrograme();
+		mActionReName.setName(getString(R.string.workspace_item_quickaction_rename));
+		mActionReName.setIconResId(R.drawable.quick_action_item_rename_bg);
+		mActionReName.setActionOP(ShenduPrograme.QUICK_ACTION_RENAME);
+		mActionDelete = new ShenduPrograme();
+		mActionDelete.setName(getString(R.string.workspace_item_quickaction_delete));
+		mActionDelete.setIconResId(R.drawable.quick_action_item_delete_bg);
+		mActionDelete.setActionOP(ShenduPrograme.QUICK_ACTION_DELETE);
+		mActionUninstall = new ShenduPrograme();
+		mActionUninstall.setName(getString(R.string.workspace_item_quickaction_uninstall));
+		mActionUninstall.setIconResId(R.drawable.quick_action_item_uninstall_bg);
+		mActionUninstall.setActionOP(ShenduPrograme.QUICK_ACTION_UNINSTALL);
+		mActionResize = new ShenduPrograme();
+		mActionResize.setName(getString(R.string.workspace_item_quickaction_resize));
+		mActionResize.setIconResId(R.drawable.quick_action_item_resize_bg);
+		mActionResize.setActionOP(ShenduPrograme.QUICK_ACTION_RESIZE);
+		
+		mQuickAction = new WorkspaceItemQuickAction(this);
+		mQuickAction.setOnActionItemClickListener(new WorkspaceItemQuickAction.OnActionItemClickListener() {
+			public void onItemClick(int child,int actionFlag) {
+				View itemView = mQuickActionCell;
+				ItemInfo itemInfo = (ItemInfo)itemView.getTag();
+				switch(actionFlag){
+				case ShenduPrograme.QUICK_ACTION_CHANGE_ICON:
+					shenduChangeItemIconChoice();
+					break;
+				case ShenduPrograme.QUICK_ACTION_RENAME:
+					TextView itemText ;
+					if(itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_FOLDER){
+						itemText = (TextView)itemView.findViewById(R.id.folder_icon_name);
+					}else{
+						itemText = (TextView)itemView.findViewById(R.id.app_shortcutinfo_name_id);
+					}
+					shenduChangeItemName(itemText.getText());
+					break;
+				case ShenduPrograme.QUICK_ACTION_DELETE:
+					CellLayout cellLayout = mDragItemCellLayout;
+					if(itemInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET){
+						removeAppWidget((LauncherAppWidgetInfo)itemInfo);
+					}
+					LauncherModel.deleteItemFromDatabase(mContext,itemInfo);
+					cellLayout.removeView(itemView);
+					mWorkspace.removeEmptyScreen(mWorkspace.mCurrentPage);
+					break;
+				case ShenduPrograme.QUICK_ACTION_UNINSTALL:
+					ShortcutInfo shortcutInfo = (ShortcutInfo)itemInfo;
+					ComponentName componentName = shortcutInfo.intent.getComponent();
+			       String pkgName = componentName.getPackageName();
+		        	String className = componentName.getClassName();
+		      		Intent intent = new Intent(Intent.ACTION_DELETE, Uri.fromParts("package",pkgName,className));
+		      		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+		      		mContext.startActivity(intent);
+					break;
+				case ShenduPrograme.QUICK_ACTION_RESIZE:
+					shenduResizeWidget(itemInfo);
+					break;
+				default:
+					break;
+				}
+				shenduDismissWorkspaceQuickAction();
+			}
+		});
+		
+		mChangeIconDialog = new AlertDialog.Builder(mContext)
+    	.setCancelable(true)
+    	.setTitle(getString(R.string.workspace_item_quickaction_changeicon))
+    	.setSingleChoiceItems(new String[]{getString(R.string.workspace_item_change_icon_default),
+    			getString(R.string.workspace_item_change_icon_custom)}, 0, new OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				if(which==0){
+					shenduTakeIconFromDefault((ItemInfo)mQuickActionCell.getTag());
+				}else{
+					shenduTakeIconFromGallery();
+				}
+				dialog.dismiss();
+			}
+		})
+		.create();
+		
+		mReNameEditView = LayoutInflater.from(mContext).inflate(R.layout.workspace_item_rename_dialog, null);
+		mReNameEditText = (EditText)mReNameEditView.findViewById(R.id.workspace_item_rename_dialog_edittext_id);
+		mReNameDialog = new AlertDialog.Builder(mContext)
+    	.setCancelable(true)
+    	.setView(mReNameEditView)
+    	.setTitle(getString(R.string.workspace_item_quickaction_rename))
+    	.setPositiveButton(android.R.string.ok,new OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				View itemView = mQuickActionCell;
+				ItemInfo itemInfo = (ItemInfo)itemView.getTag();
+				ContentValues values = new ContentValues();
+				String newName = mReNameEditText.getText().toString();
+				TextView itemName;
+				if(itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_FOLDER){
+					itemName = (TextView)itemView.findViewById(R.id.folder_icon_name);
+					((FolderIcon)itemView).mFolder.setFolderName(newName);
+				}else{
+					itemName = (TextView)itemView.findViewById(R.id.app_shortcutinfo_name_id);
+				}
+				itemName.setText(newName);
+				itemView.requestFocus();
+				values.put(LauncherSettings.Favorites.TITLE, newName);
+				mModel.updateItemInDatabaseHelper(mContext, values, itemInfo, "updateItemInDatabase");
+				values = null;
+				dialog.dismiss();
+			}
+		})
+		.setNegativeButton(android.R.string.cancel,new OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		})
+		.create();
     }
+    
+    /**
+     * 2013-1-4 hhl
+     * @param oldName: the old name.
+     * TODO: set the workspace item new name.
+     */
+    private void shenduChangeItemName(CharSequence oldName){
+    	if(mReNameDialog!=null && !mReNameDialog.isShowing()){
+    		mReNameEditText.setText(oldName);
+    		mReNameDialog.show();
+    	}
+    }
+    
+    /**
+     * 2013-1-5 hhl
+     * TODO: dismiss change workspace item name dialog.
+     */
+    private void shenduDismissReNameDialog(){
+    	if(mReNameDialog!=null && mReNameDialog.isShowing()){
+    		mReNameDialog.dismiss();
+    	}
+    }
+    
+    /**
+     * 2013-1-5 hhl
+     * TODO: display change workspace item icon choice dialog.
+     */
+    private void shenduChangeItemIconChoice(){
+    	if(mChangeIconDialog!=null && !mChangeIconDialog.isShowing()){
+        	mChangeIconDialog.show();
+    	}
+    }
+    
+    /**
+     * 2013-1-5 hhl
+     * TODO: dismiss change workspace item icon dialog.
+     */
+    private void shenduDismissChangeIconDialog(){
+    	if(mChangeIconDialog!=null && mChangeIconDialog.isShowing()){
+        	mChangeIconDialog.dismiss();
+    	}
+    }
+    
+    /**
+     * 2013-1-4 hhl
+     * @param bitmap: the new icon.
+     * TODO: set the workspace item new icon.
+     */
+    private void shenduChangeItemIcon(Bitmap bitmap){
+    	if(bitmap==null){
+    		Toast.makeText(mContext,mContext.getString(R.string.workspace_item_change_icon_error_message), 
+    				Toast.LENGTH_SHORT).show();
+    	}else{
+    		View itemView = mQuickActionCell;
+    		ItemInfo itemInfo = (ItemInfo)itemView.getTag();
+    		ContentValues values = new ContentValues();
+    		if(itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT
+    			||itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+    			ShortcutInfo shortcutInfo = (ShortcutInfo) itemInfo;
+    			shortcutInfo.setIcon(bitmap);
+    			shortcutInfo.writeBitmap(values,bitmap);
+    			((TextView)itemView.findViewById(R.id.app_shortcutinfo_icon_id))
+    			  .setBackgroundDrawable(new BitmapDrawable(bitmap));
+    		}else{ //folder
+    			FolderInfo folderInfo = (FolderInfo) itemInfo;
+    			folderInfo.mIcon = bitmap;
+    			folderInfo.writeBitmap(values,bitmap);
+    			((ImageView)itemView.findViewById(R.id.preview_background))
+    			  .setBackgroundDrawable(folderInfo.getmIcon(mContext));
+    		}
+    		bitmap = null;
+    		mModel.updateItemInDatabaseHelper(mContext, values, itemInfo, "updateItemInDatabase");
+    	}
+    }
+    
+    /**
+     * 2013-1-4 hhl
+     * @param pkgName: the workspace item package name.
+     * @param resourceName: the workspace item resource name
+     * TODO: get the workspace item icon form app default.
+     */
+    private void shenduTakeIconFromDefault(ItemInfo itemInfo){
+    	Bitmap bitmap = null;
+    	if(itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT){
+    		try {
+        		ShortcutInfo shortcutInfo = (ShortcutInfo)itemInfo;
+        		ActivityInfo activityInfo = getPackageManager().getActivityInfo(
+        				shortcutInfo.componentName,PackageManager.GET_META_DATA);
+        		bitmap = Utilities.createIconBitmap(activityInfo.loadShenduIcon(getPackageManager()), mContext);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	}else if(itemInfo.itemType ==LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT){
+    		ShortcutInfo shortcutInfo = (ShortcutInfo)itemInfo;
+    		Intent.ShortcutIconResource shortcutIconResource = shortcutInfo.iconResource;
+    		Intent shotrcutIntent = shortcutInfo.intent;
+			String pkgName = null;
+    		String resourceName = null;
+    		if(shortcutIconResource!=null){
+    			pkgName = shortcutIconResource.packageName;
+    			resourceName = shortcutIconResource.resourceName;
+    		}
+			if(pkgName!=null && resourceName!=null){
+        		try {
+                	Resources resources = getPackageManager().getResourcesForApplication(pkgName);
+                	int id = resources.getIdentifier(resourceName, null, null);
+                	bitmap = Utilities.createIconBitmap(mIconCache.getFullResIcon(resources, id), mContext);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+        		bitmap = shortcutInfo.mDefaultIcon;
+        		//bitmap = shenduReadShortcutDefaultIcon(mContext,shortcutInfo.intent.toUri(0).toString());
+			}
+    	}else{ //folder
+    		bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.folder_bg)).getBitmap();
+    	}
+    	shenduChangeItemIcon(bitmap);
+    }
+    
+    /**
+     * 2013-1-6 hhl
+     * @param context: the context
+     * @param fileName: the shortcut default icon name
+     * @return: the shortcut default icon.
+     * TODO: read the shortcut default icon.
+     */
+    private Bitmap shenduReadShortcutDefaultIcon(Context context,String fileName){
+        Bitmap resultBitmp = null;
+        FileInputStream fileInputS = null;
+        try {
+          fileInputS = context.openFileInput(fileName);
+          int lenght = fileInputS.available();
+          byte[] bg_data = new byte[lenght];
+          fileInputS.read(bg_data);
+          resultBitmp = BitmapFactory.decodeByteArray(bg_data,0,lenght);
+          fileInputS.close();
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        return resultBitmp;
+      }
+    
+	/**
+	 * 2013-1-4 hhl
+	 * TODO: get the workspace item icon form gallery. 
+	 */
+	private void shenduTakeIconFromGallery(){
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+    	intent.addCategory(Intent.CATEGORY_OPENABLE);
+    	shenduAddGalleryIntentExtras(intent,(int)mContext.getResources().getDimension(R.dimen.app_icon_size));
+    	startActivityForResult(intent, REQUEST_ICON_FROM_GALLERY);
+    }
+	
+	/**
+	 * 2013-1-4 hhl
+	 * TODO: get the workspace item icon form camera. 
+	 */
+	private void shenduTakeIconFromCamera(){
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    	startActivityForResult(intent, REQUEST_ICON_FROM_CAMERA);
+	}
+    
+    /**
+     * 2013-1-4 hhl
+     * @param intent: The intent to add extras to.
+     * @param photoSize: The size of the photo to scale to.
+     * TODO: Adds common extras to gallery intents.
+     */
+    private void shenduAddGalleryIntentExtras(Intent intent, int photoSize) {
+    	intent.setType("image/*");
+    	intent.putExtra("crop", "true");
+    	intent.putExtra("scale", true);
+    	intent.putExtra("scaleUpIfNeeded", true);
+    	intent.putExtra("aspectX", 1);
+    	intent.putExtra("aspectY", 1);
+    	intent.putExtra("outputX", photoSize);
+    	intent.putExtra("outputY", photoSize);
+    	intent.putExtra("return-data", true);
+	}
+    
+    private void shenduResizeWidget(final ItemInfo itemInfo){
+    	LauncherAppWidgetHostView appWidgetView = (LauncherAppWidgetHostView)mCellInfo.cell;
+    	mDragLayer.addResizeFrame(itemInfo,appWidgetView,mDragItemCellLayout);
+    }
+    
+	/**
+	 * 2012-12-20 hhl
+	 * @param: drag item is in hotSeat or not
+	 * TODO: open popupWindow of the Workspace QuickAction 
+	 */
+	public void shenduShowWorkspaceQuickAction(boolean hotSeatFlag) {
+		WorkspaceItemQuickAction quickAction = mQuickAction;
+		quickAction.removeActionItem();
+		CellInfo cellInfo = mCellInfo;
+		ItemInfo itemInfo = (ItemInfo)mQuickActionCell.getTag();
+		boolean isWidget = false;
+		if(itemInfo!=null){
+			switch(itemInfo.itemType){
+			case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
+				quickAction.addActionItem(mActionChangeIcon);
+				quickAction.addActionItem(mActionReName);
+				ShortcutInfo shortcutInfo = (ShortcutInfo)itemInfo;
+				ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(shortcutInfo.intent, 0);
+				if (resolveInfo!=null && !(
+					(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+	              (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0
+	               )){
+					quickAction.addActionItem(mActionUninstall);
+				}
+				resolveInfo = null;
+				break;
+			case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
+				quickAction.addActionItem(mActionChangeIcon);
+				quickAction.addActionItem(mActionReName);
+				quickAction.addActionItem(mActionDelete);
+				break;
+			case LauncherSettings.Favorites.ITEM_TYPE_FOLDER:
+				quickAction.addActionItem(mActionChangeIcon);
+				quickAction.addActionItem(mActionReName);
+				break;
+			case LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET:
+				LauncherAppWidgetHostView hostView = (LauncherAppWidgetHostView) cellInfo.cell;
+              AppWidgetProviderInfo appWindgetInfo = hostView.getAppWidgetInfo();
+              if(appWindgetInfo!=null && 
+            		(appWindgetInfo.resizeMode!=AppWidgetProviderInfo.RESIZE_NONE || mWorkspace.mResizeAnyWidget)){
+  				 	quickAction.addActionItem(mActionResize);
+                }
+				isWidget = true;
+				quickAction.addActionItem(mActionDelete);
+				break;
+			default:
+				break;
+			}
+		}
+		boolean isHotSeatOne = false;
+		if(hotSeatFlag && (mDragItemCellLayout.getShortcutsAndWidgets().getChildCount()==1)){
+			isHotSeatOne = true;
+		}
+		quickAction.show(isHotSeatOne,isWidget, hotSeatFlag, mQuickActionCell, cellInfo.cellX, cellInfo.cellY, cellInfo.spanY);
+	}
+
+	/**
+	 * 2012-12-20 hhl
+	 * TODO: dismiss popupWindow of the Workspace QuickAction
+	 */
+	public void shenduDismissWorkspaceQuickAction(){
+		if(mQuickAction!=null){
+			mQuickAction.dismiss();
+		}
+		//mQuickActionCell = null;
+		//mCellInfo = null;
+	}
 
     private void updateGlobalIcons() {
         boolean searchVisible = false;
         boolean voiceVisible = false;
         // If we have a saved version of these external icons, we load them up immediately
         int coi = getCurrentOrientationIndexForGlobalIcons();
-        if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null ||
-                sAppMarketIcon[coi] == null) {
+        if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null){
+        //        sAppMarketIcon[coi] == null) {
         //    updateAppMarketIcon();
             searchVisible = updateGlobalSearchIcon();
             voiceVisible = updateVoiceSearchIcon(searchVisible);
@@ -636,7 +1069,26 @@ public final class Launcher extends Activity
     @Override
     protected void onActivityResult(
             final int requestCode, final int resultCode, final Intent data) {
-        
+        //add, for change workspace item icon
+    	if(resultCode == RESULT_OK && requestCode == REQUEST_ICON_FROM_GALLERY){
+    		Bitmap iconBitmap = null;
+    		Bundle bundle = data.getExtras();
+    		if(bundle!=null){
+    			Object returnData = bundle.get("data");
+        		if(returnData instanceof Bitmap){
+        			iconBitmap = (Bitmap) returnData;
+                }
+    		}
+        	shenduChangeItemIcon(iconBitmap);
+    	}else if(resultCode == RESULT_OK && requestCode == REQUEST_ICON_FROM_CAMERA){
+    		if(data!=null){
+        		Intent intent = new Intent("com.android.camera.action.CROP");
+        		intent.putExtra("data", data);
+        		shenduAddGalleryIntentExtras(intent,(int)mContext.getResources().getDimension(R.dimen.app_icon_size));
+            	startActivityForResult(intent, REQUEST_ICON_FROM_GALLERY);
+    		}
+    	}
+    	
         if (requestCode == REQUEST_BIND_APPWIDGET) {
             int appWidgetId = data != null ?
                     data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
@@ -758,7 +1210,7 @@ public final class Launcher extends Activity
         // NOTE: We want all transitions from launcher to act as if the wallpaper were enabled
         // to be consistent.  So re-enable the flag here, and we will re-disable it as necessary
         // when Launcher resumes and we are still in AllApps.
-        updateWallpaperVisibility(true);
+        //updateWallpaperVisibility(true);
 
         super.onPause();
 
@@ -982,16 +1434,16 @@ public final class Launcher extends Activity
     	TextView app_icon = (TextView)app_view.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_view.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_view.findViewById(R.id.app_shortcutinfo_mark_id);
-
-		if((info.intent.getComponent()!=null) && 
-    		info.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
+    	ComponentName componentName = info.intent.getComponent();
+		if((componentName!=null) && 
+    		componentName.equals(LauncherApplication.sMMSComponentName)){
     		int unReadMMS_mark = shenduGetUnreadMMSCount();
     		if(unReadMMS_mark>0){
         		app_mark.setText(unReadMMS_mark+"");
         		app_mark.setVisibility(View.VISIBLE);
     		}
-    	}else if((info.intent.getComponent()!=null) &&
-    		info.intent.getComponent().equals(LauncherApplication.sCallComponentName)){
+    	}else if((componentName!=null) &&
+    		componentName.equals(LauncherApplication.sCallComponentName)){
     		int missCall_mark = shenduGetMissCallCount();
     		if(missCall_mark>0){
         		app_mark.setText(String.valueOf(missCall_mark));
@@ -1042,6 +1494,7 @@ public final class Launcher extends Activity
     
     /**
      * 2012-9-10 hhl
+     * @see com.shendu.launcher.LauncherModel.Callbacks#shenduUpdateAppMark(int, long, int, int, int)
      * @param mark: diff wihch app mark changed in call and sms
      * @param container: used to changed app view container 
      * @param screen: used to changed app view screen   
@@ -1099,6 +1552,35 @@ public final class Launcher extends Activity
 			view.requestLayout();
 		}
 	}
+    
+    /** 
+     * 2013-01-07 hhl
+     * (non-Javadoc)
+     * @see com.shendu.launcher.LauncherModel.Callbacks#shenduChangeTheme()
+     * TODO: delete the table favorites icon data
+     */
+    public void shenduChangeTheme(){
+    	new Thread(){
+			public void run(){
+				try {
+					ContentValues contentValues = new ContentValues();
+					byte[] data = null;
+					contentValues.put(LauncherSettings.Favorites.ICON,data);
+			       ContentResolver contentResolver = mContext.getContentResolver();
+			       int result = contentResolver.update(LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, 
+			    		   contentValues,LauncherSettings.Favorites.ITEM_TYPE+"="+
+			    				   LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT,
+			    				    null);
+	            	Log.i(Launcher.TAG, TAG+" ...shenduChangeTheme.....delete database icon..result:"+result);
+			       mHandler.sendMessage(mHandler.obtainMessage(HANDLER_DELETE_DATABASE_ICON));
+			       contentResolver = null;
+			       contentValues = null;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+    }
 
     /**
      * Add an application shortcut to the workspace.
@@ -1320,6 +1802,9 @@ public final class Launcher extends Activity
                 if(mScreenPopupWindow!=null && mScreenPopupWindow.isShowing()){ //add,dismiss screen manager
                 	mScreenPopupWindow.dismiss();
                   }
+                shenduDismissWorkspaceQuickAction();//dismiss the workspace quickaction
+                shenduDismissChangeIconDialog();//dismiss the workspace item change icon dialog
+                shenduDismissReNameDialog();//dismiss the workspace item rename dialog
                 closeFolder(); //add,close to open folder
                 if(mWorkspace!=null && mWorkspace.isSmall()){ //if state is small,back to normal
                 	backFromEditMode();
@@ -1435,6 +1920,8 @@ public final class Launcher extends Activity
                     i++;
                 }
                 sendAdvanceMessage(mAdvanceInterval);
+            }else if(msg.what == HANDLER_DELETE_DATABASE_ICON){
+            	android.os.Process.killProcess(android.os.Process.myPid());
             }
         }
     };
@@ -1495,6 +1982,9 @@ public final class Launcher extends Activity
                         != Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 
             Folder openFolder = mWorkspace.getOpenFolder();
+            shenduDismissWorkspaceQuickAction();//dismiss the workspace quickaction
+            shenduDismissChangeIconDialog();//dismiss the workspace item change icon dialog
+            shenduDismissReNameDialog();//dismiss the workspace item rename dialog
             // In all these cases, only animate if we're already on home
             mWorkspace.exitWidgetResizeMode();
             if (alreadyOnHome && mState == State.WORKSPACE && !mWorkspace.isTouchActive() &&
@@ -1568,7 +2058,8 @@ public final class Launcher extends Activity
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
-        
+        Log.i(TAG,TAG+"=============onDestroy=======");
+        shenduDismissProgressDialog();
         // Remove all pending runnables
         mHandler.removeMessages(ADVANCE_MSG);
         mHandler.removeMessages(0);
@@ -1977,8 +2468,8 @@ public final class Launcher extends Activity
     	mStateAnimation.start();
     	mState = State.APPS_CUSTOMIZE;
     	setFullScreen();
-    	mWorkspace.hideScrollingIndicator(true);
-		hideHotseat(true);
+    	//mWorkspace.hideScrollingIndicator(true);
+		hideHotseat();
 	}
     
 	public void backFromEditMode(){
@@ -2004,7 +2495,7 @@ public final class Launcher extends Activity
 		            });
 					mStateAnimation.playTogether(tranAnim2);
 					mStateAnimation.start();
-					showHotseat(true);
+					showHotseat();
 					mSearchDropTargetBar.showSearchBar(true);
 					mWorkspace.getChangeStateAnimation(Workspace.State.NORMAL,true, 0);
 					mState = State.WORKSPACE;
@@ -2433,7 +2924,10 @@ public final class Launcher extends Activity
             v = (View) v.getParent().getParent();
         }
         resetAddInfo();
-        CellLayout.CellInfo longClickCellInfo = (CellLayout.CellInfo) v.getTag();
+        //CellLayout.CellInfo longClickCellInfo = (CellLayout.CellInfo) v.getTag();
+        mDragItemCellLayout = (CellLayout)v;
+        mCellInfo = (CellLayout.CellInfo) v.getTag();
+        CellLayout.CellInfo longClickCellInfo = mCellInfo;
         // This happens when long clicking an item with the dpad/trackball
         if (longClickCellInfo == null) {
             return true;
@@ -2441,8 +2935,12 @@ public final class Launcher extends Activity
 
         // The hotseat touch handling does not go through Workspace, and we always allow long press
         // on hotseat items.
-        final View itemUnderLongClick = longClickCellInfo.cell;
-        boolean allowLongPress = isHotseatLayout(v) || mWorkspace.allowLongPress();
+        //final View itemUnderLongClick = longClickCellInfo.cell;
+        mQuickActionCell = longClickCellInfo.cell;
+        final View itemUnderLongClick = mQuickActionCell;
+        boolean hotSeatFlag = isHotseatLayout(v);
+        boolean allowLongPress = hotSeatFlag || mWorkspace.allowLongPress();
+        //boolean allowLongPress = isHotseatLayout(v) || mWorkspace.allowLongPress();
         if (allowLongPress && !mDragController.isDragging()) {
             if (itemUnderLongClick == null) {
             	if(mWorkspace.isSmall()){//add,edit state do not long click empty
@@ -2456,6 +2954,9 @@ public final class Launcher extends Activity
             } else {
                 if (!(itemUnderLongClick instanceof Folder)) {
                     // User long pressed on an item
+                	if(!mWorkspace.isSmall()){
+                		shenduShowWorkspaceQuickAction(hotSeatFlag);
+                	}
                     mWorkspace.startDrag(longClickCellInfo,isHotseatLayout(v));
                 }
             }
@@ -2646,7 +3147,7 @@ public final class Launcher extends Activity
             workspaceAnim = mWorkspace.getChangeStateAnimation(
                     Workspace.State.NORMAL, animated, stagger);
         } 
-        showHotseat(animated);
+        showHotseat();
             fromView.setVisibility(View.GONE);
             dispatchOnLauncherTransitionPrepare(fromView, animated, true);
             dispatchOnLauncherTransitionStart(fromView, animated, true);
@@ -2770,22 +3271,22 @@ public final class Launcher extends Activity
     /**
      * Shows the hotseat area.
      */
-    void showHotseat(boolean animated) {
-                if (mHotseat.getAlpha() != 1f) {
-                    int duration = mSearchDropTargetBar.getTransitionInDuration();
-                    mHotseat.animate().alpha(1f).setDuration(duration);
-                }
-    }
+	void showHotseat() {
+		//if (alphaFlag != 1f) {
+			// int duration = mSearchDropTargetBar.getTransitionInDuration();
+		mHotseat.animate().alpha(1f).setDuration(200);
+		//}
+	}
 
     /**
      * Hides the hotseat area.
      */
-    void hideHotseat(boolean animated) {
-                if (mHotseat.getAlpha() != 0f) {
-                    int duration = mSearchDropTargetBar.getTransitionOutDuration();
-                    mHotseat.animate().alpha(0f).setDuration(duration);
-                }
-    }
+	void hideHotseat() {
+		//if (alphaFlag != 0f) {
+			// int duration = mSearchDropTargetBar.getTransitionOutDuration();
+		mHotseat.animate().alpha(0f).setDuration(200);
+		//}
+	}
 
     /**
      * Add an item from all apps or customize onto the given workspace screen.
@@ -3221,9 +3722,7 @@ public final class Launcher extends Activity
      */
     public void finishBindingItems() {
      	if(mWorkspace.getChildCount()>1){
-        	if(mProgressDialog!=null&& mProgressDialog.isShowing()){
-    			mProgressDialog.dismiss();
-    		}
+     		shenduDismissProgressDialog();
      	}
         setLoadOnResume();
 
@@ -3373,7 +3872,7 @@ public final class Launcher extends Activity
        cellX=lastCell[0];
        cellY=lastCell[1];  
        for (int i=0; i<count; i++) {
-    	   final ShortcutInfo shorCutInfo = apps.get(i);
+    	   final ShortcutInfo shortcutInfo = apps.get(i);
       	   if(cellX>=cellCountX-1&&cellY>=cellCountY-1){
       		   screenNum++;
       		   if(screenNum>=workspace.getChildCount()){
@@ -3387,9 +3886,9 @@ public final class Launcher extends Activity
       	   }else{
       		   cellX++;  
       	   }
-          View view = createShortcut(shorCutInfo);
+          View view = createShortcut(shortcutInfo);
           workspace.addInScreen(view, LauncherSettings.Favorites.CONTAINER_DESKTOP, screenNum,cellX,cellY, 1, 1, false);
-          LauncherModel.addOrMoveItemInDatabase(Launcher.this, shorCutInfo, LauncherSettings.Favorites.CONTAINER_DESKTOP, screenNum, cellX,cellY);
+          LauncherModel.addOrMoveItemInDatabase(Launcher.this, shortcutInfo, LauncherSettings.Favorites.CONTAINER_DESKTOP, screenNum, cellX,cellY);
         }
   		workspace.savedThePageCount();
     }
@@ -3402,9 +3901,7 @@ public final class Launcher extends Activity
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
      	Log.i(Launcher.TAG, TAG+" ......bindAllApplications()..............:" );
     	
-    	if(mProgressDialog!=null&& mProgressDialog.isShowing()){
-			mProgressDialog.dismiss();
-		}
+     	shenduDismissProgressDialog();
         // Remove the progress bar entirely; we could also make it GONE
         // but better to remove it since we know it's not going to be used
     	
@@ -3742,7 +4239,8 @@ public final class Launcher extends Activity
 	
   		mWorkspace.isShowPreviews=false;
  		mWorkspace.setVisibility(View.VISIBLE);
- 		mHotseat.setVisibility(View.VISIBLE);
+ 		//mHotseat.setVisibility(View.VISIBLE);
+ 		showHotseat();
  		mSearchDropTargetBar.setVisibility(View.VISIBLE);
  		mWorkspace.showScrollingIndicator(false);
   	}
@@ -3750,7 +4248,8 @@ public final class Launcher extends Activity
 	 void showPreviews(final View anchor, int start, int end) {//open screen manager
 		closeFolder();
 		mWorkspace.setVisibility(View.INVISIBLE);
-		mHotseat.setVisibility(View.INVISIBLE);
+		//mHotseat.setVisibility(View.INVISIBLE);
+		hideHotseat();
 		mSearchDropTargetBar.setVisibility(View.INVISIBLE);
 		mWorkspace.hideScrollingIndicator(true);
 		//final Resources resources = getResources();

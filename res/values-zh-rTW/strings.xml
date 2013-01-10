@@ -218,4 +218,15 @@
 	<string name="luancher_load_icon">正在加載桌面...</string>
 	<string name="luancher_changed_theme">正在更換主題...</string>
     
+    <!-- Workspace Item QuickAction -->
+    <string name="workspace_item_quickaction_changeicon">換圖標</string>
+    <string name="workspace_item_quickaction_rename">重命名</string>
+    <string name="workspace_item_quickaction_delete">移除</string>
+    <string name="workspace_item_quickaction_uninstall">卸載</string>
+    <string name="workspace_item_quickaction_resize">縮放</string>
+    <string name="workspace_item_change_icon_error_message">獲取的圖片不正確，不能替換</string>
+    <string name="workspace_item_change_icon_default">默認圖標</string>
+    <string name="workspace_item_change_icon_custom">自定義圖標</string>
+
+    
 </resources>

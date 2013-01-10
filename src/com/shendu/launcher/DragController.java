@@ -496,7 +496,10 @@ public class DragController {
     private void handleMoveEvent(int x, int y) {
     	
         mDragObject.dragView.move(x, y);
-
+        //Log.i(Launcher.TAG,TAG+"===handleMoveEvent==x=="+x+"*"+y+"=mMotionDownX="+mMotionDownX+"*"+mMotionDownY);
+        if( Math.abs(mMotionDownX-x)>20 || Math.abs(mMotionDownY-y)>20 ){//add by hhl,used to dismiss quickAction
+        	mLauncher.shenduDismissWorkspaceQuickAction();
+         }
         // Drop on someone?
         final int[] coordinates = mCoordinatesTemp;
         DropTarget dropTarget = findDropTarget(x, y, coordinates);

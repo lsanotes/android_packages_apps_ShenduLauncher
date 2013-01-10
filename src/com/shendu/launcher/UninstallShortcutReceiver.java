@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.shendu.launcher.R;
+import com.shendu.launcher.preference.PreferencesProvider;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class UninstallShortcutReceiver extends BroadcastReceiver {
 
     private static void processUninstallShortcut(Context context,
             PendingUninstallShortcutInfo pendingInfo) {
-        String spKey = LauncherApplication.getSharedPreferencesKey();
+        String spKey = PreferencesProvider.PREFERENCES_KEY;
         SharedPreferences sharedPrefs = context.getSharedPreferences(spKey, Context.MODE_PRIVATE);
 
         final Intent data = pendingInfo.data;

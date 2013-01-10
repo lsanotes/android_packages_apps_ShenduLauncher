@@ -395,5 +395,15 @@ s -->
     <!-- Theme style-->
     <string name="luancher_load_icon">"loading..."</string>
     <string name="luancher_changed_theme">"change theme..."</string>
+    
+    <!-- Workspace Item QuickAction -->
+    <string name="workspace_item_quickaction_changeicon">Icon</string>
+    <string name="workspace_item_quickaction_rename">ReName</string>
+    <string name="workspace_item_quickaction_delete">Delete</string>
+    <string name="workspace_item_quickaction_uninstall">Uninstall</string>
+    <string name="workspace_item_quickaction_resize">Resize</string>
+    <string name="workspace_item_change_icon_error_message">Get the picture is incorrect, you can not replace</string>
+    <string name="workspace_item_change_icon_default">default icon</string>
+    <string name="workspace_item_change_icon_custom">custom icon</string>
 
 </resources>

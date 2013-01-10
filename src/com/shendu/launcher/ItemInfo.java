@@ -169,6 +169,13 @@ class ItemInfo {
             values.put(LauncherSettings.Favorites.ICON, data);
         }
     }
+    
+    void writeDefaultBitmap(ContentValues values, Bitmap bitmap) {//add,for default icon
+        if (bitmap != null) {
+            byte[] data = flattenBitmap(bitmap);
+            values.put(LauncherSettings.Favorites.DEFAULT_ICON, data);
+        }
+    }
 
     /**
      * It is very important that sub-classes implement this if they contain any references

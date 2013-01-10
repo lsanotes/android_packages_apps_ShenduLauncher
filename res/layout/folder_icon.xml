@@ -35,7 +35,6 @@
           	android:id="@+id/preview_background"
         	android:layout_width="@dimen/app_icon_size"
         	android:layout_height="@dimen/app_icon_size"
-        	android:background="@drawable/folder_bg"
             />
     </LinearLayout>
 

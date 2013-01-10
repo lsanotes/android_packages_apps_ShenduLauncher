@@ -291,7 +291,7 @@ public class Workspace extends SmoothPagedView
     private int mScreenPaddingVertical;
     private int mScreenPaddingHorizontal;
     private boolean mShowSearchBar;
-    private boolean mResizeAnyWidget;
+    public boolean mResizeAnyWidget; //moditify
     private boolean mHideIconLabels;
     private boolean mScrollWallpaper;
     private boolean mShowScrollingIndicator;
@@ -339,6 +339,9 @@ public class Workspace extends SmoothPagedView
     private boolean isAddHeaderAndFooter=false; //for add header and foorer view
     
     public boolean isShowPreviews =false;
+    
+    private boolean mDragItemFromHotSeat = false;
+    
     /**
      * Used to inflate the Workspace from XML.
      *
@@ -2863,6 +2866,7 @@ public class Workspace extends SmoothPagedView
         if (!child.isInTouchMode()) {
             return;
         }
+        mDragItemFromHotSeat = isFromHotseat;//add
         mDragInfo = cellInfo;
         if(isFromHotseat){
         	 mDragTargetLayout=  mLauncher.getHotseat().getLayout();
@@ -3318,7 +3322,8 @@ public class Workspace extends SmoothPagedView
                     cell.setId(LauncherModel.getCellLayoutChildId(container, mDragInfo.screen,
                             mTargetCell[0], mTargetCell[1], mDragInfo.spanX, mDragInfo.spanY));
 
-                    if (container != LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
+                    	// delete, do not resize widget here
+                    /*if (container != LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
                             cell instanceof LauncherAppWidgetHostView) {
                         final CellLayout cellLayout = dropTargetLayout;
                         // We post this call so that the widget has a chance to be placed
@@ -3326,6 +3331,8 @@ public class Workspace extends SmoothPagedView
 
                         final LauncherAppWidgetHostView hostView = (LauncherAppWidgetHostView) cell;
                         AppWidgetProviderInfo pinfo = hostView.getAppWidgetInfo();
+                        Log.i(Launcher.TAG,TAG+"======onDrop====pinfo===="+pinfo.resizeMode+
+                        		"===none==="+(pinfo.resizeMode == AppWidgetProviderInfo.RESIZE_NONE));
                            //moditify,Editstate do not support resize widget 
                         if (!CellLayout.mIsEditstate && pinfo != null &&
                                 pinfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE || mResizeAnyWidget) {
@@ -3345,7 +3352,7 @@ public class Workspace extends SmoothPagedView
                                 }
                             });
                         }
-                    }
+                    }*/
 
                     LauncherModel.moveItemInDatabase(mLauncher, info, container, screen, lp.cellX,
                             lp.cellY);
@@ -4462,6 +4469,11 @@ public class Workspace extends SmoothPagedView
     		d.cancelled = true;
     	}
         if (success) {
+        	
+        	boolean targetIsWorkspace = !mLauncher.isHotseatLayout(getParentCellLayoutForView(mDragInfo.cell));
+        	if(mDragItemFromHotSeat && targetIsWorkspace){
+        		mLauncher.shenduDismissWorkspaceQuickAction();//add by hhl,used to dismiss quickAction
+        	}
             if (target != this) {
                 if (mDragInfo != null) {
                 	  CellLayout cellLayout = getParentCellLayoutForView(mDragInfo.cell);
@@ -4853,7 +4865,7 @@ public class Workspace extends SmoothPagedView
         post(new Runnable() {
             @Override
             public void run() {
-                String spKey = LauncherApplication.getSharedPreferencesKey();
+                String spKey = PreferencesProvider.PREFERENCES_KEY;
                 SharedPreferences sp = getContext().getSharedPreferences(spKey,
                         Context.MODE_PRIVATE);
                 Set<String> newApps = sp.getStringSet(InstallShortcutReceiver.NEW_APPS_LIST_KEY,

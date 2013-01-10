@@ -19,6 +19,10 @@ package com.shendu.launcher;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 /**
@@ -35,8 +39,23 @@ class FolderInfo extends ItemInfo {
      * The folder name.
      */
     CharSequence title;
-
+    
     /**
+     * The folder background icon.
+     */
+    Bitmap mIcon;
+
+	public Drawable getmIcon(Context context) {
+		Drawable drawableBG;
+		if(mIcon==null){
+			drawableBG = context.getResources().getDrawable(R.drawable.folder_bg);
+		}else{
+			drawableBG = new BitmapDrawable(mIcon);
+		}
+		return drawableBG;
+	}
+
+	/**
      * The apps and shortcuts
      */
     ArrayList<ShortcutInfo> contents = new ArrayList<ShortcutInfo>();

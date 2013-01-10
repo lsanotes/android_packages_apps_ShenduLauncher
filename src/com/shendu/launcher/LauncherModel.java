@@ -46,6 +46,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.shendu.launcher.R;
 import com.shendu.launcher.InstallWidgetReceiver.WidgetMimeTypeHandlerData;
@@ -168,6 +169,7 @@ public class LauncherModel extends BroadcastReceiver {
         public void bindSearchablesChanged();
         public void bindWallpaperChanged(); //used to changed current wallpaper,add by hhl
         public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y); //used to update app mark,add by hhl
+        public void shenduChangeTheme(); //used to delete database icon
     }
 
     LauncherModel(LauncherApplication app, IconCache iconCache) {
@@ -254,6 +256,9 @@ public class LauncherModel extends BroadcastReceiver {
                 cr.update(uri, values, null, null);
 
                 ItemInfo modelItem = sItemsIdMap.get(itemId);
+                if(modelItem==null){ //add
+                	return;
+                }
                 if (item != modelItem) {
                     // the modelItem needs to match up perfectly with item if our model is to be
                     // consistent with the database-- for now, just require modelItem == item
@@ -358,9 +363,12 @@ public class LauncherModel extends BroadcastReceiver {
      */
     static boolean shortcutExists(Context context, String title, Intent intent) {
         final ContentResolver cr = context.getContentResolver();
-        Cursor c = cr.query(LauncherSettings.Favorites.CONTENT_URI,
+        /*Cursor c = cr.query(LauncherSettings.Favorites.CONTENT_URI,
             new String[] { "title", "intent" }, "title=? and intent=?",
-            new String[] { title, intent.toUri(0) }, null);
+            new String[] { title, intent.toUri(0) }, null);*/ //moditify
+        Cursor c = cr.query(LauncherSettings.Favorites.CONTENT_URI,
+                new String[] { "intent" }, "intent=?",
+                new String[] { intent.toUri(0) }, null);
         boolean result = false;
         try {
             result = c.moveToFirst();
@@ -628,7 +636,7 @@ public class LauncherModel extends BroadcastReceiver {
         
         
         final String action = intent.getAction();
-        Log.i(Launcher.TAG, TAG+" ......onReceive()........   mLock" +action);   
+        Log.i(Launcher.TAG, TAG+" ......onReceive()........" +action);   
         if(!mLoadWorkspaceOk){ return; } //for item replace loading
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
                 || Intent.ACTION_PACKAGE_REMOVED.equals(action)
@@ -689,18 +697,24 @@ public class LauncherModel extends BroadcastReceiver {
             	 if(mIconCache!=null){
             		 mIconCache.flush(); 
                  }
-             	Log.i(Launcher.TAG, TAG+" ......killProcess()........   mLock"+ mLock );
-            	  android.os.Process.killProcess(android.os.Process.myPid());
+             	Log.i(Launcher.TAG, TAG+" ...onReceiver...killProcess()........   mLock"+ mLock );
+             	//add,for delete the database icon
+             	Callbacks callbacks = mCallbacks==null?null:mCallbacks.get();
+             	if (callbacks != null) {
+             		callbacks.shenduChangeTheme();
+             	}else{
+             		android.os.Process.killProcess(android.os.Process.myPid());
+             	}
             	// forceReload();
                  
               } 
              
-             if (mPreviousConfigMcc != currentConfig.mcc) {
+             /*if (mPreviousConfigMcc != currentConfig.mcc) {
                    Log.d(TAG, "Reload apps on config change. curr_mcc:"
                        + currentConfig.mcc + " prevmcc:" + mPreviousConfigMcc);
                  //remove by zlf
                  // forceReload();
-             }
+             }*/
              // Update previousConfig
              mPreviousConfigMcc = currentConfig.mcc;
         } else if (SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED.equals(action) ||
@@ -1112,6 +1126,7 @@ public class LauncherModel extends BroadcastReceiver {
                 final int iconTypeIndex = c.getColumnIndexOrThrow(
                         LauncherSettings.Favorites.ICON_TYPE);
                 final int iconIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ICON);
+                final int defaultIconIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.DEFAULT_ICON);//add
                 final int iconPackageIndex = c.getColumnIndexOrThrow(
                         LauncherSettings.Favorites.ICON_PACKAGE);
                 final int iconResourceIndex = c.getColumnIndexOrThrow(
@@ -1142,6 +1157,7 @@ public class LauncherModel extends BroadcastReceiver {
                 int container;
                 long id;
                 Intent intent;
+                Intent.ShortcutIconResource iconResource;//add
 
                 while (!mStopped && c.moveToNext()) {
                     try {
@@ -1161,11 +1177,13 @@ public class LauncherModel extends BroadcastReceiver {
                             if (itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) {
                                 info = getShortcutInfo(manager, intent, context, c, iconIndex,
                                         titleIndex, mLabelCache);
-                            } else {
+                            } else {// ITEM_TYPE_DELETESHORTCUT ,moditify
                                 info = getShortcutInfo(c, context, iconTypeIndex,
                                         iconPackageIndex, iconResourceIndex, iconIndex,
                                         titleIndex,itemType);
-
+                                if(info !=null){
+                                		info.mDefaultIcon = getIconFromCursor(c, defaultIconIndex, context);
+                                	}
                                 // App shortcuts that used to be automatically added to Launcher
                                 // didn't always have the correct intent flags set, so do that here
                                 if (intent.getAction() != null &&
@@ -1188,6 +1206,10 @@ public class LauncherModel extends BroadcastReceiver {
                                 info.screen = c.getInt(screenIndex);
                                 info.cellX = c.getInt(cellXIndex);
                                 info.cellY = c.getInt(cellYIndex);
+                                iconResource = new Intent.ShortcutIconResource();
+                                iconResource.packageName = c.getString(iconPackageIndex);
+                                iconResource.resourceName = c.getString(iconResourceIndex);
+                                info.iconResource = iconResource;
 
                                 // check & update map of what's occupied
                                 if (!checkItemPlacement(occupied, info)) {
@@ -1235,6 +1257,7 @@ public class LauncherModel extends BroadcastReceiver {
                             folderInfo.screen = c.getInt(screenIndex);
                             folderInfo.cellX = c.getInt(cellXIndex);
                             folderInfo.cellY = c.getInt(cellYIndex);
+                            folderInfo.mIcon = getIconFromCursor(c, iconIndex, context);//add
 
                             // check & update map of what's occupied
                             if (!checkItemPlacement(occupied, folderInfo)) {
@@ -1917,14 +1940,15 @@ public class LauncherModel extends BroadcastReceiver {
         if (resolveInfo == null) {
             resolveInfo = manager.resolveActivity(intent, 0);
         }
-        if (resolveInfo != null) {
-            icon = mIconCache.getIcon(componentName, resolveInfo, labelCache);
-        }
         // the db
         if (icon == null) {
             if (c != null) {
                 icon = getIconFromCursor(c, iconIndex, context);
             }
+        }
+     // from the resource
+        if (icon == null && resolveInfo != null) {
+            icon = mIconCache.getIcon(componentName, resolveInfo, labelCache);
         }
         // the fallback icon
         if (icon == null) {
@@ -1982,20 +2006,21 @@ public class LauncherModel extends BroadcastReceiver {
             String resourceName = c.getString(iconResourceIndex);
             PackageManager packageManager = context.getPackageManager();
             info.customIcon = false;
+
+            // the db
+            if (icon == null) {
+                icon = getIconFromCursor(c, iconIndex, context);
+            }
             // the resource
             try {
                 Resources resources = packageManager.getResourcesForApplication(packageName);
-                if (resources != null) {
+                if (icon == null && resources != null) {
                     final int id = resources.getIdentifier(resourceName, null, null);
                     icon = Utilities.createIconBitmap(
                             mIconCache.getFullResIcon(resources, id), context);
                 }
             } catch (Exception e) {
                 // drop this.  we have other places to look for icons
-            }
-            // the db
-            if (icon == null) {
-                icon = getIconFromCursor(c, iconIndex, context);
             }
             // the fallback icon
             if (icon == null) {
@@ -2014,7 +2039,10 @@ public class LauncherModel extends BroadcastReceiver {
             }
             break;
         default:
-            icon = getFallbackIcon();
+            icon = getIconFromCursor(c, iconIndex, context);
+            if(icon==null){
+                icon = getFallbackIcon();
+            }
             info.usingFallbackIcon = true;
             info.customIcon = false;
             break;
@@ -2113,6 +2141,12 @@ public class LauncherModel extends BroadcastReceiver {
             Log.e(TAG, "Can't construct ShorcutInfo with null intent");
             return null;
         }
+        
+        boolean isExists = shortcutExists(context, name, intent);
+        if(isExists){
+        	Toast.makeText(context,context.getString(R.string.shortcut_exist_toast_message),Toast.LENGTH_SHORT).show();
+        	return null;
+        }
 
         Bitmap icon = null;
         boolean customIcon = false;
@@ -2154,7 +2188,9 @@ public class LauncherModel extends BroadcastReceiver {
         info.intent = intent;
         info.customIcon = customIcon;
         info.iconResource = iconResource;
-
+		if (iconResource == null) { //add by hhl, used to save the shortcut default icon
+			info.mDefaultIcon = icon;
+		}
         return info;
     }
 

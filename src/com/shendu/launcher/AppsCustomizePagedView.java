@@ -887,9 +887,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
              	intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
  				intent.putExtra("path", shenduPrograme.mThemePath);
  				mLauncher.sendBroadcast(intent);
- 				ProgressDialog mProgressDialog = new ProgressDialog(mLauncher);
- 				mProgressDialog.setMessage(mLauncher.getResources().getString(R.string.luancher_changed_theme));
- 				mProgressDialog.show();
+ 				mLauncher.shenduShowProgressDialog(mLauncher.getResources().getString(R.string.luancher_changed_theme));
         	 }else{
  	    	    mLauncher.startActivity(intent);
         	 }
@@ -1730,7 +1728,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         PagedViewCellLayout layout = (PagedViewCellLayout) getPageAt(page);
         layout.removeAllViewsOnPage();
         
-    	Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex+mThemesList.size() );       
+    	//Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex+mThemesList.size() );       
         for (int i = startIndex; i < endIndex; ++i) {
         	ShenduPrograme info = mThemesList.get(i);
         	PagedViewTheme pagedViewTheme = (PagedViewTheme)mLayoutInflater.inflate(
@@ -2300,6 +2298,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
 	@Override
 	public void getLocationInDragLayer(int[] loc) {
+		//Log.i(Launcher.TAG, TAG+"######################  getLocationInDragLayer=="+loc);
+		mLauncher.getDragLayer().getLocationInDragLayer(this, loc);
 		// TODO Auto-generated method stub
 		
 	}
@@ -2319,11 +2319,12 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 
     public void getHitRect(Rect outRect){
     //	super.getHitRect(outRect);
-    	outRect.left=0;
+    	/*outRect.left=0;
     	outRect.right=mLauncher.mscreenwidth;
     	
     	outRect.top=mLauncher.mscreenHeight-250;
-    	outRect.bottom=mLauncher.mscreenHeight;
+    	outRect.bottom=mLauncher.mscreenHeight;*/
+    	outRect.set(0,0,mLauncher.mscreenwidth,mLauncher.mscreenHeight);
     	
 	 }
 

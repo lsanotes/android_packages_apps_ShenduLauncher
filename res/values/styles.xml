@@ -239,4 +239,11 @@
 		<item name="android:paddingLeft">18dp</item>
 		<item name="android:paddingRight">18dp</item>
     </style>
+    
+	<!-- for workspace quickAction -->
+	<style name="QuickActionAnimation" mce_bogus="1" parent="android:Animation" >
+		<item name="android:windowEnterAnimation">@anim/popup_enter</item>
+		<item name="android:windowExitAnimation">@anim/popup_exit</item>
+	</style>
+	
 </resources>

@@ -70,6 +70,10 @@ class ShortcutInfo extends ItemInfo {
      * add hhl
      */
     ComponentName componentName;
+    
+     // shortcut default icon
+    Bitmap mDefaultIcon;
+    
     static final int DOWNLOADED_FLAG = 1;
     static final int UPDATED_SYSTEM_APP_FLAG = 2;
     int flags = 0;
@@ -80,7 +84,7 @@ class ShortcutInfo extends ItemInfo {
         itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
     }
     
-    public ShortcutInfo(ShortcutInfo info) {
+    /*public ShortcutInfo(ShortcutInfo info) {
         super(info);
         title = info.title.toString();
         intent = new Intent(info.intent);
@@ -91,7 +95,7 @@ class ShortcutInfo extends ItemInfo {
         }
         mIcon = info.mIcon; // TODO: should make a copy here.  maybe we don't need this ctor at all
         customIcon = info.customIcon;
-    }
+    }*/
 
     /** TODO: Remove this.  It's only called by ApplicationInfo.makeShortcut. */
     /* do not used now,remove by hhl
@@ -177,6 +181,9 @@ class ShortcutInfo extends ItemInfo {
             values.put(LauncherSettings.BaseLauncherColumns.ICON_TYPE,
                     LauncherSettings.BaseLauncherColumns.ICON_TYPE_BITMAP);
             writeBitmap(values, mIcon);
+            if(mDefaultIcon!=null){
+    			writeDefaultBitmap(values, mDefaultIcon);
+            }
         } else {
             if (!usingFallbackIcon) {
                 writeBitmap(values, mIcon);
@@ -202,11 +209,11 @@ class ShortcutInfo extends ItemInfo {
 
     public static void dumpShortcutInfoList(String tag, String label,
             ArrayList<ShortcutInfo> list) {
-        Log.d(tag, label + " size=" + list.size());
+        /*Log.d(tag, label + " size=" + list.size());
         for (ShortcutInfo info: list) {
             Log.d(tag, "   title=\"" + info.title + " icon=" + info.mIcon
                     + " customIcon=" + info.customIcon);
-        }
+        }*/
     }
 }
 

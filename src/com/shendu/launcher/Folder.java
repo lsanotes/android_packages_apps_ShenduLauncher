@@ -323,6 +323,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     public View getEditTextRegion() {
         return mFolderName;
     }
+    
+    /**
+     * 2012-12-24 hhl
+     * @param newText: the folder new name
+     * TODO: set the folder new name
+     */
+    public void setFolderName(String newText){
+    	if(mFolderName!=null){
+    		mFolderName.setText(newText);
+    	}
+    }
 
     public Drawable getDragDrawable() {
         return mIconDrawable;
@@ -578,32 +589,23 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
   	 * SlideFolder
   	 */
   	public void SlideFolder() {
-      	ObjectAnimator upCoverAnimation = ObjectAnimator
-        .ofFloat(upCover, "translationY",
-        		0, -slideDistance);
-  
-      	upCoverAnimation.setInterpolator(new LinearInterpolator());
-      
-    	ObjectAnimator downCoverAnimation = ObjectAnimator
-    	        .ofFloat(downCover, "translationY",
-    	        		0, (int)(folderHeight-slideDistance));
-    	
-    	downCoverAnimation.setInterpolator(new LinearInterpolator());
-    	 AnimatorSet anim = new AnimatorSet();     
-    	      
-    	 anim.playTogether(upCoverAnimation,downCoverAnimation);
-    	 anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
-    	 anim.addListener(new AnimatorListenerAdapter() {
-        	    public void onAnimationStart(Animator animation) {
-        	    	Launcher.mFolderAnimation = true;
-        	      }
-        	    
-        	    public void onAnimationEnd(Animator animation){
-        	    	Launcher.mFolderAnimation = false;
-        	      }
-        	   });
-    	 	
-    	 anim.start();
+  		ObjectAnimator upCoverAnimation = ObjectAnimator
+  				.ofFloat(upCover, "translationY",0, -slideDistance);
+  		ObjectAnimator downCoverAnimation = ObjectAnimator
+  				.ofFloat(downCover, "translationY",0, (int)(folderHeight-slideDistance));
+  		AnimatorSet anim = new AnimatorSet();     
+  		anim.playTogether(upCoverAnimation,downCoverAnimation);
+  		anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
+  		anim.setInterpolator(new LinearInterpolator());
+  		anim.addListener(new AnimatorListenerAdapter() {
+  			public void onAnimationStart(Animator animation) {
+  				Launcher.mFolderAnimation = true;
+  			}
+  			public void onAnimationEnd(Animator animation){
+  				Launcher.mFolderAnimation = false;
+  			}
+  		});
+  		anim.start();
     	 
   	}
   	/**
@@ -627,29 +629,31 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
   	 * closeFolderCoverView
   	 */
 	public void closeFolderCoverView() {
-		ObjectAnimator upCoverAnimation = ObjectAnimator
-      			.ofFloat(upCover, "translationY",-slideDistance, 0);
-      	//upCoverAnimation.setInterpolator(new LinearInterpolator());
-      	
-    	ObjectAnimator downCoverAnimation = ObjectAnimator
-    	        .ofFloat(downCover, "translationY",(int)(folderHeight-slideDistance), 0);
-    	//downCoverAnimation.setInterpolator(new LinearInterpolator());
-    
-    	AnimatorSet anim = new AnimatorSet();     
-    	anim.playTogether(upCoverAnimation,downCoverAnimation);
-    	anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
-    	anim.setInterpolator(new LinearInterpolator());
-    	anim.addListener(new AnimatorListenerAdapter() {
-    		public void onAnimationStart(Animator animation) {
-    			Launcher.mFolderAnimation = true;
-    		}
-    		public void onAnimationEnd(Animator animation){
-    			animateClosed();
-    			removeCoverView();
-    			Launcher.mFolderAnimation = false;
-    		}
-    	});
-    	anim.start();
+		if(upCover!=null && downCover!=null){//add
+			ObjectAnimator upCoverAnimation = ObjectAnimator
+	      			.ofFloat(upCover, "translationY",-slideDistance, 0);
+	      	//upCoverAnimation.setInterpolator(new LinearInterpolator());
+	      	
+	    	ObjectAnimator downCoverAnimation = ObjectAnimator
+	    	        .ofFloat(downCover, "translationY",(int)(folderHeight-slideDistance), 0);
+	    	//downCoverAnimation.setInterpolator(new LinearInterpolator());
+	    
+	    	AnimatorSet anim = new AnimatorSet();     
+	    	anim.playTogether(upCoverAnimation,downCoverAnimation);
+	    	anim.setDuration(FolderCoverView.SCROLL_CLOSE_DURATION);
+	    	anim.setInterpolator(new LinearInterpolator());
+	    	anim.addListener(new AnimatorListenerAdapter() {
+	    		public void onAnimationStart(Animator animation) {
+	    			Launcher.mFolderAnimation = true;
+	    		}
+	    		public void onAnimationEnd(Animator animation){
+	    			animateClosed();
+	    			removeCoverView();
+	    			Launcher.mFolderAnimation = false;
+	    		}
+	    	});
+	    	anim.start();
+		}
 	}
 	
 
@@ -716,15 +720,16 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     	TextView app_name = (TextView)app_view.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_view.findViewById(R.id.app_shortcutinfo_mark_id);
     	app_icon.setBackgroundDrawable(new FastBitmapDrawable(item.getIcon(mIconCache)));
-    	if((item.intent.getComponent()!=null) && 
-    		item.intent.getComponent().equals(LauncherApplication.sMMSComponentName)){
+    	ComponentName componentName = item.intent.getComponent();
+    	if((componentName!=null) && 
+    			componentName.equals(LauncherApplication.sMMSComponentName)){
         	int unReadMMS_mark = mLauncher.shenduGetUnreadMMSCount();
         	if(unReadMMS_mark>0){
             	app_mark.setText(unReadMMS_mark+"");
             	app_mark.setVisibility(View.VISIBLE);
         	}
-    	}else if((item.intent.getComponent()!=null) &&
-    		item.intent.getComponent().equals(LauncherApplication.sCallComponentName)){
+    	}else if((componentName!=null) &&
+    		componentName.equals(LauncherApplication.sCallComponentName)){
         	int missCall_mark = mLauncher.shenduGetMissCallCount();
         	if(missCall_mark>0){
             	app_mark.setText(String.valueOf(missCall_mark));

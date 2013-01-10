@@ -51,6 +51,7 @@ import android.util.Xml;
 
 import com.shendu.launcher.R;
 import com.shendu.launcher.LauncherSettings.Favorites;
+import com.shendu.launcher.preference.PreferencesProvider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -66,7 +67,7 @@ public class LauncherProvider extends ContentProvider {
 
     private static final String DATABASE_NAME = "launcher.db";
 
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13; //moditify,for default icon
 
     static final String AUTHORITY = "com.shendu.launcher.settings";
 
@@ -204,7 +205,7 @@ public class LauncherProvider extends ContentProvider {
     }
 
     synchronized public void loadDefaultFavoritesIfNecessary() {
-        String spKey = LauncherApplication.getSharedPreferencesKey();
+        String spKey = PreferencesProvider.PREFERENCES_KEY;
         SharedPreferences sp = getContext().getSharedPreferences(spKey, Context.MODE_PRIVATE);
         if (sp.getBoolean(DB_CREATED_BUT_DEFAULT_WORKSPACE_NOT_LOADED, false)) {
             // Populate favorites table with initial favorites
@@ -275,6 +276,7 @@ public class LauncherProvider extends ContentProvider {
                     "iconPackage TEXT," +
                     "iconResource TEXT," +
                     "icon BLOB," +
+                    "defaultIcon BLOB," +
                     "uri TEXT," +
                     "displayMode INTEGER" +
                     ");");
@@ -292,7 +294,7 @@ public class LauncherProvider extends ContentProvider {
         }
 
         private void setFlagToLoadDefaultWorkspaceLater() {
-            String spKey = LauncherApplication.getSharedPreferencesKey();
+            String spKey = PreferencesProvider.PREFERENCES_KEY;
             SharedPreferences sp = mContext.getSharedPreferences(spKey, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean(DB_CREATED_BUT_DEFAULT_WORKSPACE_NOT_LOADED, true);
@@ -342,6 +344,7 @@ public class LauncherProvider extends ContentProvider {
             final int titleIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.TITLE);
             final int iconTypeIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ICON_TYPE);
             final int iconIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ICON);
+            final int defaultIconIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.DEFAULT_ICON); //add,for default icon
             final int iconPackageIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ICON_PACKAGE);
             final int iconResourceIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.ICON_RESOURCE);
             final int containerIndex = c.getColumnIndexOrThrow(LauncherSettings.Favorites.CONTAINER);
@@ -361,6 +364,7 @@ public class LauncherProvider extends ContentProvider {
                 values.put(LauncherSettings.Favorites.TITLE, c.getString(titleIndex));
                 values.put(LauncherSettings.Favorites.ICON_TYPE, c.getInt(iconTypeIndex));
                 values.put(LauncherSettings.Favorites.ICON, c.getBlob(iconIndex));
+                values.put(LauncherSettings.Favorites.DEFAULT_ICON, c.getBlob(defaultIconIndex)); //add,for default icon
                 values.put(LauncherSettings.Favorites.ICON_PACKAGE, c.getString(iconPackageIndex));
                 values.put(LauncherSettings.Favorites.ICON_RESOURCE, c.getString(iconResourceIndex));
                 values.put(LauncherSettings.Favorites.CONTAINER, c.getInt(containerIndex));
@@ -486,6 +490,22 @@ public class LauncherProvider extends ContentProvider {
                 // back in the Donut days
                 updateContactsShortcuts(db);
                 version = 12;
+            }
+            
+			//add by hhl,for default icon
+            if(version < 13 ){
+            	db.beginTransaction();
+                try {
+                    // Insert new column for default icon
+                    db.execSQL("ALTER TABLE favorites "+"ADD COLUMN defaultIcon BLOB;");
+                    db.setTransactionSuccessful();
+                    version = 13;
+                } catch (SQLException ex) {
+                    // Old version remains, which means we wipe old data
+                    Log.e(Launcher.TAG, ex.getMessage(), ex);
+                } finally {
+                    db.endTransaction();
+                }
             }
 
             if (version != DATABASE_VERSION) {

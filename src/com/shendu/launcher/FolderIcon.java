@@ -142,6 +142,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
         icon.setOnClickListener(launcher);
         icon.mInfo = folderInfo;
         icon.mLauncher = launcher;
+        icon.mPreviewBackground.setBackgroundDrawable(folderInfo.getmIcon(launcher));
         icon.mPreviewBackground.setImageDrawable(icon.shenduCreateFolderThumBitmap(folderInfo));
         icon.setContentDescription(String.format(launcher.getString(R.string.folder_name_format),
                 folderInfo.title));
@@ -408,7 +409,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
     private void shenduDisplayFolderBg(ImageView imageView,boolean flag){
     	if(imageView!=null){
         	if(flag){
-        		imageView.setBackgroundDrawable(mLauncher.getResources().getDrawable(R.drawable.folder_bg));
+        		imageView.setBackgroundDrawable(mInfo.getmIcon(mLauncher));
         	}else{
         		imageView.setBackgroundDrawable(null);
         	}
