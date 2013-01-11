@@ -1759,7 +1759,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         // We use mHasScrollIndicator to prevent future lookups if there is no sibling indicator
         // found
         if (mHasScrollIndicator && mScrollIndicator == null) {
-            ViewGroup parent = (ViewGroup) getParent();
+            ViewGroup parent = (ViewGroup) getParent().getParent();//moditify
             if (parent != null) {
                 mScrollIndicator = (SlidingIndicator) (parent.findViewById(R.id.paged_view_indicator));
                 mHasScrollIndicator = mScrollIndicator != null;

@@ -28,6 +28,8 @@ public final class PreferencesProvider {
 
     public static final String PREFERENCES_CHANGED = "preferences_changed";
     public static final String PREFERENCES_EFFECT = "ui_homescreen_scrolling_transition_effect";
+    public static final String PREFERENES_SEARCH = "ui_homescreen_general_search";
+    public static final String SEARCHBAR_EXIST = "preferences_searchbar_exist";
 
     public static class Interface {
         public static class Homescreen {
@@ -69,7 +71,7 @@ public final class PreferencesProvider {
             }
             public static boolean getShowSearchBar(Context context) {
                 final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);
-                return preferences.getBoolean("ui_homescreen_general_search", true);
+                return preferences.getBoolean(PREFERENES_SEARCH, true);
             }
             public static boolean getResizeAnyWidget(Context context) {
                 final SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_KEY, 0);

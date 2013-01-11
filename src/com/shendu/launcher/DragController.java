@@ -91,7 +91,7 @@ public class DragController {
     /** Who can receive drop events */
     private ArrayList<DropTarget> mDropTargets = new ArrayList<DropTarget>();
     private ArrayList<DragListener> mListeners = new ArrayList<DragListener>();
-    private DropTarget mFlingToDeleteDropTarget;
+    //private DropTarget mFlingToDeleteDropTarget;
 
     /** The window token used as the parent for the DragView. */
     private IBinder mWindowToken;
@@ -455,12 +455,12 @@ public class DragController {
             case MotionEvent.ACTION_UP:
                 mLastTouchUpTime = System.currentTimeMillis();
                 if (mDragging) {
-                    PointF vec = isFlingingToDelete(mDragObject.dragSource);
-                    if (vec != null) {
-                        dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
-                    } else {
+                   // PointF vec = isFlingingToDelete(mDragObject.dragSource);
+                    //if (vec != null) {
+                        //dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
+                   // } else {
                         drop(dragLayerX, dragLayerY);
-                    }
+                   // }
                 }
                 endDrag();
                 break;
@@ -618,12 +618,12 @@ public class DragController {
             mHandler.removeCallbacks(mScrollRunnable);
 
             if (mDragging) {
-                PointF vec = isFlingingToDelete(mDragObject.dragSource);
-                if (vec != null) {
-                    dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
-                } else {
+                //PointF vec = isFlingingToDelete(mDragObject.dragSource);
+                //if (vec != null) {
+                    //dropOnFlingToDeleteTarget(dragLayerX, dragLayerY, vec);
+                //} else {
                     drop(dragLayerX, dragLayerY);
-                }
+                //}
             }
             endDrag();
             break;
@@ -642,8 +642,8 @@ public class DragController {
      *
      * @return the vector at which the item was flung, or null if no fling was detected.
      */
-    private PointF isFlingingToDelete(DragSource source) {
-        if (mFlingToDeleteDropTarget == null) return null;
+    //private PointF isFlingingToDelete(DragSource source) {
+       /* if (mFlingToDeleteDropTarget == null) return null;
         if (!source.supportsFlingToDelete()) return null;
 
         ViewConfiguration config = ViewConfiguration.get(mLauncher);
@@ -660,11 +660,11 @@ public class DragController {
                 return vel;
             }
         }
-        return null;
-    }
+        return null;*/
+    //}
 
-    private void dropOnFlingToDeleteTarget(float x, float y, PointF vel) {
-        final int[] coordinates = mCoordinatesTemp;
+    //private void dropOnFlingToDeleteTarget(float x, float y, PointF vel) {
+        /*final int[] coordinates = mCoordinatesTemp;
 
         mDragObject.x = coordinates[0];
         mDragObject.y = coordinates[1];
@@ -690,8 +690,8 @@ public class DragController {
         	mDragObject.cancelled = true;
         }
         mDragObject.dragSource.onDropCompleted((View) mFlingToDeleteDropTarget, mDragObject, true,
-                accepted);
-    }
+                accepted);*/
+    //}
 
     private void drop(float x, float y) {
         final int[] coordinates = mCoordinatesTemp;
@@ -789,9 +789,9 @@ public class DragController {
     /**
      * Sets the current fling-to-delete drop target.
      */
-    public void setFlingToDeleteDropTarget(DropTarget target) {
-        mFlingToDeleteDropTarget = target;
-    }
+    //public void setFlingToDeleteDropTarget(DropTarget target) {
+       // mFlingToDeleteDropTarget = target;
+   // }
 
     private void acquireVelocityTrackerAndAddMovement(MotionEvent ev) {
         if (mVelocityTracker == null) {

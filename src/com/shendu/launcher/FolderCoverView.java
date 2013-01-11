@@ -2,8 +2,6 @@ package com.shendu.launcher;
 
 import java.util.ArrayList;
 
-import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
 import android.widget.Scroller;
 
@@ -29,7 +26,6 @@ public class FolderCoverView extends View {
 	public static final int SCROLL_CLOSE_DURATION =300;
 	
 	int upOrDown;
-	private boolean isOpening = true;
 
 	/**
 	 * @param context
@@ -45,23 +41,18 @@ public class FolderCoverView extends View {
 			int width, int height, Bitmap currentFolderBitmap, int iconLeft,
 			int iconTop, int wallpaperTop,int upOrDown) {
 		super(context);
-		mCurrentPageBitmap = currentPageBitmap;
-
-		mFolderBitmap = currentFolderBitmap;
 		
+		mCurrentPageBitmap = currentPageBitmap;
+		mFolderBitmap = currentFolderBitmap;
 		mWidth = width;
 		mHeight = height;
 		mTop = top;
 		mScroller = new Scroller(context);
-
 		mFolderLeft = iconLeft;
 		mFolderTop = iconTop;
-		
-
 		mRecycleBitmaps = new ArrayList<Bitmap>();
 		mRecycleBitmaps.add(currentPageBitmap);
 		this.upOrDown =upOrDown;
-		
 		
 		if(arrow==null){
 			 arrow = createArrowBitmap();	
@@ -70,7 +61,7 @@ public class FolderCoverView extends View {
 		if(upOrDown==-1){
 			Matrix matrix = new Matrix();		
 			matrix.postRotate(180);
-			arrow	 =Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(),
+			arrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(),
 					 arrow.getHeight(), matrix, true); 
 		}
 		
@@ -84,7 +75,7 @@ public class FolderCoverView extends View {
 			canvas.drawBitmap(mFolderBitmap, mFolderLeft, mFolderTop, null);
 			canvas.drawBitmap(arrow, 
 					mFolderLeft+ (mFolderBitmap.getWidth()-arrow.getWidth())/ 2,
-					upOrDown==1? mHeight- arrow.getHeight()+6:mTop-6 ,null);
+					upOrDown==1? mHeight- arrow.getHeight()+5:mTop-5 ,null);
 		}
 	}
 
@@ -129,9 +120,7 @@ public class FolderCoverView extends View {
 	}
 
 	public Bitmap createCurrentWallpaper(Bitmap currentPageBitmap) {
-
-		Bitmap coverBg = Bitmap.createBitmap(currentPageBitmap, 0, mTop,
-				mWidth, mHeight);
+		Bitmap coverBg = Bitmap.createBitmap(currentPageBitmap, 0, mTop,mWidth, mHeight);
 		return coverBg;
 	}
 

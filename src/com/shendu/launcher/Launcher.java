@@ -279,7 +279,8 @@ public final class Launcher extends Activity
     
     private RelativeLayout relativeLayoutForFolder;//for folder
 
-    private SearchDropTargetBar mSearchDropTargetBar;
+    //private SearchDropTargetBar mSearchDropTargetBar;
+    private RelativeLayout mWorkspaceSearchBar; //add
     public AppsCustomizeTabHost mAppsCustomizeTabHost;
     private AppsCustomizePagedView mAppsCustomizeContent;
     private boolean mAutoAdvanceRunning = false;
@@ -349,7 +350,7 @@ public final class Launcher extends Activity
     private BubbleLinearLayout mWaitingForResume2;
 
     // Preferences
-    private boolean mShowSearchBar;
+    public boolean mShowSearchBar;
     private boolean mShowDockDivider;
     private boolean mHideIconLabels;
     private boolean mAutoRotate;
@@ -430,6 +431,7 @@ public final class Launcher extends Activity
     	 shenduShowProgressDialog(getResources().getString(R.string.luancher_load_icon));
         mSharedPrefs = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY,
                 Context.MODE_PRIVATE);
+        mEnableSearchBar = mSharedPrefs.getBoolean(PreferencesProvider.SEARCHBAR_EXIST,true);
         mModel = app.setLauncher(this);
         mIconCache = app.getIconCache();
         mDragController = new DragController(this);
@@ -584,7 +586,7 @@ public final class Launcher extends Activity
     	.setCancelable(true)
     	.setTitle(getString(R.string.workspace_item_quickaction_changeicon))
     	.setSingleChoiceItems(new String[]{getString(R.string.workspace_item_change_icon_default),
-    			getString(R.string.workspace_item_change_icon_custom)}, 0, new OnClickListener() {
+    			getString(R.string.workspace_item_change_icon_custom)}, -1, new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				if(which==0){
 					shenduTakeIconFromDefault((ItemInfo)mQuickActionCell.getTag());
@@ -887,25 +889,26 @@ public final class Launcher extends Activity
 	}
 
     private void updateGlobalIcons() {
-        boolean searchVisible = false;
-        boolean voiceVisible = false;
-        // If we have a saved version of these external icons, we load them up immediately
-        int coi = getCurrentOrientationIndexForGlobalIcons();
-        if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null){
-        //        sAppMarketIcon[coi] == null) {
-        //    updateAppMarketIcon();
-            searchVisible = updateGlobalSearchIcon();
-            voiceVisible = updateVoiceSearchIcon(searchVisible);
-        }
-        if (sGlobalSearchIcon[coi] != null) {
-             updateGlobalSearchIcon(sGlobalSearchIcon[coi]);
-             searchVisible = true;
-        }
-        if (sVoiceSearchIcon[coi] != null) {
-            updateVoiceSearchIcon(sVoiceSearchIcon[coi]);
-            voiceVisible = true;
-        }
-        mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
+    	boolean searchVisible = false;
+    	boolean voiceVisible = false;
+    	// If we have a saved version of these external icons, we load them up immediately
+    	int coi = getCurrentOrientationIndexForGlobalIcons();
+    	if (sGlobalSearchIcon[coi] == null || sVoiceSearchIcon[coi] == null){
+    		//sAppMarketIcon[coi] == null) {
+    		//    updateAppMarketIcon();
+    		searchVisible = updateGlobalSearchIcon();
+    		voiceVisible = updateVoiceSearchIcon(searchVisible);
+    	}
+    	if (sGlobalSearchIcon[coi] != null) {
+    		updateGlobalSearchIcon(sGlobalSearchIcon[coi]);
+    		searchVisible = true;
+    	}
+    	if (sVoiceSearchIcon[coi] != null) {
+    		updateVoiceSearchIcon(sVoiceSearchIcon[coi]);
+    		voiceVisible = true;
+    	}
+    	//mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
+        
     }
 
     private void checkForLocaleChange() {
@@ -1377,9 +1380,14 @@ public final class Launcher extends Activity
         dragController.addDragListener(mWorkspace);
 
         // Get the search/delete bar
-        mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
-
-
+        //mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
+        mWorkspaceSearchBar = (RelativeLayout) mDragLayer.findViewById(R.id.workspace_search_bar_id);
+		shenduShowOrHidemSearchBar(true);
+        /*if(mShowSearchBar){
+        	mWorkspaceSearchBar.setVisibility(View.VISIBLE);
+        }else{
+        	mWorkspaceSearchBar.setVisibility(View.GONE);
+        }*/
 
         // Setup AppsCustomize
         mAppsCustomizeTabHost = (AppsCustomizeTabHost)
@@ -1396,9 +1404,9 @@ public final class Launcher extends Activity
         
         dragController.addDropTarget(mAppsCustomizeContent); //for drag widget used drop target 
         
-        if (mSearchDropTargetBar != null) {
-            mSearchDropTargetBar.setup(this, dragController);
-        }
+        //if (mSearchDropTargetBar != null) {
+           // mSearchDropTargetBar.setup(this, dragController);
+        //}
         relativeLayoutForFolder=(RelativeLayout)findViewById(R.id.relativeLayoutFolder);//for folder
     }
     
@@ -2124,8 +2132,8 @@ public final class Launcher extends Activity
             appSearchData = new Bundle();
             appSearchData.putString(Search.SOURCE, "launcher-search");
         }
-        Rect sourceBounds = mSearchDropTargetBar.getSearchBarBounds();
-
+        //Rect sourceBounds = mSearchDropTargetBar.getSearchBarBounds();
+        Rect sourceBounds = new Rect();//moditify
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchManager.startSearch(initialQuery, selectInitialQuery, getComponentName(),
@@ -2454,7 +2462,8 @@ public final class Launcher extends Activity
     	mStateAnimation = new AnimatorSet();
     	mStateAnimation.addListener(new AnimatorListenerAdapter() {
     		public void onAnimationStart(Animator animation) {
-    			mSearchDropTargetBar.hideSearchBar(false); //Hide the search bar
+    			//mSearchDropTargetBar.hideSearchBar(false); //Hide the search bar
+				shenduShowOrHidemSearchBar(false);
     			closeFolder(); //close is open folder
     			// Prepare the position
     			mAppsCustomizeTabHost.setTranslationX(0.0f);
@@ -2471,6 +2480,21 @@ public final class Launcher extends Activity
     	//mWorkspace.hideScrollingIndicator(true);
 		hideHotseat();
 	}
+    
+    /**
+     * 2012-12-26 hhl
+     * @param showFlag: true mean show the searchBar,and false hide searchBar
+     * TODO: show ot hide workspace searchBar
+     */
+    private void shenduShowOrHidemSearchBar(boolean showFlag){
+    	if(mWorkspaceSearchBar!=null){
+    		if(mShowSearchBar && mEnableSearchBar && showFlag){
+				mWorkspaceSearchBar.setVisibility(View.VISIBLE);
+    		}else{
+				mWorkspaceSearchBar.setVisibility(View.GONE);
+    		}
+    	}
+    }
     
 	public void backFromEditMode(){
 		if(mWorkspace.isSmall()){
@@ -2496,7 +2520,8 @@ public final class Launcher extends Activity
 					mStateAnimation.playTogether(tranAnim2);
 					mStateAnimation.start();
 					showHotseat();
-					mSearchDropTargetBar.showSearchBar(true);
+					//mSearchDropTargetBar.showSearchBar(true);
+					shenduShowOrHidemSearchBar(true);
 					mWorkspace.getChangeStateAnimation(Workspace.State.NORMAL,true, 0);
 					mState = State.WORKSPACE;
 			  setScreenNoLimit();
@@ -2784,17 +2809,17 @@ public final class Launcher extends Activity
 
         mFolderIconCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
         fi.draw(mFolderIconCanvas);
-        mFolderIconImageView.setImageBitmap(mFolderIconBitmap);
+        //mFolderIconImageView.setImageBitmap(mFolderIconBitmap);
         if (fi.mFolder != null) {
-            mFolderIconImageView.setPivotX(fi.mFolder.getPivotXForIconAnimation());
-            mFolderIconImageView.setPivotY(fi.mFolder.getPivotYForIconAnimation());
+            //mFolderIconImageView.setPivotX(fi.mFolder.getPivotXForIconAnimation());
+            //mFolderIconImageView.setPivotY(fi.mFolder.getPivotYForIconAnimation());
         }
         // Just in case this image view is still in the drag layer from a previous animation,
         // we remove it and re-add it.
         if (mDragLayer.indexOfChild(mFolderIconImageView) != -1) {
             mDragLayer.removeView(mFolderIconImageView);
         }
-        mDragLayer.addView(mFolderIconImageView, lp);
+        //mDragLayer.addView(mFolderIconImageView, lp);
         if (fi.mFolder != null) {
             fi.mFolder.bringToFront();
         }
@@ -2820,7 +2845,7 @@ public final class Launcher extends Activity
         ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(mFolderIconImageView, alpha);
                
         oa.setDuration(getResources().getInteger(R.integer.config_folderAnimDuration));
-        oa.start();
+        //oa.start();
     }
 
     private void shrinkAndFadeInFolderIcon(final FolderIcon fi) {
@@ -2971,9 +2996,9 @@ public final class Launcher extends Activity
     Hotseat getHotseat() {
         return mHotseat;
     }
-    SearchDropTargetBar getSearchBar() {
-        return mSearchDropTargetBar;
-    }
+    //SearchDropTargetBar getSearchBar() {
+        //return mSearchDropTargetBar;
+    //}
 
     /**
      * Returns the CellLayout of the specified container at the specified screen.
@@ -3123,7 +3148,8 @@ public final class Launcher extends Activity
 
                 mWorkspace.hideScrollingIndicator(true);
 
-                mSearchDropTargetBar.hideSearchBar(false);
+                //mSearchDropTargetBar.hideSearchBar(false);
+        		shenduShowOrHidemSearchBar(false);
             dispatchOnLauncherTransitionPrepare(toView, animated, false);
             dispatchOnLauncherTransitionStart(toView, animated, false);
             dispatchOnLauncherTransitionEnd(toView, animated, false);
@@ -3187,7 +3213,8 @@ public final class Launcher extends Activity
 
             // Show the search bar (only animate if we were showing the drop target bar in spring
             // loaded mode)
-            mSearchDropTargetBar.showSearchBar(animated);
+            //mSearchDropTargetBar.showSearchBar(animated);
+    		shenduShowOrHidemSearchBar(true);
 
         }
 
@@ -3401,17 +3428,18 @@ public final class Launcher extends Activity
     }
 
     private boolean updateGlobalSearchIcon() {
+    	boolean flag;
         final View searchButtonContainer = findViewById(R.id.search_button_container);
         final ImageView searchButton = (ImageView) findViewById(R.id.search_button);
         //final View searchDivider = findViewById(R.id.search_divider);
-        final View voiceButtonContainer = findViewById(R.id.voice_button_container);
-        final View voiceButton = findViewById(R.id.voice_button);
-        final View voiceButtonProxy = findViewById(R.id.voice_button_proxy);
+        //final View voiceButtonContainer = findViewById(R.id.voice_button_container);
+        //final View voiceButton = findViewById(R.id.voice_button);
+        //final View voiceButtonProxy = findViewById(R.id.voice_button_proxy);
 
         final SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         ComponentName activityName = searchManager.getGlobalSearchActivity();
-        if (activityName != null && mShowSearchBar) {
+        if (activityName != null) {
             int coi = getCurrentOrientationIndexForGlobalIcons();
             sGlobalSearchIcon[coi] = updateButtonWithIconFromExternalActivity(
                     R.id.search_button, activityName, R.drawable.ic_home_search_normal_holo,
@@ -3421,15 +3449,26 @@ public final class Launcher extends Activity
                         R.id.search_button, activityName, R.drawable.ic_home_search_normal_holo,
                         TOOLBAR_ICON_METADATA_NAME);
             }
-
-            //if (searchDivider != null) searchDivider.setVisibility(View.VISIBLE);
+            flag = true;
+            invalidatePressedFocusedStates(searchButtonContainer, searchButton);
+        } else {
+        	flag = false;
+        }
+        //Log.i(Launcher.TAG,TAG+"==updateGlobalSearchIcon=======flag="+flag+"==="+mShowSearchBar);
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
+        editor.putBoolean(PreferencesProvider.SEARCHBAR_EXIST,flag);
+        editor.commit();
+        mEnableSearchBar = flag;
+        if(!mWorkspace.isSmall()){ //editstate do not show searchbar
+            shenduShowOrHidemSearchBar(true);
+        }
+        /*if(flag){
+    		showOrHidemSearchBar(true);
             if (searchButtonContainer != null) searchButtonContainer.setVisibility(View.VISIBLE);
             searchButton.setVisibility(View.VISIBLE);
             invalidatePressedFocusedStates(searchButtonContainer, searchButton);
-            return true;
-        } else {
-            // We disable both search and voice search when there is no global search provider
-            //if (searchDivider != null) searchDivider.setVisibility(View.GONE);
+        }else{
+    		showOrHidemSearchBar(false);
             if (searchButtonContainer != null) searchButtonContainer.setVisibility(View.GONE);
             if (voiceButtonContainer != null) voiceButtonContainer.setVisibility(View.GONE);
             searchButton.setVisibility(View.GONE);
@@ -3437,8 +3476,8 @@ public final class Launcher extends Activity
             if (voiceButtonProxy != null) {
                 voiceButtonProxy.setVisibility(View.GONE);
             }
-            return false;
-        }
+        }*/
+        return flag;
     }
 
     private void updateGlobalSearchIcon(Drawable.ConstantState d) {
@@ -3452,7 +3491,7 @@ public final class Launcher extends Activity
         //final View searchDivider = findViewById(R.id.search_divider);
         final View voiceButtonContainer = findViewById(R.id.voice_button_container);
         final View voiceButton = findViewById(R.id.voice_button);
-        final View voiceButtonProxy = findViewById(R.id.voice_button_proxy);
+        //final View voiceButtonProxy = findViewById(R.id.voice_button_proxy);
 
         // We only show/update the voice search icon if the search icon is enabled as well
         final SearchManager searchManager =
@@ -3486,18 +3525,18 @@ public final class Launcher extends Activity
             //if (searchDivider != null) searchDivider.setVisibility(View.VISIBLE);
             if (voiceButtonContainer != null) voiceButtonContainer.setVisibility(View.VISIBLE);
             voiceButton.setVisibility(View.VISIBLE);
-            if (voiceButtonProxy != null) {
+            /*if (voiceButtonProxy != null) {
                 voiceButtonProxy.setVisibility(View.VISIBLE);
-            }
+            }*/
             invalidatePressedFocusedStates(voiceButtonContainer, voiceButton);
             return true;
         } else {
             //if (searchDivider != null) searchDivider.setVisibility(View.GONE);
             if (voiceButtonContainer != null) voiceButtonContainer.setVisibility(View.GONE);
             voiceButton.setVisibility(View.GONE);
-            if (voiceButtonProxy != null) {
+            /*if (voiceButtonProxy != null) {
                 voiceButtonProxy.setVisibility(View.GONE);
-            }
+            }*/
             return false;
         }
     }
@@ -3848,9 +3887,8 @@ public final class Launcher extends Activity
 
     @Override
     public void bindSearchablesChanged() {
-        boolean searchVisible = updateGlobalSearchIcon();
-        boolean voiceVisible = updateVoiceSearchIcon(searchVisible);
-        mSearchDropTargetBar.onSearchPackagesChanged(searchVisible, voiceVisible);
+    	boolean searchVisible = updateGlobalSearchIcon();
+    	boolean voiceVisible = updateVoiceSearchIcon(searchVisible);
     }
 	
 	/**
@@ -4241,7 +4279,8 @@ public final class Launcher extends Activity
  		mWorkspace.setVisibility(View.VISIBLE);
  		//mHotseat.setVisibility(View.VISIBLE);
  		showHotseat();
- 		mSearchDropTargetBar.setVisibility(View.VISIBLE);
+		shenduShowOrHidemSearchBar(true);
+ 		//mSearchDropTargetBar.setVisibility(View.VISIBLE);
  		mWorkspace.showScrollingIndicator(false);
   	}
 
@@ -4250,7 +4289,8 @@ public final class Launcher extends Activity
 		mWorkspace.setVisibility(View.INVISIBLE);
 		//mHotseat.setVisibility(View.INVISIBLE);
 		hideHotseat();
-		mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+		//mSearchDropTargetBar.setVisibility(View.INVISIBLE);
+		shenduShowOrHidemSearchBar(false);
 		mWorkspace.hideScrollingIndicator(true);
 		//final Resources resources = getResources();
 		final Workspace workspace = mWorkspace;

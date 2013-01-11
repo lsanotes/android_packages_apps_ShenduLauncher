@@ -20,11 +20,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.util.Log;
 
+import com.shendu.launcher.Launcher;
 import com.shendu.launcher.LauncherApplication;
 import com.shendu.launcher.R;
 
@@ -32,6 +34,8 @@ public class Preferences extends PreferenceActivity {
 
     private static final String TAG = "Launcher.Preferences";
     private SharedPreferences mSharedPreferences;
+    private boolean mSearchBarExist;
+    private CheckBoxPreference mSearchCheckBoxPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,9 @@ public class Preferences extends PreferenceActivity {
 
         mSharedPreferences = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
-        
+        mSearchCheckBoxPreference=(CheckBoxPreference)findPreference(PreferencesProvider.PREFERENES_SEARCH);
+        mSearchBarExist = mSharedPreferences.getBoolean(PreferencesProvider.SEARCHBAR_EXIST,true);
+        mSearchCheckBoxPreference.setEnabled(mSearchBarExist);
     }
     
     protected void onDestroy() {

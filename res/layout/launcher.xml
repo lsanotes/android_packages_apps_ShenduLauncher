@@ -40,28 +40,39 @@
         android:layout_height="@dimen/paged_view_indicator_height"
         android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/button_bar_height_plus_padding" />
+    
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_marginBottom="@dimen/workspace_bottom_padding_port">
+        
+    <include
+        android:id="@+id/workspace_search_bar_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/qsb_bar_height"
+        android:layout_alignParentTop="true"
+        layout="@layout/search_bar" />
 
-    <!-- The workspace contains 5 screens of cells -->
+    <!-- The workspace contains 5 screens of cells 
+        android:paddingTop="@dimen/workspace_top_padding_port"
+        android:paddingBottom="@dimen/workspace_bottom_padding_port"-->
     <com.shendu.launcher.Workspace
         android:id="@+id/workspace"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/workspace_search_bar_id"
         android:paddingLeft="@dimen/workspace_left_padding_port"
         android:paddingRight="@dimen/workspace_right_padding_port"
-        android:paddingTop="@dimen/workspace_top_padding_port"
-        android:paddingBottom="@dimen/workspace_bottom_padding_port"
         launcher:cellCountX="@integer/cell_count_x"
         launcher:cellCountY="@integer/cell_count_y"
         launcher:pageSpacing="@dimen/workspace_page_spacing"
         launcher:scrollIndicatorPaddingLeft="@dimen/workspace_divider_padding_left"
         launcher:scrollIndicatorPaddingRight="@dimen/workspace_divider_padding_right" />
-
-
-
-    <include
-        android:id="@+id/qsb_bar"
-        layout="@layout/qsb_bar" />
-
+        
+    </RelativeLayout>
+<!-- 
     <com.shendu.launcher.DrawableStateProxyView
         android:id="@+id/voice_button_proxy"
         android:layout_width="80dp"
@@ -71,7 +82,7 @@
         android:onClick="onClickVoiceButton"
         android:importantForAccessibility="no"
         launcher:sourceViewId="@+id/voice_button" />
-
+-->
     <include layout="@layout/apps_customize_pane"
         android:id="@+id/apps_customize_pane"
         android:layout_width="match_parent"

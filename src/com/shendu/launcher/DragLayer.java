@@ -705,7 +705,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
     private void updateChildIndices() {
         if (mLauncher != null) {
             mWorkspaceIndex = indexOfChild(mLauncher.getWorkspace());
-            mQsbIndex = indexOfChild(mLauncher.getSearchBar());
+            //mQsbIndex = indexOfChild(mLauncher.getSearchBar());
         }
     }
 

@@ -394,12 +394,15 @@ public class AppWidgetResizeFrame extends FrameLayout {
         if (newY + newHeight > mDragLayer.getHeight()) {
             newHeight -= newY + newHeight - mDragLayer.getHeight();
         }
-
+        int topMargin = 0;
+        if(mLauncher.mShowSearchBar && mLauncher.mEnableSearchBar){//moditify,topMargin is the searchbar hight if has 
+        	topMargin = getResources().getDimensionPixelSize(R.dimen.qsb_bar_height);
+      	 }
         if (!animate) {
             lp.width = newWidth;
             lp.height = newHeight;
             lp.x = newX;
-            lp.y = newY;
+            lp.y = newY+topMargin;
             mLeftHandle.setAlpha(1.0f);
             mRightHandle.setAlpha(1.0f);
             mTopHandle.setAlpha(1.0f);
@@ -410,7 +413,7 @@ public class AppWidgetResizeFrame extends FrameLayout {
             PropertyValuesHolder height = PropertyValuesHolder.ofInt("height", lp.height,
                     newHeight);
             PropertyValuesHolder x = PropertyValuesHolder.ofInt("x", lp.x, newX);
-            PropertyValuesHolder y = PropertyValuesHolder.ofInt("y", lp.y, newY);
+            PropertyValuesHolder y = PropertyValuesHolder.ofInt("y", lp.y, newY+topMargin);
             ObjectAnimator oa = ObjectAnimator.ofPropertyValuesHolder(lp, width, height, x, y);
             ObjectAnimator leftOa = ObjectAnimator.ofFloat(mLeftHandle, "alpha", 1.0f);
             ObjectAnimator rightOa = ObjectAnimator.ofFloat(mRightHandle, "alpha", 1.0f);

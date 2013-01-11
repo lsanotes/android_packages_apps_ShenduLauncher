@@ -157,7 +157,7 @@
     <dimen name="cell_layout_left_padding_land">0dp</dimen>
     <dimen name="cell_layout_right_padding_port">0dp</dimen>
     <dimen name="cell_layout_right_padding_land">0dp</dimen>
-    <dimen name="cell_layout_top_padding_port">6dp</dimen>
+    <dimen name="cell_layout_top_padding_port">0dp</dimen>
     <dimen name="cell_layout_top_padding_land">0dp</dimen>
     <dimen name="cell_layout_bottom_padding_port">0dp</dimen>
     <dimen name="cell_layout_bottom_padding_land">0dp</dimen>
@@ -183,23 +183,19 @@
     <dimen name="workspace_height_gap_port">0dp</dimen>
     
 <!-- for folder -->    
-    <dimen name="saf_folder_cover_arrow_width">13dip</dimen>
-    <dimen name="saf_folder_cover_arrow_height">13dip</dimen>
-     <dimen name="quarter_height">133dip</dimen>
-     
-     
-     <dimen name="folder_cover_line">40dp</dimen>
-     <dimen name="folder_hotseat_cover_line">385dp</dimen>
-     <dimen name="folder_cover_view">45dp</dimen> 
-     <dimen name="folder_hotseat_cover_view">475dp</dimen>
-
-
+	<dimen name="saf_folder_cover_arrow_width">13dip</dimen>
+	<dimen name="saf_folder_cover_arrow_height">13dip</dimen>
+	<dimen name="quarter_height">133dip</dimen>
+	<dimen name="folder_cover_line">40dp</dimen>
+	<dimen name="folder_hotseat_cover_line">385dp</dimen>
+	<dimen name="folder_cover_view">45dp</dimen> 
+	<dimen name="folder_hotseat_cover_view">475dp</dimen>
+	<dimen name="extra_cell_offset_h">2px</dimen>
 	
-     <!-- apps_customize_pane -->
-     <dimen name="apps_customize_pane_height">166dp</dimen>
+<!-- apps_customize_pane -->
+	<dimen name="apps_customize_pane_height">166dp</dimen>
      
-     
-  <!-- paged_view_indicatorr -->    
-     <dimen name="paged_view_indicator_height">11px</dimen>
+<!-- paged_view_indicatorr -->    
+	<dimen name="paged_view_indicator_height">11px</dimen>
     
 </resources>

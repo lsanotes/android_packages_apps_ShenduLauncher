@@ -290,7 +290,7 @@ public class Workspace extends SmoothPagedView
     public int mDefaultHomescreen;
     private int mScreenPaddingVertical;
     private int mScreenPaddingHorizontal;
-    private boolean mShowSearchBar;
+    //private boolean mShowSearchBar;
     public boolean mResizeAnyWidget; //moditify
     private boolean mHideIconLabels;
     private boolean mScrollWallpaper;
@@ -416,7 +416,7 @@ public class Workspace extends SmoothPagedView
         }
         mScreenPaddingVertical = PreferencesProvider.Interface.Homescreen.getScreenPaddingVertical(context);
         mScreenPaddingHorizontal = PreferencesProvider.Interface.Homescreen.getScreenPaddingHorizontal(context);
-        mShowSearchBar = PreferencesProvider.Interface.Homescreen.getShowSearchBar(context);
+        //mShowSearchBar = PreferencesProvider.Interface.Homescreen.getShowSearchBar(context);
         mResizeAnyWidget = PreferencesProvider.Interface.Homescreen.getResizeAnyWidget(context);
         mHideIconLabels = PreferencesProvider.Interface.Homescreen.getHideIconLabels(context);
         mScrollWallpaper = PreferencesProvider.Interface.Homescreen.Scrolling.getScrollWallpaper(context);
@@ -596,17 +596,17 @@ public class Workspace extends SmoothPagedView
             // In this case, we will skip drawing background protection
         }
 
-        if (!mShowSearchBar) {
+        /*if (!mShowSearchBar) {
             int paddingTop = 0;
             if (mLauncher.getCurrentOrientation() == Configuration.ORIENTATION_PORTRAIT) {
                 paddingTop = (int)res.getDimension(R.dimen.qsb_bar_hidden_inset);
             }
             setPadding(0, paddingTop, getPaddingRight(), getPaddingBottom());
-        }
+        }*/
 
-        if (!mShowScrollingIndicator) {
+        //if (!mShowScrollingIndicator) {
             //disableScrollingIndicator();
-        }
+        //}
 
         mWallpaperOffset = new WallpaperOffsetInterpolator();
         Display display = mLauncher.getWindowManager().getDefaultDisplay();
@@ -4463,11 +4463,11 @@ public class Workspace extends SmoothPagedView
      */
     public void onDropCompleted(View target, DragObject d, boolean isFlingToDelete,
             boolean success) {
-    	if(success && target instanceof DeleteDropTarget && 
+    	/*if(success && target instanceof DeleteDropTarget && 
     			(((ItemInfo)d.dragInfo).itemType==LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT)){ //used for uninstall app
     		success = false;
     		d.cancelled = true;
-    	}
+    	}*/
         if (success) {
         	
         	boolean targetIsWorkspace = !mLauncher.isHotseatLayout(getParentCellLayoutForView(mDragInfo.cell));
