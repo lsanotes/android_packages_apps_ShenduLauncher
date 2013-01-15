@@ -616,6 +616,7 @@ public final class Launcher extends Activity
 					((FolderIcon)itemView).mFolder.setFolderName(newName);
 				}else{
 					itemName = (TextView)itemView.findViewById(R.id.app_shortcutinfo_name_id);
+					((ShortcutInfo)itemInfo).title = newName;//add,for drag to fodler item name change to default
 				}
 				itemName.setText(newName);
 				itemView.requestFocus();
