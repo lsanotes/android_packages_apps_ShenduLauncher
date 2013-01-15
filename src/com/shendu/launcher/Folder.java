@@ -898,6 +898,11 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         if(!success && Launcher.mFolderAnimation){
             mRearrangeOnClose=false;
         }
+
+       if(mDragController!=null && mDragController.mAddNewScreen){//add,remove last empty screen when drop item from folder 
+    	   mLauncher.getWorkspace().removeEmptyScreen(mLauncher.getWorkspace().getChildCount()-1);
+        }
+        
         mDeleteFolderOnDropCompleted = false;
         mDragInProgress = false;
         mItemAddedBackToSelfViaIcon = false;
