@@ -813,8 +813,8 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     	thmemIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
    
         moreThemePrograme.setIntent(thmemIntent);
-        moreThemePrograme.mThemeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.editstate_tabhost_tabcontent_wallpaper_more_normal);;
-
+        //moreThemePrograme.mThemeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.editstate_tabhost_tabcontent_wallpaper_more_normal);
+        moreThemePrograme.setResSmallId(R.drawable.editstate_more_wallpaper_bg);
         moreThemePrograme.setChoice(ShenduPrograme.CHOICE_WALLPAPER_MORE);
         mThemesList.add(moreThemePrograme);
         
