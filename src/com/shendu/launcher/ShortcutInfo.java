@@ -79,6 +79,8 @@ class ShortcutInfo extends ItemInfo {
     int flags = 0;
     long firstInstallTime;
     Bitmap iconBitmap;
+    
+ 
 
     ShortcutInfo() {
         itemType = LauncherSettings.BaseLauncherColumns.ITEM_TYPE_SHORTCUT;
@@ -176,7 +178,6 @@ class ShortcutInfo extends ItemInfo {
 
         String uri = intent != null ? intent.toUri(0) : null;
         values.put(LauncherSettings.BaseLauncherColumns.INTENT, uri);
-
         if (customIcon) {
             values.put(LauncherSettings.BaseLauncherColumns.ICON_TYPE,
                     LauncherSettings.BaseLauncherColumns.ICON_TYPE_BITMAP);

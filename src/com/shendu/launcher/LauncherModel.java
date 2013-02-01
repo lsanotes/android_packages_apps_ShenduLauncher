@@ -71,7 +71,7 @@ import android.content.res.CustomTheme;
  */
 public class LauncherModel extends BroadcastReceiver {
     static final boolean DEBUG_LOADERS = false;
-    static final String TAG = "Launcher.Model";
+    static final String TAG = "Launcher.model";
 
     private static final int ITEMS_CHUNK = 10; // batch size for the workspace icons
     private final boolean mAppsCanBeOnExternalStorage;
@@ -129,7 +129,7 @@ public class LauncherModel extends BroadcastReceiver {
 
     protected int mPreviousConfigMcc;
 
-    private CustomTheme mCurrentTheme;//add, for theme
+ //   private CustomTheme mCurrentTheme;//add, for theme
     
     private boolean mLoadWorkspaceOk = false; //for package change receiver
 	
@@ -187,10 +187,10 @@ public class LauncherModel extends BroadcastReceiver {
         Configuration config = res.getConfiguration();
         mPreviousConfigMcc = config.mcc;
         
-        CustomTheme currentTheme = config.customTheme; //add ,for theme
-        if(currentTheme !=null){
-        	mCurrentTheme =(CustomTheme)currentTheme.clone();
-        }
+//        CustomTheme currentTheme = config.customTheme; //add ,for theme
+//        if(currentTheme !=null){
+//        	mCurrentTheme =(CustomTheme)currentTheme.clone();
+//        }
         
     }
 
@@ -634,9 +634,7 @@ public class LauncherModel extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (DEBUG_LOADERS) Log.d(TAG, "onReceive intent=" + intent);
         
-        
         final String action = intent.getAction();
-        Log.i(Launcher.TAG, TAG+" ......onReceive()........" +action);   
         if(!mLoadWorkspaceOk){ return; } //for item replace loading
         if (Intent.ACTION_PACKAGE_CHANGED.equals(action)
                 || Intent.ACTION_PACKAGE_REMOVED.equals(action)
@@ -688,26 +686,26 @@ public class LauncherModel extends BroadcastReceiver {
              // Check if configuration change was an mcc/mnc change which would affect app resources
              // and we would need to clear out the labels in all apps/workspace. Same handling as
              // above for ACTION_LOCALE_CHANGED
-             Configuration currentConfig = context.getResources().getConfiguration();
-
-             /***************add lys theme**************/
-             CustomTheme newTheme = currentConfig.customTheme;
-             if (newTheme != null && (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
-            	 mCurrentTheme = (CustomTheme)newTheme.clone();
-            	 if(mIconCache!=null){
-            		 mIconCache.flush(); 
-                 }
-             	Log.i(Launcher.TAG, TAG+" ...onReceiver...killProcess()........   mLock"+ mLock );
-             	//add,for delete the database icon
-             	Callbacks callbacks = mCallbacks==null?null:mCallbacks.get();
-             	if (callbacks != null) {
-             		callbacks.shenduChangeTheme();
-             	}else{
-             		android.os.Process.killProcess(android.os.Process.myPid());
-             	}
-            	// forceReload();
-                 
-              } 
+//             Configuration currentConfig = context.getResources().getConfiguration();
+//
+//             /***************add lys theme**************/
+//             CustomTheme newTheme = currentConfig.customTheme;
+//             if (newTheme != null && (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+//            	 mCurrentTheme = (CustomTheme)newTheme.clone();
+//            	 if(mIconCache!=null){
+//            		 mIconCache.flush(); 
+//                 }
+//             	Log.i(Launcher.TAG, TAG+" ...onReceiver...killProcess()........   mLock"+ mLock );
+//             	//add,for delete the database icon
+//             	Callbacks callbacks = mCallbacks==null?null:mCallbacks.get();
+//             	if (callbacks != null) {
+//             		callbacks.shenduChangeTheme();
+//             	}else{
+//             		android.os.Process.killProcess(android.os.Process.myPid());
+//             	}
+//            	// forceReload();
+//                 
+//              } 
              
              /*if (mPreviousConfigMcc != currentConfig.mcc) {
                    Log.d(TAG, "Reload apps on config change. curr_mcc:"
@@ -716,7 +714,7 @@ public class LauncherModel extends BroadcastReceiver {
                  // forceReload();
              }*/
              // Update previousConfig
-             mPreviousConfigMcc = currentConfig.mcc;
+          //   mPreviousConfigMcc = currentConfig.mcc;
         } else if (SearchManager.INTENT_GLOBAL_SEARCH_ACTIVITY_CHANGED.equals(action) ||
                    SearchManager.INTENT_ACTION_SEARCHABLES_CHANGED.equals(action)) {
             if (mCallbacks != null) {
@@ -734,7 +732,6 @@ public class LauncherModel extends BroadcastReceiver {
     }
 
     private void forceReload() {
-    	Log.i(Launcher.TAG, TAG+" ......forceReload()........   mLock"+ mLock );
 	synchronized (mLock) {
             // Stop any existing loaders first, so they don't set mAllAppsLoaded or
             // mWorkspaceLoaded to true later
@@ -779,7 +776,6 @@ public class LauncherModel extends BroadcastReceiver {
                 }
             }
         }
-    	Log.i(Launcher.TAG, TAG+" ......startLoaderFromBackground()........   mCallbacks"+ mCallbacks +runLoader);
         if (runLoader) {
             startLoader(false);
         }
@@ -801,7 +797,6 @@ public class LauncherModel extends BroadcastReceiver {
 
     public void startLoader(boolean isLaunching) {
     	
-    	Log.i(Launcher.TAG, TAG+" ......startLoader()........   mLock:"+ mLock );
         synchronized (mLock) {
             if (DEBUG_LOADERS) {
                 Log.d(TAG, "startLoader isLaunching=" + isLaunching);
@@ -874,9 +869,8 @@ public class LauncherModel extends BroadcastReceiver {
 
             // Load the workspace
             if (DEBUG_LOADERS) {
-                Log.d(TAG, "loadAndBindWorkspace mWorkspaceLoaded=" + mWorkspaceLoaded);
             }
-            //Log.i(Launcher.TAG, TAG+"*********=loadAndBindWorkspace="+mWorkspaceLoaded);
+     
             if (!mWorkspaceLoaded) {
                 loadWorkspace();
                 synchronized (LoaderTask.this) {
@@ -941,7 +935,6 @@ public class LauncherModel extends BroadcastReceiver {
                     android.os.Process.setThreadPriority(mIsLaunching
                             ? Process.THREAD_PRIORITY_DEFAULT : Process.THREAD_PRIORITY_BACKGROUND);
                 }
-                //Log.i(Launcher.TAG, TAG+"=111=LoaderTask=loadWorkspaceFirst="+loadWorkspaceFirst);
                 if (loadWorkspaceFirst) {
                     if (DEBUG_LOADERS) Log.d(TAG, "step 1: loading workspace");
                     loadAndBindWorkspace();
@@ -1230,6 +1223,14 @@ public class LauncherModel extends BroadcastReceiver {
                                     break;
                                 }
                                 sItemsIdMap.put(info.id, info);
+                                
+                                if(info.reSaveIcon){
+                                	
+                                    final ContentValues values = new ContentValues();
+                                    byte[] data = ItemInfo.flattenBitmap(info.mIcon);
+                                    values.put(LauncherSettings.Favorites.ICON, data);
+                                    updateItemInDatabaseHelper(mApp, values, info, "moveItemInDatabase");	
+                                }
 
                                 // now that we've loaded everthing re-save it with the
                                 // icon in case it disappears somehow.
@@ -1728,6 +1729,7 @@ public class LauncherModel extends BroadcastReceiver {
             mPackages = packages;
         }
 
+  
         public void run() {
             final Context context = mApp;
 
@@ -1736,7 +1738,7 @@ public class LauncherModel extends BroadcastReceiver {
             switch (mOp) {
                 case OP_ADD:
                     for (int i=0; i<N; i++) {
-                        if (DEBUG_LOADERS) Log.d(TAG, "mAllAppsList.addPackage " + packages[i]);
+                        if (DEBUG_LOADERS);
                         mAllAppsList.addPackage(context, packages[i]);
                     }
                     break;
@@ -1946,15 +1948,19 @@ public class LauncherModel extends BroadcastReceiver {
                 icon = getIconFromCursor(c, iconIndex, context);
             }
         }
+        
      // from the resource
         if (icon == null && resolveInfo != null) {
             icon = mIconCache.getIcon(componentName, resolveInfo, labelCache);
+            info.reSaveIcon=true;
+        	
         }
         // the fallback icon
         if (icon == null) {
             icon = getFallbackIcon();
             info.usingFallbackIcon = true;
         }
+
         info.setIcon(icon);
 
         // from the db

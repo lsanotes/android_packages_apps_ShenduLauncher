@@ -121,6 +121,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Advanceable;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -158,7 +159,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import android.content.res.CustomTheme;
 /**
  * Default launcher application.
  */
@@ -276,6 +277,7 @@ public final class Launcher extends Activity
 
     private Hotseat mHotseat;
     private View mAllAppsButton;
+
     
     private RelativeLayout relativeLayoutForFolder;//for folder
 
@@ -370,6 +372,8 @@ public final class Launcher extends Activity
 	private ItemInfo mItemInfo;
 	private AlertDialog mChangeIconDialog,mReNameDialog;
 	private EditText mReNameEditText;
+	
+    private CustomTheme mCurrentTheme;//add, for theme
 
     private Runnable mBuildLayersRunnable = new Runnable() {
         public void run() {
@@ -463,14 +467,12 @@ public final class Launcher extends Activity
 
         mSavedState = savedInstanceState;
         restoreState(mSavedState);
-
         // Update customization drawer _after_ restoring the states
         if (mAppsCustomizeContent != null) {
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
             mAppsCustomizeContent.onEffectChanged();
             mAppsCustomizeContent.onThemeChanged();
-            
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
@@ -511,8 +513,7 @@ public final class Launcher extends Activity
 		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
         registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
         
-     	Log.i(Launcher.TAG, TAG+" ....create()........." +
-     			"mscreenHeight:"+mscreenHeight+"*"+mscreenwidth);
+
      	
      	//add by hhl,for popup window
 		mActionChangeIcon = new ShenduPrograme();
@@ -632,6 +633,12 @@ public final class Launcher extends Activity
 			}
 		})
 		.create();
+		
+      Configuration config = getResources().getConfiguration();
+      CustomTheme currentTheme = config.customTheme; //add ,for theme
+      if(currentTheme !=null){
+      	mCurrentTheme =(CustomTheme)currentTheme.clone();
+      }
     }
     
     /**
@@ -1301,6 +1308,7 @@ public final class Launcher extends Activity
      * @param savedState The previous state.
      */
     private void restoreState(Bundle savedState) {
+    	
         if (savedState == null) {
             return;
         }
@@ -1330,30 +1338,30 @@ public final class Launcher extends Activity
             mRestoring = true;
         }
 
-
         boolean renameFolder = savedState.getBoolean(RUNTIME_STATE_PENDING_FOLDER_RENAME, false);
         if (renameFolder) {
             long id = savedState.getLong(RUNTIME_STATE_PENDING_FOLDER_RENAME_ID);
             mFolderInfo = mModel.getFolderById(this, sFolders, id);
             mRestoring = true;
         }
-
+        
 
         // Restore the AppsCustomize tab
-        if (mAppsCustomizeTabHost != null) {
-            String curTab = savedState.getString("apps_customize_currentTab");
-            if (curTab != null) {
-                // We set this directly so that there is no delay before the tab is set
-                mAppsCustomizeContent.setContentType(
-                        mAppsCustomizeTabHost.getContentTypeForTabTag(curTab));
-                mAppsCustomizeTabHost.setCurrentTabByTag(curTab);
-                mAppsCustomizeContent.loadAssociatedPages(
-                        mAppsCustomizeContent.getCurrentPage());
-            }
-
-            int currentIndex = savedState.getInt("apps_customize_currentIndex");
-            mAppsCustomizeContent.restorePageForIndex(currentIndex);
-        }
+//        if (mAppsCustomizeTabHost != null) {
+//            String curTab = savedState.getString("apps_customize_currentTab");
+//            if (curTab != null) {
+//                // We set this directly so that there is no delay before the tab is set
+//            	Log.i(Launcher.TAG, "    restoreState   ............................... ");
+//                mAppsCustomizeContent.setContentType(
+//                        mAppsCustomizeTabHost.getContentTypeForTabTag(curTab));
+//                mAppsCustomizeTabHost.setCurrentTabByTag(curTab);
+//                mAppsCustomizeContent.loadAssociatedPages(
+//                        mAppsCustomizeContent.getCurrentPage());
+//            }
+//
+//            int currentIndex = savedState.getInt("apps_customize_currentIndex");
+//            mAppsCustomizeContent.restorePageForIndex(currentIndex);
+//        }
     }
 
     /**
@@ -1569,26 +1577,22 @@ public final class Launcher extends Activity
      * TODO: delete the table favorites icon data
      */
     public void shenduChangeTheme(){
-    	new Thread(){
-			public void run(){
-				try {
-					ContentValues contentValues = new ContentValues();
-					byte[] data = null;
-					contentValues.put(LauncherSettings.Favorites.ICON,data);
-			       ContentResolver contentResolver = mContext.getContentResolver();
-			       int result = contentResolver.update(LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, 
-			    		   contentValues,LauncherSettings.Favorites.ITEM_TYPE+"="+
-			    				   LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT,
-			    				    null);
-	            	Log.i(Launcher.TAG, TAG+" ...shenduChangeTheme.....delete database icon..result:"+result);
-			       mHandler.sendMessage(mHandler.obtainMessage(HANDLER_DELETE_DATABASE_ICON));
-			       contentResolver = null;
-			       contentValues = null;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		try {
+			ContentValues contentValues = new ContentValues();
+			byte[] data = null;
+			contentValues.put(LauncherSettings.Favorites.ICON,data);
+	       ContentResolver contentResolver = mContext.getContentResolver();
+	       int result = contentResolver.update(LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, 
+	    		   contentValues,LauncherSettings.Favorites.ITEM_TYPE+"="+
+	    				   LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT,
+	    				    null);
+	       contentResolver = null;
+	       contentValues = null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		 android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     /**
@@ -2067,7 +2071,7 @@ public final class Launcher extends Activity
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
-        Log.i(TAG,TAG+"=============onDestroy=======");
+   
         shenduDismissProgressDialog();
         // Remove all pending runnables
         mHandler.removeMessages(ADVANCE_MSG);
@@ -2103,6 +2107,15 @@ public final class Launcher extends Activity
         mDragController = null;
 
         ValueAnimator.clearAllAnimations();
+        
+        Configuration currentConfig = this.getResources().getConfiguration();
+        CustomTheme newTheme = currentConfig.customTheme;
+        Log.i(TAG,TAG+"=============onDestroy======="+currentConfig );
+      if (newTheme != null && (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+     	 mCurrentTheme = (CustomTheme)newTheme.clone();
+     	 
+     	   shenduChangeTheme();
+      }
     }
 
     public DragController getDragController() {
@@ -3219,7 +3232,6 @@ public final class Launcher extends Activity
 
         }
 
-
         // Change the state *after* we've called all the transition code
         mState = State.WORKSPACE;
 
@@ -3245,7 +3257,6 @@ public final class Launcher extends Activity
         mUserPresent = false;
         //updateRunning();
         closeFolder();
-
     }
 
     void enterSpringLoadedDragMode() {
@@ -3646,7 +3657,7 @@ public final class Launcher extends Activity
      *
      * Implementation of the method from LauncherModel.Callbacks.
      */
-    public void bindItems(ArrayList<ItemInfo> shortcuts, int start, int end) {
+    public void bindItems(final ArrayList<ItemInfo> shortcuts, final int start, final int end) {
         setLoadOnResume();
 
         Set<String> newApps = new HashSet<String>();
@@ -3657,8 +3668,7 @@ public final class Launcher extends Activity
             final ItemInfo item = shortcuts.get(i);
 
             // Short circuit if we are loading dock items for a configuration which has no dock
-            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&
-                    mHotseat == null) {
+            if (item.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT &&mHotseat == null) {
                 mHotseat = (Hotseat) findViewById(R.id.hotseat);
                 if (mHotseat != null) {
                     mHotseat.setup(this);
@@ -3707,9 +3717,26 @@ public final class Launcher extends Activity
             }
         }
         workspace.requestLayout();
+        
     }
+    
+    
+//    private void reSaveIconForShortcut(ArrayList<ItemInfo> shortcuts,int start, int end){
+//    	   for (int i = start; i < end; i++) {
+//               final ItemInfo item = shortcuts.get(i);
+//               if(item instanceof ShortcutInfo){
+//               }
+//    
+//            	if(item.reSaveIcon){
+//                    final ContentValues values = new ContentValues();
+//                    item.onAddToDatabase(values);
+//                    mModel.updateItemInDatabaseHelper(mContext, values, item, "moveItemInDatabase");	
+//            	}
+//    	   }
+//    }
 
-    /**
+
+	/**
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindFolders(HashMap<Long, FolderInfo> folders) {
@@ -3938,15 +3965,11 @@ public final class Launcher extends Activity
      * Implementation of the method from LauncherModel.Callbacks.
      */
     public void bindAllApplications(final ArrayList<ShortcutInfo> apps) {
-     	Log.i(Launcher.TAG, TAG+" ......bindAllApplications()..............:" );
     	
      	shenduDismissProgressDialog();
         // Remove the progress bar entirely; we could also make it GONE
         // but better to remove it since we know it's not going to be used
-    	
 		addAppsToWorkspace(apps);
-	
-		
     }
 
     /**
@@ -3960,7 +3983,6 @@ public final class Launcher extends Activity
             mAppsCustomizeContent.addApps(apps);
         }
     	addAppsToWorkspace(apps);
- 
     }
 
     /**

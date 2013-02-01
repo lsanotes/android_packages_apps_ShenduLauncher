@@ -95,6 +95,8 @@ class ItemInfo {
      * The position of the item in a drag-and-drop operation.
      */
     int[] dropPos = null;
+    
+    boolean reSaveIcon =false;
 
     ItemInfo() {
     }

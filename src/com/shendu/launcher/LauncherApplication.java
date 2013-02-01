@@ -98,9 +98,7 @@ public class LauncherApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-
         unregisterReceiver(mModel);
-
         ContentResolver resolver = getContentResolver();
         resolver.unregisterContentObserver(mFavoritesObserver);
         resolver.unregisterContentObserver(mCallInfoObserver);

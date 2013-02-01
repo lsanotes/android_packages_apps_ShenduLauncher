@@ -758,7 +758,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 		public void onReceive(Context context, Intent intent) {
 
 			boolean resuilt = intent.getBooleanExtra("ischanged",false);
-			Log.i("zlf", "...onReceive：:" + "   onReceive..........................." +resuilt);
+	
 			if(resuilt || firstSendToTheme ){
 				try {
 					getThemeResources( intent.getStringExtra("path") );
@@ -1653,7 +1653,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     	removeAllViews();
         // Ensure that we have the right number of pages
       	Context context = getContext();
-        int numPages = (int) Math.ceil((float)mThemesList.size()/(mCellCountX * mCellCountY));
+        int numPages = Math.max((int) Math.ceil((float)mThemesList.size()/(mCellCountX * mCellCountY)), 1);
         for (int j = 0; j < numPages; ++j) {
         	PagedViewCellLayout layout = new PagedViewCellLayout(context);
             setupPage(layout);
@@ -1728,7 +1728,6 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         PagedViewCellLayout layout = (PagedViewCellLayout) getPageAt(page);
         layout.removeAllViewsOnPage();
         
-    	//Log.i(Launcher.TAG ,TAG+"  syncThemesPageItems()   ...........  "+startIndex + endIndex+mThemesList.size() );       
         for (int i = startIndex; i < endIndex; ++i) {
         	ShenduPrograme info = mThemesList.get(i);
         	PagedViewTheme pagedViewTheme = (PagedViewTheme)mLayoutInflater.inflate(
@@ -2075,7 +2074,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
      */
     @Override
     public void setup(Launcher launcher, DragController dragController) {
+    	
         mLauncher = launcher;
+        mContentType=ContentType.Wallpapers;
+        
         mSharedPreferences = mLauncher.getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         mDragController = dragController;
