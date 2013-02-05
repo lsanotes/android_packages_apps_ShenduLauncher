@@ -4539,7 +4539,8 @@ public class Workspace extends SmoothPagedView
      */
 	public boolean  removeEmptyScreen(int index){// used to remove empty celllayout
 		CellLayout cell = (CellLayout) getChildAt(index);
-		if(cell !=null){
+	
+		if(cell !=null && getChildCount()>1){
 			int [] lastOccupiedCell=  cell.existsLastOccupiedCell();
 			if(lastOccupiedCell[0]==-1){
 				removeView(cell,index); 
