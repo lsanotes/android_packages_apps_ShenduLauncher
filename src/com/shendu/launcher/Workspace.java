@@ -342,6 +342,9 @@ public class Workspace extends SmoothPagedView
     
     private boolean mDragItemFromHotSeat = false;
     
+    
+    static  boolean  createAppwidgetComplete=true;
+    
     /**
      * Used to inflate the Workspace from XML.
      *
@@ -3401,6 +3404,9 @@ public class Workspace extends SmoothPagedView
                 cell.setVisibility(VISIBLE);
             }
             parent.onDropChild(cell);
+            
+//              createAppwidgetComplete =true;
+              
         }
         
         if(isSmall()&&mCurrentPage == getChildCount()-1){
@@ -3415,6 +3421,7 @@ public class Workspace extends SmoothPagedView
             }
         });
         
+
     }
     
     /**
@@ -4177,8 +4184,8 @@ public class Workspace extends SmoothPagedView
                         int span[] = new int[2];
                         span[0] = item.spanX;
                         span[1] = item.spanY;
-                        mLauncher.addAppWidgetFromDrop((PendingAddWidgetInfo) pendingInfo,
-                                container, screen, mTargetCell, span, null);
+                             mLauncher.addAppWidgetFromDrop((PendingAddWidgetInfo) pendingInfo,
+                                    container, screen, mTargetCell, span, null);
                         break;
                     case LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT:
                     case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
@@ -4191,13 +4198,16 @@ public class Workspace extends SmoothPagedView
                     }
                 }
             };
+            
             View finalView = pendingInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET
                     ? ((PendingAddWidgetInfo) pendingInfo).boundWidget : null;
             int animationStyle = ANIMATE_INTO_POSITION_AND_DISAPPEAR;
             if (pendingInfo.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPWIDGET &&
                     ((PendingAddWidgetInfo) pendingInfo).info.configure != null) {
                 animationStyle = ANIMATE_INTO_POSITION_AND_REMAIN;
+             
             }
+            
             animateWidgetDrop(info, cellLayout, d.dragView, onAnimationCompleteRunnable,
                     animationStyle, finalView, true);
         } else {
@@ -4331,6 +4341,24 @@ public class Workspace extends SmoothPagedView
     public void animateWidgetDrop(ItemInfo info, CellLayout cellLayout, DragView dragView,
             final Runnable onCompleteRunnable, int animationType, final View finalView,
             boolean external) {
+    	 
+    	createAppwidgetComplete =false;
+    	new Thread(){
+    		public void run(){
+    			
+    		    try
+    		    {
+    		    Thread.currentThread().sleep(1500);
+    		    }
+    		    catch(Exception e){
+    		    	
+    		        createAppwidgetComplete =true; 
+    		    } 
+    		    createAppwidgetComplete =true; 
+    		}
+    		
+    	}.start();
+    	
         Rect from = new Rect();
         mLauncher.getDragLayer().getViewRectRelativeToSelf(dragView, from);
 

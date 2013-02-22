@@ -848,9 +848,10 @@ public final class Launcher extends Activity
 				ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(shortcutInfo.intent, 0);
 				if (resolveInfo!=null && !(
 					(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
-	              (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0
-	               )){
+	              (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
 					quickAction.addActionItem(mActionUninstall);
+				}else if (resolveInfo==null){
+					quickAction.addActionItem(mActionDelete);
 				}
 				resolveInfo = null;
 				break;
@@ -1054,9 +1055,11 @@ public final class Launcher extends Activity
                         //args.cellY);
                 break;
             case REQUEST_PICK_SHORTCUT:
+            //	mWorkspace.createAppwidgetComplete =true;
                 processShortcut(args.intent);
                 break;
             case REQUEST_CREATE_SHORTCUT:
+          	//  mWorkspace.createAppwidgetComplete =true;
                 completeAddShortcut(args.intent, args.container, args.screen, args.cellX,
                         args.cellY);
                 result = true;
@@ -1076,10 +1079,10 @@ public final class Launcher extends Activity
         resetAddInfo();
         return result;
     }
-
     @Override
     protected void onActivityResult(
             final int requestCode, final int resultCode, final Intent data) {
+    	
         //add, for change workspace item icon
     	if(resultCode == RESULT_OK && requestCode == REQUEST_ICON_FROM_GALLERY){
     		Bitmap iconBitmap = null;
@@ -1109,17 +1112,19 @@ public final class Launcher extends Activity
             } else if (resultCode == RESULT_OK) {
                 addAppWidgetImpl(appWidgetId, mPendingAddInfo, null, mPendingAddWidgetInfo);
             }
+    
             return;
         }
         boolean delayExitSpringLoadedMode = false;
         boolean isWidgetDrop = (requestCode == REQUEST_PICK_APPWIDGET ||
                 requestCode == REQUEST_CREATE_APPWIDGET);
+        
         mWaitingForResult = false;
-
         // We have special handling for widgets
         if (isWidgetDrop) {
             int appWidgetId = data != null ?
                     data.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
+                    
             if (appWidgetId < 0) {
                 Log.e(TAG, "Error: appWidgetId (EXTRA_APPWIDGET_ID) was not returned from the \\" +
                         "widget configuration activity.");
@@ -1127,8 +1132,10 @@ public final class Launcher extends Activity
             } else {
                 completeTwoStageWidgetDrop(resultCode, appWidgetId);
             }
+           // mWorkspace.createAppwidgetComplete=true;
             return;
         }
+
 
         // The pattern used here is that a user PICKs a specific application,
         // which, depending on the target, might need to CREATE the actual target.
@@ -1150,9 +1157,11 @@ public final class Launcher extends Activity
             }
         }else if (resultCode == RESULT_CANCELED) {
          mWorkspace.removeEmptyScreen(mWorkspace.getChildCount()-1);
-           
+         //mWorkspace.createAppwidgetComplete=true;
         }
         mDragLayer.clearAnimatedView();
+        
+    
     }
 
     private void completeTwoStageWidgetDrop(final int resultCode, final int appWidgetId) {
@@ -1251,6 +1260,11 @@ public final class Launcher extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	
+    	
+    	  if (keyCode == KeyEvent.KEYCODE_SEARCH && mWorkspace.isSmall()) {
+              return true;
+          }
         final int uniChar = event.getUnicodeChar();
         final boolean handled = super.onKeyDown(keyCode, event);
         final boolean isKeyNotWhitespace = uniChar > 0 && !Character.isWhitespace(uniChar);
@@ -1272,6 +1286,8 @@ public final class Launcher extends Activity
         if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
             return true;
         }
+        
+    
 
         return handled;
     }
@@ -1351,7 +1367,6 @@ public final class Launcher extends Activity
 //            String curTab = savedState.getString("apps_customize_currentTab");
 //            if (curTab != null) {
 //                // We set this directly so that there is no delay before the tab is set
-//            	Log.i(Launcher.TAG, "    restoreState   ............................... ");
 //                mAppsCustomizeContent.setContentType(
 //                        mAppsCustomizeTabHost.getContentTypeForTabTag(curTab));
 //                mAppsCustomizeTabHost.setCurrentTabByTag(curTab);
@@ -1723,7 +1738,8 @@ public final class Launcher extends Activity
         if (appWidgetInfo == null) {
             appWidgetInfo = mAppWidgetManager.getAppWidgetInfo(appWidgetId);
         }
-
+        
+       // mWorkspace.createAppwidgetComplete=true;
         // Calculate the grid spans needed to fit this widget
         CellLayout layout = getCellLayout(container, screen);
 
@@ -2263,6 +2279,8 @@ public final class Launcher extends Activity
             Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
             intent.setComponent(appWidgetInfo.configure);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            
+         //   mWorkspace.createAppwidgetComplete=true;
             startActivityForResultSafely(intent, REQUEST_CREATE_APPWIDGET);
         } else {
             // Otherwise just add it
@@ -2326,7 +2344,9 @@ public final class Launcher extends Activity
 
         AppWidgetHostView hostView = info.boundWidget;
         int appWidgetId;
+
         if (hostView != null) {
+        	
             appWidgetId = hostView.getAppWidgetId();
             addAppWidgetImpl(appWidgetId, info, hostView, info.info);
         } else {
@@ -2335,7 +2355,9 @@ public final class Launcher extends Activity
             appWidgetId = getAppWidgetHost().allocateAppWidgetId();
             if (mAppWidgetManager.bindAppWidgetIdIfAllowed(appWidgetId, info.componentName)) {
                 addAppWidgetImpl(appWidgetId, info, null, info.info);
+                
             } else {
+            	
                 mPendingAddWidgetInfo = info.info;
                 Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_BIND);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
@@ -2511,7 +2533,7 @@ public final class Launcher extends Activity
     }
     
 	public void backFromEditMode(){
-		if(mWorkspace.isSmall()){
+		if(mWorkspace.isSmall()&&mWorkspace.createAppwidgetComplete){
 			CellLayout.mIsEditstate = false; //used to draw line condition
 			if (mStateAnimation != null) {
 				mStateAnimation.cancel();

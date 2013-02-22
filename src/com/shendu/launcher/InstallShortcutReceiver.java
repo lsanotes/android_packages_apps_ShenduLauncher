@@ -89,7 +89,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         
 
         Bundle bundle = intent.getExtras();
-        Log.i(Launcher.TAG," InstallShortcutReceiver.java  onReceive().....intent:"+intent+"=="+bundle);
+       // Log.i(Launcher.TAG," InstallShortcutReceiver.java  onReceive().....intent:"+intent+"=="+bundle);
         if(bundle==null){
             Log.i(Launcher.TAG,"InstallShortcutReceiver.java onReceive() bundle is null, do not create shortcut  ");
         	return;
@@ -161,8 +161,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
             	Callbacks callbacks = launcherModel.mCallbacks.get();
             	ShortcutInfo shortcutInfo = launcherModel.infoFromShortcutIntent(context, data,null);
             	if(shortcutInfo!=null){
-                	Log.i(Launcher.TAG,"==InstallShortcutReceiver.java==processInstallShortcut=="+
-                        	"==title=="+shortcutInfo.title+"==customIcon=="+shortcutInfo.customIcon);
+                	
                 	ArrayList<ShortcutInfo> list = new ArrayList<ShortcutInfo>();
                 	list.add(shortcutInfo);
                 	if(callbacks!=null){

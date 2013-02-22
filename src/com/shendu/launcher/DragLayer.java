@@ -632,6 +632,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
                 if (onCompleteRunnable != null) {
                     onCompleteRunnable.run();
                 }
+           
                 switch (animationEndStyle) {
                 case ANIMATION_END_DISAPPEAR:
                     clearAnimatedView();
