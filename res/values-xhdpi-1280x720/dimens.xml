@@ -75,9 +75,10 @@
     <integer name="apps_customize_maxCellCountY">-1</integer>
     <!-- The height of the tab bar - if this changes, we should update the
          external icon width/height above to compensate -->
-    <dimen name="apps_customize_tab_bar_height">38dp</dimen>
+    <dimen name="apps_customize_tab_bar_height">36dp</dimen>
     <dimen name="apps_customize_tab_bar_margin_top">0dp</dimen>
     <dimen name="app_icon_size">120px</dimen>
+     <dimen name="app_icon_bg_size">134px</dimen>
     <!-- The width can be 72dp because we don't have L/R padding -->
     <dimen name="apps_customize_cell_width">150px</dimen>
     <dimen name="apps_customize_cell_height">300px</dimen>
@@ -195,7 +196,7 @@
 	<dimen name="extra_cell_offset_h">0px</dimen>
      
 <!-- apps_customize_pane -->
-	<dimen name="apps_customize_pane_height">187dp</dimen>
+	<dimen name="apps_customize_pane_height">200dp</dimen>
      
 <!-- paged_view_indicatorr -->    
 	<dimen name="paged_view_indicator_height">14px</dimen>

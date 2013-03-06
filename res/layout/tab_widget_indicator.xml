@@ -34,11 +34,8 @@
     <ImageView
         android:id="@+id/editstate_tabhost_tabwidget_label_indicator_id"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="1dp"
+        android:layout_height="match_parent"
+      
         android:background="@drawable/editstate_tabhost_tabwidget_bottom_bg"
         android:visibility="gone" 
         android:scaleType="centerInside"

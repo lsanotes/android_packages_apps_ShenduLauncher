@@ -73,6 +73,7 @@
             android:id="@+id/widget_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
             android:layout_above="@id/apps_customize_widget_name_parent_id"
             android:scaleType="centerInside" />
     </RelativeLayout>

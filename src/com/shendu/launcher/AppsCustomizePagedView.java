@@ -1519,8 +1519,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             bitmapHeight = drawable.getIntrinsicHeight();
         } else {
             // Generate a preview image if we couldn't load one
-            if (cellHSpan < 1) cellHSpan = 1;
-            if (cellVSpan < 1) cellVSpan = 1;
+            //if (cellHSpan < 1) 
+            	cellHSpan = 1;
+            //if (cellVSpan < 1) 
+            	cellVSpan = 1;
 
             BitmapDrawable previewDrawable = (BitmapDrawable) getResources()
                     .getDrawable(R.drawable.widget_preview_tile);

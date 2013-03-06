@@ -22,6 +22,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/customize_pane_bg"
         android:visibility="gone">
         <!-- The layout_width of the tab bar gets overriden to align the content
              with the text in the tabs in AppsCustomizeTabHost. -->
@@ -29,6 +30,7 @@
             android:id="@+id/tabs_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/apps_customize_tab_bar_height"
+  
             android:layout_gravity="center_horizontal">
             <com.shendu.launcher.FocusOnlyTabWidget
                 android:id="@android:id/tabs"
@@ -64,7 +66,7 @@
                 android:id="@+id/apps_customize_pane_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-            	android:background="@color/customize_pane_bg"
+            
                 launcher:maxAppCellCountX="@integer/apps_customize_maxCellCountX"
                 launcher:maxAppCellCountY="@integer/apps_customize_maxCellCountY"
                 launcher:pageLayoutWidthGap="@dimen/apps_customize_pageLayoutWidthGap"

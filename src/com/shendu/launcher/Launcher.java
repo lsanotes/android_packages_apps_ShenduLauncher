@@ -1251,7 +1251,6 @@ public final class Launcher extends Activity
         return Boolean.TRUE;
     }
 
-
     private boolean acceptFilter() {
         final InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -1260,7 +1259,6 @@ public final class Launcher extends Activity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	
     	
     	  if (keyCode == KeyEvent.KEYCODE_SEARCH && mWorkspace.isSmall()) {
               return true;
@@ -1286,9 +1284,6 @@ public final class Launcher extends Activity
         if (keyCode == KeyEvent.KEYCODE_MENU && event.isLongPress()) {
             return true;
         }
-        
-    
-
         return handled;
     }
 
