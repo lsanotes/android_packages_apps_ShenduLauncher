@@ -1457,11 +1457,25 @@ public final class Launcher extends Activity
      * @return A View inflated from layoutResId.
      */
     View createShortcut(int layoutResId, ViewGroup parent, ShortcutInfo info) {
+    	
     	LinearLayout app_view = (LinearLayout) mInflater.inflate(layoutResId, parent, false);
     	TextView app_icon = (TextView)app_view.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_view.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_view.findViewById(R.id.app_shortcutinfo_mark_id);
+		LinearLayout appshortcutBg = (LinearLayout)app_view.findViewById(R.id.app_shortcutinfo_bg);
+		
     	ComponentName componentName = info.intent.getComponent();
+    	
+
+		ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(info.intent, 0);
+		if (resolveInfo!=null && (
+			(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+          (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
+			appshortcutBg.setBackgroundDrawable(null);
+		}
+		resolveInfo =null;
+		
+		
 		if((componentName!=null) && 
     		componentName.equals(LauncherApplication.sMMSComponentName)){
     		int unReadMMS_mark = shenduGetUnreadMMSCount();
@@ -3701,6 +3715,10 @@ public final class Launcher extends Activity
                 case LauncherSettings.Favorites.ITEM_TYPE_DELETESHOETCUT:
                     ShortcutInfo info = (ShortcutInfo) item;
                     String uri = info.intent.toUri(0).toString();
+                    
+              boolean isSystemApp=false;
+              
+    				
                     View shortcut = createShortcut(info);
                     workspace.addInScreen(shortcut, item.container, item.screen, item.cellX,
                             item.cellY, 1, 1, false);
