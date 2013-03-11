@@ -40,6 +40,8 @@ public class Preferences extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        setIsShenDu(true,true);
         addPreferencesFromResource(R.xml.preferences);
 
         mSharedPreferences = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);

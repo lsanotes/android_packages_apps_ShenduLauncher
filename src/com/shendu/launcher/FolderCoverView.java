@@ -64,7 +64,6 @@ public class FolderCoverView extends View {
 			arrow = Bitmap.createBitmap(arrow, 0, 0, arrow.getWidth(),
 					 arrow.getHeight(), matrix, true); 
 		}
-		
 	}
 	
 	Bitmap arrow;
@@ -75,7 +74,7 @@ public class FolderCoverView extends View {
 			canvas.drawBitmap(mFolderBitmap, mFolderLeft, mFolderTop, null);
 			canvas.drawBitmap(arrow, 
 					mFolderLeft+ (mFolderBitmap.getWidth()-arrow.getWidth())/ 2,
-					upOrDown==1? mHeight- arrow.getHeight()+5:mTop-5 ,null);
+					upOrDown==1? mHeight- arrow.getHeight()+9:mTop-5 ,null);
 		}
 	}
 
@@ -101,7 +100,6 @@ public class FolderCoverView extends View {
 		if (!mScroller.isFinished()) {
 			mScroller.abortAnimation();
 		}
-
 		mScroller.startScroll(startx, starty, deltax, deltay, duration);
 		this.invalidate();
 	}

@@ -133,7 +133,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 	//int mFolderCoverLine ,mHotseatFolderCoverLine,mFolderCoverView,mHotseatFolderCoverView;
 
 	private View mCurrentDragUpView;//add by hhl,used to mark the drag up item view
-	private int mBottomHotSeatH,mExtraFolderOffsetH,mExtraCellOffsetH;//add
+	private int mBottomHotSeatH,mExtraFolderOffsetH;//add
 
     /**
      * Used to inflate the Workspace from XML.
@@ -204,7 +204,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         
         //quarterHeight = getResources().getDimensionPixelSize(R.dimen.quarter_height);
         mBottomHotSeatH = getResources().getDimensionPixelSize(R.dimen.button_bar_height_plus_padding);
-        mExtraCellOffsetH = getResources().getDimensionPixelSize(R.dimen.extra_cell_offset_h);
+        mExtraFolderOffsetH = getResources().getDimensionPixelSize(R.dimen.extra_cell_offset_h);
 		 //mFolderCoverLine = getResources().getDimensionPixelSize(R.dimen.folder_cover_line);
 		 //mFolderCoverView = getResources().getDimensionPixelSize(R.dimen.folder_cover_view);
     	 //mHotseatFolderCoverLine = getResources().getDimensionPixelSize(R.dimen.folder_hotseat_cover_line);
@@ -427,7 +427,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             mInfo.remove(item);
             LauncherModel.deleteItemFromDatabase(mLauncher, item);
         }
-
         mItemsInvalidated = true;
         updateTextViewFocus();
         mInfo.addListener(this);
@@ -543,17 +542,17 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 				FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		if (mInfo.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
-			int upCoverH = currentBitmapH-mBottomHotSeatH-mExtraFolderOffsetH;
+			int upCoverH = currentBitmapH-mBottomHotSeatH;
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
 					currentBitmapW, upCoverH, null, 0, 0, 0, 1);
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
 					upCoverH, currentBitmapW, mBottomHotSeatH,
-					mCurrentFolderBitmap, v.getLeft(), rectTop-mExtraFolderOffsetH, 0, -1);
+					mCurrentFolderBitmap, v.getLeft(), rectTop, 0, -1);
 		} else {
-			int upCoverH = rectBottom-mExtraFolderOffsetH;
+			int upCoverH = rectBottom;
 			upCover = new FolderCoverView(mLauncher, mCurrentPageBitmap, 0,
 					currentBitmapW,upCoverH,
-					mCurrentFolderBitmap, v.getLeft(),rectTop-mExtraFolderOffsetH, 0, 1);
+					mCurrentFolderBitmap, v.getLeft(),rectTop, 0, 1);
 			downCover = new FolderCoverView(mLauncher, mCurrentPageBitmap,
 					upCoverH, currentBitmapW,currentBitmapH-rectBottom, 
 					null,0, 0, 0, -1);
@@ -981,6 +980,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     private void centerAboutIcon() {
+    	
         DragLayer.LayoutParams lp = (DragLayer.LayoutParams) getLayoutParams();
 
        // int width = getPaddingLeft() + getPaddingRight() + mContent.getDesiredWidth();
@@ -990,11 +990,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         DragLayer parent = (DragLayer) mLauncher.findViewById(R.id.drag_layer);
 
         parent.getDescendantRectRelativeToSelf(mFolderIcon, mTempRect);
-
-        //int centerX = mTempRect.centerX();
-        //int centerY = mTempRect.centerY();
-        //int centeredLeft = centerX - width / 2;
-        //int centeredTop = centerY - height / 2;
 
         int currentPage = mLauncher.getWorkspace().getCurrentPage();
         // In case the workspace is scrolling, we need to use the final scroll to compute
@@ -1008,48 +1003,24 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         // We reset the workspaces scroll
         mLauncher.getWorkspace().resetFinalScrollForPageChange(currentPage);
 
-        // We need to bound the folder to the currently visible CellLayoutChildren
-        //int left = Math.min(Math.max(bounds.left, centeredLeft),
-                //bounds.left + bounds.width() - width);
-        //int top = Math.min(Math.max(bounds.top, centeredTop),
-                //bounds.top + bounds.height() - height);
-        // If the folder doesn't fit within the bounds, center it about the desired bounds
-        //if (width >= bounds.width()) {
-            //left = bounds.left + (bounds.width() - width) / 2;
-        //}
-        //if (height >= bounds.height()) {
-            //top = bounds.top + (bounds.height() - height) / 2;
-        //}
 
-        //int folderPivotX = width / 2 + (centeredLeft - left);
-        //int folderPivotY = height / 2 + (centeredTop - top);
-        //setPivotX(folderPivotX);
-        //setPivotY(folderPivotY);
-        //mFolderIconPivotX = (int) (mFolderIcon.getMeasuredWidth() *
-                //(1.0f * folderPivotX / width));
-        //mFolderIconPivotY = (int) (mFolderIcon.getMeasuredHeight() *
-                //(1.0f * folderPivotY / height));
         lp.width = width;
         lp.height = height;
         lp.x = 0;
-        //lp.y = top;
-            //if(top<quarterHeight){
-            	//lp.y =quarterHeight;
-           //}
-        //folderTop=lp.y;
-        //folderHeight=height-3;
+
         folderHeight=height;
         int screenH = mLauncher.mscreenHeight;
         	
     	int rectTop = mTempRect.top;
     	int rectBottom = mTempRect.bottom;
     	if(mInfo.container == LauncherSettings.Favorites.CONTAINER_HOTSEAT){
-    		mExtraFolderOffsetH = 4 * mExtraCellOffsetH;
-    		slideDistance = height - mExtraFolderOffsetH;
-    		lp.y = screenH - 38 - mBottomHotSeatH - height;
+    		//mExtraFolderOffsetH = 4 * mExtraCellOffsetH;
+    		
+    		slideDistance = height;
+    		lp.y = screenH - 38-mExtraFolderOffsetH- mBottomHotSeatH - height;
+    		//lp.y = screenH - 38- mBottomHotSeatH - height;
     		//lp.y = rectTop - height -mArrowHeight-mExtraH;
     	}else{
-    		mExtraFolderOffsetH = (mFolderIcon.mInfo.cellY+1) * mExtraCellOffsetH;
     		int halfHeight = (int) (height/2.0f + 0.5f);
     		if(rectTop > halfHeight){
     			if(screenH-rectBottom-38 > halfHeight){
@@ -1060,19 +1031,12 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     		}else{
     			slideDistance = rectTop;
     		}
-			lp.y = rectBottom - slideDistance - mExtraFolderOffsetH;
+			lp.y = rectBottom - slideDistance ;
     	}
         
     }
 
-    //int quarterHeight;
-    
-    /*float getPivotXForIconAnimation() {
-        return mFolderIconPivotX;
-    }
-    float getPivotYForIconAnimation() {
-        return mFolderIconPivotY;
-    }*/
+  
 
     private void setupContentForNumItems(int count) {
         setupContentDimensions(count);

@@ -376,9 +376,14 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 				}
 			int oldWidth  = orgbmp.getWidth();
 			int oldHeight = orgbmp.getHeight();
-			int mgapInfolder=folderSize/10;
+//			int mgapInfolder=folderSize/10;
+//			int newWidth  =folderSize*3/4-mgapInfolder;
+//			int newHeight = folderSize*3/4-mgapInfolder;
+			
+			int mgapInfolder=folderSize/5;
 			int newWidth  =folderSize*3/4-mgapInfolder;
 			int newHeight = folderSize*3/4-mgapInfolder;
+			
 			float scaleW  = ((float)newWidth) / oldWidth;
 			float scaleH  = ((float)newHeight) / oldHeight;
 			Matrix matrix = new Matrix();

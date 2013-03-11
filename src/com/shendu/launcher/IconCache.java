@@ -223,151 +223,169 @@ public class IconCache {
 
 //            entry.icon = Utilities.createIconBitmap( //moditify,for theme
 //                    info.activityInfo.loadIcon(mPackageManager), mContext);
+            boolean isSystemApp=false;
+
+    		if (info!=null && (
+    			(info.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+              (info.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
+    			isSystemApp=true;
+    		}else{
+    			isSystemApp=false;
+    		}
+    
             
-            bitmap = Utilities.createIconBitmap( //moditify,for theme
+    		bitmap = Utilities.createIconBitmap( //moditify,for theme
                     info.activityInfo.loadShenduIcon(mPackageManager), mContext);
-            Log.i(TAG, "......cacheLocked..111...................bitmap:"+bitmap.getWidth()+"...."+bitmap.getHeight());
-          //  bitmap=getShenduBitmap(bitmap);
-            Log.i(TAG, "......cacheLocked...222..................bitmap:"+bitmap.getWidth()+"...."+bitmap.getHeight());
-            entry.icon= bitmap;
+    		
+    		
+    		appBgSize = (int) mContext.getResources().getDimension(R.dimen.app_icon_bg_size);
+    		Log.i(TAG, " ......................isSystemApp   "+isSystemApp+"   appBgSize..."+appBgSize+"......bitmap.getWidth():"+bitmap.getWidth());
+    		
+            if(!isSystemApp&&appBgSize==134&&bitmap.getWidth()>120){
+            	bitmap=  Bitmap.createScaledBitmap(bitmap, 120, 120, true);
+            }
+            entry.icon = bitmap;
+           //  bitmap=getShenduBitmap(bitmap);
+           // entry.icon= bitmap;
             
         }
         return entry;
     }
-    Bitmap bitmap;
-    private static Drawable ICON_BACKGROUND = null;
-    private static Drawable ICON_BORDER = null;
-    private static Drawable ICON_MASK = null;
-    private static Drawable ICON_PATTERN = null;
-    
-    public Bitmap getShenduBitmap( Bitmap apkbitmap){
-    	if(ICON_BACKGROUND == null){
-            ICON_BACKGROUND=mContext.getResources().getDrawable(R.drawable.icon_bg);
-    	}
-    	
-    	if(ICON_MASK == null){
-            ICON_MASK =ICON_BACKGROUND;
-    	}
-        
-      
-        if(ICON_BACKGROUND!=null  && ICON_MASK!=null ){
-        	apkbitmap = shenduSynthesDrawable(ICON_BACKGROUND, ICON_MASK,apkbitmap);
-        }else{
-        	apkbitmap = apkbitmap;
-        }
-        
-        return apkbitmap;
-    }
-    
-    
-    private final static class MaskPaint {
-        
-        private static Paint dstInPaint;
-
-        public static final Paint dstInPaint(int mAlpha)
-        {
-          if (dstInPaint != null){
-              dstInPaint.setAlpha(mAlpha);
-              dstInPaint.setFilterBitmap(false);
-              dstInPaint.setAntiAlias(true);
-              dstInPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-          }else{
-              Paint newDstInPaint = new Paint();
-              dstInPaint = newDstInPaint;
-              newDstInPaint.setAlpha(mAlpha);
-              dstInPaint.setFilterBitmap(false);
-              dstInPaint.setAntiAlias(true);
-              dstInPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-          }
-          return dstInPaint;
-        }
-    }
-    
-    /**
-     * d1 and d2 make dr 
-     * @param dr1
-     * @param dr2
-     * @return
-     */
-    /**@hide*/
-    public Bitmap shenduSynthesDrawable(Drawable background,Drawable mask,Bitmap apkbitmap) {
-    	//Log.i("LYS-TEST", ".0000000..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight() + " , background = " +  background.getIntrinsicWidth() + " , " + background.getIntrinsicHeight() );
-    	Drawable dr;
-        Drawable[] array = new Drawable[2];
-        array[0] = background;
-        
-        Bitmap maskBitmap = Bitmap.createBitmap(
-                background.getIntrinsicWidth(),
-                background.getIntrinsicHeight(),
-                Bitmap.Config.ARGB_8888
-                ); 
-        
-        Canvas maskCanvas = new Canvas(maskBitmap); 
-        int height = apkbitmap.getHeight();
-        int width = apkbitmap.getWidth();
-        
-        Log.i(TAG, "......cacheLocked..@@@@@@................bitmap:"+width+"....");
-        if(width>120){
-        		
-        	apkbitmap = Bitmap.createBitmap(apkbitmap, (width-120)/2,(height-120)/2, 120, 120); 
-        }
-        Log.i(TAG, "......cacheLocked..@@@@@@2222................bitmap:"+apkbitmap.getHeight()+"....");
-        //Log.i("LYS-TEST", ".11111..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight() + "    apkdrawable = " + apkBitmap.getWidth() + " , " + apkBitmap.getHeight());
-        //maskCanvas.drawBitmap(apkbitmap, (float)(background.getIntrinsicWidth() - apkbitmap.getWidth())/2, (float)(background.getIntrinsicHeight() - apkbitmap.getHeight())/2, null);
-        maskCanvas.drawBitmap(apkbitmap, 0, 0, null);
-        //Log.i("LYS-TEST", ".222222222..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight());
-        maskCanvas.drawBitmap(shenduDrawableToBitmap(mask), 0.0F, 0.0F, MaskPaint.dstInPaint(255));
-        
-        array[1] = new BitmapDrawable(maskBitmap);
-        
-        LayerDrawable la = new LayerDrawable(array);
-
-        dr = la.mutate();
-        Bitmap bitmap2 = Bitmap.createBitmap(
-                background.getIntrinsicWidth(),
-                background.getIntrinsicHeight(),
-                dr.getOpacity() != PixelFormat.OPAQUE ?
-                Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565
-                ); 
-        Canvas canvas = new Canvas(bitmap2);  
-        dr.setBounds(0, 0, bitmap2.getWidth(),bitmap2.getHeight());  
-        dr.draw(canvas);
-        //dr = new BitmapDrawable(this,bitmap2);
-        return bitmap2;
-    }
-    
-    /**
-     * drawable to bitmap
-     * @author liuyongsheng
-     * @param drawable
-     * @return
-     */
-    /**@hide*/
-    private Bitmap shenduDrawableToBitmap(Drawable drawable) {  
-        int width = drawable.getIntrinsicWidth();  
-        int height = drawable.getIntrinsicHeight();  
-        //Log.i("LYS-TEST", "=====*****************==="+width + " , " + height);
-        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888  
-                : Bitmap.Config.RGB_565;  
-        Bitmap bitmap = Bitmap.createBitmap(width, height, config);  
-        Canvas canvas = new Canvas(bitmap);  
-        drawable.setBounds(0, 0, width, height);  
-        drawable.draw(canvas); 
-        Log.i(TAG, "......cacheLocked.....................width:"+width+"...height."+height);
-        if(width >120 || height > 120){
-        	int newWidth = 120;
-        	int newHeight = 120;
-        	float scaleWidth = (float)newWidth/width;
-        	float scaleHeight = (float)newHeight/height;
-        	Matrix matrix =  new Matrix();
-        	matrix.postScale(scaleWidth, scaleHeight); 
-        	return Bitmap.createBitmap(bitmap, 0, 0, 
-        	                        width, height,matrix,true); 
-        }
-        //Log.i("LYS-TEST", "========"+bitmap.getWidth() + " , " + bitmap.getHeight());
-        return bitmap;  
-    }  
-    
+   Bitmap bitmap;
+   int appBgSize;
+//    private static Drawable ICON_BACKGROUND = null;
+//    private static Drawable ICON_BORDER = null;
+//    private static Drawable ICON_MASK = null;
+//    private static Drawable ICON_PATTERN = null;
+//    
+//    public Bitmap getShenduBitmap( Bitmap apkbitmap){
+//    	if(ICON_BACKGROUND == null){
+//            ICON_BACKGROUND=mContext.getResources().getDrawable(R.drawable.icon_bg);
+//    	}
+//    	
+//    	if(ICON_MASK == null){
+//            ICON_MASK =ICON_BACKGROUND;
+//    	}
+//        
+//      
+//        if(ICON_BACKGROUND!=null  && ICON_MASK!=null ){
+//        	apkbitmap = shenduSynthesDrawable(ICON_BACKGROUND, ICON_MASK,apkbitmap);
+//        }else{
+//        	apkbitmap = apkbitmap;
+//        }
+//        
+//        return apkbitmap;
+//    }
+//    
+//    
+//    private final static class MaskPaint {
+//        
+//        private static Paint dstInPaint;
+//
+//        public static final Paint dstInPaint(int mAlpha)
+//        {
+//          if (dstInPaint != null){
+//              dstInPaint.setAlpha(mAlpha);
+//              dstInPaint.setFilterBitmap(false);
+//              dstInPaint.setAntiAlias(true);
+//              dstInPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+//          }else{
+//              Paint newDstInPaint = new Paint();
+//              dstInPaint = newDstInPaint;
+//              newDstInPaint.setAlpha(mAlpha);
+//              dstInPaint.setFilterBitmap(false);
+//              dstInPaint.setAntiAlias(true);
+//              dstInPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+//          }
+//          return dstInPaint;
+//        }
+//    }
+//    
+//    /**
+//     * d1 and d2 make dr 
+//     * @param dr1
+//     * @param dr2
+//     * @return
+//     */
+//    /**@hide*/
+//    public Bitmap shenduSynthesDrawable(Drawable background,Drawable mask,Bitmap apkbitmap) {
+//    	//Log.i("LYS-TEST", ".0000000..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight() + " , background = " +  background.getIntrinsicWidth() + " , " + background.getIntrinsicHeight() );
+//    	Drawable dr;
+//        Drawable[] array = new Drawable[2];
+//        array[0] = background;
+//        
+//        Bitmap maskBitmap = Bitmap.createBitmap(
+//                background.getIntrinsicWidth(),
+//                background.getIntrinsicHeight(),
+//                Bitmap.Config.ARGB_8888
+//                ); 
+//        
+//        Canvas maskCanvas = new Canvas(maskBitmap); 
+//        int height = apkbitmap.getHeight();
+//        int width = apkbitmap.getWidth();
+//        
+//        Log.i(TAG, "......cacheLocked..@@@@@@................bitmap:"+width+"....");
+//        if(width>120){
+//        		
+//        	apkbitmap = Bitmap.createBitmap(apkbitmap, (width-120)/2,(height-120)/2, 120, 120); 
+//        }
+//        Log.i(TAG, "......cacheLocked..@@@@@@2222................bitmap:"+apkbitmap.getHeight()+"....");
+//        //Log.i("LYS-TEST", ".11111..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight() + "    apkdrawable = " + apkBitmap.getWidth() + " , " + apkBitmap.getHeight());
+//        //maskCanvas.drawBitmap(apkbitmap, (float)(background.getIntrinsicWidth() - apkbitmap.getWidth())/2, (float)(background.getIntrinsicHeight() - apkbitmap.getHeight())/2, null);
+//        maskCanvas.drawBitmap(apkbitmap, 0, 0, null);
+//        //Log.i("LYS-TEST", ".222222222..............mask = "  + mask.getIntrinsicWidth() + " , " + mask.getIntrinsicHeight());
+//        maskCanvas.drawBitmap(shenduDrawableToBitmap(mask), 0.0F, 0.0F, MaskPaint.dstInPaint(255));
+//        
+//        array[1] = new BitmapDrawable(maskBitmap);
+//        
+//        LayerDrawable la = new LayerDrawable(array);
+//
+//        dr = la.mutate();
+//        Bitmap bitmap2 = Bitmap.createBitmap(
+//                background.getIntrinsicWidth(),
+//                background.getIntrinsicHeight(),
+//                dr.getOpacity() != PixelFormat.OPAQUE ?
+//                Bitmap.Config.ARGB_8888: Bitmap.Config.RGB_565
+//                ); 
+//        Canvas canvas = new Canvas(bitmap2);  
+//        dr.setBounds(0, 0, bitmap2.getWidth(),bitmap2.getHeight());  
+//        dr.draw(canvas);
+//        //dr = new BitmapDrawable(this,bitmap2);
+//        return bitmap2;
+//    }
+//    
+//    /**
+//     * drawable to bitmap
+//     * @author liuyongsheng
+//     * @param drawable
+//     * @return
+//     */
+//    /**@hide*/
+//    private Bitmap shenduDrawableToBitmap(Drawable drawable) {  
+//        int width = drawable.getIntrinsicWidth();  
+//        int height = drawable.getIntrinsicHeight();  
+//        //Log.i("LYS-TEST", "=====*****************==="+width + " , " + height);
+//        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888  
+//                : Bitmap.Config.RGB_565;  
+//        Bitmap bitmap = Bitmap.createBitmap(width, height, config);  
+//        Canvas canvas = new Canvas(bitmap);  
+//        drawable.setBounds(0, 0, width, height);  
+//        drawable.draw(canvas); 
+//        Log.i(TAG, "......cacheLocked.....................width:"+width+"...height."+height);
+//        if(width >120 || height > 120){
+//        	int newWidth = 120;
+//        	int newHeight = 120;
+//        	float scaleWidth = (float)newWidth/width;
+//        	float scaleHeight = (float)newHeight/height;
+//        	Matrix matrix =  new Matrix();
+//        	matrix.postScale(scaleWidth, scaleHeight); 
+//        	return Bitmap.createBitmap(bitmap, 0, 0, 
+//        	                        width, height,matrix,true); 
+//        }
+//        //Log.i("LYS-TEST", "========"+bitmap.getWidth() + " , " + bitmap.getHeight());
+//        return bitmap;  
+//    }  
+//    
 
     public HashMap<ComponentName,Bitmap> getAllIcons() {
         synchronized (mCache) {

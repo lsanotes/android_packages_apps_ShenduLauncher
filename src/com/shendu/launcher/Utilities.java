@@ -100,7 +100,7 @@ final class Utilities {
 
             int width = sIconWidth;
             int height = sIconHeight;
-
+            
             if (icon instanceof PaintDrawable) {
                 PaintDrawable painter = (PaintDrawable) icon;
                 painter.setIntrinsicWidth(width);
@@ -115,6 +115,12 @@ final class Utilities {
             }
             int sourceWidth = icon.getIntrinsicWidth();
             int sourceHeight = icon.getIntrinsicHeight();
+            
+            
+            int textureWidth = sIconTextureWidth;
+            int textureHeight = sIconTextureHeight;
+            
+            
             if (sourceWidth > 0 && sourceHeight > 0) {
                 // There are intrinsic sizes.
                 if (width < sourceWidth || height < sourceHeight) {
@@ -129,12 +135,15 @@ final class Utilities {
                     // Don't scale up the icon
                     width = sourceWidth;
                     height = sourceHeight;
+                    
+                    textureWidth= sIconTextureWidth*60/67;
+                    
+                    textureHeight = sIconTextureHeight*60/67;
                 }
             }
 
             // no intrinsic size --> use default size
-            int textureWidth = sIconTextureWidth;
-            int textureHeight = sIconTextureHeight;
+    
 
             final Bitmap bitmap = Bitmap.createBitmap(textureWidth, textureHeight,
                     Bitmap.Config.ARGB_8888);
@@ -237,8 +246,12 @@ final class Utilities {
         final Resources resources = context.getResources();
         final DisplayMetrics metrics = resources.getDisplayMetrics();
         final float density = metrics.density;
-
-        sIconWidth = sIconHeight = (int) resources.getDimension(R.dimen.app_icon_bg_size);
+    //    if(issystemApp){
+	   sIconWidth = sIconHeight = (int) resources.getDimension(R.dimen.app_icon_bg_size);	
+//         }else{
+//	   sIconWidth = sIconHeight = (int) resources.getDimension(R.dimen.app_icon_size);
+//        }
+     
         sIconTextureWidth = sIconTextureHeight = sIconWidth;
 
         sBlurPaint.setMaskFilter(new BlurMaskFilter(5 * density, BlurMaskFilter.Blur.NORMAL));

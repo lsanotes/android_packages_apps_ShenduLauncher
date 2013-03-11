@@ -17,6 +17,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res/com.shendu.launcher"
     launcher:cellCountX="@integer/hotseat_cell_count"
+    android:background="@drawable/hotseat_bg"
     launcher:cellCountY="1">
     <com.shendu.launcher.CellLayout
         android:id="@+id/layout"

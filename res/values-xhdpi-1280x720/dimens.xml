@@ -193,7 +193,7 @@
 	<dimen name="folder_hotseat_cover_line">445dp</dimen>
 	<dimen name="folder_cover_view">61dp</dimen> 
 	<dimen name="folder_hotseat_cover_view">542dp</dimen>
-	<dimen name="extra_cell_offset_h">0px</dimen>
+	<dimen name="extra_cell_offset_h">13px</dimen>
      
 <!-- apps_customize_pane -->
 	<dimen name="apps_customize_pane_height">200dp</dimen>
