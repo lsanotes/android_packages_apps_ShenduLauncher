@@ -1637,7 +1637,6 @@ public class LauncherModel extends BroadcastReceiver {
                 final Callbacks callbacks = tryGetCallbacks(oldCallbacks);
                 final ArrayList<ShortcutInfo> added = mAllAppsList.added;
                 mAllAppsList.added = new ArrayList<ShortcutInfo>();
-
                 mHandler.post(new Runnable() {
                     public void run() {
                         final long t = SystemClock.uptimeMillis();

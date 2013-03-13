@@ -431,41 +431,41 @@ public class CellLayout extends ViewGroup {
             bg.draw(canvas);
         }
         
-        if(mIsEditstate && mIsCurrentPage && (existsLastOccupiedCell()[0]!=-1)){ //draw celllayout crosshairs
-        	final int countX = mCountX;
-        	final int countY = mCountY;
-        	final int drawCellWidth = (getMeasuredWidth()-6)/4;
-        	final int drawCellHeight = (getMeasuredHeight()-6)/4;
-        	final Drawable dCrosshairs = mCrosshairsDrawable;
-        	final int crosshairsWidth = dCrosshairs.getIntrinsicWidth();
-        	final int crosshairsHeight = dCrosshairs.getIntrinsicHeight();
-        	Paint paintLine = new Paint();
-        	paintLine.setStrokeWidth(1);
-        	paintLine.setAntiAlias(true);
-        	paintLine.setColor(Color.argb(51,255,255,255));
-        	int x = -(mWidthGap/2)-(crosshairsWidth/2)+3;
-        	for (int col = 0; col <= countX; col++) {
-        		canvas.drawLine(
-        				col*drawCellWidth-(mWidthGap/2)+3,
-        				-(mWidthGap/2)+3,
-        				col*drawCellWidth-(mWidthGap/2)+3,
-        				drawCellHeight*countX-(mWidthGap/2)+3,
-        				paintLine);//draw port line
-        		canvas.drawLine(
-        				-(mHeightGap/2)+3,
-        				col*drawCellHeight-(mHeightGap/2)+3,
-        				drawCellWidth*countX-(mHeightGap/2)+3,
-        				col*drawCellHeight-(mHeightGap/2)+3,
-        				paintLine);//draw land line
-        		int y = -(mHeightGap/2)-(crosshairsHeight/2)+3;
-        		for (int row = 0; row <= countY; row++) {
-        			dCrosshairs.setBounds(x, y, x + crosshairsWidth, y + crosshairsHeight);
-        			dCrosshairs.draw(canvas);
-        			y += drawCellHeight;
-        		}
-        		x += drawCellWidth;
-        	}
-        }
+//        if(mIsEditstate && mIsCurrentPage && (existsLastOccupiedCell()[0]!=-1)){ //draw celllayout crosshairs
+//        	final int countX = mCountX;
+//        	final int countY = mCountY;
+//        	final int drawCellWidth = (getMeasuredWidth()-6)/4;
+//        	final int drawCellHeight = (getMeasuredHeight()-6)/4;
+//        	final Drawable dCrosshairs = mCrosshairsDrawable;
+//        	final int crosshairsWidth = dCrosshairs.getIntrinsicWidth();
+//        	final int crosshairsHeight = dCrosshairs.getIntrinsicHeight();
+//        	Paint paintLine = new Paint();
+//        	paintLine.setStrokeWidth(1);
+//        	paintLine.setAntiAlias(true);
+//        	paintLine.setColor(Color.argb(51,255,255,255));
+//        	int x = -(mWidthGap/2)-(crosshairsWidth/2)+3;
+//        	for (int col = 0; col <= countX; col++) {
+//        		canvas.drawLine(
+//        				col*drawCellWidth-(mWidthGap/2)+3,
+//        				-(mWidthGap/2)+3,
+//        				col*drawCellWidth-(mWidthGap/2)+3,
+//        				drawCellHeight*countX-(mWidthGap/2)+3,
+//        				paintLine);//draw port line
+//        		canvas.drawLine(
+//        				-(mHeightGap/2)+3,
+//        				col*drawCellHeight-(mHeightGap/2)+3,
+//        				drawCellWidth*countX-(mHeightGap/2)+3,
+//        				col*drawCellHeight-(mHeightGap/2)+3,
+//        				paintLine);//draw land line
+//        		int y = -(mHeightGap/2)-(crosshairsHeight/2)+3;
+//        		for (int row = 0; row <= countY; row++) {
+//        			dCrosshairs.setBounds(x, y, x + crosshairsWidth, y + crosshairsHeight);
+//        			dCrosshairs.draw(canvas);
+//        			y += drawCellHeight;
+//        		}
+//        		x += drawCellWidth;
+//        	}
+//        }
         
         final Paint paint = mDragOutlinePaint;
         for (int i = 0; i < mDragOutlines.length; i++) { //draw itme when need mark drag item outline 

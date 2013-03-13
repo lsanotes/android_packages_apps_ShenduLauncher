@@ -16,15 +16,18 @@
 
 package com.shendu.launcher.preference;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceGroup;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.shendu.launcher.Launcher;
 import com.shendu.launcher.LauncherApplication;
@@ -44,6 +47,11 @@ public class Preferences extends PreferenceActivity {
         setIsShenDu(true,true);
         addPreferencesFromResource(R.xml.preferences);
 
+        int titleId = Resources.getSystem().getIdentifier(  
+                "action_bar_title", "id", "android"); 
+        TextView shendu_title = (TextView) findViewById(titleId);
+        shendu_title.setTextColor(getResources().getColor(R.color.actionbar_text));
+  
         mSharedPreferences = getSharedPreferences(PreferencesProvider.PREFERENCES_KEY, Context.MODE_PRIVATE);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mOnSharedPreferenceChangeListener);
         mSearchCheckBoxPreference=(CheckBoxPreference)findPreference(PreferencesProvider.PREFERENES_SEARCH);

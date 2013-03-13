@@ -136,7 +136,6 @@
         <activity android:name=".preference.Preferences"
             android:theme="@style/PreferenceStyle"
             android:label="@string/preferences_title"
-            android:icon="@drawable/launcher_setting_icon"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

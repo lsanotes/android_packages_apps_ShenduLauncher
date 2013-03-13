@@ -37,10 +37,16 @@
     <!-- TabWidget content bg and tab text color -->
 	<color name="customize_pane_bg">#A1000000</color> 
 	<color name="tab_text_press">#FF0C8DEA</color>
-	<color name="tab_text_unpress">#FF000000</color>
+	<color name="tab_text_unpress">#ffbababa</color>
 	<color name="delete_color_filter">#A5FF0000</color>
      
       <color name="sreen_shot_white">#66000000</color>
          
      <color name="sreen_shot_balck">#00000000</color>
+     
+     
+     
+     <color name="actionbar_text">#ffc7c7c7</color>
+ 
+     
 </resources>

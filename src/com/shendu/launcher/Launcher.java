@@ -1355,23 +1355,7 @@ public final class Launcher extends Activity
             mFolderInfo = mModel.getFolderById(this, sFolders, id);
             mRestoring = true;
         }
-        
 
-        // Restore the AppsCustomize tab
-//        if (mAppsCustomizeTabHost != null) {
-//            String curTab = savedState.getString("apps_customize_currentTab");
-//            if (curTab != null) {
-//                // We set this directly so that there is no delay before the tab is set
-//                mAppsCustomizeContent.setContentType(
-//                        mAppsCustomizeTabHost.getContentTypeForTabTag(curTab));
-//                mAppsCustomizeTabHost.setCurrentTabByTag(curTab);
-//                mAppsCustomizeContent.loadAssociatedPages(
-//                        mAppsCustomizeContent.getCurrentPage());
-//            }
-//
-//            int currentIndex = savedState.getInt("apps_customize_currentIndex");
-//            mAppsCustomizeContent.restorePageForIndex(currentIndex);
-//        }
     }
 
     /**
@@ -1402,13 +1386,7 @@ public final class Launcher extends Activity
         //mSearchDropTargetBar = (SearchDropTargetBar) mDragLayer.findViewById(R.id.qsb_bar);
         mWorkspaceSearchBar = (RelativeLayout) mDragLayer.findViewById(R.id.workspace_search_bar_id);
 		shenduShowOrHidemSearchBar(true);
-        /*if(mShowSearchBar){
-        	mWorkspaceSearchBar.setVisibility(View.VISIBLE);
-        }else{
-        	mWorkspaceSearchBar.setVisibility(View.GONE);
-        }*/
 
-        // Setup AppsCustomize
         mAppsCustomizeTabHost = (AppsCustomizeTabHost)
                 findViewById(R.id.apps_customize_pane);
         mAppsCustomizeContent = (AppsCustomizePagedView)
@@ -1465,16 +1443,20 @@ public final class Launcher extends Activity
 		LinearLayout appshortcutBg = (LinearLayout)app_view.findViewById(R.id.app_shortcutinfo_bg);
 		
     	ComponentName componentName = info.intent.getComponent();
+    	//com.sohu.inputmethod.sogou
+    	//com.UCMobile/
+    	String packageName = componentName.getPackageName();  
     	
-
+    	Log.i(TAG, "................"+packageName);
 		ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(info.intent, 0);
 		if (resolveInfo!=null && (
 			(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
           (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
-			appshortcutBg.setBackgroundDrawable(null);
+			if(!(packageName.equals("com.UCMobile")|packageName.equals("com.sohu.inputmethod.sogou"))){
+				appshortcutBg.setBackgroundDrawable(null);
+			}
 		}
 		resolveInfo =null;
-		
 		
 		if((componentName!=null) && 
     		componentName.equals(LauncherApplication.sMMSComponentName)){
@@ -1619,37 +1601,7 @@ public final class Launcher extends Activity
 		 android.os.Process.killProcess(android.os.Process.myPid());
     }
 
-    /**
-     * Add an application shortcut to the workspace.
-     *
-     * @param data The intent describing the application.
-     * @param cellInfo The position on screen where to create the shortcut.
-     */
-    /*void completeAddApplication(Intent data, long container, int screen, int cellX, int cellY) {
-        final int[] cellXY = mTmpAddItemCellCoordinates;
-        final CellLayout layout = getCellLayout(container, screen);
 
-        // First we check if we already know the exact location where we want to add this item.
-        if (cellX >= 0 && cellY >= 0) {
-            cellXY[0] = cellX;
-            cellXY[1] = cellY;
-        } else if (!layout.findCellForSpan(cellXY, 1, 1)) {
-            showOutOfSpaceMessage(isHotseatLayout(layout));
-            return;
-        }
-
-        final ShortcutInfo info = mModel.getShortcutInfo(getPackageManager(), data, this);
-
-        if (info != null) {
-            info.setActivity(data.getComponent(), Intent.FLAG_ACTIVITY_NEW_TASK |
-                    Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-            info.container = ItemInfo.NO_ID;
-            mWorkspace.addApplicationShortcut(info, layout, container, screen, cellXY[0], cellXY[1],
-                    isWorkspaceLocked(), cellX, cellY);
-        } else {
-            Log.e(TAG, "Couldn't find ActivityInfo for selected application: " + data);
-        }
-    }*/
 
     /**
      * Add a shortcut to the workspace.
@@ -4345,18 +4297,13 @@ public final class Launcher extends Activity
 	 void showPreviews(final View anchor, int start, int end) {//open screen manager
 		closeFolder();
 		mWorkspace.setVisibility(View.INVISIBLE);
-		//mHotseat.setVisibility(View.INVISIBLE);
 		hideHotseat();
-		//mSearchDropTargetBar.setVisibility(View.INVISIBLE);
 		shenduShowOrHidemSearchBar(false);
 		mWorkspace.hideScrollingIndicator(true);
-		//final Resources resources = getResources();
 		final Workspace workspace = mWorkspace;
 		CellLayout cell = ((CellLayout) workspace.getChildAt(start));
-		//float max = workspace.getChildCount();
 	    float max=3;
 		final Rect r = new Rect();
-		//resources.getDrawable(R.drawable.preview_background).getPadding(r);
 		int extraW = (int) ((r.left + r.right) * max);
 		int extraH = r.top + r.bottom;
 		int aW = cell.getWidth() - extraW;
@@ -4375,10 +4322,8 @@ public final class Launcher extends Activity
 		preview.setBackgroundColor(Color.argb(64, 0, 0, 0));
 		float oldAlpha; //for cellLayout and cellChildren alpha
 		int oldVisivile; //for cellLayout visibile
-		//PreviewTouchHandler handler = new PreviewTouchHandler(anchor);
 		final ArrayList<PreViewDate> previewDates = new ArrayList<PreViewDate>(count+1);  
 		for (int i = start; i < end; i++) {
-		//	HashMap<String,Bitmap > imageMap = new HashMap<String, Bitmap>();  
 			cell = (CellLayout) workspace.getChildAt(i);
 			oldAlpha = cell.getAlpha();
 			oldVisivile = cell.getVisibility();
@@ -4405,7 +4350,6 @@ public final class Launcher extends Activity
 			}
 		}
 		
-		/****add by zlf***************/
 		PreViewDateAdapter previewAdapter = new PreViewDateAdapter(Launcher.this, previewDates);
 		DragGrid preViewGrid=new DragGrid(Launcher.this,mWorkspace);
 		preViewGrid.setVerticalSpacing(10);
@@ -4430,7 +4374,6 @@ public final class Launcher extends Activity
 			 }
 			 mWorkspace.snapToPage(arg2);
 			}
-			
 		});
 		
 		if(mScreenPopupWindow ==null){

@@ -220,18 +220,20 @@
     <!-- Launcher Setting -->
     <style name="PreferenceStyle" parent="@android:style/Theme.Holo.Light">  
     	<item name="android:actionBarStyle">@style/PreferenceStyle.theme</item>
-
-    	
+         <item name="android:windowBackground">@drawable/preference_bg</item>
     </style>
-    
-    
         <style name="PreferenceStyle.theme" parent="@android:style/Widget.Holo.Light.ActionBar">  
-    	
     	<item name="android:background">@drawable/ab_transparent_light_holo</item>
-    	
-    </style>
     
+    </style>
+    <!-- 
+
+      <style name="actionBarTabTextStyle1" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+         <item name="android:textColor">#ffc7c7c7</item>
+         <item name="android:textSize">50sp</item>
+    </style>
         
+       -->  
 
     <!-- Overridden in device overlays -->
     <style name="CustomClingTitleText">

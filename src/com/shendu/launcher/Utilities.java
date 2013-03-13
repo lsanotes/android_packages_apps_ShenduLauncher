@@ -137,7 +137,6 @@ final class Utilities {
                     height = sourceHeight;
                     
                     textureWidth= sIconTextureWidth*60/67;
-                    
                     textureHeight = sIconTextureHeight*60/67;
                 }
             }

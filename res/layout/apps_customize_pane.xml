@@ -30,13 +30,12 @@
             android:id="@+id/tabs_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/apps_customize_tab_bar_height"
-  
             android:layout_gravity="center_horizontal">
             <com.shendu.launcher.FocusOnlyTabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"
+                
                 android:background="@drawable/editstate_tabhost_tabwidget_bg"
                 android:tabStripEnabled="true"
                 android:showDividers="middle"

@@ -715,6 +715,7 @@ public class DragController {
     	mAddNewScreen = false; 
     }
 
+    
     private DropTarget findDropTarget(int x, int y, int[] dropCoordinates) {
         final Rect r = mRectTemp;
 

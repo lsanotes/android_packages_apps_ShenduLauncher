@@ -226,11 +226,18 @@
     </style>
 -->
 
-    <!-- Launcher Setting -->
-    <style name="PreferenceStyle" parent="@android:style/Theme.Holo">  
-    	<item name="android:actionBarStyle">@*android:style/Widget.Holo.Light.ActionBar</item>
-    	
+    
+        <!-- Launcher Setting -->
+    <style name="PreferenceStyle" parent="@android:style/Theme.Holo.Light">  
+    	<item name="android:actionBarStyle">@style/PreferenceStyle.theme</item>
+         <item name="android:windowBackground">@drawable/preference_bg</item>
     </style>
+        <style name="PreferenceStyle.theme" parent="@android:style/Widget.Holo.Light.ActionBar">  
+    	<item name="android:background">@drawable/ab_transparent_light_holo</item>
+    
+    </style>
+    
+        
 
     <!-- Overridden in device overlays -->
     <style name="CustomClingTitleText">

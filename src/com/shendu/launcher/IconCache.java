@@ -233,16 +233,15 @@ public class IconCache {
     			isSystemApp=false;
     		}
     
-            
     		bitmap = Utilities.createIconBitmap( //moditify,for theme
                     info.activityInfo.loadShenduIcon(mPackageManager), mContext);
     		
     		
-    		appBgSize = (int) mContext.getResources().getDimension(R.dimen.app_icon_bg_size);
-    		Log.i(TAG, " ......................isSystemApp   "+isSystemApp+"   appBgSize..."+appBgSize+"......bitmap.getWidth():"+bitmap.getWidth());
+    		appBgSizeBg = (int) mContext.getResources().getDimension(R.dimen.app_icon_bg_size);
+    		appBgSize = (int) mContext.getResources().getDimension(R.dimen.app_icon_size);
     		
-            if(!isSystemApp&&appBgSize==134&&bitmap.getWidth()>120){
-            	bitmap=  Bitmap.createScaledBitmap(bitmap, 120, 120, true);
+            if(!isSystemApp&&appBgSize==appBgSizeBg&&bitmap.getWidth()>appBgSize){
+            	bitmap=  Bitmap.createScaledBitmap(bitmap, appBgSize, appBgSize, true);
             }
             entry.icon = bitmap;
            //  bitmap=getShenduBitmap(bitmap);
@@ -252,7 +251,7 @@ public class IconCache {
         return entry;
     }
    Bitmap bitmap;
-   int appBgSize;
+   int appBgSize,appBgSizeBg;
 //    private static Drawable ICON_BACKGROUND = null;
 //    private static Drawable ICON_BORDER = null;
 //    private static Drawable ICON_MASK = null;
