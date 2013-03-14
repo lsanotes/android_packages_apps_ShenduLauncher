@@ -22,6 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1"
+    android:paddingTop="1dip"
     android:background="@android:color/transparent" >
 
     <TextView
@@ -35,6 +36,7 @@
         android:id="@+id/editstate_tabhost_tabwidget_label_indicator_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        
       
         android:background="@drawable/editstate_tabhost_tabwidget_bottom_bg"
         android:visibility="gone" 

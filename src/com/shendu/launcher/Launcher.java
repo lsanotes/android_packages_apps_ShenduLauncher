@@ -134,7 +134,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.android.common.Search;
-import com.shendu.launcher.AppsCustomizePagedView.ThemeBroadcastReceiver;
+
 import com.shendu.launcher.CellLayout.CellInfo;
 import com.shendu.launcher.R;
 import com.shendu.launcher.DropTarget.DragObject;
@@ -472,7 +472,7 @@ public final class Launcher extends Activity
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
             mAppsCustomizeContent.onEffectChanged();
-            mAppsCustomizeContent.onThemeChanged();
+          //  mAppsCustomizeContent.onThemeChanged();
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
@@ -508,10 +508,10 @@ public final class Launcher extends Activity
 
         mDragController.setEffectiveY(mscreenHeight-1.5f*getResources().getDimension(R.dimen.button_bar_height_plus_padding));
        
-        // add by zlf for Theme
-		IntentFilter filterTheme = new IntentFilter();
-		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
-        registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
+//        // add by zlf for Theme
+//		IntentFilter filterTheme = new IntentFilter();
+//		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
+//        registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
         
 
      	
@@ -702,7 +702,7 @@ public final class Launcher extends Activity
     			shortcutInfo.setIcon(bitmap);
     			shortcutInfo.writeBitmap(values,bitmap);
     			((TextView)itemView.findViewById(R.id.app_shortcutinfo_icon_id))
-    			  .setBackgroundDrawable(new BitmapDrawable(bitmap));
+    			  .setBackgroundDrawable(new FastBitmapDrawable(bitmap));
     		}else{ //folder
     			FolderInfo folderInfo = (FolderInfo) itemInfo;
     			folderInfo.mIcon = bitmap;
@@ -2047,7 +2047,7 @@ public final class Launcher extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
+     //   unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
    
         shenduDismissProgressDialog();
         // Remove all pending runnables

@@ -43,7 +43,6 @@
         android:layout_gravity="center_horizontal"
         >
 	    <TextView
-	        
 	        android:id="@+id/app_shortcutinfo_icon_id"
 	        android:paddingTop="10dp"
 	        android:layout_gravity="center"

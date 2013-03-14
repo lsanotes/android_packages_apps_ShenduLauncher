@@ -19,7 +19,7 @@
   <!-- first/default screen  -->
 	<appwidget
         launcher:packageName="com.android.deskclock"
-        launcher:className="com.android.alarmclock.Shendu_Digital_Clock_Widget"
+        launcher:className="com.android.alarmclock.ShenduSimpleClockWidget"
         launcher:screen="0"
         launcher:x="0"
         launcher:y="0"
@@ -27,8 +27,8 @@
         launcher:spanY="2" />
      
 	<favorite 
-        launcher:packageName="com.shendu.theme"
-        launcher:className="com.shendu.theme.ShenDu_MainActivity"
+        launcher:packageName="com.shendu.permission"
+        launcher:className="com.shendu.permission.ShenduPermission"
         launcher:screen="0"
         launcher:x="0"
         launcher:y="2" />
@@ -48,8 +48,8 @@
         launcher:y="2" />
 	
 	 <favorite
-        launcher:packageName="com.android.settings" 
-        launcher:className="com.android.settings.MainSetting" 
+        launcher:packageName="com.shendu.fastweb"
+        launcher:className="com.shendu.fastweb.TabHostActivity"
         launcher:screen="0"
         launcher:x="3"
         launcher:y="2" />
@@ -69,8 +69,8 @@
         launcher:y="3" />
     
 	<favorite
-        launcher:packageName="com.shendu.userbook"
-        launcher:className="com.shendu.userbook.UserBookActivity"
+        launcher:packageName="com.android.browser"
+        launcher:className="com.android.browser.BrowserActivity"
         launcher:screen="0"
         launcher:x="2"
         launcher:y="3" /> 
@@ -108,8 +108,8 @@
         launcher:y="0" />
     
     <favorite
-        launcher:packageName="com.shendu.fastweb"
-        launcher:className="com.shendu.fastweb.TabHostActivity"
+        launcher:packageName="com.android.settings" 
+        launcher:className="com.android.settings.MainSetting" 
         launcher:container="-101"
         launcher:screen="3"
         launcher:x="3"

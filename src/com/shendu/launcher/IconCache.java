@@ -237,10 +237,10 @@ public class IconCache {
                     info.activityInfo.loadShenduIcon(mPackageManager), mContext);
     		
     		
-    		appBgSizeBg = (int) mContext.getResources().getDimension(R.dimen.app_icon_bg_size);
+    	//	appBgSizeBg = (int) mContext.getResources().getDimension(R.dimen.app_icon_bg_size);
     		appBgSize = (int) mContext.getResources().getDimension(R.dimen.app_icon_size);
     		
-            if(!isSystemApp&&appBgSize==appBgSizeBg&&bitmap.getWidth()>appBgSize){
+            if(!isSystemApp&&bitmap.getWidth()>appBgSize){
             	bitmap=  Bitmap.createScaledBitmap(bitmap, appBgSize, appBgSize, true);
             }
             entry.icon = bitmap;

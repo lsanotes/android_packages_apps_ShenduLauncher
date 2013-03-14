@@ -30,16 +30,18 @@
             android:id="@+id/tabs_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/apps_customize_tab_bar_height"
+            android:background="@drawable/editstate_tabhost_tabwidget_bg"
             android:layout_gravity="center_horizontal">
             <com.shendu.launcher.FocusOnlyTabWidget
                 android:id="@android:id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                
-                android:background="@drawable/editstate_tabhost_tabwidget_bg"
+                android:gravity="center"
+               
                 android:tabStripEnabled="true"
                 android:showDividers="middle"
-                android:divider="@drawable/editstate_tabhost_tabwidget_divider" />
+                android:divider="@drawable/editstate_tabhost_tabwidget_divider" 
+                android:dividerPadding="0dip"/>
             <!-- do not used the market button
             <include
                 android:id="@+id/overflow_menu_button"
