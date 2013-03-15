@@ -1440,23 +1440,27 @@ public final class Launcher extends Activity
     	TextView app_icon = (TextView)app_view.findViewById(R.id.app_shortcutinfo_icon_id);
     	TextView app_name = (TextView)app_view.findViewById(R.id.app_shortcutinfo_name_id);
 		TextView app_mark = (TextView)app_view.findViewById(R.id.app_shortcutinfo_mark_id);
-		LinearLayout appshortcutBg = (LinearLayout)app_view.findViewById(R.id.app_shortcutinfo_bg);
+		RelativeLayout appshortcutBg = (RelativeLayout)app_view.findViewById(R.id.app_shortcutinfo_bg);
 		
     	ComponentName componentName = info.intent.getComponent();
     	//com.sohu.inputmethod.sogou
     	//com.UCMobile/
-    	String packageName = componentName.getPackageName();  
     	
-    	Log.i(TAG, "................"+packageName);
-		ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(info.intent, 0);
-		if (resolveInfo!=null && (
-			(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
-          (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
-			if(!(packageName.equals("com.UCMobile")|packageName.equals("com.sohu.inputmethod.sogou"))){
-				appshortcutBg.setBackgroundDrawable(null);
-			}
-		}
-		resolveInfo =null;
+    	if(componentName!=null){
+    		String packageName = componentName.getPackageName();  
+        	
+        	Log.i(TAG, "................"+packageName);
+    		ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(info.intent, 0);
+    		if (resolveInfo!=null && (
+    			(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
+              (resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)!=0)){
+    			if(!(packageName.equals("com.UCMobile")|packageName.equals("com.sohu.inputmethod.sogou"))){
+    				appshortcutBg.setBackgroundDrawable(null);
+    			}
+    		}
+    		resolveInfo =null;
+    	}
+    	
 		
 		if((componentName!=null) && 
     		componentName.equals(LauncherApplication.sMMSComponentName)){
