@@ -241,7 +241,7 @@ public class IconCache {
     			appBgSize = (int) mContext.getResources().getDimension(R.dimen.app_icon_size);
     		}
     		
-            if(!isSystemApp&&bitmap.getWidth()>appBgSize){
+            if(!isSystemApp&&appBgSize>0&&bitmap.getWidth()>appBgSize){
             	bitmap=  Bitmap.createScaledBitmap(bitmap, appBgSize, appBgSize, true);
             }
             entry.icon = bitmap;
