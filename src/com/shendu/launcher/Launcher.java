@@ -472,7 +472,7 @@ public final class Launcher extends Activity
             mAppsCustomizeContent.onPackagesUpdated();
             mAppsCustomizeContent.onWallpaperChanged();
             mAppsCustomizeContent.onEffectChanged();
-          //  mAppsCustomizeContent.onThemeChanged();
+            mAppsCustomizeContent.onThemeChanged();
             if(mAppsCustomizeContent instanceof AppsCustomizePagedView){
             	((AppsCustomizePagedView)mAppsCustomizeContent).invalidatePageData();
             }
@@ -509,9 +509,9 @@ public final class Launcher extends Activity
         mDragController.setEffectiveY(mscreenHeight-1.5f*getResources().getDimension(R.dimen.button_bar_height_plus_padding));
        
 //        // add by zlf for Theme
-//		IntentFilter filterTheme = new IntentFilter();
-//		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
-//        registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
+		IntentFilter filterTheme = new IntentFilter();
+		filterTheme.addAction(AppsCustomizePagedView.THEME_RECEIVER);
+        registerReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver, filterTheme);
         
 
      	
@@ -1448,8 +1448,7 @@ public final class Launcher extends Activity
     	
     	if(componentName!=null){
     		String packageName = componentName.getPackageName();  
-        	
-        	Log.i(TAG, "................"+packageName);
+   
     		ResolveInfo resolveInfo = mContext.getPackageManager().resolveActivity(info.intent, 0);
     		if (resolveInfo!=null && (
     			(resolveInfo.activityInfo.applicationInfo.flags & android.content.pm.ApplicationInfo.FLAG_SYSTEM)!=0 ||
@@ -1460,7 +1459,6 @@ public final class Launcher extends Activity
     		}
     		resolveInfo =null;
     	}
-    	
 		
 		if((componentName!=null) && 
     		componentName.equals(LauncherApplication.sMMSComponentName)){
@@ -2051,7 +2049,7 @@ public final class Launcher extends Activity
     @Override
     public void onDestroy() {
         super.onDestroy();
-     //   unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
+        unregisterReceiver(mAppsCustomizeContent.mThemeBroadcastReceiver);
    
         shenduDismissProgressDialog();
         // Remove all pending runnables

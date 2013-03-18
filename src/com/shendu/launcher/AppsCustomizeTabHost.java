@@ -171,13 +171,13 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         
         
         
-        //choice specially theme
-//        label = mContext.getString(R.string.editstate_choice_theme);
-//        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
-//        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
-//        mTabLabel.setText(label);
-//        mTabViewLayout.setContentDescription(label);
-//        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
+    //    choice specially theme
+        label = mContext.getString(R.string.editstate_choice_theme);
+        mTabViewLayout = (FrameLayout) mLayoutInflater.inflate(R.layout.tab_widget_indicator, tabs, false);
+        mTabLabel = (TextView)mTabViewLayout.findViewById(R.id.editstate_tabhost_tabwidget_label_textview_id);
+        mTabLabel.setText(label);
+        mTabViewLayout.setContentDescription(label);
+        addTab(newTabSpec(THEMES_TAB_TAG).setIndicator(mTabViewLayout).setContent(contentFactory));
         
         
         setOnTabChangedListener(this);
@@ -318,8 +318,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
             return AppsCustomizePagedView.ContentType.Widgets;
         } else if(tag.equals(WALLPAPERS_TAB_TAG)){
             return AppsCustomizePagedView.ContentType.Wallpapers;
-//        } else if(tag.equals(THEMES_TAB_TAG)){
-//            return AppsCustomizePagedView.ContentType.Themes;
+        } else if(tag.equals(THEMES_TAB_TAG)){
+            return AppsCustomizePagedView.ContentType.Themes;
         } else if(tag.equals(EFFECTS_TAB_TAG)){
             return AppsCustomizePagedView.ContentType.Effects;
         }
@@ -340,8 +340,8 @@ public class AppsCustomizeTabHost extends TabHost implements LauncherTransitiona
         	return WALLPAPERS_TAB_TAG;
         }else if(type == AppsCustomizePagedView.ContentType.Effects){
         	return EFFECTS_TAB_TAG;
-//        } else if(type == AppsCustomizePagedView.ContentType.Themes){
-//        	return THEMES_TAB_TAG;
+        } else if(type == AppsCustomizePagedView.ContentType.Themes){
+        	return THEMES_TAB_TAG;
         }
         return WIDGETS_TAB_TAG;
     }
