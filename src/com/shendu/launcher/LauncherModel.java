@@ -492,7 +492,8 @@ public class LauncherModel extends BroadcastReceiver {
         Runnable r = new Runnable() {
             public void run() {
                 cr.insert(notify ? LauncherSettings.Favorites.CONTENT_URI :
-                        LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, values);
+                        LauncherSettings.Favorites.CONTENT_URI_NO_NOTIFICATION, 
+                        values);
 
                 if (sItemsIdMap.containsKey(item.id)) {
                     // we should not be adding new items in the db with the same id
