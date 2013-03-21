@@ -1527,7 +1527,7 @@ public final class Launcher extends Activity
      * @param y: used to changed app view y
      * TODO: update the call or sms app view
      */
-    public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y){
+    public void shenduUpdateAppMark(int mark,Intent intent,long container,int screen,int x,int y){
     	ShortcutAndWidgetContainer shortcutAndWidgetContainer = null;
 		if(container==LauncherSettings.Favorites.CONTAINER_DESKTOP){
 			shortcutAndWidgetContainer = 
@@ -1561,20 +1561,28 @@ public final class Launcher extends Activity
 		}
 		if(shortcutAndWidgetContainer!=null){
 			View view = shortcutAndWidgetContainer.getChildAt(x, y);
-			TextView app_mark = (TextView)view.findViewById(R.id.app_shortcutinfo_mark_id);
-			int markSize = 0;
-			if(mark==LauncherApplication.MMS_MARK){
-				markSize = shenduGetUnreadMMSCount();
-			}else if(mark==LauncherApplication.CALL_MARK){
-				markSize = shenduGetMissCallCount();
+			Object info = view.getTag();
+			
+			if(info instanceof ShortcutInfo){
+				
+			if(intent.getComponent().toString().equals(((ShortcutInfo) info).intent.getComponent().toString())){
+				TextView app_mark = (TextView)view.findViewById(R.id.app_shortcutinfo_mark_id);
+				int markSize = 0;
+				if(mark==LauncherApplication.MMS_MARK){
+					markSize = shenduGetUnreadMMSCount();
+				}else if(mark==LauncherApplication.CALL_MARK){
+					markSize = shenduGetMissCallCount();
+				}
+				if(markSize>0){
+					app_mark.setText(markSize+"");
+					app_mark.setVisibility(View.VISIBLE);
+				}else{
+					app_mark.setVisibility(View.INVISIBLE);
+				}
 			}
-			if(markSize>0){
-				app_mark.setText(markSize+"");
-				app_mark.setVisibility(View.VISIBLE);
-			}else{
-				app_mark.setVisibility(View.INVISIBLE);
+			
 			}
-			view.requestLayout();
+			view.requestLayout();	
 		}
 	}
     

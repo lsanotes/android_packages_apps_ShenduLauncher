@@ -145,7 +145,7 @@ public class LauncherModel extends BroadcastReceiver {
     		ShortcutInfo shortcutInfo = (ShortcutInfo)msg.obj;
     		Callbacks callbacks = mCallbacks != null ? mCallbacks.get() : null;
             if (callbacks!= null) {
-                callbacks.shenduUpdateAppMark(mark,shortcutInfo.container,
+                callbacks.shenduUpdateAppMark(mark,shortcutInfo.intent,shortcutInfo.container,
                 		shortcutInfo.screen,shortcutInfo.cellX,shortcutInfo.cellY);
             }
     	};
@@ -168,7 +168,7 @@ public class LauncherModel extends BroadcastReceiver {
         //public boolean isAllAppsButtonRank(int rank); //do not used,remove by hhl
         public void bindSearchablesChanged();
         public void bindWallpaperChanged(); //used to changed current wallpaper,add by hhl
-        public void shenduUpdateAppMark(int mark,long container,int screen,int x,int y); //used to update app mark,add by hhl
+        public void shenduUpdateAppMark(int mark,Intent intent,long container,int screen,int x,int y); //used to update app mark,add by hhl
         public void shenduChangeTheme(); //used to delete database icon
     }
 
@@ -1870,6 +1870,7 @@ public class LauncherModel extends BroadcastReceiver {
     					null,LauncherSettings.Favorites.INTENT+" = \'"+intent.toUri(0)+"\'",null,null);
     			if(cursor.moveToFirst()){
         			ShortcutInfo shortcutInfo = new ShortcutInfo();
+        			shortcutInfo.intent=intent;
         			shortcutInfo.screen = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.SCREEN));
         			shortcutInfo.container = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.CONTAINER));
         			shortcutInfo.cellX = cursor.getInt(cursor.getColumnIndex(LauncherSettings.Favorites.CELLX));
