@@ -352,7 +352,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     
     
     
-    public  ThemeBroadcastReceiver  mThemeBroadcastReceiver ;
+//    public  ThemeBroadcastReceiver  mThemeBroadcastReceiver ;
 
     // Used for drawing shortcut previews
     BitmapCache mCachedShortcutPreviewBitmap = new BitmapCache();
@@ -586,22 +586,22 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
 	}
 	
 	
-	/** 
-	 * 2012-9-19 hhl
-     * TODO: userd to init effectList data when listener effect is changed or first open launcher
-	 */
-	public void onThemeChanged() {
-		
-		if(mThemeBroadcastReceiver ==null){
-			mThemeBroadcastReceiver = new ThemeBroadcastReceiver();
-		}
-		
-		postDelayed(new Runnable() {
-			public void run() {
-				shenduFindTheme();
-			}
-	    }, 100);
-	}
+//	/** 
+//	 * 2012-9-19 hhl
+//     * TODO: userd to init effectList data when listener effect is changed or first open launcher
+//	 */
+//	public void onThemeChanged() {
+//		
+//		if(mThemeBroadcastReceiver ==null){
+//			mThemeBroadcastReceiver = new ThemeBroadcastReceiver();
+//		}
+//		
+//		postDelayed(new Runnable() {
+//			public void run() {
+//				shenduFindTheme();
+//			}
+//	    }, 100);
+//	}
 
     public void updatePackages() {
         mWidgets.clear();
@@ -732,93 +732,93 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
     }
     
-    /**
-     * 2012-8-26 hhl
-     * TODO: userd to find the wallpapers data in current launcher and init mWallpapersList data
-     */
-    private void shenduFindTheme() {
-    	boolean wasEmpty = mThemesList.isEmpty();
-    	mThemesList.clear();
-		Intent intent = new Intent(AppsCustomizePagedView.LAUNCH_THEME_SEND);
-		mLauncher.sendBroadcast(intent);
-		
-	 	if (wasEmpty) {
-            // The next layout pass will trigger data-ready if both widgets and apps are set, so request
-            // a layout to do this test and invalidate the page data when ready.
-            //if (testDataReady()) requestLayout();
-        } else {
-            cancelAllTasks();
-            invalidatePageData();
-        }
-    	
-    }
+//    /**
+//     * 2012-8-26 hhl
+//     * TODO: userd to find the wallpapers data in current launcher and init mWallpapersList data
+//     */
+//    private void shenduFindTheme() {
+//    	boolean wasEmpty = mThemesList.isEmpty();
+//    	mThemesList.clear();
+//		Intent intent = new Intent(AppsCustomizePagedView.LAUNCH_THEME_SEND);
+//		mLauncher.sendBroadcast(intent);
+//		
+//	 	if (wasEmpty) {
+//            // The next layout pass will trigger data-ready if both widgets and apps are set, so request
+//            // a layout to do this test and invalidate the page data when ready.
+//            //if (testDataReady()) requestLayout();
+//        } else {
+//            cancelAllTasks();
+//            invalidatePageData();
+//        }
+//    	
+//    }
 
-    public class ThemeBroadcastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-
-			boolean resuilt = intent.getBooleanExtra("ischanged",false);
-	
-			if(resuilt || firstSendToTheme ){
-				try {
-					getThemeResources( intent.getStringExtra("path") );
-					if(!firstSendToTheme){
-						syncThemesPageItems(0,true);
-					}
-					firstSendToTheme =false;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public static String LAUNCH_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_parser_perview_Action";
-    public static String THEME_RECEIVER ="com.shendu.launcher_receive";  
-    public static String CHANGE_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_setting_theme_Action";
-	private static boolean firstSendToTheme= true;
-	
-	public void getThemeResources(String path ) throws Exception {
-
-		mThemesList.clear();
-		String suffix = ".jpg";
-		File stringPath = Environment.getDataDirectory();
-		File systemThemePaht = new File(stringPath.getPath() + path);
-
-		if (systemThemePaht.exists()) {
-			File[] files = systemThemePaht.listFiles();
-		
-			for (File file : files) {
-		
-				if (file.isFile() && file.getName().endsWith(suffix)) {
-					
-					ShenduPrograme shenduTheme =new ShenduPrograme();
-					String cruThemePath = file.getAbsolutePath();
-					Bitmap bm = BitmapFactory.decodeFile(cruThemePath);
-
-					shenduTheme.mThemeBitmap=bm;
-					shenduTheme.mThemePath=cruThemePath;
-					mThemesList.add(shenduTheme);
-				}
-			}
-		}
-  
-		ShenduPrograme	moreThemePrograme = new ShenduPrograme();
-		
-    	Intent thmemIntent =  new Intent(Intent.ACTION_MAIN);
-    	ComponentName componentName = new ComponentName("com.shendu.theme","com.shendu.theme.ShenDu_MainActivity");
-    	thmemIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-    	thmemIntent.setComponent(componentName);
-    	thmemIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-   
-        moreThemePrograme.setIntent(thmemIntent);
-        //moreThemePrograme.mThemeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.editstate_tabhost_tabcontent_wallpaper_more_normal);
-        moreThemePrograme.setResSmallId(R.drawable.editstate_more_wallpaper_bg);
-        moreThemePrograme.setChoice(ShenduPrograme.CHOICE_WALLPAPER_MORE);
-        mThemesList.add(moreThemePrograme);
-        
-	}
+//    public class ThemeBroadcastReceiver extends BroadcastReceiver {
+//		@Override
+//		public void onReceive(Context context, Intent intent) {
+//
+//			boolean resuilt = intent.getBooleanExtra("ischanged",false);
+//	
+//			if(resuilt || firstSendToTheme ){
+//				try {
+//					getThemeResources( intent.getStringExtra("path") );
+//					if(!firstSendToTheme){
+//						syncThemesPageItems(0,true);
+//					}
+//					firstSendToTheme =false;
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
+//
+//	public static String LAUNCH_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_parser_perview_Action";
+//    public static String THEME_RECEIVER ="com.shendu.launcher_receive";  
+//    public static String CHANGE_THEME_SEND  ="com.shendu.theme.LauncherBroadcast_setting_theme_Action";
+//	private static boolean firstSendToTheme= true;
+//	
+//	public void getThemeResources(String path ) throws Exception {
+//
+//		mThemesList.clear();
+//		String suffix = ".jpg";
+//		File stringPath = Environment.getDataDirectory();
+//		File systemThemePaht = new File(stringPath.getPath() + path);
+//
+//		if (systemThemePaht.exists()) {
+//			File[] files = systemThemePaht.listFiles();
+//		
+//			for (File file : files) {
+//		
+//				if (file.isFile() && file.getName().endsWith(suffix)) {
+//					
+//					ShenduPrograme shenduTheme =new ShenduPrograme();
+//					String cruThemePath = file.getAbsolutePath();
+//					Bitmap bm = BitmapFactory.decodeFile(cruThemePath);
+//
+//					shenduTheme.mThemeBitmap=bm;
+//					shenduTheme.mThemePath=cruThemePath;
+//					mThemesList.add(shenduTheme);
+//				}
+//			}
+//		}
+//  
+//		ShenduPrograme	moreThemePrograme = new ShenduPrograme();
+//		
+//    	Intent thmemIntent =  new Intent(Intent.ACTION_MAIN);
+//    	ComponentName componentName = new ComponentName("com.shendu.theme","com.shendu.theme.ShenDu_MainActivity");
+//    	thmemIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+//    	thmemIntent.setComponent(componentName);
+//    	thmemIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//   
+//        moreThemePrograme.setIntent(thmemIntent);
+//        //moreThemePrograme.mThemeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.editstate_tabhost_tabcontent_wallpaper_more_normal);
+//        moreThemePrograme.setResSmallId(R.drawable.editstate_more_wallpaper_bg);
+//        moreThemePrograme.setChoice(ShenduPrograme.CHOICE_WALLPAPER_MORE);
+//        mThemesList.add(moreThemePrograme);
+//        
+//	}
 	
     @Override
     public void onClick(final View view) {
@@ -877,19 +877,19 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
             bounce.play(tyuAnim).before(tydAnim);
             bounce.setInterpolator(new AccelerateInterpolator());
             bounce.start();
-        }else if (view instanceof PagedViewTheme) {
-        	 mLauncher.backFromEditMode();
-        	 ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
-        	 Intent intent = shenduPrograme.getIntent();
-        	 if(intent ==null){
-        		  // add by zlf for Theme
-             	intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
- 				intent.putExtra("path", shenduPrograme.mThemePath);
- 				mLauncher.sendBroadcast(intent);
- 				mLauncher.shenduShowProgressDialog(mLauncher.getResources().getString(R.string.luancher_changed_theme));
-        	 }else{
- 	    	    mLauncher.startActivity(intent);
-        	 }
+//        }else if (view instanceof PagedViewTheme) {
+//        	 mLauncher.backFromEditMode();
+//        	 ShenduPrograme shenduPrograme = (ShenduPrograme) view.getTag();
+//        	 Intent intent = shenduPrograme.getIntent();
+//        	 if(intent ==null){
+//        		  // add by zlf for Theme
+//             	intent = new Intent(AppsCustomizePagedView.CHANGE_THEME_SEND);
+// 				intent.putExtra("path", shenduPrograme.mThemePath);
+// 				mLauncher.sendBroadcast(intent);
+// 				mLauncher.shenduShowProgressDialog(mLauncher.getResources().getString(R.string.luancher_changed_theme));
+//        	 }else{
+// 	    	    mLauncher.startActivity(intent);
+//        	 }
         }
     }
 
