@@ -1498,9 +1498,13 @@ public final class Launcher extends Activity
     	ContentResolver cr = getContentResolver();  
     	Cursor cursorUnreadSms = cr.query(Uri.parse("content://sms/inbox"),null,"read = 0",null,null);
     	Cursor cursorUnreadMms = cr.query(Uri.parse("content://mms/inbox"),null,"read = 0",null,null);
-    	result = cursorUnreadSms.getCount()+cursorUnreadMms.getCount();
-    	cursorUnreadSms.close();
-    	cursorUnreadMms.close();
+        if (cursorUnreadSms != null && cursorUnreadMms != null) {
+            result = cursorUnreadSms.getCount()+cursorUnreadMms.getCount();
+            cursorUnreadSms.close();
+            cursorUnreadMms.close();
+        } else {
+            result = 0;
+        }
     	return result;
     }
     
